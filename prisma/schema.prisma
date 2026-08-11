@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ==================== AUTH & USERS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          String    @default("STUDENT")
+  phone         String?
+  institution   String?
+  programme     String?
+  year          String?
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  progress          UserProgress[]
+  mockTestAttempts  MockTestAttempt[]
+  studentConsultations Consultation[] @relation("StudentConsultations")
+  expertProfile     Expert?
+  payments          Payment[]
+  studyMaterials    StudyMaterial[]
+  flashcardProgress FlashcardProgress[]
+}
+
+// ==================== CURRICULUM ====================
+
+model Programme {
+  id        String      @id @default(cuid())
+  name      String
+  fullName  String
+  yearType  String
+  icon      String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  departments Department[]
+  subjects    Subject[]
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  code        String?
+  icon        String?
+  programmeId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  programme Programme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  subjects  Subject[]
+
+  @@index([programmeId])
+}
+
+model Subject {
+  id            String    @id @default(cuid())
+  code          String?
+  name          String
+  year          String?
+  semester      String?
+  paper         String?
+  icon          String?
+  description   String?
+  departmentId  String?
+  programmeId   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  department    Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  programme     Programme   @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  chapters      Chapter[]
+  mockTests     MockTest[]
+  studyMaterials StudyMaterial[]
+  userProgress  UserProgress[]
+
+  @@index([programmeId])
+  @@index([departmentId])
+}
+
+model Chapter {
+  id          String    @id @default(cuid())
+  title       String
+  content     String
+  unitNumber  Int
+  subjectId   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([subjectId])
+}
+
+// ==================== MOCK TESTS ====================
+
+model MockTest {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  duration    Int
+  totalMarks  Int
+  subjectId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  subject   Subject?          @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  questions Question[]
+  attempts  MockTestAttempt[]
+
+  @@index([subjectId])
+}
+
+model Question {
+  id            String    @id @default(cuid())
+  text          String
+  options       String
+  correctAnswer Int
+  marks         Int       @default(1)
+  explanation   String?
+  mockTestId    String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  mockTest MockTest @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+
+  @@index([mockTestId])
+}
+
+model MockTestAttempt {
+  id          String    @id @default(cuid())
+  userId      String
+  mockTestId  String
+  score       Int
+  totalMarks  Int
+  answers     String
+  timeTaken   Int
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mockTest MockTest @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([mockTestId])
+}
+
+// ==================== STUDY MATERIALS ====================
+
+model StudyMaterial {
+  id          String    @id @default(cuid())
+  title       String
+  type        String
+  url         String?
+  content     String?
+  subjectId   String?
+  userId      String?
+  isPublic    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([subjectId])
+  @@index([userId])
+}
+
+// ==================== FLASHCARDS ====================
+
+model FlashcardProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  subjectId     String
+  chapterId     String?
+  cardIndex     Int
+  known         Boolean   @default(false)
+  nextReview    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+// ==================== CONSULTATIONS ====================
+
+model Expert {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  specialization  String
+  bio             String?
+  hourlyRate      Int
+  isAvailable     Boolean   @default(true)
+  rating          Float     @default(0)
+  totalReviews    Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultations Consultation[]
+
+  @@index([userId])
+}
+
+model Consultation {
+  id          String    @id @default(cuid())
+  studentId   String
+  expertId    String
+  slot        DateTime
+  duration    Int
+  status      String    @default("PENDING")
+  notes       String?
+  rating      Int?
+  review      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  student User    @relation("StudentConsultations", fields: [studentId], references: [id], onDelete: Cascade)
+  expert  Expert  @relation(fields: [expertId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([expertId])
+}
+
+// ==================== PAYMENTS ====================
+
+model Payment {
+  id          String    @id @default(cuid())
+  userId      String
+  amount      Int
+  currency    String    @default("INR")
+  status      String    @default("PENDING")
+  orderId     String?
+  paymentId   String?
+  metadata    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderId])
+}
+
+// ==================== USER PROGRESS ====================
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  subjectId   String
+  progress    Float     @default(0)
+  lastAccessed DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, subjectId])
+  @@index([userId])
+}
