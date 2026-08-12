@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     });
 
     const filtered = difficulty
-      ? mockTests.filter((t) => t.title.toLowerCase().includes(difficulty.toLowerCase()))
+      ? mockTests.filter((t: (typeof mockTests)[number]) => t.title.toLowerCase().includes(difficulty.toLowerCase()))
       : mockTests;
 
     return NextResponse.json(filtered);
