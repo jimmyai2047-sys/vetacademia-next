@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,7 +30,8 @@ const programmes = [
     description: "Comprehensive diploma in animal husbandry practices",
     icon: BookOpen,
     href: "/syllabus/ahdp",
-    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    image: "/images/ahdp.jpg",
+    color: "bg-green-600",
   },
   {
     name: "B.V.Sc & A.H.",
@@ -35,7 +39,8 @@ const programmes = [
     description: "Professional undergraduate veterinary degree",
     icon: GraduationCap,
     href: "/syllabus/bvsc",
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    image: "/images/bvsc.jpg",
+    color: "bg-blue-600",
   },
   {
     name: "M.V.Sc",
@@ -43,7 +48,8 @@ const programmes = [
     description: "Advanced postgraduate veterinary specializations",
     icon: FlaskConical,
     href: "/syllabus/mvsc",
-    color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+    image: "/images/mvsc.jpg",
+    color: "bg-purple-600",
   },
   {
     name: "Ph.D",
@@ -51,7 +57,8 @@ const programmes = [
     description: "Doctoral research programs in veterinary fields",
     icon: Stethoscope,
     href: "/syllabus/phd",
-    color: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+    image: "/images/phd.jpg",
+    color: "bg-orange-600",
   },
 ];
 
@@ -61,24 +68,28 @@ const features = [
     title: "Mock Tests",
     description: "Adaptive mock tests with detailed analytics",
     href: "/mock-tests",
+    image: "/images/features-mocktest.jpg",
   },
   {
     icon: FileText,
     title: "Study Materials",
     description: "Comprehensive notes, PDFs, and video lessons",
     href: "/study-materials",
+    image: "/images/features-study.jpg",
   },
   {
     icon: Users,
     title: "Expert Consultation",
     description: "One-on-one sessions with veterinary experts",
     href: "/experts",
+    image: "/images/features-experts.jpg",
   },
   {
     icon: Calculator,
     title: "Clinical Tools",
     description: "Drug calculators, drip rates, and more",
     href: "/tools",
+    image: "/images/hero-vet.jpg",
   },
 ];
 
@@ -93,26 +104,34 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-primary/5 py-20 md:py-32">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+        <Image
+          src="/images/hero-vet.jpg"
+          alt="Veterinary Education"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
               India&apos;s Premier{" "}
-              <span className="text-primary">Veterinary Education</span> Platform
+              <span className="text-green-400">Veterinary Education</span> Platform
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8">
+            <p className="text-lg md:text-xl text-gray-200 mb-8">
               Access comprehensive curricula, mock tests, study materials, and expert
               consultations for B.V.Sc, M.V.Sc, and Ph.D students.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/syllabus/ahdp">
-                <Button size="lg" className="gap-2">
+                <Button size="lg" className="gap-2 bg-green-600 hover:bg-green-700">
                   Explore Programmes
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/signup">
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
                   Start Free Trial
                 </Button>
               </Link>
@@ -122,15 +141,15 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="border-y bg-muted/50">
+      <section className="border-y bg-green-600 text-white">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-primary">
+                <div className="text-3xl md:text-4xl font-bold">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-green-100">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -148,24 +167,29 @@ export default function HomePage() {
               Comprehensive veterinary education across all academic levels
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {programmes.map((programme) => (
               <Link key={programme.name} href={programme.href}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader>
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center ${programme.color} mb-2`}
-                    >
-                      <programme.icon className="h-6 w-6" />
+                <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0">
+                  <div className="relative h-56 overflow-hidden">
+                    <Image
+                      src={programme.image}
+                      alt={programme.fullName}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-white text-sm font-medium ${programme.color}`}>
+                        <programme.icon className="h-4 w-4" />
+                        {programme.name}
+                      </div>
                     </div>
-                    <CardTitle className="group-hover:text-primary transition-colors">
-                      {programme.name}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">
                       {programme.fullName}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </h3>
                     <p className="text-sm text-muted-foreground">
                       {programme.description}
                     </p>
@@ -191,16 +215,23 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature) => (
               <Link key={feature.title} href={feature.href}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group text-center">
-                  <CardHeader>
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
-                      <feature.icon className="h-6 w-6 text-primary" />
+                <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0">
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <feature.icon className="h-12 w-12 text-white" />
                     </div>
-                    <CardTitle className="group-hover:text-primary transition-colors">
+                  </div>
+                  <CardContent className="p-5 text-center">
+                    <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">
                       {feature.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                    </h3>
                     <p className="text-sm text-muted-foreground">
                       {feature.description}
                     </p>
@@ -213,8 +244,16 @@ export default function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <Image
+            src="/images/hero-vet.jpg"
+            alt=""
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -230,23 +269,26 @@ export default function HomePage() {
                   "Affordable pricing for students",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
               <Link href="/signup" className="mt-8 inline-block">
-                <Button size="lg">Get Started Today</Button>
+                <Button size="lg" className="bg-green-600 hover:bg-green-700">Get Started Today</Button>
               </Link>
             </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <div className="text-center">
-                  <GraduationCap className="h-24 w-24 text-primary/40 mx-auto" />
-                  <p className="text-muted-foreground mt-4">
-                    Empowering veterinary students since 2020
-                  </p>
-                </div>
+            <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src="/images/bvsc.jpg"
+                alt="Veterinary Education"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-green-900/60 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 text-white">
+                <GraduationCap className="h-12 w-12 mb-3" />
+                <p className="text-lg font-semibold">Empowering veterinary students since 2020</p>
               </div>
             </div>
           </div>
@@ -254,12 +296,19 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        <Image
+          src="/images/ahdp.jpg"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-green-700/90" />
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
             Ready to Start Your Journey?
           </h2>
-          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
             Join thousands of veterinary students who are already excelling with
             VetAcademia
           </p>
@@ -267,8 +316,7 @@ export default function HomePage() {
             <Link href="/signup">
               <Button
                 size="lg"
-                variant="secondary"
-                className="gap-2"
+                className="gap-2 bg-white text-green-700 hover:bg-gray-100"
               >
                 Create Free Account
                 <ArrowRight className="h-4 w-4" />
@@ -278,7 +326,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                className="border-white text-white hover:bg-white/20"
               >
                 Watch Demo
               </Button>
