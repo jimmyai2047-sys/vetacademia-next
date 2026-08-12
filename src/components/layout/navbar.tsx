@@ -40,6 +40,9 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
+          <Link href="/">
+            <Button variant="ghost">Home</Button>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Button variant="ghost" className="gap-2">
@@ -95,6 +98,13 @@ export default function Navbar() {
               <div className="font-bold text-lg">VetAcademia</div>
               
               <div className="space-y-2">
+                <Link
+                  href="/"
+                  className="block px-3 py-2 rounded-md hover:bg-accent font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Home
+                </Link>
                 <div className="text-sm font-medium text-muted-foreground">Programmes</div>
                 {programmes.map((p) => (
                   <Link
