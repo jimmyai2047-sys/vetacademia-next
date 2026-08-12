@@ -1,13 +1,9 @@
-import { PrismaClient } from "../../src/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
-import path from "path";
 
-const dbPath = path.resolve(__dirname, "../../dev.db");
-console.log("Connecting to database at:", dbPath);
-
-const adapter = new PrismaBetterSqlite3({
-  url: `file:${dbPath}`,
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
 });
 const prisma = new PrismaClient({ adapter });
 
