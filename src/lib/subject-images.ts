@@ -2,15 +2,15 @@ const subjectImages: Record<string, string> = {
   // ═══════════════════════════════════════════════════════════════════════════
   // AHDP Subjects
   // ═══════════════════════════════════════════════════════════════════════════
-  "Introductory Veterinary Anatomy": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
-  "Introductory Veterinary Physiology & Biochemistry": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&q=80",
+  "Introductory Veterinary Anatomy": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80",
+  "Introductory Veterinary Physiology & Biochemistry": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80",
   "Introductory Animal Management": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
   "Animal Husbandry Extension": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
   "Introductory Animal Genetics": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
   "Introductory Veterinary Pharmacology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
-  "Introductory Veterinary Clinical Medicine": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
+  "Introductory Veterinary Clinical Medicine": "https://images.unsplash.com/photo-1612253465053-011194dffe14?w=800&q=80",
   "Minor Veterinary Surgery": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80",
-  "Introductory Animal Reproduction": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
+  "Introductory Animal Reproduction": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80",
   "Introductory Animal Nutrition": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
 
   // ═══════════════════════════════════════════════════════════════════════════
