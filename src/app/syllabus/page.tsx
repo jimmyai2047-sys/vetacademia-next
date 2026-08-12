@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight } from "lucide-react";
+import { getProgrammeImage } from "@/lib/subject-images";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,
@@ -12,10 +14,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const colorMap: Record<string, string> = {
-  ahdp: "text-green-600 bg-green-50",
-  bvsc: "text-blue-600 bg-blue-50",
-  mvsc: "text-purple-600 bg-purple-50",
-  phd: "text-orange-600 bg-orange-50",
+  ahdp: "from-green-600 to-green-800",
+  bvsc: "from-blue-600 to-blue-800",
+  mvsc: "from-purple-600 to-purple-800",
+  phd: "from-orange-600 to-orange-800",
 };
 
 const descriptionMap: Record<string, string> = {
@@ -56,40 +58,48 @@ export default async function SyllabusPage() {
         {programmes.map((programme) => {
           const slug = programme.name.toLowerCase().replace(/[.\s&]/g, "");
           const Icon = iconMap[programme.icon || "BookOpen"] || BookOpen;
-          const colorClass = colorMap[slug] || "text-primary bg-primary/10";
+          const gradientColor = colorMap[slug] || "from-primary to-primary/80";
           const description = descriptionMap[slug] || "";
+          const imageUrl = getProgrammeImage(slug);
 
           return (
             <Link key={programme.id} href={`/syllabus/${slug}`}>
-              <Card className="h-full hover:shadow-lg transition-all cursor-pointer group border-2 hover:border-primary/20">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${colorClass}`}>
-                        <Icon className="h-7 w-7" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                          {programme.name}
-                        </CardTitle>
-                        <p className="text-sm text-muted-foreground mt-1">{programme.fullName}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors group-hover:translate-x-1" />
+              <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={imageUrl}
+                    alt={programme.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-80`} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Icon className="h-16 w-16 text-white/60" />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">{description}</p>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs">
                       {programme.yearType === "semester" ? "Semester System" : programme.yearType === "year" ? "Year System" : "Department Based"}
                     </Badge>
-                    {programme._count.subjects > 0 && (
-                      <Badge variant="outline">{programme._count.subjects} Subjects</Badge>
-                    )}
-                    {programme._count.departments > 0 && (
-                      <Badge variant="outline">{programme._count.departments} Departments</Badge>
-                    )}
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h2 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-1 transition-transform">
+                      {programme.name}
+                    </h2>
+                    <p className="text-white/80 text-sm">{programme.fullName}</p>
+                  </div>
+                </div>
+                <CardContent className="p-4">
+                  <p className="text-sm text-muted-foreground mb-3">{description}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {programme._count.subjects > 0 && (
+                        <Badge variant="secondary">{programme._count.subjects} Subjects</Badge>
+                      )}
+                      {programme._count.departments > 0 && (
+                        <Badge variant="secondary">{programme._count.departments} Departments</Badge>
+                      )}
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors group-hover:translate-x-1" />
                   </div>
                 </CardContent>
               </Card>

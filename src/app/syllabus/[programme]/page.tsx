@@ -1,9 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, ArrowRight } from "lucide-react";
+import { getSubjectImage } from "@/lib/subject-images";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,
@@ -18,6 +20,17 @@ const colorMap: Record<string, string> = {
   mvsc: "text-purple-600",
   phd: "text-orange-600",
 };
+
+const deptColors = [
+  "from-green-600 to-green-800",
+  "from-blue-600 to-blue-800",
+  "from-purple-600 to-purple-800",
+  "from-orange-600 to-orange-800",
+  "from-red-600 to-red-800",
+  "from-teal-600 to-teal-800",
+  "from-indigo-600 to-indigo-800",
+  "from-pink-600 to-pink-800",
+];
 
 export default async function ProgrammePage({
   params,
@@ -97,61 +110,97 @@ export default async function ProgrammePage({
 
       {isDepartmentBased ? (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Departments</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {programme.departments.map((dept) => (
-              <Link key={dept.id} href={`/syllabus/${slug}/${dept.id}`}>
-                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer group">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {dept.name}
-                      </CardTitle>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          <h2 className="text-xl font-semibold mb-6">Departments</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {programme.departments.map((dept, index) => {
+              const imageUrl = getSubjectImage(dept.name);
+              const gradientColor = deptColors[index % deptColors.length];
+              return (
+                <Link key={dept.id} href={`/syllabus/${slug}/${dept.id}`}>
+                  <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
+                    <div className="relative h-40 overflow-hidden">
+                      <Image
+                        src={imageUrl}
+                        alt={dept.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-70`} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-4xl font-bold opacity-30">
+                          {dept._count.subjects}
+                        </span>
+                      </div>
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                          {dept._count.subjects} {dept._count.subjects === 1 ? "Subject" : "Subjects"}
+                        </Badge>
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Badge variant="secondary">
-                      {dept._count.subjects} {dept._count.subjects === 1 ? "Subject" : "Subjects"}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-base group-hover:text-primary transition-colors leading-tight">
+                          {dept.name}
+                        </CardTitle>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
       ) : (
         <div>
           {Object.entries(groupedSubjects).map(([year, subjects]) => (
-            <div key={year} className="mb-8">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <div key={year} className="mb-10">
+              <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
                 <Badge variant="outline" className="text-base">{year}</Badge>
               </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {subjects.map((subject) => (
-                  <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
-                    <Card className="h-full hover:shadow-md transition-shadow cursor-pointer group">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                          {subject.name}
-                        </CardTitle>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {subject.code && <Badge variant="secondary">{subject.code}</Badge>}
-                          {subject.semester && <Badge variant="outline">{subject.semester}</Badge>}
-                          {subject.paper && <Badge variant="outline">{subject.paper}</Badge>}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {subjects.map((subject) => {
+                  const imageUrl = getSubjectImage(subject.name);
+                  return (
+                    <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
+                      <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
+                        <div className="relative h-40 overflow-hidden">
+                          <Image
+                            src={imageUrl}
+                            alt={subject.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <BookOpen className="h-10 w-10 text-white/70" />
+                          </div>
+                          <div className="absolute top-3 left-3 flex items-center gap-2">
+                            {subject.code && (
+                              <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                                {subject.code}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="absolute bottom-3 right-3">
+                            <Badge variant="secondary" className="text-xs">
+                              {subject._count.chapters} Chapters
+                            </Badge>
+                          </div>
                         </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="secondary">
-                            {subject._count.chapters} {subject._count.chapters === 1 ? "Chapter" : "Chapters"}
-                          </Badge>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
+                        <CardContent className="p-4">
+                          <CardTitle className="text-base group-hover:text-primary transition-colors mb-2 leading-tight">
+                            {subject.name}
+                          </CardTitle>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {subject.semester && <Badge variant="outline" className="text-xs">{subject.semester}</Badge>}
+                            {subject.paper && <Badge variant="outline" className="text-xs">{subject.paper}</Badge>}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           ))}
