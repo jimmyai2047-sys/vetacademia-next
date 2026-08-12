@@ -1,28 +1,38 @@
 const subjectImages: Record<string, string> = {
+  // ═══════════════════════════════════════════════════════════════════════════
   // AHDP Subjects
+  // ═══════════════════════════════════════════════════════════════════════════
+  "Introductory Veterinary Anatomy": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
+  "Introductory Veterinary Physiology & Biochemistry": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&q=80",
+  "Introductory Animal Management": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
+  "Animal Husbandry Extension": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
+  "Introductory Animal Genetics": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
+  "Introductory Veterinary Pharmacology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Introductory Veterinary Clinical Medicine": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
+  "Minor Veterinary Surgery": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80",
+  "Introductory Animal Reproduction": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
+  "Introductory Animal Nutrition": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // BVSc Subjects
+  // ═══════════════════════════════════════════════════════════════════════════
   "Veterinary Anatomy": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
   "Veterinary Physiology": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&q=80",
-  "Introductory Animal Management": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
-  "Introductory Animal Nutrition": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
-  "Animal Breeding": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
-  "Animal Reproduction": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
-  "Veterinary Pharmacology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
-  "Introductory Veterinary Medicine": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
-  "Minor Veterinary Surgery": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80",
-  "Preventive Medicine": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
-  "Animal Husbandry Extension Education": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
-
-  // BVSc Subjects
   "Veterinary Biochemistry": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
   "Veterinary Pathology": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80",
   "Veterinary Microbiology": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&q=80",
   "Veterinary Parasitology": "https://images.unsplash.com/photo-1615486511484-92a08b15a3e2?w=800&q=80",
-  "Veterinary Public Health": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&q=80",
+  "Veterinary Pharmacology and Toxicology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Veterinary Public Health and Epidemiology": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&q=80",
   "Veterinary Surgery": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
   "Veterinary Gynaecology & Obstetrics": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=800&q=80",
   "Veterinary Clinical Practices": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
+  "Veterinary Medicine": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
+  "Preventive Medicine": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
 
+  // ═══════════════════════════════════════════════════════════════════════════
   // Department-based (MVSc/PhD)
+  // ═══════════════════════════════════════════════════════════════════════════
   "Animal Genetics & Breeding": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
   "Animal Nutrition": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
   "Animal Reproduction, Gynaecology & Obstetrics": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
@@ -31,9 +41,7 @@ const subjectImages: Record<string, string> = {
   "Poultry Science": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80",
   "Veterinary Biotechnology": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
   "Veterinary Extension Education": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
-  "Veterinary Medicine": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=800&q=80",
   "Veterinary Pharmacology & Toxicology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
-  "Veterinary Public Health & Epidemiology": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&q=80",
   "Veterinary Surgery & Radiology": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
 };
 

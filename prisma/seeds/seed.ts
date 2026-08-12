@@ -17,9 +17,12 @@ function chapters(unitNumber: number, items: { title: string; content: string }[
 // ─── AHDP Subject Data ──────────────────────────────────────────────────────
 
 const AHDP_SUBJECTS = [
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIRST YEAR (Semester I & II)
+  // ═══════════════════════════════════════════════════════════════════════════
   {
-    code: "VAN-101",
-    name: "Veterinary Anatomy",
+    code: "AHDP-VAN-101",
+    name: "Introductory Veterinary Anatomy",
     year: "1st Year",
     semester: "1st Semester",
     chapters: [
@@ -48,8 +51,8 @@ const AHDP_SUBJECTS = [
     ],
   },
   {
-    code: "VPH-101",
-    name: "Veterinary Physiology",
+    code: "AHDP-VPH-101",
+    name: "Introductory Veterinary Physiology & Biochemistry",
     year: "1st Year",
     semester: "1st Semester",
     chapters: [
@@ -74,10 +77,20 @@ const AHDP_SUBJECTS = [
         { title: "Lactation Physiology", content: "Mammary gland development, lactogenesis, milk composition and ejection reflex. Hormonal control of lactation and milking physiology." },
         { title: "Endocrine Physiology", content: "Hypothalamic-pituitary axis, thyroid, adrenal and pancreatic hormones. Hormonal regulation of metabolism, growth and reproduction." },
       ]),
+      ...chapters(5, [
+        { title: "Biomolecules – Structure and Function", content: "Carbohydrates, lipids, proteins and nucleic acids. Structure-function relationships, conformational changes and biochemical classification." },
+        { title: "Enzymes and Enzyme Kinetics", content: "Enzyme classification, mechanisms of catalysis, Michaelis-Menten kinetics. Enzyme regulation, allosteric control and clinical enzymology." },
+        { title: "Biochemical Techniques", content: "Spectrophotometry, chromatography, electrophoresis and centrifugation. Clinical biochemistry laboratory methods and quality control." },
+      ]),
+      ...chapters(6, [
+        { title: "Carbohydrate Metabolism", content: "Glycolysis, TCA cycle, oxidative phosphorylation and pentose phosphate pathway. Gluconeogenesis, glycogen metabolism and blood glucose regulation." },
+        { title: "Lipid Metabolism", content: "Beta-oxidation, ketogenesis, lipogenesis and cholesterol metabolism. Fatty acid synthesis, phospholipid metabolism and lipoproteins." },
+        { title: "Protein and Amino Acid Metabolism", content: "Protein synthesis, transamination, deamination and urea cycle. Nitrogen balance and amino acid catabolism." },
+      ]),
     ],
   },
   {
-    code: "VAM-201",
+    code: "AHDP-VAM-101",
     name: "Introductory Animal Management",
     year: "1st Year",
     semester: "2nd Semester",
@@ -105,7 +118,123 @@ const AHDP_SUBJECTS = [
     ],
   },
   {
-    code: "VAN-201",
+    code: "AHDP-AHE-101",
+    name: "Animal Husbandry Extension",
+    year: "1st Year",
+    semester: "2nd Semester",
+    chapters: [
+      ...chapters(1, [
+        { title: "Fundamentals of Extension Education", content: "Definition, objectives and philosophy of extension education. History of agricultural extension, extension principles and teaching-learning process." },
+        { title: "Rural Sociology and Development", content: "Rural social structure, social groups, community development and leadership. Role of extension in rural livelihood improvement." },
+        { title: "Extension Philosophy and Approaches", content: "Farmers first approach, participatory rural appraisal and community-driven development. Adult education principles and extension methodologies." },
+      ]),
+      ...chapters(2, [
+        { title: "Extension Programme Planning", content: "Needs assessment, programme development, implementation and evaluation. Logical framework approach and result-based management in extension." },
+        { title: "Extension Teaching Methods", content: "Individual, group and mass methods of extension teaching. Farm demonstrations, training, exhibitions, farm visits and field days." },
+        { title: "Training and Capacity Building", content: "Training need assessment, training design, delivery and evaluation. Capacity building of farmers, extension workers and rural youth." },
+      ]),
+      ...chapters(3, [
+        { title: "Communication in Extension", content: "Communication models, barriers and strategies. Verbal, non-verbal and visual communication in extension. Interpersonal communication skills." },
+        { title: "Mass Media and ICT in Extension", content: "Role of radio, television, print media and social media in extension. ICT-based extension – mobile apps, e-learning and digital platforms." },
+        { title: "Audio-Visual Aids and Presentation", content: "Use of charts, models, posters, video and multimedia in extension. Effective presentation and public speaking skills for extension professionals." },
+      ]),
+      ...chapters(4, [
+        { title: "Livestock Entrepreneurship", content: "Entrepreneurship development, business planning and feasibility studies. Value chain analysis and market linkages for livestock products." },
+        { title: "Self-Help Groups and Cooperatives", content: "Formation and management of self-help groups, cooperatives and farmer producer organisations. Microfinance and credit access for livestock farmers." },
+        { title: "Extension Programme Evaluation", content: "Impact assessment, monitoring and evaluation methods. Cost-benefit analysis of extension programmes and outcome measurement." },
+      ]),
+    ],
+  },
+  {
+    code: "AHDP-ABG-101",
+    name: "Introductory Animal Genetics",
+    year: "1st Year",
+    semester: "2nd Semester",
+    chapters: [
+      ...chapters(1, [
+        { title: "Introduction to Genetics", content: "Mendelian laws of inheritance, gene concept, multiple alleles and gene interactions. Chromosomal basis of inheritance and chromosomal aberrations." },
+        { title: "Quantitative Genetics", content: "Polygenic inheritance, additive and non-additive genetic variance. Heritability, repeatability and genetic correlation concepts." },
+        { title: "Population Genetics", content: "Hardy-Weinberg equilibrium, gene and genotypic frequencies. Factors changing gene frequencies – selection, drift, mutation and migration." },
+      ]),
+      ...chapters(2, [
+        { title: "Principles of Animal Breeding", content: "Selection methods – mass, progeny, sib and combined selection. Selection intensity, genetic progress and breeding value estimation." },
+        { title: "Mating Systems", content: "Inbreeding, linebreeding, outcrossing and crossbreeding. Heterosis and its exploitation in livestock improvement programs." },
+        { title: "Breeding Programmes", content: "Centralized recording, genetic evaluation and national breeding programmes. Sire selection, dam selection and breeding value prediction." },
+      ]),
+      ...chapters(3, [
+        { title: "Reproductive Technologies in Breeding", content: "Artificial insemination, embryo transfer, multiple ovulation and embryo transfer (MOET). In-vitro fertilisation and embryo biotechnology." },
+        { title: "Molecular Genetics and Markers", content: "DNA markers, RFLP, microsatellites, SNP and QTL mapping. Marker-assisted selection and genomic selection in livestock." },
+        { title: "Genomic Selection", content: "Genome-wide association studies, genomic estimated breeding values. Reference populations, SNP chips and implementation of genomic selection." },
+      ]),
+      ...chapters(4, [
+        { title: "Breeding for Production Traits", content: "Selection for milk production, growth rate, wool production and reproductive efficiency. Index selection and multi-trait selection." },
+        { title: "Breeding for Disease Resistance", content: "Genetic resistance to diseases, breeding for immune competence. Genetic disorders and their control in livestock populations." },
+        { title: "Conservation of Animal Genetic Resources", content: "Breed conservation strategies, in-situ and ex-situ conservation. Genetic diversity assessment and management of endangered breeds." },
+      ]),
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SECOND YEAR (Semester III & IV)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    code: "AHDP-VPH-201",
+    name: "Introductory Veterinary Pharmacology",
+    year: "2nd Year",
+    semester: "3rd Semester",
+    chapters: [
+      ...chapters(1, [
+        { title: "Introduction to Pharmacology", content: "Drug nomenclature, pharmacokinetics – absorption, distribution, metabolism and excretion. Pharmacodynamics – drug-receptor interactions, dose-response relationships." },
+        { title: "Drug Administration and Dosage", content: "Routes of drug administration, bioavailability, first-pass effect. Dosage calculations for different species and routes of administration." },
+        { title: "Autonomic Pharmacology", content: "Cholinergic and adrenergic drugs, autonomic ganglia and neuromuscular junction pharmacology. Parasympathomimetics, sympathomimetics and their antagonists." },
+      ]),
+      ...chapters(2, [
+        { title: "Drugs Acting on CNS", content: "Sedatives, tranquillisers, general anaesthetics, analgesics and anticonvulsants. NSAIDs and their use in veterinary practice." },
+        { title: "Drugs Acting on CVS and Kidney", content: "Cardiac glycosides, antiarrhythmics, vasodilators and diuretics. Cardiovascular drugs used in veterinary emergencies." },
+        { title: "Drugs Acting on Blood and GI Tract", content: "Haematinics, anticoagulants, antiemetics, prokinetics and purgatives. Gastrointestinal pharmacology in domestic animals." },
+      ]),
+      ...chapters(3, [
+        { title: "Antimicrobial Agents", content: "Antibiotics – classification, mechanisms of action and resistance. Sulfonamides, quinolones, tetracyclines and aminoglycosides in veterinary use." },
+        { title: "Antifungal and Antiviral Agents", content: "Antifungal drugs, antiviral chemotherapy and antiprotozoal agents. Coccidiostats and anthelmintics for parasitic infections." },
+        { title: "Chemotherapy of Parasitic Diseases", content: "Anthelmintics – benzimidazoles, macrocyclic lactones, imidazothiazoles. Ectoparasiticides – organophosphates, pyrethroids and newer compounds." },
+      ]),
+      ...chapters(4, [
+        { title: "Applied Pharmacology", content: "Drug interactions, adverse drug reactions and withdrawal periods. Pharmacovigilance and rational drug use in food-producing animals." },
+        { title: "Veterinary Drug Regulations", content: "Drug schedules, prescription requirements and controlled substances. Regulatory frameworks for veterinary drug use and antimicrobial stewardship." },
+        { title: "Pharmacology of Biologicals", content: "Vaccines, antisera, allergens and immunomodulators. Biological products used in veterinary preventive medicine." },
+      ]),
+    ],
+  },
+  {
+    code: "AHDP-VME-201",
+    name: "Introductory Veterinary Clinical Medicine",
+    year: "2nd Year",
+    semester: "3rd Semester",
+    chapters: [
+      ...chapters(1, [
+        { title: "Clinical Examination and History Taking", content: "Methods of clinical examination – inspection, palpation, percussion, auscultation. History taking, physical examination records and clinical documentation." },
+        { title: "Disease Diagnosis Methods", content: "Laboratory diagnostic methods, blood sampling, sample collection and transport. Clinical pathology – haematology, biochemistry and urinalysis basics." },
+        { title: "General Principles of Treatment", content: "Fluid therapy, electrolyte correction, supportive care and symptomatic treatment. Principles of rational therapeutics in veterinary medicine." },
+      ]),
+      ...chapters(2, [
+        { title: "Infectious Diseases of Cattle – Bacterial", content: "Anthrax, blackleg, brucellosis, tuberculosis and Johne's disease. Clinical signs, diagnosis, treatment and control measures." },
+        { title: "Infectious Diseases of Cattle – Viral", content: "Foot-and-mouth disease, rinderpest, bovine viral diarrhoea and infectious bovine rhinotracheitis. Vaccination and disease prevention." },
+        { title: "Metabolic Diseases of Cattle", content: "Milk fever, ketosis, ruminal acidosis, bloat and grass tetany. Clinical features, emergency treatment and prevention strategies." },
+      ]),
+      ...chapters(3, [
+        { title: "Diseases of Small Ruminants", content: "Clostridial diseases, caseous lymphadenitis, foot rot, pneumonia and pregnancy toxemia in sheep and goats." },
+        { title: "Diseases of Swine", content: "African swine fever, classical swine fever, erysipelas, porcine reproductive and respiratory syndrome and parvovirus infection." },
+        { title: "Poultry Diseases", content: "Newcastle disease, infectious bursal disease, Marek's disease, fowl pox and coccidiosis in poultry." },
+      ]),
+      ...chapters(4, [
+        { title: "Emergency Medicine", content: "Acute haemorrhage, shock, heat stroke, poisoning and trauma management. Emergency drugs, doses and critical care protocols." },
+        { title: "Common Toxicities", content: "Plant poisoning, organophosphate toxicity, heavy metal poisoning and mycotoxin toxicosis. Clinical signs and antidotal treatment." },
+        { title: "Wound Management and Bandaging", content: "Wound classification, cleaning, debridement, suturing and bandaging techniques. Principles of wound healing and infection control." },
+      ]),
+    ],
+  },
+  {
+    code: "AHDP-VAN-201",
     name: "Introductory Animal Nutrition",
     year: "2nd Year",
     semester: "3rd Semester",
@@ -133,119 +262,7 @@ const AHDP_SUBJECTS = [
     ],
   },
   {
-    code: "AB-201",
-    name: "Animal Breeding",
-    year: "2nd Year",
-    semester: "3rd Semester",
-    chapters: [
-      ...chapters(1, [
-        { title: "Introduction to Genetics", content: "Mendelian laws of inheritance, gene concept, multiple alleles and gene interactions. Chromosomal basis of inheritance and chromosomal aberrations." },
-        { title: "Quantitative Genetics", content: "Polygenic inheritance, additive and non-additive genetic variance. Heritability, repeatability and genetic correlation concepts." },
-        { title: "Population Genetics", content: "Hardy-Weinberg equilibrium, gene and genotypic frequencies. Factors changing gene frequencies – selection, drift, mutation and migration." },
-      ]),
-      ...chapters(2, [
-        { title: "Principles of Animal Breeding", content: "Selection methods – mass, progeny, sib and combined selection. Selection intensity, genetic progress and breeding value estimation." },
-        { title: "Mating Systems", content: "Inbreeding, linebreeding, outcrossing and crossbreeding. Heterosis and its exploitation in livestock improvement programs." },
-        { title: "Breeding Programmes", content: "Centralized recording, genetic evaluation and national breeding programmes. sire selection, dam selection and breeding value prediction." },
-      ]),
-      ...chapters(3, [
-        { title: "Reproductive Technologies in Breeding", content: "Artificial insemination, embryo transfer, multiple ovulation and embryo transfer (MOET). In-vitro fertilisation and embryo biotechnology." },
-        { title: "Molecular Genetics and Markers", content: "DNA markers, RFLP, microsatellites, SNP and QTL mapping. Marker-assisted selection and genomic selection in livestock." },
-        { title: "Genomic Selection", content: "Genome-wide association studies, genomic estimated breeding values. Reference populations, SNP chips and implementation of genomic selection." },
-      ]),
-      ...chapters(4, [
-        { title: "Breeding for Production Traits", content: "Selection for milk production, growth rate, wool production and reproductive efficiency. Index selection and multi-trait selection." },
-        { title: "Breeding for Disease Resistance", content: "Genetic resistance to diseases, breeding for immune competence. Genetic disorders and their control in livestock populations." },
-        { title: "Conservation of Animal Genetic Resources", content: "Breed conservation strategies, in-situ and ex-situ conservation. Genetic diversity assessment and management of endangered breeds." },
-      ]),
-    ],
-  },
-  {
-    code: "VRE-201",
-    name: "Animal Reproduction",
-    year: "2nd Year",
-    semester: "4th Semester",
-    chapters: [
-      ...chapters(1, [
-        { title: "Reproductive Anatomy – Male", content: "Testicular anatomy, sperm transport pathway, accessory sex glands and penis anatomy. Species differences in male reproductive anatomy." },
-        { title: "Reproductive Anatomy – Female", content: "Ovarian structure, oviduct, uterus, cervix and vagina. Species-specific differences in female reproductive tract anatomy." },
-        { title: "Reproductive Hormones", content: "Hypothalamic, pituitary and gonadal hormones. Hormonal regulation of reproductive cycles, feedback mechanisms and seasonality." },
-      ]),
-      ...chapters(2, [
-        { title: "Semen Collection and Evaluation", content: "Semen collection methods – artificial vagina, electro-ejaculation and massage. Semen evaluation – motility, morphology, concentration and viability." },
-        { title: "Artificial Insemination Techniques", content: "AI equipment, insemination methods, timing and technique. Deep uterine and cervical insemination. AI in cattle, buffalo, sheep and goats." },
-        { title: "Semen Processing and Storage", content: "Semen dilution, extender composition, cooling and freezing protocols. Liquid nitrogen storage and straw technology." },
-      ]),
-      ...chapters(3, [
-        { title: "Pregnancy Diagnosis", content: "Rectal palpation, ultrasonography, hormonal tests and blood tests for pregnancy diagnosis. Timing and accuracy of different methods." },
-        { title: "Gestation Period and Fetal Development", content: "Duration of gestation across species, fetal membranes, placental types and fetal development milestones." },
-        { title: "Parturition", content: "Signs of parturition, stages of labour, fetal membranes and placental expulsion. Dystocia recognition, assisted delivery and obstetric procedures." },
-      ]),
-      ...chapters(4, [
-        { title: "Reproductive Disorders – Female", content: "Ovarian cysts, silent heat, anestrus, metritis and pyometra. Uterine prolapse, vaginal prolapse and their management." },
-        { title: "Reproductive Disorders – Male", content: "Cryptorchidism, hypoplasia, seminal vesiculitis and orchitis. Breeding soundness examination of males." },
-        { title: "Infertility Investigation", content: "Infertility examination procedures, herd fertility assessment and breeding efficiency indices. Strategies for improving herd reproductive performance." },
-      ]),
-    ],
-  },
-  {
-    code: "VPH-201",
-    name: "Veterinary Pharmacology",
-    year: "2nd Year",
-    semester: "4th Semester",
-    chapters: [
-      ...chapters(1, [
-        { title: "Introduction to Pharmacology", content: "Drug nomenclature, pharmacokinetics – absorption, distribution, metabolism and excretion. Pharmacodynamics – drug-receptor interactions, dose-response relationships." },
-        { title: "Drug Administration and Dosage", content: "Routes of drug administration, bioavailability, first-pass effect. Dosage calculations for different species and routes of administration." },
-        { title: "Autonomic Pharmacology", content: "Cholinergic and adrenergic drugs, autonomic ganglia and neuromuscular junction pharmacology. Parasympathomimetics, sympathomimetics and their antagonists." },
-      ]),
-      ...chapters(2, [
-        { title: "Drugs Acting on CNS", content: "Sedatives, tranquillisers, general anaesthetics, analgesics and anticonvulsants. NSAIDs and their use in veterinary practice." },
-        { title: "Drugs Acting on CVS and Kidney", content: "Cardiac glycosides, antiarrhythmics, vasodilators and diuretics. Cardiovascular drugs used in veterinary emergencies." },
-        { title: "Drugs Acting on Blood and GI Tract", content: "Haematinics, anticoagulants, antiemetics, prokinetics and purgatives. Gastrointestinal pharmacology in domestic animals." },
-      ]),
-      ...chapters(3, [
-        { title: "Antimicrobial Agents", content: "Antibiotics – classification, mechanisms of action and resistance. Sulfonamides, quinolones, tetracyclines and aminoglycosides in veterinary use." },
-        { title: "Antifungal and Antiviral Agents", content: "Antifungal drugs, antiviral chemotherapy and antiprotozoal agents. Coccidiostats and anthelmintics for parasitic infections." },
-        { title: "Chemotherapy of Parasitic Diseases", content: "Anthelmintics – benzimidazoles, macrocyclic lactones, imidazothiazoles. Ectoparasiticides – organophosphates, pyrethroids and newer compounds." },
-      ]),
-      ...chapters(4, [
-        { title: "Applied Pharmacology", content: "Drug interactions, adverse drug reactions and withdrawal periods. Pharmacovigilance and rational drug use in food-producing animals." },
-        { title: "Veterinary Drug Regulations", content: "Drug schedules, prescription requirements and controlled substances. Regulatory frameworks for veterinary drug use and antimicrobial stewardship." },
-        { title: "Pharmacology of Biologicals", content: "Vaccines, antisera, allergens and immunomodulators. Biological products used in veterinary preventive medicine." },
-      ]),
-    ],
-  },
-  {
-    code: "VME-201",
-    name: "Introductory Veterinary Medicine",
-    year: "2nd Year",
-    semester: "4th Semester",
-    chapters: [
-      ...chapters(1, [
-        { title: "Clinical Examination and History Taking", content: "Methods of clinical examination – inspection, palpation, percussion, auscultation. History taking, physical examination records and clinical documentation." },
-        { title: "Disease Diagnosis Methods", content: "Laboratory diagnostic methods, blood sampling, sample collection and transport. Clinical pathology – haematology, biochemistry and urinalysis basics." },
-        { title: "General Principles of Treatment", content: "Fluid therapy, electrolyte correction, supportive care and symptomatic treatment. Principles of rational therapeutics in veterinary medicine." },
-      ]),
-      ...chapters(2, [
-        { title: "Infectious Diseases of Cattle – Bacterial", content: "Anthrax, blackleg, brucellosis, tuberculosis and Johne's disease. Clinical signs, diagnosis, treatment and control measures." },
-        { title: "Infectious Diseases of Cattle – Viral", content: "Foot-and-mouth disease, rinderpest, bovine viral diarrhoea and infectious bovine rhinotracheitis. Vaccination and disease prevention." },
-        { title: "Metabolic Diseases of Cattle", content: "Milk fever, ketosis, ruminal acidosis, bloat and grass tetany. Clinical features, emergency treatment and prevention strategies." },
-      ]),
-      ...chapters(3, [
-        { title: "Diseases of Small Ruminants", content: "Clostridial diseases, caseous lymphadenitis, foot rot, pneumonia and pregnancy toxemia in sheep and goats." },
-        { title: "Diseases of Swine", content: "African swine fever, classical swine fever, erysipelas, porcine reproductive and respiratory syndrome and parvovirus infection." },
-        { title: "Poultry Diseases", content: "Newcastle disease, infectious bursal disease, Marek's disease, fowl pox and coccidiosis in poultry." },
-      ]),
-      ...chapters(4, [
-        { title: "Emergency Medicine", content: "Acute haemorrhage, shock, heat stroke, poisoning and trauma management. Emergency drugs, doses and critical care protocols." },
-        { title: "Common Toxicities", content: "Plant poisoning, organophosphate toxicity, heavy metal poisoning and mycotoxin toxicosis. Clinical signs and antidotal treatment." },
-        { title: "Wound Management and Bandaging", content: "Wound classification, cleaning, debridement, suturing and bandaging techniques. Principles of wound healing and infection control." },
-      ]),
-    ],
-  },
-  {
-    code: "VSU-201",
+    code: "AHDP-VSU-201",
     name: "Minor Veterinary Surgery",
     year: "2nd Year",
     semester: "4th Semester",
@@ -273,58 +290,30 @@ const AHDP_SUBJECTS = [
     ],
   },
   {
-    code: "VPM-201",
-    name: "Preventive Medicine",
+    code: "AHDP-VRE-201",
+    name: "Introductory Animal Reproduction",
     year: "2nd Year",
     semester: "4th Semester",
     chapters: [
       ...chapters(1, [
-        { title: "Principles of Disease Prevention", content: "Epidemiological concepts, disease determinants and transmission. Levels of prevention – primary, secondary and tertiary. Disease surveillance and monitoring." },
-        { title: "Immunity and Immunization", content: "Types of immunity – innate, adaptive, humoral and cell-mediated. Vaccine types, schedules and cold chain management." },
-        { title: "Biosecurity Principles", content: "Farm biosecurity, quarantine, isolation and movement control. Sanitation, disinfection and decontamination procedures." },
+        { title: "Reproductive Anatomy – Male", content: "Testicular anatomy, sperm transport pathway, accessory sex glands and penis anatomy. Species differences in male reproductive anatomy." },
+        { title: "Reproductive Anatomy – Female", content: "Ovarian structure, oviduct, uterus, cervix and vagina. Species-specific differences in female reproductive tract anatomy." },
+        { title: "Reproductive Hormones", content: "Hypothalamic, pituitary and gonadal hormones. Hormonal regulation of reproductive cycles, feedback mechanisms and seasonality." },
       ]),
       ...chapters(2, [
-        { title: "Prevention of Major Livestock Diseases", content: "Vaccination programs for foot-and-mouth disease, brucellosis, anthrax and clostridial diseases. Disease prevention in poultry and swine." },
-        { title: "Vector-Borne Disease Prevention", content: "Control of ticks, mosquitoes, flies and other arthropod vectors. Parasite management and seasonal disease prevention strategies." },
-        { title: "Nutritional Disease Prevention", content: "Prevention of mineral deficiencies, metabolic disorders and nutritional imbalances. Feed quality control and supplementation programs." },
+        { title: "Semen Collection and Evaluation", content: "Semen collection methods – artificial vagina, electro-ejaculation and massage. Semen evaluation – motility, morphology, concentration and viability." },
+        { title: "Artificial Insemination Techniques", content: "AI equipment, insemination methods, timing and technique. Deep uterine and cervical insemination. AI in cattle, buffalo, sheep and goats." },
+        { title: "Semen Processing and Storage", content: "Semen dilution, extender composition, cooling and freezing protocols. Liquid nitrogen storage and straw technology." },
       ]),
       ...chapters(3, [
-        { title: "Veterinary Public Health", content: "Zoonotic diseases, food safety, meat and milk hygiene. Environmental health and its impact on animal and human health." },
-        { title: "Food Safety and Quality Control", content: "HACCP principles, residue monitoring, antimicrobial residue testing. Food animal inspection and slaughter hygiene." },
-        { title: "One Health Concept", content: "Integration of human, animal and environmental health. Antimicrobial resistance, emerging infections and collaborative health approaches." },
+        { title: "Pregnancy Diagnosis", content: "Rectal palpation, ultrasonography, hormonal tests and blood tests for pregnancy diagnosis. Timing and accuracy of different methods." },
+        { title: "Gestation Period and Fetal Development", content: "Duration of gestation across species, fetal membranes, placental types and fetal development milestones." },
+        { title: "Parturition", content: "Signs of parturition, stages of labour, fetal membranes and placental expulsion. Dystocia recognition, assisted delivery and obstetric procedures." },
       ]),
       ...chapters(4, [
-        { title: "Herd Health Management", content: "Herd health programs, production medicine and health monitoring systems. Economic analysis of disease in livestock herds." },
-        { title: "Disease Record Keeping", content: "Health records, disease incidence monitoring and statistical analysis. Computer-based disease surveillance and reporting systems." },
-        { title: "Emergency Disease Management", content: "Outbreak investigation, quarantine procedures and stamping out policies. Contingency planning and disaster management for livestock diseases." },
-      ]),
-    ],
-  },
-  {
-    code: "AHE-201",
-    name: "Animal Husbandry Extension Education",
-    year: "1st Year",
-    semester: "2nd Semester",
-    chapters: [
-      ...chapters(1, [
-        { title: "Fundamentals of Extension Education", content: "Definition, objectives and philosophy of extension education. History of agricultural extension, extension principles and teaching-learning process." },
-        { title: "Rural Sociology and Development", content: "Rural social structure, social groups, community development and leadership. Role of extension in rural livelihood improvement." },
-        { title: "Extension Philosophy and Approaches", content: "Farmers first approach, participatory rural appraisal and community-driven development. Adult education principles and extension methodologies." },
-      ]),
-      ...chapters(2, [
-        { title: "Extension Programme Planning", content: "Needs assessment, programme development, implementation and evaluation. Logical framework approach and result-based management in extension." },
-        { title: "Extension Teaching Methods", content: "Individual, group and mass methods of extension teaching. Farm demonstrations, training, exhibitions, farm visits and field days." },
-        { title: "Training and Capacity Building", content: "Training need assessment, training design, delivery and evaluation. Capacity building of farmers, extension workers and rural youth." },
-      ]),
-      ...chapters(3, [
-        { title: "Communication in Extension", content: "Communication models, barriers and strategies. Verbal, non-verbal and visual communication in extension. Interpersonal communication skills." },
-        { title: "Mass Media and ICT in Extension", content: "Role of radio, television, print media and social media in extension. ICT-based extension – mobile apps, e-learning and digital platforms." },
-        { title: "Audio-Visual Aids and Presentation", content: "Use of charts, models, posters, video and multimedia in extension. Effective presentation and public speaking skills for extension professionals." },
-      ]),
-      ...chapters(4, [
-        { title: "Livestock Entrepreneurship", content: "Entrepreneurship development, business planning and feasibility studies. Value chain analysis and market linkages for livestock products." },
-        { title: "Self-Help Groups and Cooperatives", content: "Formation and management of self-help groups, cooperatives and farmer producer organisations. Microfinance and credit access for livestock farmers." },
-        { title: "Extension Programme Evaluation", content: "Impact assessment, monitoring and evaluation methods. Cost-benefit analysis of extension programmes and outcome measurement." },
+        { title: "Reproductive Disorders – Female", content: "Ovarian cysts, silent heat, anestrus, metritis and pyometra. Uterine prolapse, vaginal prolapse and their management." },
+        { title: "Reproductive Disorders – Male", content: "Cryptorchidism, hypoplasia, seminal vesiculitis and orchitis. Breeding soundness examination of males." },
+        { title: "Infertility Investigation", content: "Infertility examination procedures, herd fertility assessment and breeding efficiency indices. Strategies for improving herd reproductive performance." },
       ]),
     ],
   },
