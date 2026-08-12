@@ -322,8 +322,11 @@ const AHDP_SUBJECTS = [
 // ─── BVSc Subject Data ──────────────────────────────────────────────────────
 
 const BVSC_SUBJECTS = [
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIRST PROFESSIONAL
+  // ═══════════════════════════════════════════════════════════════════════════
   {
-    code: "VAN-301",
+    code: "BVSC-VAN-101",
     name: "Veterinary Anatomy",
     year: "1st Year",
     paper: "1st Paper",
@@ -351,7 +354,7 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VPH-301",
+    code: "BVSC-VPH-101",
     name: "Veterinary Physiology",
     year: "1st Year",
     paper: "1st Paper",
@@ -379,7 +382,38 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VBC-401",
+    code: "BVSC-LPM-101",
+    name: "Livestock Production Management",
+    year: "1st Year",
+    paper: "1st Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "Introduction to Livestock Production", content: "Importance of livestock in Indian agriculture. Classification of livestock, breed conservation and livestock production systems." },
+        { title: "Cattle Production Systems", content: "Dairy and beef production systems. Housing, feeding and management of cattle for different production purposes." },
+        { title: "Buffalo Production Systems", content: "Dairy buffalo management, breeding programs and production optimization. Buffalo-specific husbandry practices." },
+      ]),
+      ...chapters(2, [
+        { title: "Sheep and Goat Production", content: "Wool, meat and milk production in small ruminants. Flock management, breeding systems and health care." },
+        { title: "Poultry Production", content: "Broiler and layer production systems. Hatchery management, feeding programs and environmental control." },
+        { title: "Swine Production", content: "Pig production systems, breeding management, nutrition and growth monitoring. Pork production and quality control." },
+      ]),
+      ...chapters(3, [
+        { title: "Feed and Nutrition Management", content: "Feed availability, fodder production, ration formulation and feeding strategies for different livestock species." },
+        { title: "Housing and Infrastructure", content: "Animal housing design, ventilation, lighting and space requirements. Farm infrastructure and equipment." },
+        { title: "Health Management", content: "Disease prevention, vaccination programs, biosecurity and quarantine protocols for livestock farms." },
+      ]),
+      ...chapters(4, [
+        { title: "Livestock Economics", content: "Cost-benefit analysis, marketing channels, value chain development and livestock enterprise management." },
+        { title: "Sustainable Livestock Production", content: "Environmental impact, waste management, carbon footprint and sustainable intensification of livestock production." },
+        { title: "Extension and Advisory Services", content: "Technology transfer, farmer training, ICT-based extension and best practices dissemination in livestock production." },
+      ]),
+    ],
+  },
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SECOND PROFESSIONAL
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    code: "BVSC-VBC-201",
     name: "Veterinary Biochemistry",
     year: "2nd Year",
     paper: "1st Paper",
@@ -402,7 +436,35 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VPA-401",
+    code: "BVSC-VMI-201",
+    name: "Veterinary Microbiology",
+    year: "2nd Year",
+    paper: "1st Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "General Microbiology", content: "Microbial cell structure, classification and growth requirements. Bacterial morphology, staining, culture media and cultivation methods." },
+        { title: "Microbial Genetics and Physiology", content: "DNA replication, gene expression, mutation and recombination. Bacterial metabolism, growth curves and sterilization methods." },
+        { title: "Immunology – Innate Immunity", content: "Physical barriers, phagocytes, complement system and natural killer cells. Inflammation and acute phase response." },
+      ]),
+      ...chapters(2, [
+        { title: "Adaptive Immunity", content: "Humoral and cell-mediated immunity. Antibody structure, classes and functions. T-cell and B-cell responses and immune memory." },
+        { title: "Immunological Techniques", content: "Agglutination, precipitation, complement fixation, ELISA and flow cytometry. Diagnostic immunology and serological methods." },
+        { title: "Vaccinology and Immunoprophylaxis", content: "Vaccine types, adjuvants, production and quality control. Vaccination strategies and immune responses to vaccination." },
+      ]),
+      ...chapters(3, [
+        { title: "Systemic Bacteriology – Gram Positive", content: "Staphylococcus, Streptococcus, Bacillus, Clostridium and Corynebacterium species. Pathogenesis, diagnosis and control of infections." },
+        { title: "Systemic Bacteriology – Gram Negative", content: "Escherichia coli, Salmonella, Pasteurella, Brucella and Pseudomonas. Zoonotic potential and laboratory diagnosis." },
+        { title: "Anaerobic and Fastidious Bacteria", content: "Clostridial diseases, leptospirosis, mycoplasmosis and chlamydiosis. Special culture requirements and identification methods." },
+      ]),
+      ...chapters(4, [
+        { title: "Virology", content: "Virus structure, replication strategies and classification. DNA and RNA virus families important in veterinary medicine." },
+        { title: "Veterinary Virology – DNA Viruses", content: "Poxviruses, herpesviruses, adenoviruses, parvoviruses and iridoviruses. Pathogenesis, diagnosis and control of viral infections." },
+        { title: "Mycology", content: "Fungal morphology, classification and cultivation. Superficial, subcutaneous and systemic mycoses in animals." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-VPA-201",
     name: "Veterinary Pathology",
     year: "2nd Year",
     paper: "2nd Paper",
@@ -430,63 +492,66 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VMI-401",
-    name: "Veterinary Microbiology",
+    code: "BVSC-AGB-201",
+    name: "Animal Genetics and Breeding",
     year: "2nd Year",
     paper: "2nd Paper",
     chapters: [
       ...chapters(1, [
-        { title: "General Microbiology", content: "Microbial cell structure, classification and growth requirements. Bacterial morphology, staining, culture media and cultivation methods." },
-        { title: "Microbial Genetics and Physiology", content: "DNA replication, gene expression, mutation and recombination. Bacterial metabolism, growth curves and sterilization methods." },
-        { title: "Immunology – Innate Immunity", content: "Physical barriers, phagocytes, complement system and natural killer cells. Inflammation and acute phase response." },
+        { title: "Introduction to Genetics", content: "Mendelian laws of inheritance, gene concept, multiple alleles and gene interactions. Chromosomal basis of inheritance and chromosomal aberrations." },
+        { title: "Quantitative Genetics", content: "Polygenic inheritance, additive and non-additive genetic variance. Heritability, repeatability and genetic correlation concepts." },
+        { title: "Population Genetics", content: "Hardy-Weinberg equilibrium, gene and genotypic frequencies. Factors changing gene frequencies – selection, drift, mutation and migration." },
       ]),
       ...chapters(2, [
-        { title: "Adaptive Immunity", content: "Humoral and cell-mediated immunity. Antibody structure, classes and functions. T-cell and B-cell responses and immune memory." },
-        { title: "Immunological Techniques", content: "Agglutination, precipitation, complement fixation, ELISA and flow cytometry. Diagnostic immunology and serological methods." },
-        { title: "Vaccinology and Immunoprophylaxis", content: "Vaccine types, adjuvants, production and quality control. Vaccination strategies and immune responses to vaccination." },
+        { title: "Principles of Animal Breeding", content: "Selection methods – mass, progeny, sib and combined selection. Selection intensity, genetic progress and breeding value estimation." },
+        { title: "Mating Systems", content: "Inbreeding, linebreeding, outcrossing and crossbreeding. Heterosis and its exploitation in livestock improvement programs." },
+        { title: "Breeding Programmes", content: "Centralized recording, genetic evaluation and national breeding programmes. Sire selection, dam selection and breeding value prediction." },
       ]),
       ...chapters(3, [
-        { title: "Systemic Bacteriology – Gram Positive", content: "Staphylococcus, Streptococcus, Bacillus, Clostridium and Corynebacterium species. Pathogenesis, diagnosis and control of infections." },
-        { title: "Systemic Bacteriology – Gram Negative", content: "Escherichia coli, Salmonella, Pasteurella, Brucella and Pseudomonas. Zoonotic potential and laboratory diagnosis." },
-        { title: "Anaerobic and Fastidious Bacteria", content: "Clostridial diseases, leptospirosis, mycoplasmosis and chlamydiosis. Special culture requirements and identification methods." },
+        { title: "Reproductive Technologies in Breeding", content: "Artificial insemination, embryo transfer, multiple ovulation and embryo transfer (MOET). In-vitro fertilisation and embryo biotechnology." },
+        { title: "Molecular Genetics and Markers", content: "DNA markers, RFLP, microsatellites, SNP and QTL mapping. Marker-assisted selection and genomic selection in livestock." },
+        { title: "Genomic Selection", content: "Genome-wide association studies, genomic estimated breeding values. Reference populations, SNP chips and implementation of genomic selection." },
       ]),
       ...chapters(4, [
-        { title: "Virology", content: "Virus structure, replication strategies and classification. DNA and RNA virus families important in veterinary medicine." },
-        { title: "Veterinary Virology – DNA Viruses", content: "Poxviruses, herpesviruses, adenoviruses, parvoviruses and iridoviruses. Pathogenesis, diagnosis and control of viral infections." },
-        { title: "Mycology", content: "Fungal morphology, classification and cultivation. superficial, subcutaneous and systemic mycoses in animals." },
+        { title: "Breeding for Production Traits", content: "Selection for milk production, growth rate, wool production and reproductive efficiency. Index selection and multi-trait selection." },
+        { title: "Breeding for Disease Resistance", content: "Genetic resistance to diseases, breeding for immune competence. Genetic disorders and their control in livestock populations." },
+        { title: "Conservation of Animal Genetic Resources", content: "Breed conservation strategies, in-situ and ex-situ conservation. Genetic diversity assessment and management of endangered breeds." },
       ]),
     ],
   },
   {
-    code: "VPA-501",
-    name: "Veterinary Parasitology",
-    year: "3rd Year",
-    paper: "1st Paper",
+    code: "BVSC-AN-201",
+    name: "Animal Nutrition",
+    year: "2nd Year",
+    paper: "2nd Paper",
     chapters: [
       ...chapters(1, [
-        { title: "General Parasitology", content: "Parasite-host relationships, life cycles and epidemiology. Classification of parasites, terminology and ecological concepts in parasitology." },
-        { title: "Helminthology – Nematodes", content: "Morphology, life cycles and pathology of gastrointestinal and tissue nematodes. Ascaris, Trichuris, Haemonchus, Ostertagia and Dictyocaulus." },
-        { title: "Helminthology – Trematodes and Cestodes", content: "Liver flukes, lung flukes and tapeworms. Fasciola, Schistosoma, Moniezia and Echinococcus life cycles and pathology." },
+        { title: "Principles of Animal Nutrition", content: "Nutrient classes, functions and requirements. Nutrient digestion and absorption mechanisms. Factors affecting nutrient utilization in domestic animals." },
+        { title: "Water and Energy Nutrition", content: "Role of water in body functions, water requirements and quality. Energy concepts, gross, digestible, metabolisable and net energy systems." },
+        { title: "Carbohydrate and Lipid Nutrition", content: "Structural and non-structural carbohydrates, fibre digestion in ruminants. Lipid digestion, absorption and metabolic roles in different species." },
       ]),
       ...chapters(2, [
-        { title: "Entomology – External Parasites", content: "Ticks, mites, lice, fleas and flies. Morphology, life cycles, pathogenicity and vector-borne disease transmission." },
-        { title: "Arthropod-Borne Diseases", content: "Babesiosis, theileriosis, anaplasmosis, trypanosomiasis and leishmaniasis. Transmission cycles and control strategies." },
-        { title: "Ectoparasite Control", content: "Acaricides, insecticides and their application methods. Integrated pest management and resistance mechanisms." },
+        { title: "Protein and Amino Acid Nutrition", content: "Crude protein, digestible protein and metabolisable protein concepts. Amino acid requirements, limiting amino acids and protein evaluation systems." },
+        { title: "Mineral and Vitamin Nutrition", content: "Macro and micro mineral functions, deficiencies and supplementation. Fat-soluble and water-soluble vitamins, sources and requirements." },
+        { title: "Feedstuff Classification and Evaluation", content: "Classification of feeds – roughages, concentrates and supplements. Feed analysis, proximate analysis and feed quality assessment methods." },
       ]),
       ...chapters(3, [
-        { title: "Protozoology – Apicomplexa", content: "Coccidia, haemosporidia, piroplasms and toxoplasma. Life cycles, pathogenesis and diagnosis of protozoal infections." },
-        { title: "Protozoology – Flagellates and Ciliates", content: "Trypanosomes, Leishmania, Giardia and rumen protozoa. Morphology, pathogenicity and laboratory diagnosis." },
-        { title: "Immunology of Parasitic Infections", content: "Immune responses to parasites, evasion mechanisms and acquired immunity. Immunodiagnosis and vaccine development." },
+        { title: "Nutrient Requirements of Livestock", content: "Nutrient requirements for growth, maintenance, reproduction, lactation and work. NRC guidelines and feeding standards for different species." },
+        { title: "Balanced Ration Formulation", content: "Principles of ration formulation, Pearson's square method, linear programming and computer-based ration balancing. Least-cost ration formulation." },
+        { title: "Feed Supplements and Additives", content: "Probiotics, prebiotics, enzymes, growth promoters and feed preservatives. Feed additives – benefits, regulation and proper usage." },
       ]),
       ...chapters(4, [
-        { title: "Diagnostic Parasitology", content: "Faecal examination methods, blood smear techniques and serological diagnosis. Quantitative and qualitative parasitological methods." },
-        { title: "Anthelmintic Therapy", content: "Classification of anthelmintics, mechanisms of action and resistance. Rational drug use, efficacy testing and combination therapy." },
-        { title: "Applied Parasitology and Control Programs", content: "Integrated parasite management, strategic treatment and pasture management. Zoonotic parasites and public health importance." },
+        { title: "Fodder Production", content: "Annual and perennial fodder crops, pasture management, hay and silage making. Cultivation practices for major fodder species." },
+        { title: "Feed Storage and Preservation", content: "Grain storage, silage fermentation, hay making and feed preservation methods. Preventing feed spoilage and mycotoxin contamination." },
+        { title: "Feeding Management Practices", content: "Feeding systems, feed conversion efficiency, feed intake regulation and practical feeding of different livestock species." },
       ]),
     ],
   },
+  // ═══════════════════════════════════════════════════════════════════════════
+  // THIRD PROFESSIONAL
+  // ═══════════════════════════════════════════════════════════════════════════
   {
-    code: "VPH-501",
+    code: "BVSC-VPT-301",
     name: "Veterinary Pharmacology and Toxicology",
     year: "3rd Year",
     paper: "1st Paper",
@@ -514,10 +579,10 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VPH-502",
+    code: "BVSC-VPH-301",
     name: "Veterinary Public Health and Epidemiology",
     year: "3rd Year",
-    paper: "2nd Paper",
+    paper: "1st Paper",
     chapters: [
       ...chapters(1, [
         { title: "Principles of Epidemiology", content: "Epidemiological study designs, measures of disease frequency and association. Bias, confounding and effect modification in epidemiological studies." },
@@ -542,7 +607,168 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VME-601",
+    code: "BVSC-VPA-301",
+    name: "Veterinary Parasitology",
+    year: "3rd Year",
+    paper: "1st Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "General Parasitology", content: "Parasite-host relationships, life cycles and epidemiology. Classification of parasites, terminology and ecological concepts in parasitology." },
+        { title: "Helminthology – Nematodes", content: "Morphology, life cycles and pathology of gastrointestinal and tissue nematodes. Ascaris, Trichuris, Haemonchus, Ostertagia and Dictyocaulus." },
+        { title: "Helminthology – Trematodes and Cestodes", content: "Liver flukes, lung flukes and tapeworms. Fasciola, Schistosoma, Moniezia and Echinococcus life cycles and pathology." },
+      ]),
+      ...chapters(2, [
+        { title: "Entomology – External Parasites", content: "Ticks, mites, lice, fleas and flies. Morphology, life cycles, pathogenicity and vector-borne disease transmission." },
+        { title: "Arthropod-Borne Diseases", content: "Babesiosis, theileriosis, anaplasmosis, trypanosomiasis and leishmaniasis. Transmission cycles and control strategies." },
+        { title: "Ectoparasite Control", content: "Acaricides, insecticides and their application methods. Integrated pest management and resistance mechanisms." },
+      ]),
+      ...chapters(3, [
+        { title: "Protozoology – Apicomplexa", content: "Coccidia, haemosporidia, piroplasms and toxoplasma. Life cycles, pathogenesis and diagnosis of protozoal infections." },
+        { title: "Protozoology – Flagellates and Ciliates", content: "Trypanosomes, Leishmania, Giardia and rumen protozoa. Morphology, pathogenicity and laboratory diagnosis." },
+        { title: "Immunology of Parasitic Infections", content: "Immune responses to parasites, evasion mechanisms and acquired immunity. Immunodiagnosis and vaccine development." },
+      ]),
+      ...chapters(4, [
+        { title: "Diagnostic Parasitology", content: "Faecal examination methods, blood smear techniques and serological diagnosis. Quantitative and qualitative parasitological methods." },
+        { title: "Anthelmintic Therapy", content: "Classification of anthelmintics, mechanisms of action and resistance. Rational drug use, efficacy testing and combination therapy." },
+        { title: "Applied Parasitology and Control Programs", content: "Integrated parasite management, strategic treatment and pasture management. Zoonotic parasites and public health importance." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-LPT-301",
+    name: "Livestock Products Technology",
+    year: "3rd Year",
+    paper: "2nd Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "Meat Science and Technology", content: "Muscle biology, meat composition, factors affecting meat quality. Slaughter procedures, dressing and carcass evaluation." },
+        { title: "Poultry and Egg Products", content: "Poultry processing, egg grading, packaging and quality control. Poultry product safety and regulatory standards." },
+        { title: "Milk and Dairy Products", content: "Milk composition, quality testing, pasteurization and processing. Manufacturing of dairy products – butter, cheese, yogurt and ice cream." },
+      ]),
+      ...chapters(2, [
+        { title: "Fish and Seafood Technology", content: "Fish processing, preservation methods and quality assessment. Fishery products and their nutritional value." },
+        { title: "By-products Utilization", content: "Leather, wool, blood, bone and offal utilization. Rendering industry and by-product processing technologies." },
+        { title: "Food Safety and Quality Control", content: "HACCP implementation, food safety management systems, residue monitoring and compliance with national and international standards." },
+      ]),
+      ...chapters(3, [
+        { title: "Meat Preservation and Processing", content: "Curing, smoking, canning, freezing and irradiation of meat products. Minimally processed meat products and shelf-life extension." },
+        { title: "Product Adulteration and Detection", content: "Common adulterants in meat, milk and egg products. Detection methods and regulatory compliance for product authenticity." },
+        { title: "Value Addition to Livestock Products", content: "Product diversification, functional foods, organic and niche market products. Marketing strategies for value-added livestock products." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-VAH-301",
+    name: "Veterinary and Animal Husbandry Extension Education",
+    year: "3rd Year",
+    paper: "2nd Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "Fundamentals of Extension Education", content: "Definition, objectives and philosophy of extension education. History of agricultural extension, extension principles and teaching-learning process." },
+        { title: "Rural Sociology and Development", content: "Rural social structure, social groups, community development and leadership. Role of extension in rural livelihood improvement." },
+        { title: "Extension Philosophy and Approaches", content: "Farmers first approach, participatory rural appraisal and community-driven development. Adult education principles and extension methodologies." },
+      ]),
+      ...chapters(2, [
+        { title: "Extension Programme Planning", content: "Needs assessment, programme development, implementation and evaluation. Logical framework approach and result-based management in extension." },
+        { title: "Extension Teaching Methods", content: "Individual, group and mass methods of extension teaching. Farm demonstrations, training, exhibitions, farm visits and field days." },
+        { title: "Training and Capacity Building", content: "Training need assessment, training design, delivery and evaluation. Capacity building of farmers, extension workers and rural youth." },
+      ]),
+      ...chapters(3, [
+        { title: "Communication in Extension", content: "Communication models, barriers and strategies. Verbal, non-verbal and visual communication in extension. Interpersonal communication skills." },
+        { title: "Mass Media and ICT in Extension", content: "Role of radio, television, print media and social media in extension. ICT-based extension – mobile apps, e-learning and digital platforms." },
+        { title: "Audio-Visual Aids and Presentation", content: "Use of charts, models, posters, video and multimedia in extension. Effective presentation and public speaking skills for extension professionals." },
+      ]),
+      ...chapters(4, [
+        { title: "Livestock Entrepreneurship", content: "Entrepreneurship development, business planning and feasibility studies. Value chain analysis and market linkages for livestock products." },
+        { title: "Self-Help Groups and Cooperatives", content: "Formation and management of self-help groups, cooperatives and farmer producer organisations. Microfinance and credit access for livestock farmers." },
+        { title: "Extension Programme Evaluation", content: "Impact assessment, monitoring and evaluation methods. Cost-benefit analysis of extension programmes and outcome measurement." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-VCP-301",
+    name: "Veterinary Clinical Practices",
+    year: "3rd Year",
+    paper: "3rd Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "Clinical Examination and Diagnosis", content: "Systematic clinical examination techniques, history taking, physical examination and clinical reasoning. Diagnostic approach to common presentations." },
+        { title: "Laboratory Diagnosis", content: "Haematology, clinical chemistry, urinalysis, faecal examination and cytology. Sample collection, processing and result interpretation." },
+        { title: "Diagnostic Imaging in Practice", content: "Point-of-care ultrasonography, portable radiography and endoscopy. Image acquisition and interpretation in field conditions." },
+      ]),
+      ...chapters(2, [
+        { title: "Therapeutic Procedures", content: "Intravenous and intraosseous catheterisation, fluid therapy, blood transfusion and parenteral nutrition. Common medical procedures in practice." },
+        { title: "Emergency and Critical Care", content: "Triage, shock management, cardiopulmonary resuscitation and emergency drug protocols. Critical care monitoring and intensive care unit management." },
+        { title: "Wound Management and Bandaging", content: "Wound assessment, cleaning, closure and bandage application. Cast application, splinting and post-operative wound care." },
+      ]),
+      ...chapters(3, [
+        { title: "Large Animal Clinical Practice", content: "Ambulatory practice, field surgery, herd health rounds and production medicine. Common conditions in cattle, horses and small ruminants." },
+        { title: "Large Animal Medicine and Surgery", content: "Dairy practice, equine practice, beef cattle operations and feedlot medicine. Reproductive management and surgical interventions." },
+        { title: "Large Animal Emergency Practice", content: "Colic, dystocia, traumatic reticuloperitonitis, displaced abomasum and fracture repair in large animals." },
+      ]),
+      ...chapters(4, [
+        { title: "Small Animal Clinical Practice", content: "Companion animal medicine, preventive health care, vaccination protocols and wellness examinations." },
+        { title: "Small Animal Surgery and Dentistry", content: "Soft tissue surgery, orthopaedic procedures, dental scaling and extraction. Common surgical conditions in dogs and cats." },
+        { title: "Special Species and Exotic Animal Practice", content: "Avian medicine, reptile medicine, rabbit medicine and zoo animal practice. Husbandry requirements and common conditions in exotic species." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-LFP-301",
+    name: "Livestock Farm Practices",
+    year: "3rd Year",
+    paper: "3rd Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "Dairy Farm Management", content: "Daily farm operations, milking routines, record keeping and farm layout. Dairy farm planning and management for different scales." },
+        { title: "Cattle and Buffalo Health Management", content: "Preventive health programs, vaccination schedules, common disease recognition and first aid in livestock." },
+        { title: "Feed and Fodder Management", content: "Feed storage, ration formulation, feeding schedules and fodder production. Economic feeding strategies for livestock." },
+      ]),
+      ...chapters(2, [
+        { title: "Sheep and Goat Farm Management", content: "Flock management, shearing practices, breeding management and health care for small ruminants." },
+        { title: "Poultry Farm Management", content: "Broiler and layer farm management, housing systems, feeding programs and environmental control." },
+        { title: "Swine Farm Management", content: "Pig farm management, breeding programs, nutrition and growth monitoring. Pork production and quality control." },
+      ]),
+      ...chapters(3, [
+        { title: "Farm Record Keeping", content: "Financial records, production records, health records and performance monitoring. Computerized farm management information systems." },
+        { title: "Livestock Marketing", content: "Marketing channels, market intelligence, price discovery and value chain development for livestock and livestock products." },
+        { title: "Farm Economics and Business Planning", content: "Cost-benefit analysis, break-even analysis, farm budgeting and business planning for livestock enterprises." },
+      ]),
+    ],
+  },
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FOURTH PROFESSIONAL
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    code: "BVSC-VSR-401",
+    name: "Veterinary Surgery and Radiology",
+    year: "4th Year",
+    paper: "1st Paper",
+    chapters: [
+      ...chapters(1, [
+        { title: "General Surgical Principles", content: "Aseptic technique, surgical instrumentation, wound closure and suture materials. Haemostasis, drainage and surgical anatomy." },
+        { title: "Anaesthesia and Pain Management", content: "General and regional anaesthesia protocols, monitoring and pain assessment. Multimodal analgesia and anaesthetic emergencies." },
+        { title: "Pre-operative and Post-operative Care", content: "Patient preparation, surgical planning, fluid therapy and wound management. Complications, infection control and surgical nutrition." },
+      ]),
+      ...chapters(2, [
+        { title: "Abdominal Surgery", content: "Laparotomy, rumenotomy, ovariohysterectomy, caesarean section and splenectomy. Gastrointestinal surgery in large and small animals." },
+        { title: "Thoracic Surgery", content: "Thoracotomy, pericardectomy, lung lobectomy and diaphragmatic hernia repair. Chest tube placement and pleural drainage." },
+        { title: "Urogenital Surgery", content: "Cystotomy, nephrectomy, urethrostomy, castration and penile surgery. Prostatic surgery and reproductive tract procedures." },
+      ]),
+      ...chapters(3, [
+        { title: "Orthopaedic Surgery", content: "Fracture repair – internal and external fixation, joint surgery, cruciate ligament repair. Arthroscopy and limb amputation." },
+        { title: "Head and Neck Surgery", content: "Brachycephalic obstructive airway surgery, lateral ear canal resection, laryngeal paralysis repair and thyroidectomy." },
+        { title: "Soft Tissue and Reconstructive Surgery", content: "Hernia repair, reconstructive surgery, skin flaps and grafts. Tumour removal and wound reconstruction techniques." },
+      ]),
+      ...chapters(4, [
+        { title: "Veterinary Radiology – Principles", content: "X-ray physics, image acquisition, exposure factors and radiation safety. Digital radiography and image processing." },
+        { title: "Diagnostic Radiology – Body Systems", content: "Radiographic interpretation of thoracic, abdominal and musculoskeletal systems. Normal radiographic anatomy and pathological patterns." },
+        { title: "Advanced Imaging – Ultrasound and CT", content: "Ultrasonographic techniques, echocardiography and CT scanning. MRI principles and cross-sectional imaging in veterinary practice." },
+      ]),
+    ],
+  },
+  {
+    code: "BVSC-VME-401",
     name: "Veterinary Medicine",
     year: "4th Year",
     paper: "1st Paper",
@@ -570,35 +796,7 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VSU-601",
-    name: "Veterinary Surgery and Radiology",
-    year: "4th Year",
-    paper: "2nd Paper",
-    chapters: [
-      ...chapters(1, [
-        { title: "General Surgical Principles", content: "Aseptic technique, surgical instrumentation, wound closure and suture materials. Haemostasis, drainage and surgical anatomy." },
-        { title: "Anaesthesia and Pain Management", content: "General and regional anaesthesia protocols, monitoring and pain assessment. Multimodal analgesia and anaesthetic emergencies." },
-        { title: "Pre-operative and Post-operative Care", content: "Patient preparation, surgical planning, fluid therapy and wound management. Complications, infection control and surgical nutrition." },
-      ]),
-      ...chapters(2, [
-        { title: "Abdominal Surgery", content: "Laparotomy, rumenotomy, ovariohysterectomy, caesarean section and splenectomy. Gastrointestinal surgery in large and small animals." },
-        { title: "Thoracic Surgery", content: "Thoracotomy, pericardectomy, lung lobectomy and diaphragmatic hernia repair. Chest tube placement and pleural drainage." },
-        { title: "Urogenital Surgery", content: "Cystotomy, nephrectomy, urethrostomy, castration and penile surgery. Prostatic surgery and reproductive tract procedures." },
-      ]),
-      ...chapters(3, [
-        { title: "Orthopaedic Surgery", content: "Fracture repair – internal and external fixation, joint surgery, cruciate ligament repair. Arthroscopy and limb amputation." },
-        { title: "Head and Neck Surgery", content: "Brachycephalic obstructive airway surgery, lateral ear canal resection, laryngeal paralysis repair and thyroidectomy." },
-        { title: "Soft Tissue and Reconstructive Surgery", content: "Hernia repair, reconstructive surgery, skin flaps and grafts. Tumour removal and wound reconstruction techniques." },
-      ]),
-      ...chapters(4, [
-        { title: "Veterinary Radiology – Principles", content: "X-ray physics, image acquisition, exposure factors and radiation safety. Digital radiography and image processing." },
-        { title: "Diagnostic Radiology – Body Systems", content: "Radiographic interpretation of thoracic, abdominal and musculoskeletal systems. Normal radiographic anatomy and pathological patterns." },
-        { title: "Advanced Imaging – Ultrasound and CT", content: "Ultrasonographic techniques, echocardiography and CT scanning. MRI principles and cross-sectional imaging in veterinary practice." },
-      ]),
-    ],
-  },
-  {
-    code: "VGO-601",
+    code: "BVSC-VGO-401",
     name: "Veterinary Gynaecology and Obstetrics",
     year: "4th Year",
     paper: "2nd Paper",
@@ -609,7 +807,7 @@ const BVSC_SUBJECTS = [
         { title: "Endocrinology of Reproduction", content: "GnRH, FSH, LH, oestrogen, progesterone and prostaglandin. Hormonal assays, reproductive hormone profiles and clinical applications." },
       ]),
       ...chapters(2, [
-        { title: "Normal Parturition", content: "Stages of labour, fetal membranes and placental expulsion. Neonatal care, resuscitation andcolostrum management." },
+        { title: "Normal Parturition", content: "Stages of labour, fetal membranes and placental expulsion. Neonatal care, resuscitation and colostrum management." },
         { title: "Dystocia and Obstetric Emergencies", content: "Causes of dystocia, fetal malpresentation and maternal foetal disproportion. Obstetric procedures, caesarean section and foetotomy." },
         { title: "Post-partum Disorders", content: "Metritis, retained placenta, uterine prolapse, milk fever and ketosis. Post-partum care and reproductive recovery management." },
       ]),
@@ -626,7 +824,7 @@ const BVSC_SUBJECTS = [
     ],
   },
   {
-    code: "VCP-601",
+    code: "BVSC-VCP-401",
     name: "Veterinary Clinical Practices",
     year: "4th Year",
     paper: "3rd Paper",
