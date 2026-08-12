@@ -1,172 +1,88 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, BookOpen, Clock, FileText } from "lucide-react";
-
-// Sample data - in production this would come from the database
-const subjectsData: Record<string, Record<string, { name: string; description: string; units: { title: string; chapters: string[] }[] }>> = {
-  ahdp: {
-    anatomy: {
-      name: "Veterinary Anatomy",
-      description: "Study of the structure and organization of animal bodies",
-      units: [
-        {
-          title: "Unit I: General Anatomy",
-          chapters: [
-            "Introduction to Veterinary Anatomy",
-            "Cell and Tissues",
-            "Skeletal System - Axial Skeleton",
-            "Skeletal System - Appendicular Skeleton",
-          ],
-        },
-        {
-          title: "Unit II: Systemic Anatomy",
-          chapters: [
-            "Muscular System",
-            "Cardiovascular System",
-            "Respiratory System",
-            "Digestive System",
-          ],
-        },
-        {
-          title: "Unit III: Special Anatomy",
-          chapters: [
-            "Nervous System",
-            "Reproductive System",
-            "Urogenital System",
-            "Integumentary System",
-          ],
-        },
-      ],
-    },
-    physiology: {
-      name: "Veterinary Physiology",
-      description: "Study of functions and mechanisms in animal bodies",
-      units: [
-        {
-          title: "Unit I: General Physiology",
-          chapters: [
-            "Cell Physiology",
-            "Nerve and Muscle Physiology",
-            "Blood and Body Fluids",
-            "Homeostasis",
-          ],
-        },
-        {
-          title: "Unit II: Systemic Physiology",
-          chapters: [
-            "Cardiovascular Physiology",
-            "Respiratory Physiology",
-            "Renal Physiology",
-            "Digestive Physiology",
-          ],
-        },
-        {
-          title: "Unit III: Reproductive Physiology",
-          chapters: [
-            "Male Reproductive Physiology",
-            "Female Reproductive Physiology",
-            "Lactation Physiology",
-            "Endocrinology",
-          ],
-        },
-      ],
-    },
-  },
-  bvsc: {
-    anatomy: {
-      name: "Veterinary Anatomy",
-      description: "Comprehensive study of animal body structures",
-      units: [
-        {
-          title: "Unit I: Histology",
-          chapters: [
-            "Cell Biology and Histological Techniques",
-            "Epithelial Tissues",
-            "Connective Tissues",
-            "Muscle and Nervous Tissues",
-          ],
-        },
-        {
-          title: "Unit II: Gross Anatomy",
-          chapters: [
-            "Locomotor System",
-            "Cardiovascular System",
-            "Respiratory System",
-            "Alimentary System",
-          ],
-        },
-        {
-          title: "Unit III: Regional Anatomy",
-          chapters: [
-            "Head and Neck",
-            "Thorax",
-            "Abdomen",
-            "Pelvis and Perineum",
-          ],
-        },
-      ],
-    },
-  },
-};
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ArrowLeft, BookOpen, FileText, Clock } from "lucide-react";
 
 export default async function SubjectPage({
   params,
 }: {
   params: Promise<{ programme: string; subject: string }>;
 }) {
-  const { programme, subject } = await params;
+  const { programme: progSlug, subject: subjectId } = await params;
 
-  const programmeData = subjectsData[programme];
-  if (!programmeData) {
-    notFound();
-  }
+  const subject = await prisma.subject.findFirst({
+    where: { id: subjectId },
+    include: {
+      programme: { select: { name: true, fullName: true } },
+      chapters: { orderBy: { unitNumber: "asc" } },
+    },
+  });
 
-  const subjectData = programmeData[subject];
-  if (!subjectData) {
-    notFound();
-  }
+  if (!subject) notFound();
+
+  const groupedChapters = subject.chapters.reduce(
+    (acc, chapter) => {
+      const key = `Unit ${chapter.unitNumber}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(chapter);
+      return acc;
+    },
+    {} as Record<string, typeof subject.chapters>
+  );
+
+  const unitCount = Object.keys(groupedChapters).length;
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link href="/syllabus" className="hover:text-primary">
-          Syllabus
+        <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
+        <span>/</span>
+        <Link href={`/syllabus/${progSlug}`} className="hover:text-primary">
+          {subject.programme.name}
         </Link>
         <span>/</span>
-        <Link href={`/syllabus/${programme}`} className="hover:text-primary">
-          {programme.toUpperCase()}
-        </Link>
-        <span>/</span>
-        <span className="text-foreground">{subjectData.name}</span>
+        <span className="text-foreground">{subject.name}</span>
       </div>
 
       {/* Header */}
       <div className="mb-8">
         <Link
-          href={`/syllabus/${programme}`}
+          href={`/syllabus/${progSlug}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to {programme.toUpperCase()}
+          Back to {subject.programme.name}
         </Link>
-        <h1 className="text-3xl font-bold mb-2">{subjectData.name}</h1>
-        <p className="text-muted-foreground">{subjectData.description}</p>
-        <div className="flex items-center gap-4 mt-4">
-          <Badge variant="secondary" className="gap-1">
-            <BookOpen className="h-3 w-3" />
-            {subjectData.units.length} Units
-          </Badge>
+        <h1 className="text-3xl font-bold mb-2">{subject.name}</h1>
+        {subject.description && (
+          <p className="text-muted-foreground max-w-3xl">{subject.description}</p>
+        )}
+        <div className="flex items-center gap-4 mt-4 flex-wrap">
+          {subject.code && (
+            <Badge variant="secondary" className="gap-1">
+              <BookOpen className="h-3 w-3" />
+              {subject.code}
+            </Badge>
+          )}
+          {subject.year && <Badge variant="secondary">{subject.year}</Badge>}
+          {subject.semester && <Badge variant="outline">{subject.semester}</Badge>}
+          {subject.paper && <Badge variant="outline">{subject.paper}</Badge>}
           <Badge variant="secondary" className="gap-1">
             <FileText className="h-3 w-3" />
-            {subjectData.units.reduce((acc, u) => acc + u.chapters.length, 0)} Chapters
+            {unitCount} {unitCount === 1 ? "Unit" : "Units"}
           </Badge>
           <Badge variant="secondary" className="gap-1">
             <Clock className="h-3 w-3" />
-            40 Hours
+            {subject.chapters.length} {subject.chapters.length === 1 ? "Chapter" : "Chapters"}
           </Badge>
         </div>
       </div>
@@ -181,27 +97,46 @@ export default async function SubjectPage({
         </TabsList>
 
         <TabsContent value="syllabus" className="space-y-6">
-          {subjectData.units.map((unit, index) => (
-            <div key={index} className="border rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Badge variant="outline">Unit {index + 1}</Badge>
-                {unit.title}
-              </h3>
-              <ul className="space-y-3">
-                {unit.chapters.map((chapter, chapterIndex) => (
-                  <li key={chapterIndex} className="flex items-center gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
-                      {chapterIndex + 1}
-                    </div>
-                    <span className="flex-1">{chapter}</span>
-                    <Button variant="ghost" size="sm">
-                      Read More →
-                    </Button>
-                  </li>
+          {Object.entries(groupedChapters).map(([unit, chapters]) => (
+            <div key={unit} className="border rounded-lg overflow-hidden">
+              <div className="bg-muted/50 px-6 py-3 border-b">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Badge variant="outline">{unit}</Badge>
+                </h3>
+              </div>
+              <Accordion className="px-6">
+                {chapters.map((chapter, index) => (
+                  <AccordionItem key={chapter.id} value={chapter.id}>
+                    <AccordionTrigger className="py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                          {index + 1}
+                        </div>
+                        <span className="text-left">{chapter.title}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-4">
+                      {chapter.content ? (
+                        <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
+                          {chapter.content}
+                        </div>
+                      ) : (
+                        <div className="pl-10 text-muted-foreground italic">
+                          Content coming soon...
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </ul>
+              </Accordion>
             </div>
           ))}
+          {subject.chapters.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No chapters available yet</p>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="materials">

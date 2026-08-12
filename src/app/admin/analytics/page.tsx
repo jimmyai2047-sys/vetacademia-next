@@ -1,5 +1,5 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -8,43 +8,109 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Users,
   BookOpen,
   Brain,
   TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
+  ArrowLeft,
+  GraduationCap,
 } from "lucide-react";
 
-const metrics = [
-  { title: "Total Users", value: "12,345", change: "+12%", trend: "up", icon: Users, color: "text-blue-600" },
-  { title: "Active Students", value: "8,901", change: "+8%", trend: "up", icon: Users, color: "text-green-600" },
-  { title: "Tests Completed", value: "45,678", change: "+23%", trend: "up", icon: Brain, color: "text-purple-600" },
-  { title: "Avg. Score", value: "72%", change: "+5%", trend: "up", icon: TrendingUp, color: "text-orange-600" },
-];
+export const dynamic = "force-dynamic";
 
-const popularSubjects = [
-  { name: "Veterinary Anatomy", students: 2345, trend: "+15%" },
-  { name: "Veterinary Physiology", students: 1987, trend: "+12%" },
-  { name: "Veterinary Pharmacology", students: 1654, trend: "+8%" },
-  { name: "Veterinary Pathology", students: 1432, trend: "+10%" },
-  { name: "Veterinary Medicine", students: 1298, trend: "+6%" },
-];
+export default async function AnalyticsPage() {
+  const [
+    totalUsers,
+    totalStudents,
+    totalExperts,
+    totalAdmins,
+    totalSubjects,
+    totalMockTests,
+    totalAttempts,
+    programmeStats,
+    subjectStats,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "STUDENT" } }),
+    prisma.user.count({ where: { role: "EXPERT" } }),
+    prisma.user.count({ where: { role: "ADMIN" } }),
+    prisma.subject.count(),
+    prisma.mockTest.count(),
+    prisma.mockTestAttempt.count(),
+    prisma.programme.findMany({
+      include: {
+        _count: { select: { subjects: true } },
+      },
+    }),
+    prisma.subject.findMany({
+      include: {
+        programme: { select: { name: true } },
+        _count: { select: { chapters: true, mockTests: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
+  ]);
 
-const programmeStats = [
-  { name: "AHDP", students: 3456, percentage: 28 },
-  { name: "B.V.Sc & A.H.", students: 4567, percentage: 37 },
-  { name: "M.V.Sc", students: 2345, percentage: 19 },
-  { name: "Ph.D", students: 1977, percentage: 16 },
-];
+  const scoreAgg = await prisma.mockTestAttempt.aggregate({
+    _sum: { score: true, totalMarks: true },
+  });
 
-export default function AnalyticsPage() {
+  const calculatedAvg =
+    scoreAgg._sum.totalMarks && scoreAgg._sum.score
+      ? Math.round((scoreAgg._sum.score / scoreAgg._sum.totalMarks) * 100)
+      : 0;
+
+  const programmeAttempts = await prisma.mockTest.findMany({
+    select: {
+      subject: {
+        select: { programmeId: true },
+      },
+    },
+  });
+
+  const attemptsByProgramme: Record<string, number> = {};
+  programmeAttempts.forEach((t) => {
+    if (t.subject?.programmeId) {
+      attemptsByProgramme[t.subject.programmeId] =
+        (attemptsByProgramme[t.subject.programmeId] || 0) + 1;
+    }
+  });
+
+  const programmeDistribution = programmeStats.map((prog) => ({
+    name: prog.name,
+    fullName: prog.fullName,
+    subjects: prog._count.subjects,
+    tests: attemptsByProgramme[prog.id] || 0,
+    percentage:
+      totalMockTests > 0
+        ? Math.round(((attemptsByProgramme[prog.id] || 0) / totalMockTests) * 100)
+        : 0,
+  }));
+
+  const metrics = [
+    { title: "Total Users", value: totalUsers.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+    { title: "Active Students", value: totalStudents.toLocaleString(), icon: GraduationCap, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
+    { title: "Tests Available", value: totalMockTests.toLocaleString(), icon: Brain, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+    { title: "Avg. Score", value: `${calculatedAvg}%`, icon: TrendingUp, color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">Platform performance metrics</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/admin">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold">Analytics</h1>
+            <p className="text-muted-foreground">Platform performance metrics</p>
+          </div>
+        </div>
       </div>
 
       {/* Metrics */}
@@ -56,19 +122,8 @@ export default function AnalyticsPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">{metric.title}</p>
                   <p className="text-2xl font-bold">{metric.value}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    {metric.trend === "up" ? (
-                      <ArrowUpRight className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <ArrowDownRight className="h-4 w-4 text-red-600" />
-                    )}
-                    <span className={`text-xs ${metric.trend === "up" ? "text-green-600" : "text-red-600"}`}>
-                      {metric.change}
-                    </span>
-                    <span className="text-xs text-muted-foreground">vs last month</span>
-                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                <div className={`w-10 h-10 rounded-lg ${metric.bg} flex items-center justify-center`}>
                   <metric.icon className={`h-5 w-5 ${metric.color}`} />
                 </div>
               </div>
@@ -78,54 +133,63 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Popular Subjects */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Popular Subjects</CardTitle>
-            <CardDescription>Most enrolled subjects</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {popularSubjects.map((subject, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{subject.name}</p>
-                      <p className="text-xs text-muted-foreground">{subject.students.toLocaleString()} students</p>
-                    </div>
-                  </div>
-                  <Badge variant="secondary" className="text-green-600">
-                    {subject.trend}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Programme Distribution */}
         <Card>
           <CardHeader>
             <CardTitle>Programme Distribution</CardTitle>
-            <CardDescription>Students by programme</CardDescription>
+            <CardDescription>Content by programme</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {programmeStats.map((prog, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{prog.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {prog.students.toLocaleString()} ({prog.percentage}%)
-                    </span>
+              {programmeDistribution.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No data yet</p>
+              ) : (
+                programmeDistribution.map((prog, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="font-medium text-sm">{prog.name}</span>
+                        <span className="text-xs text-muted-foreground ml-2">
+                          {prog.subjects} subjects &middot; {prog.tests} tests
+                        </span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">{prog.percentage}%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all"
+                        style={{ width: `${prog.percentage}%` }}
+                      />
+                    </div>
                   </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* User Role Distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle>User Distribution</CardTitle>
+            <CardDescription>Platform user roles</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { role: "Students", count: totalStudents, color: "bg-blue-500" },
+                { role: "Experts", count: totalExperts, color: "bg-green-500" },
+                { role: "Admins", count: totalAdmins, color: "bg-red-500" },
+              ].map((item) => (
+                <div key={item.role} className="text-center space-y-2">
+                  <div className="text-3xl font-bold">{item.count}</div>
+                  <div className="text-sm text-muted-foreground">{item.role}</div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div
-                      className="bg-primary h-2 rounded-full"
-                      style={{ width: `${prog.percentage}%` }}
+                      className={`${item.color} h-2 rounded-full`}
+                      style={{
+                        width: `${totalUsers > 0 ? (item.count / totalUsers) * 100 : 0}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -135,19 +199,30 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* Charts Placeholder */}
+      {/* Subject Breakdown */}
       <Card>
         <CardHeader>
-          <CardTitle>Revenue Overview</CardTitle>
-          <CardDescription>Monthly revenue trends</CardDescription>
+          <CardTitle>Subject Breakdown</CardTitle>
+          <CardDescription>All subjects across programmes</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-64 flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
-              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Revenue chart coming soon</p>
-              <p className="text-sm">Integrate with Chart.js for visual analytics</p>
-            </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subjectStats.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8 col-span-full">No subjects yet</p>
+            ) : (
+              subjectStats.map((subject) => (
+                <div key={subject.id} className="p-4 border rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-sm">{subject.name}</h4>
+                    <Badge variant="outline" className="text-xs">{subject.programme.name}</Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span>{subject._count.chapters} chapters</span>
+                    <span>{subject._count.mockTests} tests</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

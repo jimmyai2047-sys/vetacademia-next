@@ -1,5 +1,5 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -7,8 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -17,39 +18,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus,
   BookOpen,
   GraduationCap,
   FlaskConical,
-  Stethoscope,
-  Edit,
-  Trash2,
+  ArrowLeft,
+  Layers,
 } from "lucide-react";
 
-const programmes = [
-  { id: "1", name: "AHDP", fullName: "Animal Husbandry Diploma Programme", subjects: 11, icon: BookOpen, color: "text-green-600" },
-  { id: "2", name: "BVSC", fullName: "Bachelor of Veterinary Science & A.H.", subjects: 12, icon: GraduationCap, color: "text-blue-600" },
-  { id: "3", name: "MVSC", fullName: "Master of Veterinary Science", departments: 18, icon: FlaskConical, color: "text-purple-600" },
-  { id: "4", name: "PHD", fullName: "Doctor of Philosophy", departments: 18, icon: Stethoscope, color: "text-orange-600" },
-];
+export const dynamic = "force-dynamic";
 
-const subjects = [
-  { id: "1", code: "VAN-101", name: "Veterinary Anatomy", programme: "AHDP", year: "1st Year", chapters: 12 },
-  { id: "2", code: "VPH-101", name: "Veterinary Physiology", programme: "AHDP", year: "1st Year", chapters: 10 },
-  { id: "3", code: "VAN-301", name: "Veterinary Anatomy", programme: "BVSC", year: "1st Year", chapters: 15 },
-  { id: "4", code: "VPH-301", name: "Veterinary Physiology", programme: "BVSC", year: "1st Year", chapters: 12 },
-  { id: "5", code: "VPA-401", name: "Veterinary Pathology", programme: "BVSC", year: "2nd Year", chapters: 14 },
-];
+export default async function ContentPage() {
+  const [programmes, subjects, departments] = await Promise.all([
+    prisma.programme.findMany({
+      include: {
+        _count: { select: { subjects: true, departments: true } },
+      },
+      orderBy: { name: "asc" },
+    }),
+    prisma.subject.findMany({
+      include: {
+        programme: { select: { name: true } },
+        department: { select: { name: true } },
+        _count: { select: { chapters: true, mockTests: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    prisma.department.findMany({
+      include: {
+        programme: { select: { name: true } },
+        _count: { select: { subjects: true } },
+      },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
-export default function ContentPage() {
+  const iconMap: Record<string, typeof BookOpen> = {
+    AHDP: BookOpen,
+    BVSC: GraduationCap,
+    MVSC: FlaskConical,
+    PHD: GraduationCap,
+  };
+
+  const colorMap: Record<string, string> = {
+    AHDP: "text-green-600",
+    BVSC: "text-blue-600",
+    MVSC: "text-purple-600",
+    PHD: "text-orange-600",
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Content Management</h1>
-          <p className="text-muted-foreground">Manage curriculum and study materials</p>
+        <div className="flex items-center gap-4">
+          <Link href="/admin">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold">Content Management</h1>
+            <p className="text-muted-foreground">Manage curriculum and study materials</p>
+          </div>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
@@ -59,42 +91,43 @@ export default function ContentPage() {
 
       <Tabs defaultValue="programmes">
         <TabsList>
-          <TabsTrigger value="programmes">Programmes</TabsTrigger>
-          <TabsTrigger value="subjects">Subjects</TabsTrigger>
-          <TabsTrigger value="materials">Study Materials</TabsTrigger>
+          <TabsTrigger value="programmes">Programmes ({programmes.length})</TabsTrigger>
+          <TabsTrigger value="subjects">Subjects ({subjects.length})</TabsTrigger>
+          <TabsTrigger value="departments">Departments ({departments.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="programmes" className="space-y-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {programmes.map((prog) => (
-              <Card key={prog.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <prog.icon className={`h-5 w-5 ${prog.color}`} />
-                      <CardTitle className="text-lg">{prog.name}</CardTitle>
+            {programmes.map((prog) => {
+              const Icon = iconMap[prog.name] || BookOpen;
+              const color = colorMap[prog.name] || "text-primary";
+              return (
+                <Card key={prog.id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Icon className={`h-5 w-5 ${color}`} />
+                        <CardTitle className="text-lg">{prog.name}</CardTitle>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    <CardDescription className="text-xs">{prog.fullName}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        <Badge variant="secondary">
+                          {prog._count.subjects} Subjects
+                        </Badge>
+                        <Badge variant="outline">
+                          {prog._count.departments} Depts
+                        </Badge>
+                      </div>
+                      <Button variant="outline" size="sm">View</Button>
                     </div>
-                  </div>
-                  <CardDescription className="text-xs">{prog.fullName}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary">
-                      {prog.subjects || prog.departments} {prog.subjects ? "Subjects" : "Departments"}
-                    </Badge>
-                    <Button variant="outline" size="sm">View</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
 
@@ -102,7 +135,10 @@ export default function ContentPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>All Subjects</CardTitle>
+                <div>
+                  <CardTitle>All Subjects</CardTitle>
+                  <CardDescription>Recently added subjects</CardDescription>
+                </div>
                 <Button size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Subject
@@ -116,44 +152,92 @@ export default function ContentPage() {
                     <TableHead>Code</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Programme</TableHead>
+                    <TableHead>Department</TableHead>
                     <TableHead>Year</TableHead>
+                    <TableHead>Semester</TableHead>
                     <TableHead>Chapters</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>Tests</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {subjects.map((subject) => (
-                    <TableRow key={subject.id}>
-                      <TableCell className="font-mono">{subject.code}</TableCell>
-                      <TableCell className="font-medium">{subject.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{subject.programme}</Badge>
-                      </TableCell>
-                      <TableCell>{subject.year}</TableCell>
-                      <TableCell>{subject.chapters}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                  {subjects.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        No subjects found
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    subjects.map((subject) => (
+                      <TableRow key={subject.id}>
+                        <TableCell className="font-mono text-sm">{subject.code || "-"}</TableCell>
+                        <TableCell className="font-medium">{subject.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{subject.programme.name}</Badge>
+                        </TableCell>
+                        <TableCell>{subject.department?.name || "-"}</TableCell>
+                        <TableCell>{subject.year || "-"}</TableCell>
+                        <TableCell>{subject.semester || "-"}</TableCell>
+                        <TableCell>{subject._count.chapters}</TableCell>
+                        <TableCell>{subject._count.mockTests}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="materials">
+        <TabsContent value="departments">
           <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Study materials management coming soon</p>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Departments</CardTitle>
+                  <CardDescription>All departments across programmes</CardDescription>
+                </div>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Department
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Programme</TableHead>
+                    <TableHead>Subjects</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {departments.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        No departments found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    departments.map((dept) => (
+                      <TableRow key={dept.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Layers className="h-4 w-4 text-muted-foreground" />
+                            {dept.name}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">{dept.code || "-"}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{dept.programme.name}</Badge>
+                        </TableCell>
+                        <TableCell>{dept._count.subjects}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
