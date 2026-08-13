@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
@@ -103,48 +104,78 @@ export default async function SubjectPage({
         </TabsList>
 
         <TabsContent value="syllabus" className="space-y-6">
-          {Object.entries(groupedChapters).map(([unit, chapters]) => (
-            <div key={unit} className="border rounded-lg overflow-hidden">
-              <div className="bg-muted/50 px-6 py-3 border-b">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Badge variant="outline">{unit}</Badge>
-                </h3>
-              </div>
-              <div className="px-6 py-4 space-y-3">
-                {chapters.map((chapter, index) => (
-                  <div key={chapter.id} className="border rounded-lg p-4 hover:bg-accent/50 transition-colors">
-                    {/* Course Name */}
-                    <div className="font-semibold text-base mb-2">{chapter.title}</div>
-                    {/* Course Code + Credit Hours */}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      {chapter.courseCode && (
-                        <div className="flex items-center gap-1.5">
-                          <Hash className="h-3.5 w-3.5" />
-                          <span>Course Code: <span className="font-medium text-foreground">{chapter.courseCode}</span></span>
-                        </div>
-                      )}
-                      {chapter.creditHours && (
-                        <div className="flex items-center gap-1.5">
-                          <Timer className="h-3.5 w-3.5" />
-                          <span>Credit Hours: <span className="font-medium text-foreground">{chapter.creditHours}</span></span>
-                        </div>
-                      )}
+          {hasCourses ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {subject.chapters.map((course, index) => (
+                <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+                  <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/80 to-primary/60">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Hash className="h-10 w-10 text-white/30" />
                     </div>
-                    {/* Content if available */}
-                    {chapter.content && !chapter.content.startsWith("Credit Hours:") && (
-                      <div className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap border-t pt-3">
-                        {chapter.content}
-                      </div>
-                    )}
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-white/20 text-white border-white/30 text-xs font-mono">
+                        {course.courseCode}
+                      </Badge>
+                    </div>
+                    <div className="absolute bottom-3 right-3">
+                      <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                        {course.creditHours} Credits
+                      </Badge>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <CardContent className="p-4">
+                    <CardTitle className="text-sm group-hover:text-primary transition-colors leading-tight mb-2">
+                      {course.title}
+                    </CardTitle>
+                    {course.content && !course.content.startsWith("Credit Hours:") && (
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {course.content}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          ))}
+          ) : (
+            Object.entries(groupedChapters).map(([unit, chapters]) => (
+              <div key={unit} className="border rounded-lg overflow-hidden">
+                <div className="bg-muted/50 px-6 py-3 border-b">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Badge variant="outline">{unit}</Badge>
+                  </h3>
+                </div>
+                <Accordion className="px-6">
+                  {chapters.map((chapter, index) => (
+                    <AccordionItem key={chapter.id} value={chapter.id}>
+                      <AccordionTrigger className="py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                            {index + 1}
+                          </div>
+                          <span className="text-left">{chapter.title}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        {chapter.content ? (
+                          <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
+                            {chapter.content}
+                          </div>
+                        ) : (
+                          <div className="pl-10 text-muted-foreground italic">
+                            Content coming soon...
+                          </div>
+                        )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            ))
+          )}
           {subject.chapters.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
               <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No chapters available yet</p>
+              <p>No courses available yet</p>
             </div>
           )}
         </TabsContent>

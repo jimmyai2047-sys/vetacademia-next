@@ -144,42 +144,44 @@ export default async function ProgrammePage({
       ) : (
         <div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programme.subjects.map((subject) => {
+            {programme.subjects.map((subject, index) => {
               const imageUrl = getSubjectImage(subject.name);
+              const gradientColor = deptColors[index % deptColors.length];
               return (
                 <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
                   <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
-                    <div className="relative h-40 overflow-hidden">
+                    <div className="relative h-48 overflow-hidden">
                       <Image
                         src={imageUrl}
                         alt={subject.name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-80`} />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <BookOpen className="h-10 w-10 text-white/70" />
+                        <BookOpen className="h-12 w-12 text-white/50" />
                       </div>
-                      <div className="absolute top-3 left-3 flex items-center gap-2">
+                      <div className="absolute top-3 left-3">
                         {subject.code && (
                           <Badge className="bg-white/20 text-white border-white/30 text-xs">
                             {subject.code}
                           </Badge>
                         )}
                       </div>
-                      <div className="absolute bottom-3 right-3">
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <CardTitle className="text-lg font-bold text-white mb-1 group-hover:translate-x-1 transition-transform leading-tight">
+                          {subject.name}
+                        </CardTitle>
                         <Badge variant="secondary" className="text-xs">
-                          {subject._count.chapters} Chapters
+                          {subject._count.chapters} {subject._count.chapters === 1 ? "Course" : "Courses"}
                         </Badge>
                       </div>
                     </div>
                     <CardContent className="p-4">
-                      <CardTitle className="text-base group-hover:text-primary transition-colors mb-2 leading-tight">
-                        {subject.name}
-                      </CardTitle>
                       <div className="flex items-center gap-2 flex-wrap">
                         {subject.semester && <Badge variant="outline" className="text-xs">{subject.semester}</Badge>}
                         {subject.paper && <Badge variant="outline" className="text-xs">{subject.paper}</Badge>}
+                        {subject.year && <Badge variant="outline" className="text-xs">{subject.year}</Badge>}
                       </div>
                     </CardContent>
                   </Card>
