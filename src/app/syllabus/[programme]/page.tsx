@@ -108,7 +108,7 @@ export default async function ProgrammePage({
         </div>
       </div>
 
-      {isDepartmentBased ? (
+      {isDepartmentBased && programme.departments.length > 0 ? (
         <div>
           <h2 className="text-xl font-semibold mb-6">Departments</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
