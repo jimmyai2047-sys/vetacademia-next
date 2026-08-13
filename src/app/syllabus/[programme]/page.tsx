@@ -77,16 +77,6 @@ export default async function ProgrammePage({
   const colorClass = colorMap[slug] || "text-primary";
   const isDepartmentBased = programme.yearType === "department";
 
-  const groupedSubjects = programme.subjects.reduce(
-    (acc, subject) => {
-      const key = subject.year || "Other";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(subject);
-      return acc;
-    },
-    {} as Record<string, typeof programme.subjects>
-  );
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -153,57 +143,50 @@ export default async function ProgrammePage({
         </div>
       ) : (
         <div>
-          {Object.entries(groupedSubjects).map(([year, subjects]) => (
-            <div key={year} className="mb-10">
-              <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
-                <Badge variant="outline" className="text-base">{year}</Badge>
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {subjects.map((subject) => {
-                  const imageUrl = getSubjectImage(subject.name);
-                  return (
-                    <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
-                      <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
-                        <div className="relative h-40 overflow-hidden">
-                          <Image
-                            src={imageUrl}
-                            alt={subject.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <BookOpen className="h-10 w-10 text-white/70" />
-                          </div>
-                          <div className="absolute top-3 left-3 flex items-center gap-2">
-                            {subject.code && (
-                              <Badge className="bg-white/20 text-white border-white/30 text-xs">
-                                {subject.code}
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="absolute bottom-3 right-3">
-                            <Badge variant="secondary" className="text-xs">
-                              {subject._count.chapters} Chapters
-                            </Badge>
-                          </div>
-                        </div>
-                        <CardContent className="p-4">
-                          <CardTitle className="text-base group-hover:text-primary transition-colors mb-2 leading-tight">
-                            {subject.name}
-                          </CardTitle>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {subject.semester && <Badge variant="outline" className="text-xs">{subject.semester}</Badge>}
-                            {subject.paper && <Badge variant="outline" className="text-xs">{subject.paper}</Badge>}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {programme.subjects.map((subject) => {
+              const imageUrl = getSubjectImage(subject.name);
+              return (
+                <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
+                  <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
+                    <div className="relative h-40 overflow-hidden">
+                      <Image
+                        src={imageUrl}
+                        alt={subject.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <BookOpen className="h-10 w-10 text-white/70" />
+                      </div>
+                      <div className="absolute top-3 left-3 flex items-center gap-2">
+                        {subject.code && (
+                          <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                            {subject.code}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="absolute bottom-3 right-3">
+                        <Badge variant="secondary" className="text-xs">
+                          {subject._count.chapters} Chapters
+                        </Badge>
+                      </div>
+                    </div>
+                    <CardContent className="p-4">
+                      <CardTitle className="text-base group-hover:text-primary transition-colors mb-2 leading-tight">
+                        {subject.name}
+                      </CardTitle>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {subject.semester && <Badge variant="outline" className="text-xs">{subject.semester}</Badge>}
+                        {subject.paper && <Badge variant="outline" className="text-xs">{subject.paper}</Badge>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

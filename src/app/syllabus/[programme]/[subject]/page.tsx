@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowLeft, BookOpen, FileText, Clock } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer } from "lucide-react";
 
 export default async function SubjectPage({
   params,
@@ -30,7 +30,7 @@ export default async function SubjectPage({
 
   const groupedChapters = subject.chapters.reduce(
     (acc, chapter) => {
-      const key = `Unit ${chapter.unitNumber}`;
+      const key = chapter.courseCode ? "Courses" : `Unit ${chapter.unitNumber}`;
       if (!acc[key]) acc[key] = [];
       acc[key].push(chapter);
       return acc;
@@ -39,6 +39,7 @@ export default async function SubjectPage({
   );
 
   const unitCount = Object.keys(groupedChapters).length;
+  const hasCourses = subject.chapters.some((ch) => ch.courseCode);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,12 +79,17 @@ export default async function SubjectPage({
           {subject.paper && <Badge variant="outline">{subject.paper}</Badge>}
           <Badge variant="secondary" className="gap-1">
             <FileText className="h-3 w-3" />
-            {unitCount} {unitCount === 1 ? "Unit" : "Units"}
+            {hasCourses
+              ? `${subject.chapters.length} ${subject.chapters.length === 1 ? "Course" : "Courses"}`
+              : `${unitCount} ${unitCount === 1 ? "Unit" : "Units"}`
+            }
           </Badge>
-          <Badge variant="secondary" className="gap-1">
-            <Clock className="h-3 w-3" />
-            {subject.chapters.length} {subject.chapters.length === 1 ? "Chapter" : "Chapters"}
-          </Badge>
+          {!hasCourses && (
+            <Badge variant="secondary" className="gap-1">
+              <Clock className="h-3 w-3" />
+              {subject.chapters.length} {subject.chapters.length === 1 ? "Chapter" : "Chapters"}
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -104,31 +110,35 @@ export default async function SubjectPage({
                   <Badge variant="outline">{unit}</Badge>
                 </h3>
               </div>
-              <Accordion className="px-6">
+              <div className="px-6 py-4 space-y-3">
                 {chapters.map((chapter, index) => (
-                  <AccordionItem key={chapter.id} value={chapter.id}>
-                    <AccordionTrigger className="py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
-                          {index + 1}
-                        </div>
-                        <span className="text-left">{chapter.title}</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      {chapter.content ? (
-                        <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
-                          {chapter.content}
-                        </div>
-                      ) : (
-                        <div className="pl-10 text-muted-foreground italic">
-                          Content coming soon...
+                  <div key={chapter.id} className="border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                    {/* Course Name */}
+                    <div className="font-semibold text-base mb-2">{chapter.title}</div>
+                    {/* Course Code + Credit Hours */}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      {chapter.courseCode && (
+                        <div className="flex items-center gap-1.5">
+                          <Hash className="h-3.5 w-3.5" />
+                          <span>Course Code: <span className="font-medium text-foreground">{chapter.courseCode}</span></span>
                         </div>
                       )}
-                    </AccordionContent>
-                  </AccordionItem>
+                      {chapter.creditHours && (
+                        <div className="flex items-center gap-1.5">
+                          <Timer className="h-3.5 w-3.5" />
+                          <span>Credit Hours: <span className="font-medium text-foreground">{chapter.creditHours}</span></span>
+                        </div>
+                      )}
+                    </div>
+                    {/* Content if available */}
+                    {chapter.content && !chapter.content.startsWith("Credit Hours:") && (
+                      <div className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap border-t pt-3">
+                        {chapter.content}
+                      </div>
+                    )}
+                  </div>
                 ))}
-              </Accordion>
+              </div>
             </div>
           ))}
           {subject.chapters.length === 0 && (
