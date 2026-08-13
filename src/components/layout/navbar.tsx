@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, GraduationCap, BookOpen, FlaskConical, Stethoscope, FileCheck } from "lucide-react";
+import { Menu, GraduationCap, BookOpen, FlaskConical, Stethoscope, FileCheck, Tractor, HeartPulse } from "lucide-react";
 
 const programmes = [
   { name: "A.H.D.P.", href: "/syllabus/ahdp", icon: BookOpen },
@@ -66,6 +66,18 @@ export default function Navbar() {
             <Button variant="ghost" className="gap-2">
               <FileCheck className="h-4 w-4" />
               Examinations
+            </Button>
+          </Link>
+          <Link href="/farmers">
+            <Button variant="ghost" className="gap-2">
+              <Tractor className="h-4 w-4" />
+              Farmers
+            </Button>
+          </Link>
+          <Link href="/vets">
+            <Button variant="ghost" className="gap-2">
+              <HeartPulse className="h-4 w-4" />
+              Vets
             </Button>
           </Link>
           <Link href="/study-materials">
@@ -130,6 +142,22 @@ export default function Navbar() {
                 >
                   <FileCheck className="h-4 w-4" />
                   Examinations
+                </Link>
+                <Link
+                  href="/farmers"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Tractor className="h-4 w-4" />
+                  Farmers
+                </Link>
+                <Link
+                  href="/vets"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <HeartPulse className="h-4 w-4" />
+                  Vets
                 </Link>
                 <Link
                   href="/study-materials"
