@@ -854,6 +854,51 @@ const BVSC_SUBJECTS = [
 ];
 
 // ─── MVSc & PhD Department Data ─────────────────────────────────────────────
+// MVSc has 19 subjects (including Common Courses)
+// PhD has 18 subjects (same as MVSc minus Common Courses)
+
+const MVSC_SUBJECTS = [
+  { name: "Veterinary Anatomy", code: "MVSC-VAN" },
+  { name: "Veterinary Biochemistry", code: "MVSC-VBC" },
+  { name: "Veterinary Biotechnology", code: "MVSC-VBT" },
+  { name: "Veterinary Extension Education", code: "MVSC-VEE" },
+  { name: "Veterinary Physiology", code: "MVSC-VPH" },
+  { name: "Common Courses", code: "MVSC-CC" },
+  { name: "Animal Reproduction Gynaecology and Obstetrics", code: "MVSC-ARGO" },
+  { name: "Veterinary Surgery and Radiology", code: "MVSC-VSR" },
+  { name: "Veterinary Medicine", code: "MVSC-VME" },
+  { name: "Veterinary Microbiology", code: "MVSC-VMI" },
+  { name: "Veterinary Pathology", code: "MVSC-VPA" },
+  { name: "Veterinary Parasitology", code: "MVSC-VPS" },
+  { name: "Veterinary Public Health and Epidemiology", code: "MVSC-VPH-EPI" },
+  { name: "Veterinary Pharmacology and Toxicology", code: "MVSC-VPT" },
+  { name: "Animal Genetics and Breeding", code: "MVSC-AGB" },
+  { name: "Animal Nutrition", code: "MVSC-AN" },
+  { name: "Livestock Production and Management", code: "MVSC-LPM" },
+  { name: "Livestock Products Technology", code: "MVSC-LPT" },
+  { name: "Poultry Science", code: "MVSC-PS" },
+];
+
+const PHD_SUBJECTS = [
+  { name: "Veterinary Anatomy", code: "PHD-VAN" },
+  { name: "Veterinary Biochemistry", code: "PHD-VBC" },
+  { name: "Veterinary Biotechnology", code: "PHD-VBT" },
+  { name: "Veterinary Extension Education", code: "PHD-VEE" },
+  { name: "Veterinary Physiology", code: "PHD-VPH" },
+  { name: "Animal Reproduction Gynaecology and Obstetrics", code: "PHD-ARGO" },
+  { name: "Veterinary Surgery and Radiology", code: "PHD-VSR" },
+  { name: "Veterinary Medicine", code: "PHD-VME" },
+  { name: "Veterinary Microbiology", code: "PHD-VMI" },
+  { name: "Veterinary Pathology", code: "PHD-VPA" },
+  { name: "Veterinary Parasitology", code: "PHD-VPS" },
+  { name: "Veterinary Public Health and Epidemiology", code: "PHD-VPH-EPI" },
+  { name: "Veterinary Pharmacology and Toxicology", code: "PHD-VPT" },
+  { name: "Animal Genetics and Breeding", code: "PHD-AGB" },
+  { name: "Animal Nutrition", code: "PHD-AN" },
+  { name: "Livestock Production and Management", code: "PHD-LPM" },
+  { name: "Livestock Products Technology", code: "PHD-LPT" },
+  { name: "Poultry Science", code: "PHD-PS" },
+];
 
 const MVSC_PHD_DEPARTMENTS: {
   name: string;
@@ -1856,9 +1901,7 @@ async function main() {
 
   console.log(`BVSc subjects created (${BVSC_SUBJECTS.length} subjects with chapters).`);
 
-  // ── MVSc Departments, Subjects and Chapters ─────────────────────────────
-
-  const mvscDeptIds: string[] = [];
+  // ── MVSc Departments and Subjects ────────────────────────────────────
 
   for (const dept of MVSC_PHD_DEPARTMENTS) {
     const createdDept = await prisma.department.create({
@@ -1868,7 +1911,6 @@ async function main() {
         programmeId: mvsc.id,
       },
     });
-    mvscDeptIds.push(createdDept.id);
 
     for (const subj of dept.subjects) {
       const createdSubj = await prisma.subject.create({
@@ -1894,11 +1936,28 @@ async function main() {
     }
   }
 
-  console.log(`MVSc departments created (${mvscDeptIds.length} departments with subjects).`);
+  // Add Common Courses department for MVSc
+  const commonCoursesDept = await prisma.department.create({
+    data: {
+      name: "Common Courses",
+      code: "CC",
+      programmeId: mvsc.id,
+    },
+  });
 
-  // ── PhD Departments, Subjects and Chapters ──────────────────────────────
+  await prisma.subject.create({
+    data: {
+      code: "MVSC-CC",
+      name: "Common Courses",
+      year: "1st Year",
+      programmeId: mvsc.id,
+      departmentId: commonCoursesDept.id,
+    },
+  });
 
-  const phdDeptIds: string[] = [];
+  console.log(`MVSc departments and subjects created (${MVSC_PHD_DEPARTMENTS.length + 1} departments).`);
+
+  // ── PhD Departments and Subjects ─────────────────────────────────────
 
   for (const dept of MVSC_PHD_DEPARTMENTS) {
     const createdDept = await prisma.department.create({
@@ -1908,13 +1967,12 @@ async function main() {
         programmeId: phd.id,
       },
     });
-    phdDeptIds.push(createdDept.id);
 
     for (const subj of dept.subjects) {
       const createdSubj = await prisma.subject.create({
         data: {
-          code: subj.code + "-PHD",
-          name: subj.name + " (PhD)",
+          code: subj.code,
+          name: subj.name,
           year: "1st Year",
           programmeId: phd.id,
           departmentId: createdDept.id,
@@ -1934,7 +1992,7 @@ async function main() {
     }
   }
 
-  console.log(`PhD departments created (${phdDeptIds.length} departments with subjects).`);
+  console.log(`PhD departments and subjects created (${MVSC_PHD_DEPARTMENTS.length} departments).`);
 
   // ── Demo Users ──────────────────────────────────────────────────────────
 
