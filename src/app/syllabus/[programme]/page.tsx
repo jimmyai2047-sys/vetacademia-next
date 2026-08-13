@@ -21,16 +21,7 @@ const colorMap: Record<string, string> = {
   phd: "text-orange-600",
 };
 
-const deptColors = [
-  "from-green-600 to-green-800",
-  "from-blue-600 to-blue-800",
-  "from-purple-600 to-purple-800",
-  "from-orange-600 to-orange-800",
-  "from-red-600 to-red-800",
-  "from-teal-600 to-teal-800",
-  "from-indigo-600 to-indigo-800",
-  "from-pink-600 to-pink-800",
-];
+
 
 export default async function ProgrammePage({
   params,
@@ -102,9 +93,8 @@ export default async function ProgrammePage({
         <div>
           <h2 className="text-xl font-semibold mb-6">Departments</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programme.departments.map((dept, index) => {
+            {programme.departments.map((dept) => {
               const imageUrl = getSubjectImage(dept.name);
-              const gradientColor = deptColors[index % deptColors.length];
               return (
                 <Link key={dept.id} href={`/syllabus/${slug}/${dept.id}`}>
                   <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
@@ -115,7 +105,7 @@ export default async function ProgrammePage({
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-70`} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-white text-4xl font-bold opacity-30">
                           {dept._count.subjects}
@@ -144,9 +134,8 @@ export default async function ProgrammePage({
       ) : (
         <div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programme.subjects.map((subject, index) => {
+            {programme.subjects.map((subject) => {
               const imageUrl = getSubjectImage(subject.name);
-              const gradientColor = deptColors[index % deptColors.length];
               return (
                 <Link key={subject.id} href={`/syllabus/${slug}/${subject.id}`}>
                   <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
@@ -157,7 +146,7 @@ export default async function ProgrammePage({
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-80`} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <BookOpen className="h-12 w-12 text-white/50" />
                       </div>
