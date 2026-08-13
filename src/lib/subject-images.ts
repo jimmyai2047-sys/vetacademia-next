@@ -30,7 +30,7 @@ const subjectImages: Record<string, string> = {
   "Livestock Products Technology": "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80",
   "Veterinary and Animal Husbandry Extension Education": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
   "Veterinary Surgery and Radiology": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
-  "Veterinary Gynaecology and Obstetrics": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
+  "Veterinary Gynaecology and Obstetrics": "https://images.unsplash.com/photo-1506110061263-1de62e5aad6a?w=800&q=80",
   "Veterinary Clinical Practices": "https://images.unsplash.com/photo-1733783506192-653df6185a7d?w=800&q=80",
   "Livestock Farm Practices": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
   "Veterinary Medicine": "https://images.unsplash.com/photo-1725409796872-8b41e8eca929?w=800&q=80",
@@ -41,7 +41,7 @@ const subjectImages: Record<string, string> = {
   // ═══════════════════════════════════════════════════════════════════════════
   "Veterinary Biotechnology": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
   "Veterinary Extension Education": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
-  "Animal Reproduction Gynaecology and Obstetrics": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
+  "Animal Reproduction Gynaecology and Obstetrics": "https://images.unsplash.com/photo-1506110061263-1de62e5aad6a?w=800&q=80",
   "Livestock Production and Management": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
   "Poultry Science": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80",
   "Common Courses": "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=800&q=80",
