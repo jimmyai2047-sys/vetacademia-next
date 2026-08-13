@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, GraduationCap, BookOpen, FlaskConical, Stethoscope } from "lucide-react";
+import { Menu, GraduationCap, BookOpen, FlaskConical, Stethoscope, FileCheck } from "lucide-react";
 
 const programmes = [
   { name: "A.H.D.P.", href: "/syllabus/ahdp", icon: BookOpen },
@@ -62,8 +62,11 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="/mock-tests">
-            <Button variant="ghost">Mock Tests</Button>
+          <Link href="/examinations">
+            <Button variant="ghost" className="gap-2">
+              <FileCheck className="h-4 w-4" />
+              Examinations
+            </Button>
           </Link>
           <Link href="/study-materials">
             <Button variant="ghost">Study Materials</Button>
@@ -121,11 +124,12 @@ export default function Navbar() {
 
               <div className="space-y-2">
                 <Link
-                  href="/mock-tests"
-                  className="block px-3 py-2 rounded-md hover:bg-accent"
+                  href="/examinations"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  Mock Tests
+                  <FileCheck className="h-4 w-4" />
+                  Examinations
                 </Link>
                 <Link
                   href="/study-materials"
