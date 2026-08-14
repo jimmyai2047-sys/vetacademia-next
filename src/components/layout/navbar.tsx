@@ -2,15 +2,30 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, GraduationCap, BookOpen, FlaskConical, Stethoscope, FileCheck, Tractor, HeartPulse } from "lucide-react";
+import {
+  Menu,
+  GraduationCap,
+  BookOpen,
+  FlaskConical,
+  Stethoscope,
+  FileCheck,
+  Tractor,
+  HeartPulse,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
 
 const programmes = [
   { name: "A.H.D.P.", href: "/syllabus/ahdp", icon: BookOpen },
@@ -21,6 +36,18 @@ const programmes = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  const isAuthed = status === "authenticated" && !!session?.user;
+  const isAdmin = session?.user?.role === "ADMIN";
+  const initials =
+    (session?.user?.name || session?.user?.email || "U")
+      .split(" ")
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "U";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -88,14 +115,48 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Auth Buttons */}
+        {/* Auth Buttons / User Menu */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/login">
-            <Button variant="ghost">Login</Button>
-          </Link>
-          <Link href="/signup">
-            <Button>Sign Up</Button>
-          </Link>
+          {isAuthed ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent outline-none">
+                <Avatar className="h-7 w-7">
+                  <AvatarFallback className="text-xs">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="max-w-[120px] truncate">
+                  {session.user?.name || session.user?.email}
+                </span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  onClick={() => router.push(isAdmin ? "/admin" : "/dashboard")}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  {isAdmin ? "Admin Panel" : "Dashboard"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="flex items-center gap-2 text-red-600 focus:text-red-600 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost">Login</Button>
+              </Link>
+              <Link href="/signup">
+                <Button>Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu */}
@@ -166,14 +227,40 @@ export default function Navbar() {
               </div>
 
               <div className="border-t pt-4 space-y-2">
-                <Link href="/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/signup" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full">Sign Up</Button>
-                </Link>
+                {isAuthed ? (
+                  <>
+                    <Link
+                      href={isAdmin ? "/admin" : "/dashboard"}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      {isAdmin ? "Admin Panel" : "Dashboard"}
+                    </Link>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        setIsOpen(false);
+                        signOut();
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" className="w-full">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/signup" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full">Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>
