@@ -147,6 +147,22 @@ model Post {
   @@index([exam])
 }
 
+// ==================== VISITOR STATS ====================
+
+model SiteVisit {
+  id        String   @id @default(cuid())
+  visitorId String
+  lastSeen  DateTime @default(now())
+
+  @@index([lastSeen])
+  @@index([visitorId])
+}
+
+model SiteCounter {
+  id    String @id @default("total")
+  total Int    @default(0)
+}
+
 model Question {
   id            String    @id @default(cuid())
   text          String

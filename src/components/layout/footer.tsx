@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GraduationCap, Mail, Phone, MapPin } from "lucide-react";
+import VisitorCounter from "@/components/visitor-counter";
 
 const footerLinks = {
   programmes: [
@@ -111,8 +112,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} VetAcademia. All rights reserved.</p>
+          <VisitorCounter />
         </div>
       </div>
     </footer>

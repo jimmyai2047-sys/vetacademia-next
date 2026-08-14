@@ -25,6 +25,7 @@ import {
   HeartPulse,
   LogOut,
   LayoutDashboard,
+  Search,
 } from "lucide-react";
 
 const programmes = [
@@ -36,6 +37,7 @@ const programmes = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -48,6 +50,12 @@ export default function Navbar() {
       .slice(0, 2)
       .join("")
       .toUpperCase() || "U";
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = search.trim();
+    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -115,6 +123,20 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        {/* Global Search */}
+        <form
+          onSubmit={handleSearch}
+          className="hidden lg:flex items-center relative"
+        >
+          <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search subjects..."
+            className="pl-9 pr-3 h-9 w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </form>
+
         {/* Auth Buttons / User Menu */}
         <div className="hidden md:flex items-center gap-3">
           {isAuthed ? (
@@ -169,6 +191,16 @@ export default function Navbar() {
           <SheetContent side="right" className="w-72">
             <div className="flex flex-col gap-4 mt-8">
               <div className="font-bold text-lg">VetAcademia</div>
+
+              <form onSubmit={handleSearch} className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search subjects..."
+                  className="w-full pl-9 pr-3 h-9 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </form>
               
               <div className="space-y-2">
                 <Link
