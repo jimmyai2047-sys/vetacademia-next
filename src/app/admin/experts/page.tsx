@@ -28,6 +28,7 @@ type Expert = {
   specialization: string;
   bio: string | null;
   photoUrl: string | null;
+  photoUrlBase?: string | null;
   hourlyRate: number;
   isAvailable: boolean;
   rating: number;
@@ -41,6 +42,7 @@ export default function AdminExpertsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -70,6 +72,7 @@ export default function AdminExpertsPage() {
 
   function openCreate() {
     setEditing(null);
+    setPreviewUrl(null);
     setForm({
       name: "",
       email: "",
@@ -85,6 +88,7 @@ export default function AdminExpertsPage() {
 
   function openEdit(e: Expert) {
     setEditing(e);
+    setPreviewUrl(e.photoUrl);
     setForm({
       name: e.name,
       email: e.email,
@@ -93,7 +97,7 @@ export default function AdminExpertsPage() {
       bio: e.bio || "",
       hourlyRate: String(e.hourlyRate),
       isAvailable: e.isAvailable,
-      photoUrl: e.photoUrl,
+      photoUrl: e.photoUrlBase ?? null,
     });
     setShowForm(true);
   }
@@ -107,8 +111,10 @@ export default function AdminExpertsPage() {
       fd.append("file", file);
       const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
-      if (res.ok) setForm((f) => ({ ...f, photoUrl: data.url }));
-      else alert(data.error || "Upload failed");
+      if (res.ok) {
+        setForm((f) => ({ ...f, photoUrl: data.url }));
+        setPreviewUrl(data.downloadUrl);
+      } else alert(data.error || "Upload failed");
     } catch {
       alert("Upload failed");
     } finally {
@@ -260,10 +266,10 @@ export default function AdminExpertsPage() {
               <div>
                 <label className="text-sm font-medium">Photo</label>
                 <div className="flex items-center gap-4 mt-2">
-                  {form.photoUrl ? (
+                  {previewUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={form.photoUrl}
+                      src={previewUrl}
                       alt="preview"
                       className="h-20 w-20 rounded-full object-cover border"
                     />
@@ -298,7 +304,10 @@ export default function AdminExpertsPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => setForm({ ...form, photoUrl: null })}
+                        onClick={() => {
+                      setForm({ ...form, photoUrl: null });
+                      setPreviewUrl(null);
+                    }}
                       >
                         <X className="h-4 w-4" /> Remove
                       </Button>

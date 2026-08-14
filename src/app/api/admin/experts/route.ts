@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
+import { getDownloadUrl } from "@vercel/blob";
 import bcrypt from "bcryptjs";
 
 export async function GET() {
@@ -15,20 +16,33 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(
-      experts.map((e) => ({
-        id: e.id,
-        name: e.user.name,
-        email: e.user.email,
-        specialization: e.specialization,
-        bio: e.bio,
-        photoUrl: e.photoUrl,
-        hourlyRate: e.hourlyRate,
-        isAvailable: e.isAvailable,
-        rating: e.rating,
-        totalReviews: e.totalReviews,
-      }))
+    const data = await Promise.all(
+      experts.map(async (e) => {
+        let signed: string | null = null;
+        if (e.photoUrl) {
+          try {
+            signed = await getDownloadUrl(e.photoUrl);
+          } catch {
+            signed = null;
+          }
+        }
+        return {
+          id: e.id,
+          name: e.user.name,
+          email: e.user.email,
+          specialization: e.specialization,
+          bio: e.bio,
+          photoUrl: signed,
+          photoUrlBase: e.photoUrl,
+          hourlyRate: e.hourlyRate,
+          isAvailable: e.isAvailable,
+          rating: e.rating,
+          totalReviews: e.totalReviews,
+        };
+      })
     );
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Experts GET error:", error);
     return NextResponse.json({ error: "Failed to load experts" }, { status: 500 });
