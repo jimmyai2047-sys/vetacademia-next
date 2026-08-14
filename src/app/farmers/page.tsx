@@ -24,6 +24,10 @@ import {
   Clock,
   Phone,
 } from "lucide-react";
+import { getPublishedPosts } from "@/lib/posts";
+import PostList from "@/components/post-list";
+
+export const dynamic = "force-dynamic";
 
 const schemes = [
   {
@@ -175,7 +179,8 @@ const feedFormulation = [
   },
 ];
 
-export default function FarmersPage() {
+export default async function FarmersPage() {
+  const farmerPosts = await getPublishedPosts("FARMERS");
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
@@ -499,6 +504,14 @@ export default function FarmersPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Admin-managed Updates & Resources */}
+      {farmerPosts.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Updates &amp; Resources</h2>
+          <PostList posts={farmerPosts} />
+        </div>
+      )}
 
       {/* Helpline Banner */}
       <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">

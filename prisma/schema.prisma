@@ -114,6 +114,9 @@ model MockTest {
   duration    Int
   totalMarks  Int
   subjectId   String?
+  fileUrl     String?
+  fileName    String?
+  fileType    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -122,6 +125,26 @@ model MockTest {
   attempts  MockTestAttempt[]
 
   @@index([subjectId])
+}
+
+// ==================== GENERIC POSTS (Farmers / Vets / Advisory / Previous Year Papers) ====================
+
+model Post {
+  id        String   @id @default(cuid())
+  category  String // FARMERS | VETS | ADVISORY | PREVIOUS_YEAR
+  title     String
+  content   String? // rich HTML
+  fileUrl   String?
+  fileName  String?
+  fileType  String?
+  fileSize  Int?
+  exam      String? // for PREVIOUS_YEAR: psc | icar-entrance | net | ars | other
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([category])
+  @@index([exam])
 }
 
 model Question {
