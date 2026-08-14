@@ -14,6 +14,7 @@ import {
   Microscope,
   MoreHorizontal,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 
 const examinations = [
@@ -174,6 +175,29 @@ export default function ExaminationsPage() {
             </Card>
           </Link>
         ))}
+      </div>
+
+      {/* Study Materials */}
+      <div className="mt-12">
+        <h2 className="text-xl font-semibold mb-4">Study Materials</h2>
+        <Link href="/study-materials">
+          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group border-primary/20 bg-primary/5">
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <BookOpen className="h-7 w-7 text-primary" />
+              </div>
+              <div className="flex-1">
+                <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                  Access Study Materials
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Notes, videos, and reference material for all veterinary subjects and exam preparations.
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* CTA */}

@@ -80,9 +80,6 @@ export default function Navbar() {
               Vets
             </Button>
           </Link>
-          <Link href="/study-materials">
-            <Button variant="ghost">Study Materials</Button>
-          </Link>
           <Link href="/experts">
             <Button variant="ghost">Experts</Button>
           </Link>
@@ -158,13 +155,6 @@ export default function Navbar() {
                 >
                   <HeartPulse className="h-4 w-4" />
                   Vets
-                </Link>
-                <Link
-                  href="/study-materials"
-                  className="block px-3 py-2 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Study Materials
                 </Link>
                 <Link
                   href="/experts"

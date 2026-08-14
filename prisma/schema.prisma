@@ -68,6 +68,7 @@ model Subject {
   year          String?
   semester      String?
   paper         String?
+  creditHours   String?
   icon          String?
   description   String?
   departmentId  String?
