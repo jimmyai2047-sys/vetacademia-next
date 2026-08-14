@@ -8,6 +8,8 @@ import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
 import { getSignedUrl } from "@/lib/blob";
+import { getAccess } from "@/lib/access";
+import EnrollCta from "@/components/enroll-cta";
 
 export default async function CoursePage({
   params,
@@ -30,6 +32,9 @@ export default async function CoursePage({
   });
 
   if (!course) notFound();
+
+  const access = await getAccess();
+  const hasAccess = access.programmeSlugs.has(progSlug);
 
   const signedContents = await Promise.all(
     course.chapterContents.map(async (c) => ({
@@ -88,6 +93,7 @@ export default async function CoursePage({
       </div>
 
       {/* Theory / Practical split */}
+      {hasAccess ? (
       <div className="grid md:grid-cols-2 gap-6">
         {theoryCredits > 0 && (
           <Card className="border-blue-200">
@@ -133,6 +139,13 @@ export default async function CoursePage({
           </Card>
         )}
       </div>
+      ) : (
+        <EnrollCta
+          planSlug={progSlug}
+          title="Enroll to access this course"
+          message="Enroll in this programme to unlock the full course content and resources."
+        />
+      )}
     </div>
   );
 }

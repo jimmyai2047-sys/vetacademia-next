@@ -14,6 +14,7 @@ import {
   Brain,
   Stethoscope,
   ChevronLeft,
+  IndianRupee,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +24,7 @@ const sidebarItems = [
   { name: "Experts", href: "/admin/experts", icon: Stethoscope },
   { name: "Content", href: "/admin/content", icon: BookOpen },
   { name: "Posts", href: "/admin/posts", icon: FileText },
+  { name: "Pricing", href: "/admin/pricing", icon: IndianRupee },
   { name: "Mock Tests", href: "/admin/mock-tests", icon: Brain },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Settings", href: "/admin/settings", icon: Settings },

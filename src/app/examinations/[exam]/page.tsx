@@ -27,6 +27,9 @@ import {
 } from "lucide-react";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
+import { getAccess } from "@/lib/access";
+import { planSlugForExam } from "@/lib/plans";
+import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
 
@@ -291,6 +294,9 @@ export default async function ExamPage({
 
   const prevYearPosts = await getPublishedPosts("PREVIOUS_YEAR", exam);
 
+  const access = await getAccess();
+  const examUnlocked = access.examKeys.has(exam) || exam === "other";
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
@@ -353,33 +359,43 @@ export default async function ExamPage({
             </div>
           </CardHeader>
           <CardContent>
-            {prevYearPosts.length > 0 ? (
-              <PostList posts={prevYearPosts} />
-            ) : (
-              <div className="space-y-3">
-                {data.previousYearPapers.map((paper, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
-                  >
-                    <div>
-                      <div className="font-medium text-sm">{paper.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {paper.questions} Questions &middot; {paper.duration}
+            {examUnlocked ? (
+              <>
+                {prevYearPosts.length > 0 ? (
+                  <PostList posts={prevYearPosts} />
+                ) : (
+                  <div className="space-y-3">
+                    {data.previousYearPapers.map((paper, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
+                      >
+                        <div>
+                          <div className="font-medium text-sm">{paper.title}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {paper.questions} Questions &middot; {paper.duration}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{paper.year}</Badge>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline">{paper.year}</Badge>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-            {prevYearPosts.length === 0 && (
-              <Button variant="outline" className="w-full mt-4">
-                View All Papers
-              </Button>
+                )}
+                {prevYearPosts.length === 0 && (
+                  <Button variant="outline" className="w-full mt-4">
+                    View All Papers
+                  </Button>
+                )}
+              </>
+            ) : (
+              <EnrollCta
+                planSlug={planSlugForExam(exam) || "veterinary-officer"}
+                title="Enroll to access previous year papers"
+                message="Enroll in the exam preparation plan to unlock previous year papers and solutions."
+              />
             )}
           </CardContent>
         </Card>

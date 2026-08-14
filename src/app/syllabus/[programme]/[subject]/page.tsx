@@ -15,6 +15,8 @@ import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
 import { getSignedUrl } from "@/lib/blob";
+import { getAccess } from "@/lib/access";
+import EnrollCta from "@/components/enroll-cta";
 
 export default async function SubjectPage({
   params,
@@ -35,6 +37,9 @@ export default async function SubjectPage({
   });
 
   if (!subject) notFound();
+
+  const access = await getAccess();
+  const hasAccess = access.programmeSlugs.has(progSlug);
 
   const hasCourses = subject.chapters.some((ch) => ch.courseCode);
 
@@ -132,7 +137,9 @@ export default async function SubjectPage({
         </TabsList>
 
         <TabsContent value="syllabus" className="space-y-6">
-          {hasCourses ? (
+          {hasAccess ? (
+            <>
+              {hasCourses ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {subject.chapters.map((course, index) => (
                 <Link key={course.id} href={`/syllabus/${progSlug}/${subject.id}/${course.id}`}>
@@ -302,6 +309,14 @@ export default async function SubjectPage({
               <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No courses available yet</p>
             </div>
+          )}
+          </>
+          ) : (
+            <EnrollCta
+              planSlug={progSlug}
+              title="Enroll to access syllabus"
+              message={`Enroll in ${subject.programme.name} to unlock chapters, notes and study material.`}
+            />
           )}
         </TabsContent>
 
