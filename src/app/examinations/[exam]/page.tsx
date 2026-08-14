@@ -25,11 +25,16 @@ import {
   TrendingUp,
   ChevronRight,
 } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
-import { getExamGroups, getExamDisciplines } from "@/lib/exam-subjects";
+import {
+  getExamGroups,
+  getExamDisciplines,
+  slugify,
+} from "@/lib/exam-subjects";
 import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
@@ -301,6 +306,22 @@ export default async function ExamPage({
   const groups = getExamGroups(exam);
   const disciplines = getExamDisciplines(exam);
 
+  // For programme-based groups (PSC tracks), fetch the actual subjects.
+  const groupSubjects: Record<string, { slug: string; name: string }[]> = {};
+  for (const g of groups) {
+    if (g.programmeSlug) {
+      const subs = await prisma.subject.findMany({
+        where: { programme: { name: g.programmeSlug.toUpperCase() } },
+        select: { name: true },
+        orderBy: { name: "asc" },
+      });
+      groupSubjects[g.slug] = subs.map((s) => ({
+        slug: slugify(s.name),
+        name: s.name,
+      }));
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
@@ -540,26 +561,39 @@ export default async function ExamPage({
           </h2>
           {groups.length > 0 ? (
             <div className="grid md:grid-cols-2 gap-6">
-              {groups.map((g) => (
-                <Card key={g.slug}>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{g.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {g.disciplines.map((d) => (
-                        <Link
-                          key={d.slug}
-                          href={`/examinations/${exam}/${d.slug}`}
-                          className="px-3 py-1.5 rounded-lg border text-sm hover:bg-accent transition-colors"
-                        >
-                          {d.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {groups.map((g) => {
+                const items = [
+                  ...(g.programmeSlug
+                    ? groupSubjects[g.slug] ?? []
+                    : g.disciplines ?? []),
+                  ...(g.extraDisciplines ?? []),
+                ];
+                return (
+                  <Card key={g.slug}>
+                    <CardHeader>
+                      <CardTitle className="text-lg">{g.name}</CardTitle>
+                      {g.planSlug && (
+                        <p className="text-xs text-muted-foreground">
+                          Enroll in this track to unlock
+                        </p>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        {items.map((d) => (
+                          <Link
+                            key={d.slug}
+                            href={`/examinations/${exam}/${d.slug}`}
+                            className="px-3 py-1.5 rounded-lg border text-sm hover:bg-accent transition-colors"
+                          >
+                            {d.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">

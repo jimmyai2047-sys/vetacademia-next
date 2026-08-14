@@ -40,3 +40,8 @@ dev.db
 
 # generated
 src/generated/
+
+# local backups (created by backup.bat)
+backups/
+server.log
+

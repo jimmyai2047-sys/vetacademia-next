@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
-import { findDiscipline } from "@/lib/exam-subjects";
+import { findDiscipline, getExamGroups, slugify } from "@/lib/exam-subjects";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import EnrollCta from "@/components/enroll-cta";
@@ -25,31 +25,63 @@ export default async function ExamSubjectPage({
   params: Promise<{ exam: string; subject: string }>;
 }) {
   const { exam, subject: subjectSlug } = await params;
-  const found = findDiscipline(exam, subjectSlug);
-  if (!found) notFound();
 
+  // Resolve discipline (static config, plus DB fallback for programme-based tracks).
+  let found = findDiscipline(exam, subjectSlug);
+  if (!found) {
+    const groups = getExamGroups(exam).filter((g) => g.programmeSlug);
+    if (groups.length > 0) {
+      const programmes = groups.map((g) => g.programmeSlug!.toUpperCase());
+      const subjects = await prisma.subject.findMany({
+        where: { programme: { name: { in: programmes } } },
+        select: { name: true, programme: { select: { name: true } } },
+      });
+      const match = subjects.find((s) => slugify(s.name) === subjectSlug);
+      if (match) {
+        const grp = groups.find(
+          (g) => g.programmeSlug!.toUpperCase() === match.programme.name
+        );
+        found = {
+          discipline: {
+            slug: subjectSlug,
+            name: match.name,
+            subjectName: match.name,
+            programmeSlug: match.programme.name.toLowerCase(),
+          },
+          group: grp,
+        };
+      }
+    }
+  }
+  if (!found) notFound();
   const { discipline, group } = found;
 
   const access = await getAccess();
   const examUnlocked = access.examKeys.has(exam) || exam === "other";
+  const requiredPlan = group?.planSlug ?? planSlugForExam(exam);
+  const unlocked = group?.planSlug
+    ? access.planSlugs.has(group.planSlug)
+    : examUnlocked;
 
   const [mvscSubject, papers] = await Promise.all([
-    prisma.subject.findFirst({
-      where: {
-        name: { equals: discipline.mvscSubject, mode: "insensitive" },
-        programme: { name: "MVSC" },
-      },
-      include: {
-        chapters: {
-          orderBy: { unitNumber: "asc" },
-          select: { id: true, title: true, unitNumber: true },
-        },
-        mockTests: {
-          orderBy: { createdAt: "desc" },
-          select: { id: true, title: true, duration: true, totalMarks: true },
-        },
-      },
-    }),
+    discipline.subjectName && discipline.programmeSlug
+      ? prisma.subject.findFirst({
+          where: {
+            name: { equals: discipline.subjectName, mode: "insensitive" },
+            programme: { name: discipline.programmeSlug.toUpperCase() },
+          },
+          include: {
+            chapters: {
+              orderBy: { unitNumber: "asc" },
+              select: { id: true, title: true, unitNumber: true },
+            },
+            mockTests: {
+              orderBy: { createdAt: "desc" },
+              select: { id: true, title: true, duration: true, totalMarks: true },
+            },
+          },
+        })
+      : Promise.resolve(null),
     getPublishedPosts("PREVIOUS_YEAR", exam, subjectSlug),
   ]);
 
@@ -72,12 +104,13 @@ export default async function ExamSubjectPage({
               : exam.toUpperCase()}
           </Badge>
           {group && <Badge variant="outline">{group.name}</Badge>}
+          {discipline.isGeneral && <Badge variant="outline">Paper</Badge>}
         </div>
       </div>
 
-      {!examUnlocked ? (
+      {!unlocked ? (
         <EnrollCta
-          planSlug={planSlugForExam(exam) || "veterinary-officer"}
+          planSlug={requiredPlan || "veterinary-officer"}
           title="Enroll to access this subject"
           message={`Enroll in the exam preparation plan to unlock ${discipline.name} previous year papers, mock tests and study material.`}
         />
@@ -147,7 +180,7 @@ export default async function ExamSubjectPage({
             </CardContent>
           </Card>
 
-          {/* Study Material (M.V.Sc syllabus) */}
+          {/* Study Material (programme syllabus) */}
           {mvscSubject && mvscSubject.chapters.length > 0 && (
             <Card className="md:col-span-2">
               <CardHeader>
@@ -158,7 +191,8 @@ export default async function ExamSubjectPage({
                   <div>
                     <CardTitle>Study Material</CardTitle>
                     <CardDescription>
-                      M.V.Sc {discipline.name} syllabus &amp; notes
+                      {discipline.programmeSlug?.toUpperCase()} {discipline.name}{" "}
+                      syllabus &amp; notes
                     </CardDescription>
                   </div>
                 </div>
@@ -168,7 +202,7 @@ export default async function ExamSubjectPage({
                   {mvscSubject.chapters.map((c) => (
                     <Link
                       key={c.id}
-                      href={`/syllabus/mvsc/${mvscSubject.id}/${c.id}`}
+                      href={`/syllabus/${discipline.programmeSlug}/${mvscSubject.id}/${c.id}`}
                       className="px-3 py-2 rounded-lg border text-sm hover:bg-accent transition-colors"
                     >
                       {c.title}

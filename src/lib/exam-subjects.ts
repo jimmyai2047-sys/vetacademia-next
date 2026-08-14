@@ -1,60 +1,64 @@
+export function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export type Discipline = {
   slug: string;
   name: string;
-  mvscSubject: string; // exact M.V.Sc subject name used to link existing content
+  subjectName?: string; // DB subject name used to link existing content
+  programmeSlug?: string; // bvsc | ahdp | mvsc — programme that owns the subject
+  isGeneral?: boolean; // General Knowledge style paper (no subject)
 };
 
 export type Group = {
   slug: string;
   name: string;
-  disciplines: Discipline[];
+  planSlug?: string; // which plan gates this group (e.g. PSC tracks)
+  programmeSlug?: string; // if set, disciplines = all subjects of this programme
+  disciplines?: Discipline[]; // static disciplines
+  extraDisciplines?: Discipline[]; // e.g. General Knowledge
 };
 
-// Canonical discipline definitions (slug, display name, linked M.V.Sc subject).
+export type ExamStructure = {
+  groups?: Group[];
+  disciplines?: Discipline[];
+};
+
+const GK: Discipline = {
+  slug: "general-knowledge",
+  name: "General Knowledge",
+  isGeneral: true,
+};
+
+// Canonical discipline definitions (slug, display name, linked subject).
 const D = {
-  anatomy: { slug: "anatomy", name: "Veterinary Anatomy", mvscSubject: "Veterinary Anatomy" },
-  physiology: { slug: "physiology", name: "Veterinary Physiology", mvscSubject: "Veterinary Physiology" },
-  animalNutrition: { slug: "animal-nutrition", name: "Animal Nutrition", mvscSubject: "Animal Nutrition" },
-  agb: { slug: "animal-genetics-breeding", name: "Animal Genetics & Breeding", mvscSubject: "Animal Genetics and Breeding" },
-  biochemistry: { slug: "biochemistry", name: "Veterinary Biochemistry", mvscSubject: "Veterinary Biochemistry" },
-  microbiology: { slug: "microbiology", name: "Veterinary Microbiology", mvscSubject: "Veterinary Microbiology" },
-  pathology: { slug: "pathology", name: "Veterinary Pathology", mvscSubject: "Veterinary Pathology" },
-  parasitology: { slug: "parasitology", name: "Veterinary Parasitology", mvscSubject: "Veterinary Parasitology" },
-  pharmacology: { slug: "pharmacology", name: "Veterinary Pharmacology & Toxicology", mvscSubject: "Veterinary Pharmacology and Toxicology" },
-  publicHealth: { slug: "public-health", name: "Veterinary Public Health & Epidemiology", mvscSubject: "Veterinary Public Health and Epidemiology" },
-  surgery: { slug: "surgery", name: "Veterinary Surgery & Radiology", mvscSubject: "Veterinary Surgery and Radiology" },
-  medicine: { slug: "medicine", name: "Veterinary Medicine", mvscSubject: "Veterinary Medicine" },
-  gynaecology: { slug: "gynaecology", name: "Veterinary Gynaecology & Obstetrics", mvscSubject: "Animal Reproduction Gynaecology and Obstetrics" },
-  biotechnology: { slug: "biotechnology", name: "Veterinary Biotechnology", mvscSubject: "Veterinary Biotechnology" },
-  lpm: { slug: "lpm", name: "Livestock Production & Management", mvscSubject: "Livestock Production and Management" },
-  lpt: { slug: "lpt", name: "Livestock Products Technology", mvscSubject: "Livestock Products Technology" },
-  extension: { slug: "extension", name: "Veterinary Extension Education", mvscSubject: "Veterinary Extension Education" },
-  poultry: { slug: "poultry", name: "Poultry Science", mvscSubject: "Poultry Science" },
+  anatomy: { slug: "anatomy", name: "Veterinary Anatomy", subjectName: "Veterinary Anatomy", programmeSlug: "mvsc" },
+  physiology: { slug: "physiology", name: "Veterinary Physiology", subjectName: "Veterinary Physiology", programmeSlug: "mvsc" },
+  animalNutrition: { slug: "animal-nutrition", name: "Animal Nutrition", subjectName: "Animal Nutrition", programmeSlug: "mvsc" },
+  agb: { slug: "animal-genetics-breeding", name: "Animal Genetics & Breeding", subjectName: "Animal Genetics and Breeding", programmeSlug: "mvsc" },
+  biochemistry: { slug: "biochemistry", name: "Veterinary Biochemistry", subjectName: "Veterinary Biochemistry", programmeSlug: "mvsc" },
+  microbiology: { slug: "microbiology", name: "Veterinary Microbiology", subjectName: "Veterinary Microbiology", programmeSlug: "mvsc" },
+  pathology: { slug: "pathology", name: "Veterinary Pathology", subjectName: "Veterinary Pathology", programmeSlug: "mvsc" },
+  parasitology: { slug: "parasitology", name: "Veterinary Parasitology", subjectName: "Veterinary Parasitology", programmeSlug: "mvsc" },
+  pharmacology: { slug: "pharmacology", name: "Veterinary Pharmacology & Toxicology", subjectName: "Veterinary Pharmacology and Toxicology", programmeSlug: "mvsc" },
+  publicHealth: { slug: "public-health", name: "Veterinary Public Health & Epidemiology", subjectName: "Veterinary Public Health and Epidemiology", programmeSlug: "mvsc" },
+  surgery: { slug: "surgery", name: "Veterinary Surgery & Radiology", subjectName: "Veterinary Surgery and Radiology", programmeSlug: "mvsc" },
+  medicine: { slug: "medicine", name: "Veterinary Medicine", subjectName: "Veterinary Medicine", programmeSlug: "mvsc" },
+  gynaecology: { slug: "gynaecology", name: "Veterinary Gynaecology & Obstetrics", subjectName: "Animal Reproduction Gynaecology and Obstetrics", programmeSlug: "mvsc" },
+  biotechnology: { slug: "biotechnology", name: "Veterinary Biotechnology", subjectName: "Veterinary Biotechnology", programmeSlug: "mvsc" },
+  lpm: { slug: "lpm", name: "Livestock Production & Management", subjectName: "Livestock Production and Management", programmeSlug: "mvsc" },
+  lpt: { slug: "lpt", name: "Livestock Products Technology", subjectName: "Livestock Products Technology", programmeSlug: "mvsc" },
+  extension: { slug: "extension", name: "Veterinary Extension Education", subjectName: "Veterinary Extension Education", programmeSlug: "mvsc" },
+  poultry: { slug: "poultry", name: "Poultry Science", subjectName: "Poultry Science", programmeSlug: "mvsc" },
 } satisfies Record<string, Discipline>;
 
 const ALL_DISCIPLINES: Discipline[] = Object.values(D);
 
 // ARS and NET are organized per M.V.Sc discipline.
-const ARS_NET_DISCIPLINES: Discipline[] = [
-  D.anatomy,
-  D.physiology,
-  D.animalNutrition,
-  D.agb,
-  D.biochemistry,
-  D.microbiology,
-  D.pathology,
-  D.parasitology,
-  D.pharmacology,
-  D.publicHealth,
-  D.surgery,
-  D.medicine,
-  D.gynaecology,
-  D.biotechnology,
-  D.lpm,
-  D.lpt,
-  D.extension,
-  D.poultry,
-];
+const ARS_NET_DISCIPLINES: Discipline[] = Object.values(D);
 
 // ICAR-JRF (PG entrance) is organized by 4 groups, each with its subjects.
 const ICAR_JRF_GROUPS: Group[] = [
@@ -97,15 +101,30 @@ const ICAR_JRF_GROUPS: Group[] = [
   },
 ];
 
-export type ExamStructure = {
-  groups?: Group[];
-  disciplines?: Discipline[];
-};
+// PSC tracks: Veterinary Officer (B.V.Sc subjects) and Livestock Assistant (AHDP subjects),
+// each with a General Knowledge paper.
+const PSC_GROUPS: Group[] = [
+  {
+    slug: "veterinary-officer",
+    name: "Veterinary Officer / Surgeon",
+    planSlug: "veterinary-officer",
+    programmeSlug: "bvsc",
+    extraDisciplines: [GK],
+  },
+  {
+    slug: "livestock-assistant",
+    name: "Livestock Assistant",
+    planSlug: "livestock-assistant",
+    programmeSlug: "ahdp",
+    extraDisciplines: [GK],
+  },
+];
 
 export const EXAM_STRUCTURE: Record<string, ExamStructure> = {
   "icar-entrance": { groups: ICAR_JRF_GROUPS },
   net: { disciplines: ARS_NET_DISCIPLINES },
   ars: { disciplines: ARS_NET_DISCIPLINES },
+  psc: { groups: PSC_GROUPS },
 };
 
 export function getExamGroups(exam: string): Group[] {
@@ -114,7 +133,7 @@ export function getExamGroups(exam: string): Group[] {
 
 export function getExamDisciplines(exam: string): Discipline[] {
   const s = EXAM_STRUCTURE[exam];
-  if (s?.groups) return s.groups.flatMap((g) => g.disciplines);
+  if (s?.groups) return s.groups.flatMap((g) => g.disciplines ?? []);
   return s?.disciplines ?? [];
 }
 
@@ -126,7 +145,8 @@ export function findDiscipline(
   if (!s) return null;
   if (s.groups) {
     for (const g of s.groups) {
-      const d = g.disciplines.find((x) => x.slug === slug);
+      const all = [...(g.disciplines ?? []), ...(g.extraDisciplines ?? [])];
+      const d = all.find((x) => x.slug === slug);
       if (d) return { discipline: d, group: g };
     }
     return null;
@@ -135,4 +155,4 @@ export function findDiscipline(
   return d ? { discipline: d } : null;
 }
 
-export { ALL_DISCIPLINES };
+export { ALL_DISCIPLINES, GK };
