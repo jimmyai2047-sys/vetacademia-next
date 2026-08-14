@@ -19,6 +19,14 @@ model User {
   programme     String?
   year          String?
   avatar        String?
+  surname           String?
+  college            String?
+  university         String?
+  address            String?
+  highestDegree      String?
+  expertDesignation  String?
+  subjectDepartment  String?
+  specialization     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
