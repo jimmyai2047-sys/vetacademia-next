@@ -8,6 +8,7 @@ export type AccessInfo = {
   planSlugs: Set<string>;
   programmeSlugs: Set<string>;
   examKeys: Set<string>;
+  examPlanOwned: boolean;
 };
 
 const EMPTY: AccessInfo = {
@@ -16,6 +17,7 @@ const EMPTY: AccessInfo = {
   planSlugs: new Set(),
   programmeSlugs: new Set(),
   examKeys: new Set(),
+  examPlanOwned: false,
 };
 
 // Returns the plans the current user has PAID for, derived from Payment rows.
@@ -37,6 +39,7 @@ export async function getAccess(): Promise<AccessInfo> {
     planSlugs: new Set(),
     programmeSlugs: new Set(),
     examKeys: new Set(),
+    examPlanOwned: false,
   };
 
   for (const p of payments) {
@@ -48,6 +51,7 @@ export async function getAccess(): Promise<AccessInfo> {
       info.programmeSlugs.add(plan.programmeSlug);
     }
     if (plan.type === "EXAM") {
+      info.examPlanOwned = true;
       getExamKeysForPlan(plan.examSlug).forEach((k) => info.examKeys.add(k));
     }
   }

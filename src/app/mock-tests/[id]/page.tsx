@@ -29,7 +29,8 @@ export default async function MockTestAttemptPage({
     : null;
 
   const access = await getAccess();
-  const hasAccess = !progSlug || access.programmeSlugs.has(progSlug);
+  const hasAccess =
+    !progSlug || access.programmeSlugs.has(progSlug) || access.examPlanOwned;
 
   const questions = test.questions.map((q) => {
     let opts: string[] = [];

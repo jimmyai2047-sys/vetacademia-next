@@ -29,6 +29,7 @@ import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
+import { getExamGroups, getExamDisciplines } from "@/lib/exam-subjects";
 import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
@@ -297,6 +298,9 @@ export default async function ExamPage({
   const access = await getAccess();
   const examUnlocked = access.examKeys.has(exam) || exam === "other";
 
+  const groups = getExamGroups(exam);
+  const disciplines = getExamDisciplines(exam);
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
@@ -527,6 +531,51 @@ export default async function ExamPage({
           </CardContent>
         </Card>
       </div>
+
+      {/* Subjects / Disciplines */}
+      {(groups.length > 0 || disciplines.length > 0) && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">
+            {groups.length > 0 ? "Subject Groups" : "Subjects / Disciplines"}
+          </h2>
+          {groups.length > 0 ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              {groups.map((g) => (
+                <Card key={g.slug}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{g.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {g.disciplines.map((d) => (
+                        <Link
+                          key={d.slug}
+                          href={`/examinations/${exam}/${d.slug}`}
+                          className="px-3 py-1.5 rounded-lg border text-sm hover:bg-accent transition-colors"
+                        >
+                          {d.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {disciplines.map((d) => (
+                <Link
+                  key={d.slug}
+                  href={`/examinations/${exam}/${d.slug}`}
+                  className="px-4 py-3 rounded-lg border hover:bg-accent transition-colors text-sm font-medium"
+                >
+                  {d.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* CTA */}
       <Card className="bg-primary text-primary-foreground">

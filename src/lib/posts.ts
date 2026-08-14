@@ -12,13 +12,15 @@ export type PublicPost = {
 
 export async function getPublishedPosts(
   category: string,
-  exam?: string
+  exam?: string,
+  subjectSlug?: string
 ): Promise<PublicPost[]> {
   const posts = await prisma.post.findMany({
     where: {
       category,
       published: true,
       ...(exam ? { exam } : {}),
+      ...(subjectSlug ? { examSubjectSlug: subjectSlug } : {}),
     },
     orderBy: { createdAt: "desc" },
   });

@@ -125,6 +125,7 @@ model MockTest {
   fileUrl     String?
   fileName    String?
   fileType    String?
+  examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -147,6 +148,7 @@ model Post {
   fileType  String?
   fileSize  Int?
   exam      String? // for PREVIOUS_YEAR: psc | icar-entrance | net | ars | other
+  examSubjectSlug String? // discipline/subject within the exam (e.g. veterinary-anatomy)
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime  @updatedAt
