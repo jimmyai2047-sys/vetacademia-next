@@ -80,13 +80,11 @@ export default async function ContentPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold">Content Management</h1>
-            <p className="text-muted-foreground">Manage curriculum and study materials</p>
+            <p className="text-muted-foreground">
+              Upload &amp; manage chapter files (PDF / PPT / Video / Images)
+            </p>
           </div>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Content
-        </Button>
       </div>
 
       <Tabs defaultValue="programmes">
@@ -102,30 +100,32 @@ export default async function ContentPage() {
               const Icon = iconMap[prog.name] || BookOpen;
               const color = colorMap[prog.name] || "text-primary";
               return (
-                <Card key={prog.id}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Icon className={`h-5 w-5 ${color}`} />
-                        <CardTitle className="text-lg">{prog.name}</CardTitle>
+                <Link key={prog.id} href={`/admin/content/${prog.name.toLowerCase()}`}>
+                  <Card className="hover:shadow-lg transition-all cursor-pointer">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Icon className={`h-5 w-5 ${color}`} />
+                          <CardTitle className="text-lg">{prog.name}</CardTitle>
+                        </div>
                       </div>
-                    </div>
-                    <CardDescription className="text-xs">{prog.fullName}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Badge variant="secondary">
-                          {prog._count.subjects} Subjects
-                        </Badge>
-                        <Badge variant="outline">
-                          {prog._count.departments} Depts
-                        </Badge>
+                      <CardDescription className="text-xs">{prog.fullName}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                          <Badge variant="secondary">
+                            {prog._count.subjects} Subjects
+                          </Badge>
+                          <Badge variant="outline">
+                            {prog._count.departments} Depts
+                          </Badge>
+                        </div>
+                        <Button variant="outline" size="sm">Manage</Button>
                       </div>
-                      <Button variant="outline" size="sm">View</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               );
             })}
           </div>

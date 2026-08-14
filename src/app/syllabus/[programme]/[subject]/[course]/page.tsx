@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
+import ChapterResources from "@/components/chapter-resources";
 
 export default async function CoursePage({
   params,
@@ -21,6 +22,7 @@ export default async function CoursePage({
           programme: { select: { name: true } },
         },
       },
+      chapterContents: { orderBy: { createdAt: "desc" } },
     },
   });
 
@@ -94,6 +96,7 @@ export default async function CoursePage({
               ) : (
                 <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
               )}
+              <ChapterResources contents={course.chapterContents} />
             </CardContent>
           </Card>
         )}
@@ -111,6 +114,7 @@ export default async function CoursePage({
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
+              <ChapterResources contents={course.chapterContents} />
             </CardContent>
           </Card>
         )}

@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical } from "lucide-react";
+import ChapterResources from "@/components/chapter-resources";
 
 export default async function SubjectPage({
   params,
@@ -23,7 +24,10 @@ export default async function SubjectPage({
     where: { id: subjectId },
     include: {
       programme: { select: { name: true, fullName: true } },
-      chapters: { orderBy: { unitNumber: "asc" } },
+      chapters: {
+        orderBy: { unitNumber: "asc" },
+        include: { chapterContents: { orderBy: { createdAt: "desc" } } },
+      },
     },
   });
 
@@ -196,6 +200,7 @@ export default async function SubjectPage({
                                   Content coming soon...
                                 </div>
                               )}
+                              <ChapterResources contents={chapter.chapterContents} />
                             </AccordionContent>
                           </AccordionItem>
                         ))}
@@ -247,6 +252,7 @@ export default async function SubjectPage({
                                   Content coming soon...
                                 </div>
                               )}
+                              <ChapterResources contents={chapter.chapterContents} />
                             </AccordionContent>
                           </AccordionItem>
                         ))}

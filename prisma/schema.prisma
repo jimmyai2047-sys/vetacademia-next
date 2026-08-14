@@ -100,6 +100,7 @@ model Chapter {
   updatedAt   DateTime  @updatedAt
 
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  chapterContents ChapterContent[]
 
   @@index([subjectId])
 }
@@ -155,6 +156,25 @@ model MockTestAttempt {
 
   @@index([userId])
   @@index([mockTestId])
+}
+
+// ==================== CHAPTER CONTENT (admin uploads) ====================
+
+model ChapterContent {
+  id           String   @id @default(cuid())
+  chapterId    String
+  title        String
+  fileType     String
+  fileName     String
+  url          String
+  size         Int?
+  uploadedById String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
 }
 
 // ==================== STUDY MATERIALS ====================
