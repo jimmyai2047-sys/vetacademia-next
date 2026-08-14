@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { getDownloadUrl } from "@vercel/blob";
+import { getSignedUrl } from "@/lib/blob";
 
 export const dynamic = "force-dynamic";
 
@@ -29,11 +29,7 @@ export default async function ExpertsPage() {
     experts.map(async (e) => {
       let photo: string | null = null;
       if (e.photoUrl) {
-        try {
-          photo = await getDownloadUrl(e.photoUrl);
-        } catch {
-          photo = null;
-        }
+        photo = await getSignedUrl(e.photoUrl);
       }
       return {
         id: e.id,

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
-import { getDownloadUrl } from "@vercel/blob";
+import { getSignedUrl } from "@/lib/blob";
 import bcrypt from "bcryptjs";
 
 export async function GET() {
@@ -20,11 +20,7 @@ export async function GET() {
       experts.map(async (e) => {
         let signed: string | null = null;
         if (e.photoUrl) {
-          try {
-            signed = await getDownloadUrl(e.photoUrl);
-          } catch {
-            signed = null;
-          }
+          signed = await getSignedUrl(e.photoUrl);
         }
         return {
           id: e.id,

@@ -1,6 +1,7 @@
-import { put, getDownloadUrl } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
+import { getSignedUrl } from "@/lib/blob";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         url: blob.url,
-        downloadUrl: getDownloadUrl(blob.url),
+        downloadUrl: await getSignedUrl(blob.url),
         fileName: file.name,
         fileType,
         fileSize: file.size,

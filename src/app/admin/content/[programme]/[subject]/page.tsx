@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDownloadUrl } from "@vercel/blob";
+import { getSignedUrl } from "@/lib/blob";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,9 +43,20 @@ export default async function SubjectContentPage({
   const theoryChapters = subject.chapters.filter((c) => c.type !== "PRACTICAL");
   const practicalChapters = subject.chapters.filter((c) => c.type === "PRACTICAL");
 
-  const toItems = (
-    contents: (typeof subject.chapters)[number]["chapterContents"]
-  ) => contents.map((c) => ({ ...c, downloadUrl: getDownloadUrl(c.url) }));
+  const signedMap = new Map<string, (typeof subject.chapters)[number]["chapterContents"] & { downloadUrl?: string }[]>();
+  await Promise.all(
+    subject.chapters.map(async (ch) => {
+      signedMap.set(
+        ch.id,
+        await Promise.all(
+          ch.chapterContents.map(async (c) => ({
+            ...c,
+            downloadUrl: await getSignedUrl(c.url),
+          }))
+        )
+      );
+    })
+  );
 
   return (
     <div className="space-y-6">
@@ -84,7 +95,7 @@ export default async function SubjectContentPage({
               <ChapterContentManager
                 chapterId={course.id}
                 chapterTitle={course.title}
-                initialContents={toItems(course.chapterContents)}
+                  initialContents={signedMap.get(course.id) ?? []}
               />
             </div>
           ))}
@@ -108,7 +119,7 @@ export default async function SubjectContentPage({
                   key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
-                  initialContents={toItems(ch.chapterContents)}
+                  initialContents={signedMap.get(ch.id) ?? []}
                 />
               </>))}
             </div>
@@ -130,7 +141,7 @@ export default async function SubjectContentPage({
                   key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
-                  initialContents={toItems(ch.chapterContents)}
+                  initialContents={signedMap.get(ch.id) ?? []}
                 />
               </>))}
             </div>

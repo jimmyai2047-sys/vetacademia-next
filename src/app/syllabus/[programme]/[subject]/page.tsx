@@ -14,6 +14,7 @@ import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical } from 
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
+import { getSignedUrl } from "@/lib/blob";
 
 export default async function SubjectPage({
   params,
@@ -53,6 +54,21 @@ export default async function SubjectPage({
 
   const theoryGrouped = groupByUnit(theoryChapters);
   const practicalGrouped = groupByUnit(practicalChapters);
+
+  const signedContents = new Map<string, (typeof subject.chapters)[number]["chapterContents"]>();
+  await Promise.all(
+    subject.chapters.map(async (ch) => {
+      signedContents.set(
+        ch.id,
+        await Promise.all(
+          ch.chapterContents.map(async (c) => ({
+            ...c,
+            url: await getSignedUrl(c.url),
+          }))
+        )
+      );
+    })
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -208,7 +224,7 @@ export default async function SubjectPage({
                                   Content coming soon...
                                 </div>
                               )}
-                              <ChapterResources contents={chapter.chapterContents} />
+                              <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
                             </AccordionContent>
                           </AccordionItem>
                         ))}
@@ -266,7 +282,7 @@ export default async function SubjectPage({
                                   Content coming soon...
                                 </div>
                               )}
-                              <ChapterResources contents={chapter.chapterContents} />
+                              <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
                             </AccordionContent>
                           </AccordionItem>
                         ))}

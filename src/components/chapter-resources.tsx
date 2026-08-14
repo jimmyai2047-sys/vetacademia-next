@@ -7,7 +7,6 @@ import {
   File as FileIcon,
   Download,
 } from "lucide-react";
-import { getDownloadUrl } from "@vercel/blob";
 import { Badge } from "@/components/ui/badge";
 
 function iconFor(type: string) {
@@ -57,7 +56,7 @@ export default function ChapterResources({
       <ul className="space-y-1.5">
         {contents.map((c) => {
           const Icon = iconFor(c.fileType);
-          const href = getDownloadUrl(c.url);
+          const href = c.url;
           return (
             <li key={c.id}>
               <a

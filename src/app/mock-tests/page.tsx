@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getDownloadUrl } from "@vercel/blob";
+import { getSignedUrl } from "@/lib/blob";
 import {
   Card,
   CardContent,
@@ -20,6 +20,13 @@ export default async function MockTestsPage() {
     include: { _count: { select: { questions: true } } },
   });
 
+  const testsWithLinks = await Promise.all(
+    tests.map(async (t) => ({
+      ...t,
+      signedUrl: await getSignedUrl(t.fileUrl),
+    }))
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -35,7 +42,7 @@ export default async function MockTestsPage() {
         </p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tests.map((test) => (
+          {testsWithLinks.map((test) => (
             <Card key={test.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-lg">{test.title}</CardTitle>
@@ -53,9 +60,9 @@ export default async function MockTestsPage() {
                   </div>
                 </div>
 
-                {test.fileUrl && (
+                {test.signedUrl && (
                   <a
-                    href={getDownloadUrl(test.fileUrl)}
+                    href={test.signedUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-primary hover:underline"

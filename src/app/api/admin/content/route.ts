@@ -1,7 +1,8 @@
-import { put, getDownloadUrl } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { getSignedUrl } from "@/lib/blob";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 
@@ -105,7 +106,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { ...content, downloadUrl: getDownloadUrl(blob.url) },
+      { ...content, downloadUrl: await getSignedUrl(blob.url) },
       { status: 201 }
     );
   } catch (error) {

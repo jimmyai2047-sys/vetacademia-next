@@ -7,6 +7,7 @@ import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
+import { getSignedUrl } from "@/lib/blob";
 
 export default async function CoursePage({
   params,
@@ -29,6 +30,13 @@ export default async function CoursePage({
   });
 
   if (!course) notFound();
+
+  const signedContents = await Promise.all(
+    course.chapterContents.map(async (c) => ({
+      ...c,
+      url: await getSignedUrl(c.url),
+    }))
+  );
 
   // Parse creditHours "X+Y" into Theory + Practical
   let theoryCredits = 0;
@@ -102,7 +110,7 @@ export default async function CoursePage({
               ) : (
                 <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
               )}
-              <ChapterResources contents={course.chapterContents} />
+              <ChapterResources contents={signedContents} />
             </CardContent>
           </Card>
         )}
@@ -120,7 +128,7 @@ export default async function CoursePage({
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
-              <ChapterResources contents={course.chapterContents} />
+              <ChapterResources contents={signedContents} />
             </CardContent>
           </Card>
         )}

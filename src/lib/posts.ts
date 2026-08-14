@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getDownloadUrl } from "@vercel/blob";
+import { getSignedUrl } from "@/lib/blob";
 
 export type PublicPost = {
   id: string;
@@ -22,12 +22,14 @@ export async function getPublishedPosts(
     },
     orderBy: { createdAt: "desc" },
   });
-  return posts.map((p) => ({
-    id: p.id,
-    title: p.title,
-    content: p.content,
-    fileName: p.fileName,
-    fileType: p.fileType,
-    downloadUrl: p.fileUrl ? getDownloadUrl(p.fileUrl) : null,
-  }));
+  return Promise.all(
+    posts.map(async (p) => ({
+      id: p.id,
+      title: p.title,
+      content: p.content,
+      fileName: p.fileName,
+      fileType: p.fileType,
+      downloadUrl: await getSignedUrl(p.fileUrl),
+    }))
+  );
 }
