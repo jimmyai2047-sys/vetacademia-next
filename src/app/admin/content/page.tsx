@@ -54,6 +54,19 @@ export default async function ContentPage() {
     }),
   ]);
 
+  const programmeOrder: Record<string, number> = {
+    AHDP: 0,
+    BVSC: 1,
+    MVSC: 2,
+    PHD: 3,
+  };
+  subjects.sort((a, b) => {
+    const pa = programmeOrder[a.programme.name] ?? 99;
+    const pb = programmeOrder[b.programme.name] ?? 99;
+    if (pa !== pb) return pa - pb;
+    return a.name.localeCompare(b.name);
+  });
+
   const iconMap: Record<string, typeof BookOpen> = {
     AHDP: BookOpen,
     BVSC: GraduationCap,
@@ -151,9 +164,7 @@ export default async function ContentPage() {
                     <TableHead>Code</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Programme</TableHead>
-                    <TableHead>Department</TableHead>
                     <TableHead>Year</TableHead>
-                    <TableHead>Semester</TableHead>
                     <TableHead>Chapters</TableHead>
                     <TableHead>Tests</TableHead>
                   </TableRow>
@@ -173,9 +184,7 @@ export default async function ContentPage() {
                         <TableCell>
                           <Badge variant="outline">{subject.programme.name}</Badge>
                         </TableCell>
-                        <TableCell>{subject.department?.name || "-"}</TableCell>
                         <TableCell>{subject.year || "-"}</TableCell>
-                        <TableCell>{subject.semester || "-"}</TableCell>
                         <TableCell>{subject._count.chapters}</TableCell>
                         <TableCell>{subject._count.mockTests}</TableCell>
                       </TableRow>
