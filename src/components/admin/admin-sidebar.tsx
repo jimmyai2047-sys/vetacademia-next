@@ -12,6 +12,7 @@ import {
   GraduationCap,
   FileText,
   Brain,
+  Stethoscope,
   ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 const sidebarItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Experts", href: "/admin/experts", icon: Stethoscope },
   { name: "Content", href: "/admin/content", icon: BookOpen },
   { name: "Posts", href: "/admin/posts", icon: FileText },
   { name: "Mock Tests", href: "/admin/mock-tests", icon: Brain },

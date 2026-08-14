@@ -263,6 +263,7 @@ model Expert {
   userId          String    @unique
   specialization  String
   bio             String?
+  photoUrl        String?
   hourlyRate      Int
   isAvailable     Boolean   @default(true)
   rating          Float     @default(0)
