@@ -160,3 +160,53 @@
 .dark ::-webkit-scrollbar-thumb {
   background: oklch(0.4 0 0);
 }
+
+/* Rendered rich chapter content */
+.chapter-content {
+  line-height: 1.7;
+  word-break: break-word;
+}
+.chapter-content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.75em 0 0.5em;
+}
+.chapter-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.75em 0 0.5em;
+}
+.chapter-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.75em 0 0.5em;
+}
+.chapter-content p {
+  margin: 0.5em 0;
+}
+.chapter-content ul {
+  list-style: disc;
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.chapter-content ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.chapter-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.5em 0;
+}
+.chapter-content a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.chapter-content blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1em;
+  color: var(--muted-foreground);
+  margin: 0.5em 0;
+}

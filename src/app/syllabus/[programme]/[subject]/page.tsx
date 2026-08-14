@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/accordion";
 import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
+import ProtectedHtml from "@/components/protected-html";
+import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
 
 export default async function SubjectPage({
   params,
@@ -191,7 +193,13 @@ export default async function SubjectPage({
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="pb-4">
-                              {chapter.content ? (
+                              {isHtmlContent(chapter.content) ? (
+                                <div className="pl-10">
+                                  <ProtectedHtml
+                                    html={sanitizeChapterContent(chapter.content)}
+                                  />
+                                </div>
+                              ) : chapter.content ? (
                                 <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
                                   {chapter.content}
                                 </div>
@@ -243,7 +251,13 @@ export default async function SubjectPage({
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="pb-4">
-                              {chapter.content ? (
+                              {isHtmlContent(chapter.content) ? (
+                                <div className="pl-10">
+                                  <ProtectedHtml
+                                    html={sanitizeChapterContent(chapter.content)}
+                                  />
+                                </div>
+                              ) : chapter.content ? (
                                 <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
                                   {chapter.content}
                                 </div>

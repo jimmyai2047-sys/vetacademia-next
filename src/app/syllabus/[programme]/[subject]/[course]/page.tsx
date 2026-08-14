@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
+import ProtectedHtml from "@/components/protected-html";
+import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
 
 export default async function CoursePage({
   params,
@@ -92,7 +94,11 @@ export default async function CoursePage({
             </CardHeader>
             <CardContent>
               {course.content && !course.content.startsWith("Credit Hours:") ? (
-                <p className="text-sm text-muted-foreground">{course.content}</p>
+                isHtmlContent(course.content) ? (
+                  <ProtectedHtml html={sanitizeChapterContent(course.content)} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{course.content}</p>
+                )
               ) : (
                 <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
               )}

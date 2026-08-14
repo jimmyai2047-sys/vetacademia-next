@@ -13,7 +13,7 @@ import {
   Layers,
 } from "lucide-react";
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
-import ChapterTextEditor from "@/components/admin/chapter-text-editor";
+import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -77,9 +77,9 @@ export default async function SubjectContentPage({
                 </Badge>
                 <span className="text-sm font-medium">{course.title}</span>
               </div>
-              <ChapterTextEditor
+              <ChapterRichEditor
                 chapterId={course.id}
-                initialText={course.content}
+                initialContent={course.content}
               />
               <ChapterContentManager
                 chapterId={course.id}
@@ -99,10 +99,10 @@ export default async function SubjectContentPage({
             <div className="space-y-3">
               {theoryChapters.map((ch) => (<>
 
-                <ChapterTextEditor
+                <ChapterRichEditor
                   key={`txt-${ch.id}`}
                   chapterId={ch.id}
-                  initialText={ch.content}
+                  initialContent={ch.content}
                 />
                 <ChapterContentManager
                   key={ch.id}
@@ -121,10 +121,10 @@ export default async function SubjectContentPage({
             <div className="space-y-3">
               {practicalChapters.map((ch) => (<>
 
-                <ChapterTextEditor
+                <ChapterRichEditor
                   key={`txt-${ch.id}`}
                   chapterId={ch.id}
-                  initialText={ch.content}
+                  initialContent={ch.content}
                 />
                 <ChapterContentManager
                   key={ch.id}
