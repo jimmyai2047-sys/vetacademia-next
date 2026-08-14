@@ -94,6 +94,7 @@ model Chapter {
   unitNumber  Int
   courseCode  String?
   creditHours String?
+  type        String?
   subjectId   String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
