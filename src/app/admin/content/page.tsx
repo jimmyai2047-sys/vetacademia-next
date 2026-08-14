@@ -43,8 +43,7 @@ export default async function ContentPage() {
         department: { select: { name: true } },
         _count: { select: { chapters: true, mockTests: true } },
       },
-      orderBy: { createdAt: "desc" },
-      take: 20,
+      orderBy: { name: "asc" },
     }),
     prisma.department.findMany({
       include: {
@@ -137,7 +136,7 @@ export default async function ContentPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>All Subjects</CardTitle>
-                  <CardDescription>Recently added subjects</CardDescription>
+                  <CardDescription>All subjects across programmes</CardDescription>
                 </div>
                 <Button size="sm">
                   <Plus className="h-4 w-4 mr-2" />
