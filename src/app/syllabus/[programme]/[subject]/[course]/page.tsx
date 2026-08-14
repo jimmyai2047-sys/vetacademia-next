@@ -77,39 +77,43 @@ export default async function CoursePage({
 
       {/* Theory / Practical split */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card className="border-blue-200">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Theory</CardTitle>
-              <p className="text-sm text-muted-foreground">{theoryCredits} Credits</p>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {course.content && !course.content.startsWith("Credit Hours:") ? (
-              <p className="text-sm text-muted-foreground">{course.content}</p>
-            ) : (
-              <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
-            )}
-          </CardContent>
-        </Card>
+        {theoryCredits > 0 && (
+          <Card className="border-blue-200">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Theory</CardTitle>
+                <p className="text-sm text-muted-foreground">{theoryCredits} Credits</p>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {course.content && !course.content.startsWith("Credit Hours:") ? (
+                <p className="text-sm text-muted-foreground">{course.content}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="border-emerald-200">
-          <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <FlaskConical className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Practical</CardTitle>
-              <p className="text-sm text-muted-foreground">{practicalCredits} Credits</p>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
-          </CardContent>
-        </Card>
+        {practicalCredits > 0 && (
+          <Card className="border-emerald-200">
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <FlaskConical className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Practical</CardTitle>
+                <p className="text-sm text-muted-foreground">{practicalCredits} Credits</p>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

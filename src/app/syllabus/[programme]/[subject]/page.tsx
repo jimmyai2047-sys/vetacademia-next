@@ -140,12 +140,16 @@ export default async function SubjectPage({
                         </p>
                       )}
                       <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="outline" className="text-[10px] gap-1 text-blue-600 border-blue-200">
-                          <BookOpen className="h-3 w-3" /> Theory
-                        </Badge>
-                        <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-200">
-                          <FlaskConical className="h-3 w-3" /> Practical
-                        </Badge>
+                        {course.creditHours && course.creditHours.includes("+") && parseInt(course.creditHours.split("+")[0], 10) > 0 && (
+                          <Badge variant="outline" className="text-[10px] gap-1 text-blue-600 border-blue-200">
+                            <BookOpen className="h-3 w-3" /> Theory
+                          </Badge>
+                        )}
+                        {course.creditHours && course.creditHours.includes("+") && parseInt(course.creditHours.split("+")[1], 10) > 0 && (
+                          <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-200">
+                            <FlaskConical className="h-3 w-3" /> Practical
+                          </Badge>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
