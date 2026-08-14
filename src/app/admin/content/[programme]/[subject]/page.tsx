@@ -13,6 +13,7 @@ import {
   Layers,
 } from "lucide-react";
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
+import ChapterTextEditor from "@/components/admin/chapter-text-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +77,10 @@ export default async function SubjectContentPage({
                 </Badge>
                 <span className="text-sm font-medium">{course.title}</span>
               </div>
+              <ChapterTextEditor
+                chapterId={course.id}
+                initialText={course.content}
+              />
               <ChapterContentManager
                 chapterId={course.id}
                 chapterTitle={course.title}
@@ -92,14 +97,20 @@ export default async function SubjectContentPage({
               {theoryChapters.length})
             </h2>
             <div className="space-y-3">
-              {theoryChapters.map((ch) => (
+              {theoryChapters.map((ch) => (<>
+
+                <ChapterTextEditor
+                  key={`txt-${ch.id}`}
+                  chapterId={ch.id}
+                  initialText={ch.content}
+                />
                 <ChapterContentManager
                   key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={toItems(ch.chapterContents)}
                 />
-              ))}
+              </>))}
             </div>
           </div>
           <div>
@@ -108,14 +119,20 @@ export default async function SubjectContentPage({
               {practicalChapters.length})
             </h2>
             <div className="space-y-3">
-              {practicalChapters.map((ch) => (
+              {practicalChapters.map((ch) => (<>
+
+                <ChapterTextEditor
+                  key={`txt-${ch.id}`}
+                  chapterId={ch.id}
+                  initialText={ch.content}
+                />
                 <ChapterContentManager
                   key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={toItems(ch.chapterContents)}
                 />
-              ))}
+              </>))}
             </div>
           </div>
         </div>
