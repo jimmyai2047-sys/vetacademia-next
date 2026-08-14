@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import VisitorCounter from "@/components/visitor-counter";
 import {
   Card,
   CardContent,
@@ -153,6 +154,13 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Visitor Counter (homepage only) */}
+      <section className="border-b bg-muted/30">
+        <div className="container mx-auto px-4 py-4 flex justify-center">
+          <VisitorCounter />
         </div>
       </section>
 
