@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import VisitorCounter from "@/components/visitor-counter";
+import Chatbot from "@/components/chatbot";
 import {
   Card,
   CardContent,
@@ -425,6 +426,8 @@ export default function HomePage() {
           <VisitorCounter />
         </div>
       </section>
+
+      <Chatbot />
     </div>
   );
 }

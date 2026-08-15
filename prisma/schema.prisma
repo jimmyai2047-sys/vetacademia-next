@@ -354,6 +354,22 @@ model Payment {
   @@index([planSlug])
 }
 
+// ==================== COMMUNITY LINKS (WhatsApp / Telegram) ====================
+
+model CommunityLink {
+  id        String   @id @default(cuid())
+  platform  String // WHATSAPP | TELEGRAM
+  category  String // PROGRAMME | EXAM
+  ref       String // programmeSlug (ahdp|bvsc|mvsc|phd) or examKey (psc|icar-entrance|net|ars|other)
+  title     String
+  url       String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category, ref])
+}
+
 // ==================== USER PROGRESS ====================
 
 model UserProgress {

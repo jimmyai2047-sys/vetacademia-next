@@ -13,6 +13,7 @@ const footerLinks = {
     { name: "Study Materials", href: "/study-materials" },
     { name: "Previous Year Papers", href: "/papers" },
     { name: "Flashcards", href: "/flashcards" },
+    { name: "Community", href: "/community" },
   ],
   support: [
     { name: "Expert Consultation", href: "/experts" },
