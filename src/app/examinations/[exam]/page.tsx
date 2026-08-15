@@ -306,6 +306,8 @@ export default async function ExamPage({
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {m.type}
+                        {m.subject ? ` · ${m.subject}` : ""}
+                        {m.topic ? ` → ${m.topic}` : ""}
                       </div>
                     </div>
                     {m.signedUrl ? (

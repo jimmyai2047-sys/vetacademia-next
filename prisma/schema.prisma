@@ -130,11 +130,14 @@ model ExamMaterial {
   externalUrl String? // for video/audio embeds (YouTube, etc.)
   published   Boolean  @default(true)
   order       Int      @default(0)
+  subject     String? // Subject name (e.g. "Anatomy") — UG (B.V.Sc/AHDP) or PG (M.V.Sc)
+  topic       String? // Chapter / Unit (UG) or Course (PG) title within the subject
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([category])
   @@index([type])
+  @@index([subject])
 }
 
 // ==================== MOCK TESTS ====================

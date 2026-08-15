@@ -25,6 +25,8 @@ export async function PUT(
       externalUrl,
       published,
       order,
+      subject,
+      topic,
     } = body as {
       category?: string;
       type?: string;
@@ -37,6 +39,8 @@ export async function PUT(
       externalUrl?: string | null;
       published?: boolean;
       order?: number;
+      subject?: string | null;
+      topic?: string | null;
     };
 
     const existing = await prisma.examMaterial.findUnique({ where: { id } });
@@ -60,6 +64,8 @@ export async function PUT(
           externalUrl !== undefined ? externalUrl : existing.externalUrl,
         published: published ?? existing.published,
         order: order ?? existing.order,
+        subject: subject !== undefined ? subject : existing.subject,
+        topic: topic !== undefined ? topic : existing.topic,
       },
     });
     return NextResponse.json(material);

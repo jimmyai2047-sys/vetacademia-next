@@ -10,6 +10,8 @@ import {
   LINK_TYPES,
   materialTypeLabel,
   getExamPrepCategory,
+  programmeForCategory,
+  levelForProgramme,
 } from "@/lib/exam-prep";
 import {
   Plus,
@@ -33,6 +35,8 @@ type MaterialRow = {
   externalUrl: string | null;
   published: boolean;
   order: number;
+  subject: string | null;
+  topic: string | null;
 };
 
 type FormState = {
@@ -43,6 +47,8 @@ type FormState = {
   externalUrl: string;
   published: boolean;
   order: number;
+  subject: string;
+  topic: string;
 };
 
 const emptyForm: FormState = {
@@ -53,6 +59,8 @@ const emptyForm: FormState = {
   externalUrl: "",
   published: true,
   order: 0,
+  subject: "",
+  topic: "",
 };
 
 export default function ExamMaterialManager({
@@ -80,6 +88,64 @@ export default function ExamMaterialManager({
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
+  const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
+  const [subjectMap, setSubjectMap] = useState<Record<string, string>>({});
+
+  const activeCategory = category || form.category;
+  const programme = programmeForCategory(activeCategory);
+  const isPG = programme === "mvsc";
+  const topicLabel = isPG ? "Course" : "Chapter / Unit";
+
+  async function loadChapters(subjectId?: string) {
+    if (!subjectId) {
+      setChapters([]);
+      return;
+    }
+    try {
+      const res = await fetch(
+        `/api/admin/exam-chapters?subjectId=${encodeURIComponent(subjectId)}`
+      );
+      if (res.ok) {
+        const d = await res.json();
+        setChapters(d.chapters || []);
+      }
+    } catch {
+      setChapters([]);
+    }
+  }
+
+  // Load subjects whenever the active programme changes.
+  useEffect(() => {
+    if (!programme) {
+      setSubjects([]);
+      setSubjectMap({});
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/admin/exam-subjects?programme=${programme}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        const list = d.subjects || [];
+        setSubjects(list);
+        setSubjectMap(Object.fromEntries(list.map((s: any) => [s.name, s.id])));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [programme]);
+
+  // When editing an existing material, load its chapters once subjects arrive.
+  useEffect(() => {
+    if (editingId && form.subject && subjects.length) {
+      const sid = subjects.find((s) => s.name === form.subject)?.id;
+      if (sid) loadChapters(sid);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId, form.subject, subjects]);
+
   async function load() {
     setLoading(true);
     const url = category
@@ -104,6 +170,8 @@ export default function ExamMaterialManager({
       externalUrl: m.externalUrl || "",
       published: m.published,
       order: m.order,
+      subject: m.subject || "",
+      topic: m.topic || "",
     });
     setFile(
       m.fileUrl
@@ -123,6 +191,7 @@ export default function ExamMaterialManager({
     setForm({ ...emptyForm, category: category || emptyForm.category });
     setFile(null);
     setError(null);
+    setChapters([]);
   }
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -188,6 +257,8 @@ export default function ExamMaterialManager({
       fileName: file?.fileName || null,
       fileType: file?.fileType || null,
       fileSize: file?.fileSize ?? null,
+      subject: form.subject || null,
+      topic: form.topic || null,
     };
     const method = editingId ? "PUT" : "POST";
     const url = editingId
@@ -249,9 +320,15 @@ export default function ExamMaterialManager({
               <select
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                 value={form.category}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, category: e.target.value }))
-                }
+                onChange={(e) => {
+                  setForm((f) => ({
+                    ...f,
+                    category: e.target.value,
+                    subject: "",
+                    topic: "",
+                  }));
+                  setChapters([]);
+                }}
               >
                 {EXAM_PREP_CATEGORIES.map((c) => (
                   <option key={c.key} value={c.key}>
@@ -274,6 +351,59 @@ export default function ExamMaterialManager({
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium block mb-1">Subject</label>
+            <select
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+              value={form.subject}
+              disabled={!programme}
+              onChange={(e) => {
+                const name = e.target.value;
+                setForm((f) => ({ ...f, subject: name, topic: "" }));
+                setChapters([]);
+                if (name && subjectMap[name]) loadChapters(subjectMap[name]);
+              }}
+            >
+              <option value="">— Select subject —</option>
+              {subjects.map((s) => (
+                <option key={s.id} value={s.name}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            {!programme && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Select a category first.
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="text-sm font-medium block mb-1">
+              {topicLabel}
+            </label>
+            <select
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+              value={form.topic}
+              disabled={!form.subject || chapters.length === 0}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, topic: e.target.value }))
+              }
+            >
+              <option value="">
+                — Select {topicLabel.toLowerCase()} —
+              </option>
+              {chapters.map((c) => (
+                <option key={c.id} value={c.title}>
+                  {c.title}
+                </option>
+              ))}
+            </select>
+            {form.subject && chapters.length === 0 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                No {topicLabel.toLowerCase()} found for this subject.
+              </p>
+            )}
           </div>
           <div className="sm:col-span-2">
             <label className="text-sm font-medium block mb-1">Title</label>
@@ -420,6 +550,7 @@ export default function ExamMaterialManager({
                   <th className="text-left p-3">Category</th>
                   <th className="text-left p-3">Type</th>
                   <th className="text-left p-3">Title</th>
+                  <th className="text-left p-3">Subject / Topic</th>
                   <th className="text-left p-3">Source</th>
                   <th className="text-left p-3">Published</th>
                   <th className="text-right p-3">Actions</th>
@@ -431,6 +562,15 @@ export default function ExamMaterialManager({
                     <td className="p-3">{categoryLabel(m.category)}</td>
                     <td className="p-3">{materialTypeLabel(m.type)}</td>
                     <td className="p-3">{m.title}</td>
+                    <td className="p-3 max-w-[220px]">
+                      {m.subject || "—"}
+                      {m.topic ? (
+                        <span className="text-muted-foreground">
+                          {" "}
+                          → {m.topic}
+                        </span>
+                      ) : null}
+                    </td>
                     <td className="p-3 max-w-[200px] truncate">
                       {m.externalUrl
                         ? "Link"

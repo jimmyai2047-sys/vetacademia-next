@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { getExamTrack, trackLabel } from "@/lib/exam-tracks";
-import { categoryForExamContentTrack } from "@/lib/exam-prep";
+import { materialSectionsForTrack } from "@/lib/exam-prep";
 import ExamMaterialManager from "@/components/admin/exam-material-manager";
 import {
   Card,
@@ -29,7 +29,7 @@ export default async function ExamContentPage({
   if (!trackInfo) notFound();
 
   const multi = trackInfo.subs.length > 1;
-  const materialCategory = categoryForExamContentTrack(track);
+  const materialSections = materialSectionsForTrack(track);
 
   const subData = await Promise.all(
     trackInfo.subs.map(async (sub) => {
@@ -159,19 +159,19 @@ export default async function ExamContentPage({
         </section>
        ))}
 
-      {materialCategory && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Study Materials</h2>
+      {materialSections.map((section) => (
+        <section key={section.category} className="space-y-4">
+          <h2 className="text-xl font-semibold">{section.label}</h2>
           <p className="text-muted-foreground">
             Add PPT / PDF / Video / Audio / Animation / Image resources for this
-            exam. These appear on the public exam-prep hub and the exam page.
+            exam, organised by Subject and {section.category === "ARS" ? "Course" : "Chapter / Unit"}. These appear on the public exam-prep hub and the exam page.
           </p>
           <ExamMaterialManager
-            category={materialCategory}
+            category={section.category}
             showHeading={false}
           />
         </section>
-      )}
+      ))}
     </div>
   );
 }

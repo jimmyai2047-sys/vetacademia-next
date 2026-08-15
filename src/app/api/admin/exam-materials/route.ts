@@ -40,6 +40,8 @@ export async function POST(req: Request) {
       externalUrl,
       published,
       order,
+      subject,
+      topic,
     } = body as {
       category?: string;
       type?: string;
@@ -52,6 +54,8 @@ export async function POST(req: Request) {
       externalUrl?: string | null;
       published?: boolean;
       order?: number;
+      subject?: string | null;
+      topic?: string | null;
     };
 
     if (!category || !type || !title) {
@@ -74,6 +78,8 @@ export async function POST(req: Request) {
         externalUrl: externalUrl || null,
         published: published ?? true,
         order: order ?? 0,
+        subject: subject || null,
+        topic: topic || null,
       },
     });
     return NextResponse.json(material, { status: 201 });
