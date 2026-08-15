@@ -210,6 +210,31 @@
   color: var(--muted-foreground);
   margin: 0.5em 0;
 }
+.chapter-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75em 0;
+  font-size: 0.95em;
+  overflow-x: auto;
+  display: block;
+}
+.chapter-content caption {
+  caption-side: bottom;
+  font-size: 0.85em;
+  color: var(--muted-foreground);
+  margin-top: 0.25em;
+}
+.chapter-content th,
+.chapter-content td {
+  border: 1px solid var(--border);
+  padding: 0.5em 0.75em;
+  text-align: left;
+  vertical-align: top;
+}
+.chapter-content th {
+  background: var(--muted);
+  font-weight: 600;
+}
 
 /* Important Links continuous circular marquee */
 @keyframes va-marquee {

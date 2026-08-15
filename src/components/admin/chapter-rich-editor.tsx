@@ -4,6 +4,8 @@ import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Extension } from "@tiptap/core";
+import { TableKit } from "@tiptap/extension-table/kit";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +18,7 @@ import {
   List,
   ListOrdered,
   Image as ImageIcon,
+  Table as TableIcon,
 } from "lucide-react";
 
 function insertImageAsBase64(editor: Editor | null, file: File) {
@@ -26,6 +29,44 @@ function insertImageAsBase64(editor: Editor | null, file: File) {
   };
   reader.readAsDataURL(file);
 }
+
+// Keep inline `style` attributes (e.g. colours, alignment, fonts) coming from
+// pasted Word / Google-Docs HTML so the visual formatting is preserved.
+const StyleAttribute = Extension.create({
+  name: "styleAttribute",
+  addGlobalAttributes() {
+    return [
+      {
+        types: [
+          "paragraph",
+          "heading",
+          "bulletList",
+          "orderedList",
+          "listItem",
+          "table",
+          "tableRow",
+          "tableCell",
+          "tableHeader",
+          "image",
+          "blockquote",
+          "codeBlock",
+        ],
+        attributes: {
+          style: {
+            default: null as string | null,
+            parseHTML: (element: Element) =>
+              (element as HTMLElement).getAttribute("style"),
+            renderHTML: (attributes: Record<string, unknown>) => {
+              const style = attributes.style as string | null | undefined;
+              if (!style) return {};
+              return { style };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
 
 export default function ChapterRichEditor({
   chapterId,
@@ -44,6 +85,8 @@ export default function ChapterRichEditor({
     extensions: [
       StarterKit,
       Image,
+      TableKit,
+      StyleAttribute,
       Placeholder.configure({
         placeholder: "Type or paste chapter content here (text + images)...",
       }),
@@ -169,6 +212,22 @@ export default function ChapterRichEditor({
           onClick={() => fileRef.current?.click()}
         >
           <ImageIcon className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          className="h-7 w-7"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+              .run()
+          }
+          title="Insert table"
+        >
+          <TableIcon className="h-3.5 w-3.5" />
         </Button>
         <input
           ref={fileRef}
