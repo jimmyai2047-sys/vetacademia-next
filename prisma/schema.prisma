@@ -113,6 +113,30 @@ model Chapter {
   @@index([subjectId])
 }
 
+// ==================== EXAM PREPARATION STUDY MATERIALS ====================
+// Uploaded study resources for exam-prep students, tagged by prep category
+// (VO | LSA | ARS | ICAR_ENTRANCE) and resource type.
+
+model ExamMaterial {
+  id          String   @id @default(cuid())
+  category    String // VO | LSA | ARS | ICAR_ENTRANCE
+  type        String // PPT | PDF | VIDEO | AUDIO | ANIMATION | IMAGE
+  title       String
+  description String?
+  fileUrl     String? // uploaded file (Blob URL)
+  fileName    String?
+  fileType    String?
+  fileSize    Int?
+  externalUrl String? // for video/audio embeds (YouTube, etc.)
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([type])
+}
+
 // ==================== MOCK TESTS ====================
 
 model MockTest {
@@ -127,6 +151,7 @@ model MockTest {
   fileType    String?
   exam        String? // exam key the test belongs to (psc | icar-entrance | net | ars | other)
   track       String? // granular content track (veterinary-officer | livestock-assistant | icar-pre | icar-mains | ...)
+  isAdaptive  Boolean  @default(false) // true => adaptive test (vs standard mock test)
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
