@@ -9,6 +9,9 @@ export type AccessInfo = {
   programmeSlugs: Set<string>;
   examKeys: Set<string>;
   examPlanOwned: boolean;
+  // Scopes for granular purchases:
+  ownedYearScopes: Set<string>; // `${programmeSlug}:${year}` (BVSc/AHDP year plans)
+  ownedSubjectIds: Set<string>; // subject ids (MVSc/PhD subject plans)
 };
 
 const EMPTY: AccessInfo = {
@@ -18,6 +21,8 @@ const EMPTY: AccessInfo = {
   programmeSlugs: new Set(),
   examKeys: new Set(),
   examPlanOwned: false,
+  ownedYearScopes: new Set(),
+  ownedSubjectIds: new Set(),
 };
 
 // Returns the plans the current user has PAID for, derived from Payment rows.
@@ -30,7 +35,7 @@ export async function getAccess(): Promise<AccessInfo> {
   const { prisma } = await import("@/lib/prisma");
   const payments = await prisma.payment.findMany({
     where: { userId, status: "PAID", planSlug: { not: null } },
-    select: { planSlug: true },
+    include: { plan: true },
   });
 
   const info: AccessInfo = {
@@ -40,19 +45,27 @@ export async function getAccess(): Promise<AccessInfo> {
     programmeSlugs: new Set(),
     examKeys: new Set(),
     examPlanOwned: false,
+    ownedYearScopes: new Set(),
+    ownedSubjectIds: new Set(),
   };
 
   for (const p of payments) {
     const slug = p.planSlug!;
-    const plan = PLAN_BY_SLUG[slug];
+    const plan = p.plan;
     if (!plan) continue;
     info.planSlugs.add(slug);
-    if (plan.type === "COURSE" && plan.programmeSlug) {
+    if (plan.type === "COURSE" && plan.programmeSlug && !plan.year && !plan.subjectId) {
       info.programmeSlugs.add(plan.programmeSlug);
     }
-    if (plan.type === "EXAM") {
+    if (plan.type === "EXAM" && plan.examSlug) {
       info.examPlanOwned = true;
       getExamKeysForPlan(plan.examSlug).forEach((k) => info.examKeys.add(k));
+    }
+    if (plan.year && plan.programmeSlug) {
+      info.ownedYearScopes.add(`${plan.programmeSlug}:${plan.year}`);
+    }
+    if (plan.subjectId) {
+      info.ownedSubjectIds.add(plan.subjectId);
     }
   }
 

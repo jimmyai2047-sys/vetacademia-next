@@ -6,11 +6,17 @@ export default function EnrollCta({
   planSlug,
   title = "Premium Content",
   message,
+  to = "pricing",
 }: {
   planSlug: string;
   title?: string;
   message?: string;
+  to?: "pricing" | "checkout";
 }) {
+  const href =
+    to === "checkout"
+      ? `/checkout?plan=${encodeURIComponent(planSlug)}`
+      : `/pricing?plan=${encodeURIComponent(planSlug)}`;
   return (
     <Card className="border-primary/30 bg-primary/5">
       <CardContent className="p-8 text-center space-y-4">
@@ -25,10 +31,10 @@ export default function EnrollCta({
           </p>
         </div>
         <Link
-          href={`/pricing?plan=${encodeURIComponent(planSlug)}`}
+          href={href}
           className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
-          View Plans &amp; Enroll
+          {to === "checkout" ? "Buy & Unlock" : "View Plans & Enroll"}
         </Link>
       </CardContent>
     </Card>

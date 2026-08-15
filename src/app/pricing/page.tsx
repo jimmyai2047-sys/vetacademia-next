@@ -40,7 +40,9 @@ export default async function PricingPage({
     getAccess(),
   ]);
 
-  const courses = plans.filter((p) => p.type === "COURSE");
+  const courses = plans.filter(
+    (p) => p.type === "COURSE" && !p.year && !p.subjectId
+  );
   const exams = plans.filter((p) => p.type === "EXAM");
 
   const renderPlan = (plan: (typeof plans)[number]) => {

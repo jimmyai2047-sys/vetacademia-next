@@ -318,11 +318,16 @@ model Plan {
   price         Int      @default(0) // in INR
   programmeSlug String? // for COURSE plans: ahdp | bvsc | mvsc | phd
   examSlug      String? // for EXAM plans: veterinary-officer | livestock-assistant | icar-jrf-srf | net | ars
+  year          String? // for YEAR-scoped COURSE plans (BVSc/AHDP): e.g. "3rd Year"
+  subjectId     String? // for SUBJECT-scoped COURSE plans (MVSc/PhD): specific Subject
   sortOrder     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   purchases Payment[]
+
+  @@index([year])
+  @@index([subjectId])
 }
 
 // ==================== PAYMENTS ====================

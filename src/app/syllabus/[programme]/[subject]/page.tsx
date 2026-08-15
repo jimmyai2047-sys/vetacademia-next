@@ -39,7 +39,38 @@ export default async function SubjectPage({
   if (!subject) notFound();
 
   const access = await getAccess();
-  const hasAccess = access.programmeSlugs.has(progSlug);
+  const programmeOwned = access.programmeSlugs.has(progSlug);
+  const yearOwned =
+    (progSlug === "bvsc" || progSlug === "ahdp") && subject.year
+      ? access.ownedYearScopes.has(`${progSlug}:${subject.year}`)
+      : false;
+  const subjectOwned = access.ownedSubjectIds.has(subject.id);
+  const hasAccess = programmeOwned || yearOwned || subjectOwned;
+
+  // Resolve the plan to purchase when locked.
+  let purchasePlanSlug: string = progSlug;
+  let purchaseViaCheckout = false;
+  if (!hasAccess) {
+    if (progSlug === "bvsc" || progSlug === "ahdp") {
+      if (subject.year) {
+        const plan = await prisma.plan.findFirst({
+          where: { programmeSlug: progSlug, year: subject.year },
+        });
+        if (plan) {
+          purchasePlanSlug = plan.slug;
+          purchaseViaCheckout = true;
+        }
+      }
+    } else if (progSlug === "mvsc" || progSlug === "phd") {
+      const plan = await prisma.plan.findFirst({
+        where: { subjectId: subject.id },
+      });
+      if (plan) {
+        purchasePlanSlug = plan.slug;
+        purchaseViaCheckout = true;
+      }
+    }
+  }
 
   const hasCourses = subject.chapters.some((ch) => ch.courseCode);
 
@@ -313,9 +344,18 @@ export default async function SubjectPage({
           </>
           ) : (
             <EnrollCta
-              planSlug={progSlug}
-              title="Enroll to access syllabus"
-              message={`Enroll in ${subject.programme.name} to unlock chapters, notes and study material.`}
+              planSlug={purchasePlanSlug}
+              title={purchaseViaCheckout ? "Unlock this content" : "Enroll to access syllabus"}
+              message={
+                purchaseViaCheckout
+                  ? `Buy ${
+                      progSlug === "bvsc" || progSlug === "ahdp"
+                        ? `${subject.programme.name} ${subject.year}`
+                        : subject.name
+                    } to unlock chapters, notes and study material.`
+                  : `Enroll in ${subject.programme.name} to unlock chapters, notes and study material.`
+              }
+              to={purchaseViaCheckout ? "checkout" : "pricing"}
             />
           )}
         </TabsContent>
