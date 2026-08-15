@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { EXAM_CONTENT_TRACKS } from "@/lib/exam-tracks";
 import {
   Plus,
   BookOpen,
@@ -25,6 +26,7 @@ import {
   FlaskConical,
   ArrowLeft,
   Layers,
+  Award,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -104,6 +106,7 @@ export default async function ContentPage() {
           <TabsTrigger value="programmes">Programmes ({programmes.length})</TabsTrigger>
           <TabsTrigger value="subjects">Subjects ({subjects.length})</TabsTrigger>
           <TabsTrigger value="departments">Departments ({departments.length})</TabsTrigger>
+          <TabsTrigger value="examinations">Examinations ({EXAM_CONTENT_TRACKS.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="programmes" className="space-y-4">
@@ -248,6 +251,28 @@ export default async function ContentPage() {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="examinations" className="space-y-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {EXAM_CONTENT_TRACKS.map((track) => (
+              <Link key={track.key} href={`/admin/content/exam/${track.key}`}>
+                <Card className="hover:shadow-lg transition-all cursor-pointer">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Award className="h-5 w-5 text-primary" />
+                      <CardTitle className="text-lg">{track.label}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" size="sm">
+                      Manage
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

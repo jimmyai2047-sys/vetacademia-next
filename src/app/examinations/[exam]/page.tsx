@@ -300,6 +300,12 @@ export default async function ExamPage({
 
   const prevYearPosts = await getPublishedPosts("PREVIOUS_YEAR", exam);
 
+  const dbMockTests = await prisma.mockTest.findMany({
+    where: { exam },
+    orderBy: { createdAt: "desc" },
+    include: { _count: { select: { questions: true } } },
+  });
+
   const access = await getAccess();
   const examUnlocked = access.examKeys.has(exam) || exam === "other";
 
@@ -464,7 +470,7 @@ export default async function ExamPage({
           </CardContent>
         </Card>
 
-        {/* Mock Test */}
+        {/* Mock & Adaptive Tests (DB-driven) */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -472,83 +478,42 @@ export default async function ExamPage({
                 <Brain className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <CardTitle>Mock Test</CardTitle>
-                <CardDescription>Practice with timed mock tests</CardDescription>
+                <CardTitle>Mock &amp; Adaptive Tests</CardTitle>
+                <CardDescription>
+                  Practice with timed and personalized tests
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {data.mockTests.map((test, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
-                >
-                  <div>
-                    <div className="font-medium text-sm">{test.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {test.questions} Questions &middot; {test.duration}
+            {dbMockTests.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No tests yet. Add them from the admin panel.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {dbMockTests.map((t) => (
+                  <Link
+                    key={t.id}
+                    href={`/mock-tests/${t.id}`}
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                  >
+                    <div>
+                      <div className="font-medium text-sm">{t.title}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {t._count.questions} Questions &middot; {t.duration} min
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        test.difficulty === "Easy"
-                          ? "default"
-                          : test.difficulty === "Medium"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {test.difficulty}
-                    </Badge>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" className="w-full mt-4">
-              View All Mock Tests
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Adaptive Test */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+                  </Link>
+                ))}
               </div>
-              <div>
-                <CardTitle>Adaptive Test</CardTitle>
-                <CardDescription>AI-powered personalized tests</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {data.adaptiveTests.map((test, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
-                >
-                  <div>
-                    <div className="font-medium text-sm">{test.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {test.description}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{test.level}</Badge>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" className="w-full mt-4">
-              Start Adaptive Test
-            </Button>
+            )}
+            <Link href="/mock-tests" className="block mt-4">
+              <Button variant="outline" className="w-full">
+                View All Tests
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

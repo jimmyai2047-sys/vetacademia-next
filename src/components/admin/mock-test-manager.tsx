@@ -25,8 +25,18 @@ type MockTest = {
   totalMarks: number;
   fileName: string | null;
   fileType: string | null;
+  exam?: string | null;
   _count?: { questions: number };
 };
+
+const EXAM_OPTIONS = [
+  { value: "", label: "None (general)" },
+  { value: "psc", label: "PSC (VO/VS & LSA)" },
+  { value: "icar-entrance", label: "ICAR-JRF/SRF" },
+  { value: "net", label: "NET" },
+  { value: "ars", label: "ARS" },
+  { value: "other", label: "Other" },
+];
 
 export default function MockTestManager() {
   const router = useRouter();
@@ -39,6 +49,7 @@ export default function MockTestManager() {
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState(30);
   const [totalMarks, setTotalMarks] = useState(0);
+  const [exam, setExam] = useState("");
   const [file, setFile] = useState<{
     url: string;
     fileName: string;
@@ -72,6 +83,7 @@ export default function MockTestManager() {
     setDescription("");
     setDuration(30);
     setTotalMarks(0);
+    setExam("");
     setFile(null);
     setError(null);
     setShowForm(true);
@@ -83,6 +95,7 @@ export default function MockTestManager() {
     setDescription(t.description || "");
     setDuration(t.duration);
     setTotalMarks(t.totalMarks);
+    setExam(t.exam || "");
     setFile(
       t.fileName
         ? { url: "", fileName: t.fileName, fileType: t.fileType || "" }
@@ -123,7 +136,7 @@ export default function MockTestManager() {
     setSaving(true);
     setError(null);
     try {
-      const payload = { title, description, duration, totalMarks, file };
+      const payload = { title, description, duration, totalMarks, exam, file };
       const res = editing
         ? await fetch(`/api/admin/mock-tests/${editing.id}`, {
             method: "PUT",
@@ -211,6 +224,20 @@ export default function MockTestManager() {
               value={totalMarks}
               onChange={(e) => setTotalMarks(Number(e.target.value))}
             />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Exam (optional — tag to an examination)</Label>
+            <select
+              value={exam}
+              onChange={(e) => setExam(e.target.value)}
+              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {EXAM_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="space-y-1.5">
             <Label>Practice Set File (optional PDF)</Label>

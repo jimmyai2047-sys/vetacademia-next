@@ -125,6 +125,7 @@ model MockTest {
   fileUrl     String?
   fileName    String?
   fileType    String?
+  exam        String? // exam key the test belongs to (psc | icar-entrance | net | ars | other)
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

@@ -19,6 +19,7 @@ export async function PUT(
       duration,
       totalMarks,
       subjectId,
+      exam,
       file,
     } = body as {
       title?: string;
@@ -26,6 +27,7 @@ export async function PUT(
       duration?: number;
       totalMarks?: number;
       subjectId?: string | null;
+      exam?: string | null;
       file?: {
         url: string;
         fileName: string;
@@ -46,6 +48,7 @@ export async function PUT(
         duration: duration ?? existing.duration,
         totalMarks: totalMarks ?? existing.totalMarks,
         subjectId: subjectId !== undefined ? subjectId : existing.subjectId,
+        exam: exam !== undefined ? exam : existing.exam,
         fileUrl: file?.url !== undefined ? (file?.url || null) : existing.fileUrl,
         fileName:
           file?.fileName !== undefined ? (file?.fileName || null) : existing.fileName,
