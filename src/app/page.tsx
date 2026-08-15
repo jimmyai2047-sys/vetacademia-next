@@ -149,7 +149,7 @@ const importantLinks = [
   {
     name: "NBAGR",
     href: "https://nbagr.res.in",
-    logo: "/logos/nbagr.png",
+    logo: "/logos/nbagr.jpg",
     short: "NB",
     color: "#7c3aed",
   },
