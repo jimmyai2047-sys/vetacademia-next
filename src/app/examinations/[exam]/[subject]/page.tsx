@@ -63,9 +63,9 @@ export default async function ExamSubjectPage({
     ? access.planSlugs.has(group.planSlug)
     : examUnlocked;
 
-  const [mvscSubject, papers] = await Promise.all([
+  const [matchedSubjects, papers] = await Promise.all([
     discipline.subjectName && discipline.programmeSlug
-      ? prisma.subject.findFirst({
+      ? prisma.subject.findMany({
           where: {
             name: { equals: discipline.subjectName, mode: "insensitive" },
             programme: { name: discipline.programmeSlug.toUpperCase() },
@@ -80,10 +80,22 @@ export default async function ExamSubjectPage({
               select: { id: true, title: true, duration: true, totalMarks: true },
             },
           },
+          orderBy: { year: "asc" },
         })
-      : Promise.resolve(null),
+      : Promise.resolve([]),
     getPublishedPosts("PREVIOUS_YEAR", exam, subjectSlug),
   ]);
+
+  // Merge all year records that share this subject name (e.g. III Year + IV Year).
+  const allMockTests = matchedSubjects.flatMap((s) => s.mockTests);
+  const studySections = matchedSubjects
+    .filter((s) => s.chapters.length > 0)
+    .map((s) => ({
+      subjectId: s.id,
+      year: s.year,
+      creditHours: s.creditHours,
+      chapters: s.chapters,
+    }));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -154,9 +166,9 @@ export default async function ExamSubjectPage({
               </div>
             </CardHeader>
             <CardContent>
-              {mvscSubject && mvscSubject.mockTests.length > 0 ? (
+              {allMockTests.length > 0 ? (
                 <div className="space-y-3">
-                  {mvscSubject.mockTests.map((t) => (
+                  {allMockTests.map((t) => (
                     <Link
                       key={t.id}
                       href={`/mock-tests/${t.id}`}
@@ -180,8 +192,8 @@ export default async function ExamSubjectPage({
             </CardContent>
           </Card>
 
-          {/* Study Material (programme syllabus) */}
-          {mvscSubject && mvscSubject.chapters.length > 0 && (
+          {/* Study Material (programme syllabus, merged across years) */}
+          {studySections.length > 0 && (
             <Card className="md:col-span-2">
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -197,18 +209,30 @@ export default async function ExamSubjectPage({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                  {mvscSubject.chapters.map((c) => (
-                    <Link
-                      key={c.id}
-                      href={`/syllabus/${discipline.programmeSlug}/${mvscSubject.id}/${c.id}`}
-                      className="px-3 py-2 rounded-lg border text-sm hover:bg-accent transition-colors"
-                    >
-                      {c.title}
-                    </Link>
-                  ))}
-                </div>
+              <CardContent className="space-y-6">
+                {studySections.map((sec, i) => (
+                  <div key={i}>
+                    <div className="flex items-center gap-2 mb-2">
+                      {sec.year && <Badge variant="secondary">{sec.year}</Badge>}
+                      {sec.creditHours && (
+                        <span className="text-xs text-muted-foreground">
+                          Credit Hours: {sec.creditHours}
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {sec.chapters.map((c) => (
+                        <Link
+                          key={c.id}
+                          href={`/syllabus/${discipline.programmeSlug}/${sec.subjectId}/${c.id}`}
+                          className="px-3 py-2 rounded-lg border text-sm hover:bg-accent transition-colors"
+                        >
+                          {c.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}

@@ -315,10 +315,10 @@ export default async function ExamPage({
         select: { name: true },
         orderBy: { name: "asc" },
       });
-      groupSubjects[g.slug] = subs.map((s) => ({
-        slug: slugify(s.name),
-        name: s.name,
-      }));
+      const seen = new Set<string>();
+      groupSubjects[g.slug] = subs
+        .map((s) => ({ slug: slugify(s.name), name: s.name }))
+        .filter((s) => (seen.has(s.slug) ? false : (seen.add(s.slug), true)));
     }
   }
 
