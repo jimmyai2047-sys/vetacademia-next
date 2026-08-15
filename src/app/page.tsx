@@ -141,7 +141,7 @@ const importantLinks = [
   },
   {
     name: "DOAHD (GOI)",
-    href: "https://dahd.nic.in",
+    href: "https://www.dahd.gov.in/",
     logo: "/logos/dohd.png",
     short: "DH",
     color: "#2563eb",
