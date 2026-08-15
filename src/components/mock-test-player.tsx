@@ -32,19 +32,35 @@ export default function MockTestPlayer({
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [saved, setSaved] = useState(false);
 
   function select(qid: string, idx: number) {
     if (submitted) return;
     setAnswers((prev) => ({ ...prev, [qid]: idx }));
   }
 
-  function submit() {
+  async function submit() {
     let s = 0;
     questions.forEach((q) => {
       if (answers[q.id] === q.correctAnswer) s += q.marks;
     });
     setScore(s);
     setSubmitted(true);
+
+    try {
+      await fetch(`/api/mock-tests/${testId}/attempt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          score: s,
+          totalMarks,
+          answers,
+        }),
+      });
+      setSaved(true);
+    } catch {
+      // progress not persisted, but the result is still shown locally
+    }
   }
 
   function reset() {
@@ -83,6 +99,11 @@ export default function MockTestPlayer({
               {score} / {totalMarks}
             </div>
             <p className="text-muted-foreground">Your score</p>
+            {saved && (
+              <p className="text-xs text-green-600 mt-1">
+                Saved to your progress
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

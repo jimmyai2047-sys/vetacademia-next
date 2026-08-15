@@ -126,9 +126,15 @@ export default async function ExpertsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" disabled={!expert.isAvailable}>
-                  {expert.isAvailable ? "Book Consultation" : "Not Available"}
-                </Button>
+                {expert.isAvailable ? (
+                  <Link href="/contact" className="w-full">
+                    <Button className="w-full">Book Consultation</Button>
+                  </Link>
+                ) : (
+                  <Button className="w-full" disabled>
+                    Not Available
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))}
@@ -143,9 +149,11 @@ export default async function ExpertsPage() {
             <p className="opacity-90 mb-4">
               Share your knowledge and help veterinary students succeed
             </p>
-            <Button variant="secondary" size="lg">
-              Apply as Expert
-            </Button>
+            <Link href="/contact">
+              <Button variant="secondary" size="lg">
+                Apply as Expert
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

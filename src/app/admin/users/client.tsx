@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, UserPlus, Download, Users, ArrowLeft } from "lucide-react";
+import { Search, Download, Users, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 type User = {
@@ -65,6 +65,33 @@ export default function UsersClient({ users }: { users: User[] }) {
     return counts;
   }, [users]);
 
+  function handleExport() {
+    const headers = ["Name", "Email", "Role", "Programme", "Year", "Joined"];
+    const escape = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const rows = users.map((u) => [
+      u.name,
+      u.email,
+      u.role,
+      u.programme ?? "",
+      u.year ?? "",
+      new Date(u.createdAt).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((cell) => escape(String(cell))).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "users.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -80,13 +107,9 @@ export default function UsersClient({ users }: { users: User[] }) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export
-          </Button>
-          <Button size="sm">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add User
           </Button>
         </div>
       </div>

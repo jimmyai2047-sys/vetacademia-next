@@ -195,7 +195,7 @@ export default async function DashboardPage() {
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
               </div>
             </Link>
-            <Link href="/materials">
+            <Link href="/study-materials">
               <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">

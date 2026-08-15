@@ -20,7 +20,6 @@ import {
   Brain,
   Users,
   FileText,
-  Calculator,
   ArrowRight,
   CheckCircle,
   ExternalLink,
@@ -86,13 +85,6 @@ const features = [
     description: "One-on-one sessions with veterinary experts",
     href: "/experts",
     image: "/images/features-experts.jpg",
-  },
-  {
-    icon: Calculator,
-    title: "Clinical Tools",
-    description: "Drug calculators, drip rates, and more",
-    href: "/tools",
-    image: "/images/hero-vet.jpg",
   },
 ];
 
@@ -405,15 +397,6 @@ export default function HomePage() {
               >
                 Create Free Account
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/demo">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/20"
-              >
-                Watch Demo
               </Button>
             </Link>
           </div>

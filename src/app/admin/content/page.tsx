@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/table";
 import { EXAM_CONTENT_TRACKS } from "@/lib/exam-tracks";
 import {
-  Plus,
   BookOpen,
   GraduationCap,
   FlaskConical,
@@ -154,10 +153,6 @@ export default async function ContentPage() {
                   <CardTitle>All Subjects</CardTitle>
                   <CardDescription>All subjects across programmes</CardDescription>
                 </div>
-                <Button size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Subject
-                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -207,10 +202,6 @@ export default async function ContentPage() {
                   <CardTitle>Departments</CardTitle>
                   <CardDescription>All departments across programmes</CardDescription>
                 </div>
-                <Button size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Department
-                </Button>
               </div>
             </CardHeader>
             <CardContent>

@@ -15,11 +15,6 @@ import {
   Wheat,
   Megaphone,
   Stethoscope,
-  ChevronRight,
-  ArrowRight,
-  Shield,
-  Calendar,
-  TrendingUp,
   Users,
   Clock,
   Phone,
@@ -270,7 +265,7 @@ export default async function FarmersPage() {
           <CardContent>
             <div className="space-y-3">
               {schemes.map((scheme, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="flex items-start justify-between mb-1">
                     <div className="font-medium text-sm">{scheme.name}</div>
                     <Badge variant="default" className="text-xs shrink-0">{scheme.status}</Badge>
@@ -280,9 +275,6 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              View All Schemes <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </CardContent>
         </Card>
 
@@ -302,7 +294,7 @@ export default async function FarmersPage() {
           <CardContent>
             <div className="space-y-3">
               {vaccinationSchedule.map((vaccine, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="font-medium text-sm mb-1">{vaccine.disease}</div>
                   <div className="text-xs text-muted-foreground mb-2">{vaccine.animals}</div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
@@ -313,9 +305,6 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              Full Vaccination Calendar <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </CardContent>
         </Card>
 
@@ -341,7 +330,7 @@ export default async function FarmersPage() {
                 { title: "Pig Farming (20 Pigs)", investment: "Rs. 2-3 Lakh", returns: "Rs. 1.5-2 Lakh/year", duration: "1-1.5 years" },
                 { title: "Sheep Farming (100 Sheep)", investment: "Rs. 3-4 Lakh", returns: "Rs. 2-2.5 Lakh/year", duration: "1-2 years" },
               ].map((project, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="font-medium text-sm mb-1">{project.title}</div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div><span className="text-muted-foreground">Investment:</span> {project.investment}</div>
@@ -353,9 +342,6 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              Generate Custom Report <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </CardContent>
         </Card>
 
@@ -375,7 +361,7 @@ export default async function FarmersPage() {
           <CardContent>
             <div className="space-y-3">
               {feedFormulation.map((feed, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="font-medium text-sm mb-1">{feed.animal}</div>
                   <div className="text-xs text-muted-foreground mb-2">{feed.feedType}</div>
                   <div className="grid grid-cols-2 gap-2 text-xs mb-2">
@@ -386,9 +372,6 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              Calculate Custom Feed <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </CardContent>
         </Card>
 
@@ -414,7 +397,7 @@ export default async function FarmersPage() {
                 { title: "Best Practices for Feed Storage", type: "Management", date: "Updated: June 2026", icon: "🌾" },
                 { title: "Disease Outbreak Prevention", type: "Health", date: "Updated: Aug 2026", icon: "🛡️" },
               ].map((advisory, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{advisory.icon}</span>
                     <div className="font-medium text-sm">{advisory.title}</div>
@@ -426,9 +409,6 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              View All Advisories <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </CardContent>
         </Card>
 
@@ -453,7 +433,7 @@ export default async function FarmersPage() {
                 { name: "Dr. Amit Singh", specialty: "Veterinary Medicine", experience: "10 years exp", available: false },
                 { name: "Dr. Neha Gupta", specialty: "Dairy Management", experience: "8 years exp", available: true },
               ].map((expert, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
+                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="flex items-center justify-between mb-1">
                     <div className="font-medium text-sm">{expert.name}</div>
                     <Badge variant={expert.available ? "default" : "secondary"} className="text-xs">
@@ -465,9 +445,11 @@ export default async function FarmersPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-4">
-              Book Consultation <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
+            <Link href="/experts" className="block mt-4">
+              <Button variant="outline" className="w-full">
+                Book Consultation
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -521,9 +503,11 @@ export default async function FarmersPage() {
             Call our toll-free veterinary helpline or book an online consultation with experts
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button variant="secondary" size="lg">
-              <Phone className="h-4 w-4 mr-2" /> Call Helpline
-            </Button>
+            <Link href="/contact">
+              <Button variant="secondary" size="lg">
+                <Phone className="h-4 w-4 mr-2" /> Call Helpline
+              </Button>
+            </Link>
             <Link href="/experts">
               <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
                 <Stethoscope className="h-4 w-4 mr-2" /> Book Consultation
