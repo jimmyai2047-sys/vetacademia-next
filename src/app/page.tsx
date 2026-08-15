@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import VisitorCounter from "@/components/visitor-counter";
 import Chatbot from "@/components/chatbot";
@@ -99,39 +100,104 @@ const importantLinks = [
   {
     name: "RUVAS",
     href: "https://ruvasjaipur.rajasthan.gov.in/",
-    logo: "https://ruvasjaipur.rajasthan.gov.in/favicon.ico",
+    logo: "/logos/ruvas.ico",
+    short: "RU",
+    color: "#1d4ed8",
   },
   {
     name: "RAJUVAS",
     href: "https://rajuvas.org",
-    logo: "https://rajuvas.org/favicon.ico",
+    logo: "/logos/rajuvas.png",
+    short: "RA",
+    color: "#16a34a",
   },
   {
     name: "ICAR",
     href: "https://icar.org.in",
-    logo: "https://icar.org.in/favicon.ico",
+    logo: "/logos/icar.png",
+    short: "IC",
+    color: "#dc2626",
   },
   {
     name: "VCI",
     href: "https://vci.nic.in",
-    logo: "https://vci.nic.in/favicon.ico",
+    logo: "/logos/vci.png",
+    short: "VC",
+    color: "#0891b2",
   },
   {
     name: "NDDB",
     href: "https://nddb.coop",
-    logo: "https://nddb.coop/favicon.ico",
+    logo: "/logos/nddb.png",
+    short: "ND",
+    color: "#ca8a04",
   },
   {
     name: "APEDA",
     href: "https://apeda.gov.in",
-    logo: "https://apeda.gov.in/favicon.ico",
+    logo: "/logos/apeda.png",
+    short: "AP",
+    color: "#15803d",
   },
   {
     name: "DOAHD (GOI)",
     href: "https://dahd.nic.in",
-    logo: "https://dahd.nic.in/favicon.ico",
+    logo: "/logos/dohd.png",
+    short: "DH",
+    color: "#2563eb",
+  },
+  {
+    name: "NBAGR",
+    href: "https://nbagr.res.in",
+    logo: "/logos/nbagr.png",
+    short: "NB",
+    color: "#7c3aed",
   },
 ];
+
+function ImportantLinkCard({
+  name,
+  href,
+  logo,
+  short,
+  color,
+}: {
+  name: string;
+  href: string;
+  logo: string;
+  short: string;
+  color: string;
+}) {
+  const [errored, setErrored] = useState(false);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`Visit ${name}`}
+      className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all"
+    >
+      {logo && !errored ? (
+        <img
+          src={logo}
+          alt={`${name} logo`}
+          width={56}
+          height={56}
+          className="h-14 w-14 object-contain"
+          onError={() => setErrored(true)}
+        />
+      ) : (
+        <div
+          className="h-14 w-14 rounded-full flex items-center justify-center text-white font-bold text-sm"
+          style={{ backgroundColor: color }}
+        >
+          {short}
+        </div>
+      )}
+      <span className="text-sm font-medium text-foreground">{name}</span>
+    </a>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -290,29 +356,14 @@ export default function HomePage() {
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {importantLinks.map((link) => (
-                  <a
+                  <ImportantLinkCard
                     key={link.name}
+                    name={link.name}
                     href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Visit ${link.name}`}
-                    className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all"
-                  >
-                    <img
-                      src={link.logo}
-                      alt={`${link.name} logo`}
-                      width={56}
-                      height={56}
-                      className="h-14 w-14 object-contain"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display =
-                          "none";
-                      }}
-                    />
-                    <span className="text-sm font-medium text-foreground">
-                      {link.name}
-                    </span>
-                  </a>
+                    logo={link.logo}
+                    short={link.short}
+                    color={link.color}
+                  />
                 ))}
               </div>
             </div>
