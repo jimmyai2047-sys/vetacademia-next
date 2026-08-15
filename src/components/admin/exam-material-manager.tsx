@@ -9,6 +9,7 @@ import {
   FILE_TYPES,
   LINK_TYPES,
   materialTypeLabel,
+  getExamPrepCategory,
 } from "@/lib/exam-prep";
 import {
   Plus,
@@ -54,10 +55,19 @@ const emptyForm: FormState = {
   order: 0,
 };
 
-export default function ExamMaterialManager() {
+export default function ExamMaterialManager({
+  category,
+  showHeading = true,
+}: {
+  category?: string;
+  showHeading?: boolean;
+}) {
   const [rows, setRows] = useState<MaterialRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [form, setForm] = useState<FormState>({
+    ...emptyForm,
+    category: category || emptyForm.category,
+  });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [file, setFile] = useState<{
     url: string;
@@ -72,7 +82,10 @@ export default function ExamMaterialManager() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/admin/exam-materials");
+    const url = category
+      ? `/api/admin/exam-materials?category=${encodeURIComponent(category)}`
+      : "/api/admin/exam-materials";
+    const res = await fetch(url);
     if (res.ok) setRows(await res.json());
     setLoading(false);
   }
@@ -107,7 +120,7 @@ export default function ExamMaterialManager() {
 
   function reset() {
     setEditingId(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, category: category || emptyForm.category });
     setFile(null);
     setError(null);
   }
@@ -208,35 +221,46 @@ export default function ExamMaterialManager() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Exam Study Materials</h1>
-        <p className="text-muted-foreground">
-          Upload PPT/PDF/Video/Audio/Animation/Image resources for exam-prep
-          students, organised by category (VO, LSA, ARS, ICAR Entrance).
-        </p>
-      </div>
+      {showHeading && (
+        <div>
+          <h1 className="text-2xl font-bold">Exam Study Materials</h1>
+          <p className="text-muted-foreground">
+            Upload PPT/PDF/Video/Audio/Animation/Image resources for exam-prep
+            students, organised by category (VO, LSA, ARS, ICAR Entrance).
+          </p>
+        </div>
+      )}
 
       <section className="rounded-xl border p-5 bg-card">
         <h2 className="font-semibold mb-4">
           {editingId ? "Edit Material" : "Add Material"}
         </h2>
         <form onSubmit={submit} className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium block mb-1">Category</label>
-            <select
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-              value={form.category}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, category: e.target.value }))
-              }
-            >
-              {EXAM_PREP_CATEGORIES.map((c) => (
-                <option key={c.key} value={c.key}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {category ? (
+            <div>
+              <label className="text-sm font-medium block mb-1">Category</label>
+              <div className="w-full rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+                {getExamPrepCategory(category)?.label || category}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label className="text-sm font-medium block mb-1">Category</label>
+              <select
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                value={form.category}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, category: e.target.value }))
+                }
+              >
+                {EXAM_PREP_CATEGORIES.map((c) => (
+                  <option key={c.key} value={c.key}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className="text-sm font-medium block mb-1">Type</label>
             <select

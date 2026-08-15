@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { getExamTrack, trackLabel } from "@/lib/exam-tracks";
+import { categoryForExamContentTrack } from "@/lib/exam-prep";
+import ExamMaterialManager from "@/components/admin/exam-material-manager";
 import {
   Card,
   CardContent,
@@ -27,6 +29,7 @@ export default async function ExamContentPage({
   if (!trackInfo) notFound();
 
   const multi = trackInfo.subs.length > 1;
+  const materialCategory = categoryForExamContentTrack(track);
 
   const subData = await Promise.all(
     trackInfo.subs.map(async (sub) => {
@@ -63,8 +66,8 @@ export default async function ExamContentPage({
         <div>
           <h1 className="text-3xl font-bold">{trackInfo.label}</h1>
           <p className="text-muted-foreground">
-            Manage Previous Year Papers and Mock / Adaptive Tests for this exam
-            track.
+            Manage Study Materials, Previous Year Papers and Mock / Adaptive
+            Tests for this exam track.
           </p>
         </div>
       </div>
@@ -154,7 +157,21 @@ export default async function ExamContentPage({
             )}
           </div>
         </section>
-      ))}
+       ))}
+
+      {materialCategory && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Study Materials</h2>
+          <p className="text-muted-foreground">
+            Add PPT / PDF / Video / Audio / Animation / Image resources for this
+            exam. These appear on the public exam-prep hub and the exam page.
+          </p>
+          <ExamMaterialManager
+            category={materialCategory}
+            showHeading={false}
+          />
+        </section>
+      )}
     </div>
   );
 }

@@ -55,6 +55,20 @@ export function getExamPrepCategory(key: string) {
   return EXAM_PREP_CATEGORIES.find((c) => c.key === key);
 }
 
+// Map the admin "Content Management for Examination" track keys (route segments
+// used on /admin/content/exam/[track]) to the ExamMaterial prep category, so
+// study materials can be managed per exam from that page.
+export const EXAM_CONTENT_TRACK_TO_CATEGORY: Record<string, string> = {
+  "veterinary-officer": "VO",
+  "livestock-assistant": "LSA",
+  "icar-jrf-srf": "ICAR_ENTRANCE",
+  "icar-ars-net": "ARS",
+};
+
+export function categoryForExamContentTrack(key: string) {
+  return EXAM_CONTENT_TRACK_TO_CATEGORY[key] || null;
+}
+
 // Material types that are typically an uploaded file vs. an external link.
 export const FILE_TYPES: MaterialType[] = ["PPT", "PDF", "ANIMATION", "IMAGE"];
 export const LINK_TYPES: MaterialType[] = ["VIDEO", "AUDIO"];
