@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PROGRAMME_REFS, EXAM_REFS } from "@/lib/community-constants";
+import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
 
 type LinkRow = {
   id: string;
   platform: "WHATSAPP" | "TELEGRAM";
-  category: "PROGRAMME" | "EXAM";
+  category: "PROGRAMME" | "EXAM" | "ROLE";
   ref: string;
   title: string;
   url: string;
@@ -17,7 +17,7 @@ type LinkRow = {
 
 type FormState = {
   platform: "WHATSAPP" | "TELEGRAM";
-  category: "PROGRAMME" | "EXAM";
+  category: "PROGRAMME" | "EXAM" | "ROLE";
   ref: string;
   title: string;
   url: string;
@@ -41,7 +41,12 @@ export default function CommunityManager() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const refOptions = form.category === "PROGRAMME" ? PROGRAMME_REFS : EXAM_REFS;
+  const refOptions =
+    form.category === "PROGRAMME"
+      ? PROGRAMME_REFS
+      : form.category === "ROLE"
+      ? ROLE_REFS
+      : EXAM_REFS;
 
   async function load() {
     setLoading(true);
@@ -142,16 +147,25 @@ export default function CommunityManager() {
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"
               value={form.category}
               onChange={(e) => {
-                const category = e.target.value as "PROGRAMME" | "EXAM";
+                const category = e.target.value as
+                  | "PROGRAMME"
+                  | "EXAM"
+                  | "ROLE";
                 setForm((f) => ({
                   ...f,
                   category,
-                  ref: category === "PROGRAMME" ? "bvsc" : "psc",
+                  ref:
+                    category === "PROGRAMME"
+                      ? "bvsc"
+                      : category === "ROLE"
+                      ? "STUDENT"
+                      : "psc",
                 }));
               }}
             >
               <option value="PROGRAMME">Programme</option>
               <option value="EXAM">Examination</option>
+              <option value="ROLE">User Role</option>
             </select>
           </div>
           <div>

@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
     if (
       !["WHATSAPP", "TELEGRAM"].includes(platform) ||
-      !["PROGRAMME", "EXAM"].includes(category) ||
+      !["PROGRAMME", "EXAM", "ROLE"].includes(category) ||
       typeof ref !== "string" ||
       !ref.trim() ||
       typeof title !== "string" ||

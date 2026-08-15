@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { getExamKeysForPlan } from "@/lib/plans";
-export { PROGRAMME_REFS, EXAM_REFS } from "./community-constants";
+export {
+  PROGRAMME_REFS,
+  EXAM_REFS,
+  ROLE_REFS,
+} from "./community-constants";
 
 export type CommunityLinkRow = {
   id: string;
@@ -11,12 +15,17 @@ export type CommunityLinkRow = {
   url: string;
 };
 
-// Resolve which community (WhatsApp/Telegram) links a user is eligible for,
-// based on the programmes / exam tracks they have PAID for (including
-// year-scoped and subject-scoped plans).
+// Resolve which community (WhatsApp/Telegram) links a user is eligible for:
+//  - PROGRAMME / EXAM links require a PAID enrolment (incl. year/subject plans)
+//  - ROLE links are shown to any logged-in user with that signup role
 export async function getEligibleCommunityLinks(
   userId: string
 ): Promise<CommunityLinkRow[]> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
   const payments = await prisma.payment.findMany({
     where: { userId, status: "PAID" },
     include: { plan: true },
@@ -44,7 +53,8 @@ export async function getEligibleCommunityLinks(
     .filter(
       (l) =>
         (l.category === "PROGRAMME" && programmeSlugs.has(l.ref)) ||
-        (l.category === "EXAM" && examKeys.has(l.ref))
+        (l.category === "EXAM" && examKeys.has(l.ref)) ||
+        (l.category === "ROLE" && !!user && l.ref === user.role)
     )
     .map((l) => ({
       id: l.id,

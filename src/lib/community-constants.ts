@@ -12,3 +12,16 @@ export const EXAM_REFS = [
   { value: "ars", label: "ARS" },
   { value: "other", label: "Other Examinations" },
 ];
+
+export const ROLE_REFS = [
+  { value: "STUDENT", label: "Students" },
+  { value: "FARMER", label: "Farmers" },
+  { value: "EXPERT", label: "Experts" },
+];
+
+export const CATEGORIES = [
+  { value: "PROGRAMME", label: "Programme" },
+  { value: "EXAM", label: "Examination" },
+  { value: "ROLE", label: "User Role" },
+];
+

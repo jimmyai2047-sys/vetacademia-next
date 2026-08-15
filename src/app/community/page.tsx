@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getEligibleCommunityLinks, PROGRAMME_REFS, EXAM_REFS } from "@/lib/community";
+import { getEligibleCommunityLinks, PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
 
 export const metadata = { title: "Community | VetAcademia" };
 
 function refLabel(category: string, ref: string) {
-  const list = category === "PROGRAMME" ? PROGRAMME_REFS : EXAM_REFS;
+  let list = EXAM_REFS;
+  if (category === "PROGRAMME") list = PROGRAMME_REFS;
+  else if (category === "ROLE") list = ROLE_REFS;
   return list.find((r) => r.value === ref)?.label || ref;
 }
 
@@ -89,7 +91,11 @@ export default async function CommunityPage() {
           {Object.entries(byCategory).map(([category, items]) => (
             <section key={category}>
               <h2 className="text-xl font-semibold mb-4">
-                {category === "PROGRAMME" ? "By Programme" : "By Examination"}
+                {category === "PROGRAMME"
+                  ? "By Programme"
+                  : category === "ROLE"
+                  ? "By Role"
+                  : "By Examination"}
               </h2>
               <div className="space-y-4">
                 {items.map((l) => (
