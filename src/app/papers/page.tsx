@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, ArrowLeft } from "lucide-react";
 import { getPublishedPosts } from "@/lib/posts";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Previous Year Papers | VetAcademia" };
 
 export default async function PapersPage() {
