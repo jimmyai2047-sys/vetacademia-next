@@ -22,6 +22,7 @@ import {
   Calculator,
   ArrowRight,
   CheckCircle,
+  ExternalLink,
 } from "lucide-react";
 
 const programmes = [
@@ -99,6 +100,44 @@ const stats = [
   { label: "Subjects", value: "100+" },
   { label: "Students", value: "10K+" },
   { label: "Experts", value: "50+" },
+];
+
+const importantLinks = [
+  {
+    name: "RUVAS",
+    href: "https://ruvasjaipur.rajasthan.gov.in/",
+    logo: "https://ruvasjaipur.rajasthan.gov.in/favicon.ico",
+  },
+  {
+    name: "RAJUVAS",
+    href: "https://rajuvas.org",
+    logo: "https://rajuvas.org/favicon.ico",
+  },
+  {
+    name: "ICAR",
+    href: "https://icar.org.in",
+    logo: "https://icar.org.in/favicon.ico",
+  },
+  {
+    name: "VCI",
+    href: "https://vci.nic.in",
+    logo: "https://vci.nic.in/favicon.ico",
+  },
+  {
+    name: "NDDB",
+    href: "https://nddb.coop",
+    logo: "https://nddb.coop/favicon.ico",
+  },
+  {
+    name: "APEDA",
+    href: "https://apeda.gov.in",
+    logo: "https://apeda.gov.in/favicon.ico",
+  },
+  {
+    name: "DOAHD (GOI)",
+    href: "https://dahd.nic.in",
+    logo: "https://dahd.nic.in/favicon.ico",
+  },
 ];
 
 export default function HomePage() {
@@ -240,6 +279,50 @@ export default function HomePage() {
                 </Card>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Important Links */}
+      <section className="py-12 md:py-16 border-y bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl border bg-card p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <ExternalLink className="h-5 w-5 text-green-600" />
+                <h2 className="text-xl md:text-2xl font-bold">Important Links</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6">
+                Official websites of veterinary &amp; animal husbandry authorities
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {importantLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Visit ${link.name}`}
+                    className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all"
+                  >
+                    <img
+                      src={link.logo}
+                      alt={`${link.name} logo`}
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 object-contain"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display =
+                          "none";
+                      }}
+                    />
+                    <span className="text-sm font-medium text-foreground">
+                      {link.name}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
