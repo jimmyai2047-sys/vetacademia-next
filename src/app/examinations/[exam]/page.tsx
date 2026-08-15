@@ -26,6 +26,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { trackLabel } from "@/lib/exam-tracks";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
@@ -306,6 +307,20 @@ export default async function ExamPage({
     include: { _count: { select: { questions: true } } },
   });
 
+  const mockTestGroups = (() => {
+    const map = new Map<string, typeof dbMockTests>();
+    for (const t of dbMockTests) {
+      const key = t.track || "general";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(t);
+    }
+    return Array.from(map.entries()).map(([k, items]) => ({
+      key: k,
+      label: k === "general" ? "General" : trackLabel(k),
+      items,
+    }));
+  })();
+
   const access = await getAccess();
   const examUnlocked = access.examKeys.has(exam) || exam === "other";
 
@@ -470,52 +485,61 @@ export default async function ExamPage({
           </CardContent>
         </Card>
 
-        {/* Mock & Adaptive Tests (DB-driven) */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <Brain className="h-5 w-5 text-emerald-600" />
+        {/* Mock & Adaptive Tests (DB-driven), grouped by track */}
+        {mockTestGroups.map((group) => (
+          <Card key={group.key}>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                  <Brain className="h-5 w-5 text-emerald-600" />
+                </div>
+                <div>
+                  <CardTitle>
+                    Mock &amp; Adaptive Tests
+                    {group.key !== "general" && (
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        {group.label}
+                      </span>
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    Practice with timed and personalized tests
+                  </CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle>Mock &amp; Adaptive Tests</CardTitle>
-                <CardDescription>
-                  Practice with timed and personalized tests
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {dbMockTests.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No tests yet. Add them from the admin panel.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {dbMockTests.map((t) => (
-                  <Link
-                    key={t.id}
-                    href={`/mock-tests/${t.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <div>
-                      <div className="font-medium text-sm">{t.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {t._count.questions} Questions &middot; {t.duration} min
+            </CardHeader>
+            <CardContent>
+              {group.items.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No tests yet. Add them from the admin panel.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {group.items.map((t) => (
+                    <Link
+                      key={t.id}
+                      href={`/mock-tests/${t.id}`}
+                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                    >
+                      <div>
+                        <div className="font-medium text-sm">{t.title}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t._count.questions} Questions &middot; {t.duration} min
+                        </div>
                       </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                ))}
-              </div>
-            )}
-            <Link href="/mock-tests" className="block mt-4">
-              <Button variant="outline" className="w-full">
-                View All Tests
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </Link>
+                  ))}
+                </div>
+              )}
+              <Link href="/mock-tests" className="block mt-4">
+                <Button variant="outline" className="w-full">
+                  View All Tests
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Subjects / Disciplines */}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { TRACK_OPTIONS, trackLabel } from "@/lib/exam-tracks";
 import {
   Pencil,
   Trash2,
@@ -27,6 +28,7 @@ type Post = {
   fileType: string | null;
   fileSize: number | null;
   exam: string | null;
+  track: string | null;
   published: boolean;
   createdAt: string;
 };
@@ -57,6 +59,7 @@ export default function PostManager() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [exam, setExam] = useState("");
+  const [track, setTrack] = useState("");
   const [published, setPublished] = useState(true);
   const [file, setFile] = useState<{
     url: string;
@@ -91,6 +94,7 @@ export default function PostManager() {
     setTitle("");
     setContent("");
     setExam("");
+    setTrack("");
     setPublished(true);
     setFile(null);
     setError(null);
@@ -102,6 +106,7 @@ export default function PostManager() {
     setTitle(p.title);
     setContent(p.content || "");
     setExam(p.exam || "");
+    setTrack(p.track || "");
     setPublished(p.published);
     setFile(
       p.fileUrl
@@ -158,6 +163,7 @@ export default function PostManager() {
         category: activeCategory,
         content,
         exam: activeCategory === "PREVIOUS_YEAR" ? exam || null : null,
+        track: activeCategory === "PREVIOUS_YEAR" ? track || null : null,
         published,
         file,
       };
@@ -255,6 +261,23 @@ export default function PostManager() {
                 {EXAMS.map((ex) => (
                   <option key={ex.key} value={ex.key}>
                     {ex.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {activeCategory === "PREVIOUS_YEAR" && (
+            <div className="space-y-1.5">
+              <Label>Track (optional — separate VO/VS, LSA, ICAR Pre/Mains)</Label>
+              <select
+                value={track}
+                onChange={(e) => setTrack(e.target.value)}
+                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {TRACK_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
                   </option>
                 ))}
               </select>
@@ -361,6 +384,11 @@ export default function PostManager() {
                   {p.exam && (
                     <Badge variant="outline" className="text-xs">
                       {EXAMS.find((e) => e.key === p.exam)?.label}
+                    </Badge>
+                  )}
+                  {p.track && (
+                    <Badge variant="secondary" className="text-xs">
+                      {trackLabel(p.track)}
                     </Badge>
                   )}
                 </div>

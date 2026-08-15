@@ -33,6 +33,7 @@ export async function POST(req: Request) {
       totalMarks,
       subjectId,
       exam,
+      track,
       file,
     } = body as {
       title?: string;
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
       totalMarks?: number;
       subjectId?: string | null;
       exam?: string | null;
+      track?: string | null;
       file?: {
         url: string;
         fileName: string;
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
         totalMarks: totalMarks ?? 0,
         subjectId: subjectId || null,
         exam: exam || null,
+        track: track || null,
         fileUrl: file?.url || null,
         fileName: file?.fileName || null,
         fileType: file?.fileType || null,

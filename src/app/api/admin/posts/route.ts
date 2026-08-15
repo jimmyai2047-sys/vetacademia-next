@@ -28,11 +28,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
-    const { title, category, content, exam, published, file } = body as {
+    const { title, category, content, exam, track, published, file } = body as {
       title?: string;
       category?: string;
       content?: string;
       exam?: string | null;
+      track?: string | null;
       published?: boolean;
       file?: {
         url: string;
@@ -55,6 +56,7 @@ export async function POST(req: Request) {
         category,
         content: content || null,
         exam: exam || null,
+        track: track || null,
         published: published ?? true,
         fileUrl: file?.url || null,
         fileName: file?.fileName || null,

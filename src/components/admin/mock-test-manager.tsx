@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { TRACK_OPTIONS, examForTrack, trackLabel } from "@/lib/exam-tracks";
 import {
   Plus,
   Trash2,
@@ -26,17 +27,9 @@ type MockTest = {
   fileName: string | null;
   fileType: string | null;
   exam?: string | null;
+  track?: string | null;
   _count?: { questions: number };
 };
-
-const EXAM_OPTIONS = [
-  { value: "", label: "None (general)" },
-  { value: "psc", label: "PSC (VO/VS & LSA)" },
-  { value: "icar-entrance", label: "ICAR-JRF/SRF" },
-  { value: "net", label: "NET" },
-  { value: "ars", label: "ARS" },
-  { value: "other", label: "Other" },
-];
 
 export default function MockTestManager() {
   const router = useRouter();
@@ -49,7 +42,7 @@ export default function MockTestManager() {
   const [description, setDescription] = useState("");
   const [duration, setDuration] = useState(30);
   const [totalMarks, setTotalMarks] = useState(0);
-  const [exam, setExam] = useState("");
+  const [track, setTrack] = useState("");
   const [file, setFile] = useState<{
     url: string;
     fileName: string;
@@ -83,7 +76,7 @@ export default function MockTestManager() {
     setDescription("");
     setDuration(30);
     setTotalMarks(0);
-    setExam("");
+    setTrack("");
     setFile(null);
     setError(null);
     setShowForm(true);
@@ -95,7 +88,7 @@ export default function MockTestManager() {
     setDescription(t.description || "");
     setDuration(t.duration);
     setTotalMarks(t.totalMarks);
-    setExam(t.exam || "");
+    setTrack(t.track || "");
     setFile(
       t.fileName
         ? { url: "", fileName: t.fileName, fileType: t.fileType || "" }
@@ -136,7 +129,15 @@ export default function MockTestManager() {
     setSaving(true);
     setError(null);
     try {
-      const payload = { title, description, duration, totalMarks, exam, file };
+      const payload = {
+        title,
+        description,
+        duration,
+        totalMarks,
+        track: track || null,
+        exam: examForTrack(track),
+        file,
+      };
       const res = editing
         ? await fetch(`/api/admin/mock-tests/${editing.id}`, {
             method: "PUT",
@@ -226,13 +227,13 @@ export default function MockTestManager() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label>Exam (optional — tag to an examination)</Label>
+            <Label>Track (tag to VO/VS, LSA, ICAR Pre/Mains, etc.)</Label>
             <select
-              value={exam}
-              onChange={(e) => setExam(e.target.value)}
+              value={track}
+              onChange={(e) => setTrack(e.target.value)}
               className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
             >
-              {EXAM_OPTIONS.map((o) => (
+              {TRACK_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
@@ -314,6 +315,11 @@ export default function MockTestManager() {
                   {t.fileName && (
                     <Badge variant="outline" className="text-xs">
                       {t.fileType} Set
+                    </Badge>
+                  )}
+                  {t.track && (
+                    <Badge variant="secondary" className="text-xs">
+                      {trackLabel(t.track)}
                     </Badge>
                   )}
                 </div>

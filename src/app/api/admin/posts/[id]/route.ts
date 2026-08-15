@@ -13,11 +13,12 @@ export async function PUT(
     }
     const { id } = await params;
     const body = await req.json();
-    const { title, category, content, exam, published, file } = body as {
+    const { title, category, content, exam, track, published, file } = body as {
       title?: string;
       category?: string;
       content?: string;
       exam?: string | null;
+      track?: string | null;
       published?: boolean;
       file?: {
         url: string;
@@ -39,6 +40,7 @@ export async function PUT(
         category: category ?? existing.category,
         content: content !== undefined ? content : existing.content,
         exam: exam !== undefined ? exam : existing.exam,
+        track: track !== undefined ? track : existing.track,
         published: published ?? existing.published,
         fileUrl: file?.url !== undefined ? (file?.url || null) : existing.fileUrl,
         fileName:
