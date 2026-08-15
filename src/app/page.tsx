@@ -153,6 +153,13 @@ const importantLinks = [
     short: "NB",
     color: "#7c3aed",
   },
+  {
+    name: "ASRB",
+    href: "https://asrb.gov.in/",
+    logo: "/logos/asrb.png",
+    short: "AS",
+    color: "#0d9488",
+  },
 ];
 
 function ImportantLinkCard({
