@@ -100,7 +100,7 @@ const importantLinks = [
   {
     name: "RUVAS",
     href: "https://ruvasjaipur.rajasthan.gov.in/",
-    logo: "/logos/ruvas.ico",
+    logo: "/logos/ruvas.png",
     short: "RU",
     color: "#1d4ed8",
   },
