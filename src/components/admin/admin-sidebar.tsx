@@ -26,6 +26,7 @@ const sidebarItems = [
   { name: "Posts", href: "/admin/posts", icon: FileText },
   { name: "Pricing", href: "/admin/pricing", icon: IndianRupee },
   { name: "Mock Tests", href: "/admin/mock-tests", icon: Brain },
+  { name: "Exam Materials", href: "/admin/exam-materials", icon: FileText },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

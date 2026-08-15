@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { trackLabel } from "@/lib/exam-tracks";
+import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
+import { getSignedUrl } from "@/lib/blob";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
@@ -140,6 +142,22 @@ export default async function ExamPage({
     }));
   })();
 
+  const examMaterialCats = EXAM_PREP_CATEGORIES.filter(
+    (c) => c.examKey === exam
+  ).map((c) => c.key);
+  const examMaterials = examMaterialCats.length
+    ? await prisma.examMaterial.findMany({
+        where: { category: { in: examMaterialCats }, published: true },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      })
+    : [];
+  const examMaterialsWithLinks = await Promise.all(
+    examMaterials.map(async (m) => ({
+      ...m,
+      signedUrl: m.fileUrl ? await getSignedUrl(m.fileUrl) : null,
+    }))
+  );
+
   const access = await getAccess();
   const examUnlocked = access.examKeys.has(exam) || exam === "other";
 
@@ -252,6 +270,67 @@ export default async function ExamPage({
                 View All Materials
               </Button>
             </Link>
+          </CardContent>
+        </Card>
+
+        {/* Exam Study Materials (uploaded, category-specific) */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <CardTitle>Study Materials</CardTitle>
+                <CardDescription>
+                  PPT, PDF, Video, Audio, Animations &amp; Images for this exam
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {examMaterialsWithLinks.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No study materials uploaded yet.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {examMaterialsWithLinks.map((m) => (
+                  <div
+                    key={m.id}
+                    className="flex items-center justify-between p-3 rounded-lg border"
+                  >
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm truncate">
+                        {m.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {m.type}
+                      </div>
+                    </div>
+                    {m.signedUrl ? (
+                      <a
+                        href={m.signedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline shrink-0 ml-3"
+                      >
+                        Download
+                      </a>
+                    ) : m.externalUrl ? (
+                      <a
+                        href={m.externalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline shrink-0 ml-3"
+                      >
+                        Open
+                      </a>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

@@ -103,6 +103,12 @@ export default function Navbar() {
               Examinations
             </Button>
           </Link>
+          <Link href="/prepare">
+            <Button variant="ghost" className="gap-2">
+              <BookOpen className="h-4 w-4" />
+              Exam Prep
+            </Button>
+          </Link>
           <Link href="/farmers">
             <Button variant="ghost" className="gap-2">
               <Tractor className="h-4 w-4" />
@@ -232,6 +238,14 @@ export default function Navbar() {
                 >
                   <FileCheck className="h-4 w-4" />
                   Examinations
+                </Link>
+                <Link
+                  href="/prepare"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Exam Prep
                 </Link>
                 <Link
                   href="/farmers"

@@ -28,6 +28,7 @@ type MockTest = {
   fileType: string | null;
   exam?: string | null;
   track?: string | null;
+  isAdaptive?: boolean;
   _count?: { questions: number };
 };
 
@@ -43,6 +44,7 @@ export default function MockTestManager() {
   const [duration, setDuration] = useState(30);
   const [totalMarks, setTotalMarks] = useState(0);
   const [track, setTrack] = useState("");
+  const [isAdaptive, setIsAdaptive] = useState(false);
   const [file, setFile] = useState<{
     url: string;
     fileName: string;
@@ -77,6 +79,7 @@ export default function MockTestManager() {
     setDuration(30);
     setTotalMarks(0);
     setTrack("");
+    setIsAdaptive(false);
     setFile(null);
     setError(null);
     setShowForm(true);
@@ -89,6 +92,7 @@ export default function MockTestManager() {
     setDuration(t.duration);
     setTotalMarks(t.totalMarks);
     setTrack(t.track || "");
+    setIsAdaptive(t.isAdaptive || false);
     setFile(
       t.fileName
         ? { url: "", fileName: t.fileName, fileType: t.fileType || "" }
@@ -136,6 +140,7 @@ export default function MockTestManager() {
         totalMarks,
         track: track || null,
         exam: examForTrack(track),
+        isAdaptive,
         file,
       };
       const res = editing
@@ -240,6 +245,17 @@ export default function MockTestManager() {
               ))}
             </select>
           </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isAdaptive"
+              checked={isAdaptive}
+              onChange={(e) => setIsAdaptive(e.target.checked)}
+            />
+            <label htmlFor="isAdaptive" className="text-sm">
+              Adaptive Test (vs standard Mock Test)
+            </label>
+          </div>
           <div className="space-y-1.5">
             <Label>Practice Set File (optional PDF)</Label>
             <div className="flex items-center gap-2">
@@ -320,6 +336,11 @@ export default function MockTestManager() {
                   {t.track && (
                     <Badge variant="secondary" className="text-xs">
                       {trackLabel(t.track)}
+                    </Badge>
+                  )}
+                  {t.isAdaptive && (
+                    <Badge variant="default" className="text-xs">
+                      Adaptive
                     </Badge>
                   )}
                 </div>

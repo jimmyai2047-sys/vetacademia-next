@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       subjectId,
       exam,
       track,
+      isAdaptive,
       file,
     } = body as {
       title?: string;
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
       subjectId?: string | null;
       exam?: string | null;
       track?: string | null;
+      isAdaptive?: boolean;
       file?: {
         url: string;
         fileName: string;
@@ -63,6 +65,7 @@ export async function POST(req: Request) {
         subjectId: subjectId || null,
         exam: exam || null,
         track: track || null,
+        isAdaptive: isAdaptive ?? false,
         fileUrl: file?.url || null,
         fileName: file?.fileName || null,
         fileType: file?.fileType || null,

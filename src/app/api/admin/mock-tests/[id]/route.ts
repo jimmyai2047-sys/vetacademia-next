@@ -21,6 +21,7 @@ export async function PUT(
       subjectId,
       exam,
       track,
+      isAdaptive,
       file,
     } = body as {
       title?: string;
@@ -30,6 +31,7 @@ export async function PUT(
       subjectId?: string | null;
       exam?: string | null;
       track?: string | null;
+      isAdaptive?: boolean;
       file?: {
         url: string;
         fileName: string;
@@ -52,6 +54,8 @@ export async function PUT(
         subjectId: subjectId !== undefined ? subjectId : existing.subjectId,
         exam: exam !== undefined ? exam : existing.exam,
         track: track !== undefined ? track : existing.track,
+        isAdaptive:
+          isAdaptive !== undefined ? isAdaptive : existing.isAdaptive,
         fileUrl: file?.url !== undefined ? (file?.url || null) : existing.fileUrl,
         fileName:
           file?.fileName !== undefined ? (file?.fileName || null) : existing.fileName,
