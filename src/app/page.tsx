@@ -157,13 +157,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Visitor Counter (homepage only) */}
-      <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-4 flex justify-center">
-          <VisitorCounter />
-        </div>
-      </section>
-
       {/* Programmes */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -340,6 +333,13 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Visitor Counter (homepage only) */}
+      <section className="border-t bg-muted/30">
+        <div className="container mx-auto px-4 py-4 flex justify-center">
+          <VisitorCounter />
         </div>
       </section>
     </div>
