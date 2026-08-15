@@ -361,17 +361,19 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mb-6">
                 Official websites of veterinary &amp; animal husbandry authorities
               </p>
-              <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
-                {importantLinks.map((link) => (
-                  <ImportantLinkCard
-                    key={link.name}
-                    name={link.name}
-                    href={link.href}
-                    logo={link.logo}
-                    short={link.short}
-                    color={link.color}
-                  />
-                ))}
+              <div className="relative overflow-hidden va-marquee-mask">
+                <div className="va-marquee flex gap-3 md:gap-4 w-max">
+                  {[...importantLinks, ...importantLinks].map((link, i) => (
+                    <ImportantLinkCard
+                      key={`${link.name}-${i}`}
+                      name={link.name}
+                      href={link.href}
+                      logo={link.logo}
+                      short={link.short}
+                      color={link.color}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

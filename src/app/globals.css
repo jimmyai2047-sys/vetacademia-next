@@ -210,3 +210,36 @@
   color: var(--muted-foreground);
   margin: 0.5em 0;
 }
+
+/* Important Links continuous circular marquee */
+@keyframes va-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.va-marquee {
+  animation: va-marquee 32s linear infinite;
+  will-change: transform;
+}
+.va-marquee:hover {
+  animation-play-state: paused;
+}
+.va-marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
