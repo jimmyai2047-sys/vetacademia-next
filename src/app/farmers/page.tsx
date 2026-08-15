@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -176,6 +177,12 @@ const feedFormulation = [
 
 export default async function FarmersPage() {
   const farmerPosts = await getPublishedPosts("FARMERS");
+  const consultationExperts = await prisma.expert.findMany({
+    where: { isAvailable: true },
+    take: 4,
+    orderBy: { rating: "desc" },
+    include: { user: { select: { name: true } } },
+  });
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
@@ -427,23 +434,30 @@ export default async function FarmersPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { name: "Dr. Rajesh Kumar", specialty: "Veterinary Surgery", experience: "15 years exp", available: true },
-                { name: "Dr. Priya Sharma", specialty: "Animal Nutrition", experience: "12 years exp", available: true },
-                { name: "Dr. Amit Singh", specialty: "Veterinary Medicine", experience: "10 years exp", available: false },
-                { name: "Dr. Neha Gupta", specialty: "Dairy Management", experience: "8 years exp", available: true },
-              ].map((expert, i) => (
-                <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="font-medium text-sm">{expert.name}</div>
-                    <Badge variant={expert.available ? "default" : "secondary"} className="text-xs">
-                      {expert.available ? "Available" : "Busy"}
-                    </Badge>
+              {consultationExperts.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No experts available right now.
+                </p>
+              ) : (
+                consultationExperts.map((expert) => (
+                  <div key={expert.id} className="p-3 rounded-lg border hover:bg-accent transition-colors">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-sm">
+                        {expert.user.name}
+                      </div>
+                      <Badge variant="default" className="text-xs">
+                        Available
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {expert.specialization}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      ⭐ {expert.rating.toFixed(1)} &middot; ₹{expert.hourlyRate}/hr
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">{expert.specialty}</div>
-                  <div className="text-xs text-muted-foreground">{expert.experience}</div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <Link href="/experts" className="block mt-4">
               <Button variant="outline" className="w-full">
