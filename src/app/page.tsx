@@ -182,7 +182,7 @@ function ImportantLinkCard({
       target="_blank"
       rel="noopener noreferrer"
       title={`Visit ${name}`}
-      className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all"
+      className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all shrink-0 w-28 md:w-32"
     >
       {logo && !errored ? (
         <img
@@ -361,7 +361,7 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mb-6">
                 Official websites of veterinary &amp; animal husbandry authorities
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2">
                 {importantLinks.map((link) => (
                   <ImportantLinkCard
                     key={link.name}
