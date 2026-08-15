@@ -120,7 +120,7 @@ const importantLinks = [
   },
   {
     name: "VCI",
-    href: "https://vci.nic.in",
+    href: "https://vci.dahd.gov.in/",
     logo: "/logos/vci.png",
     short: "VC",
     color: "#0891b2",
