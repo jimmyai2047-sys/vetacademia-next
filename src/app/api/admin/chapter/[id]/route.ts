@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { processInlineImages } from "@/lib/chapter-images";
 
 export async function PATCH(
   req: Request,
@@ -24,9 +25,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
 
+    const nextContent = await processInlineImages(content || "");
     const updated = await prisma.chapter.update({
       where: { id },
-      data: { content },
+      data: { content: nextContent },
       select: { id: true, content: true },
     });
 

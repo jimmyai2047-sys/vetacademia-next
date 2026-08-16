@@ -39,10 +39,16 @@ export function sanitizeChapterContent(html: string): string {
     ],
     allowedAttributes: {
       a: ["href", "target", "rel"],
-      img: ["src", "alt"],
+      img: ["src", "alt", "loading", "decoding"],
       td: ["colspan", "rowspan"],
       th: ["colspan", "rowspan"],
       "*": ["class", "style"],
+    },
+    transformTags: {
+      img: (tagName, attribs) => ({
+        tagName,
+        attribs: { ...attribs, loading: "lazy", decoding: "async" },
+      }),
     },
     allowedStyles: {
       "*": {

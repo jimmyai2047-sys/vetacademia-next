@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 
 export async function POST(req: Request) {
   try {
@@ -39,13 +40,15 @@ export async function POST(req: Request) {
     for (let i = 0; i < chapters.length; i++) {
       const c = chapters[i] || {};
       const title = typeof c.title === "string" ? c.title.trim() : "";
-      const content = typeof c.content === "string" ? c.content : "";
+      const rawContent = typeof c.content === "string" ? c.content : "";
       if (!title) continue;
+      // Offload any inline base64 images (e.g. pasted from Word) to Blob.
+      const optimized = await processInlineImages(rawContent);
       const createdChapter = await prisma.chapter.create({
         data: {
           subjectId,
           title,
-          content: sanitizeChapterContent(content),
+          content: sanitizeChapterContent(optimized),
           unitNumber: typeof c.unitNumber === "number" ? c.unitNumber : i + 1,
           type: c.type === "PRACTICAL" ? "PRACTICAL" : c.type === "THEORY" ? "THEORY" : null,
         },

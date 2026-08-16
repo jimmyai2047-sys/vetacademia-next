@@ -13,7 +13,8 @@ import {
 import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
-import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
+import { isHtmlContent } from "@/lib/content";
+import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
@@ -87,6 +88,14 @@ export default async function SubjectPage({
 
   const theoryChapters = subject.chapters.filter((c) => c.type !== "PRACTICAL");
   const practicalChapters = subject.chapters.filter((c) => c.type === "PRACTICAL");
+
+  // Pre-sign + sanitize chapter HTML (handles Blob-hosted images).
+  const htmlMap = new Map<string, string>();
+  await Promise.all(
+    subject.chapters.map(async (ch) => {
+      htmlMap.set(ch.id, await prepareChapterHtml(ch.content));
+    })
+  );
 
   const theoryGrouped = groupByUnit(theoryChapters);
   const practicalGrouped = groupByUnit(practicalChapters);
@@ -250,7 +259,7 @@ export default async function SubjectPage({
                               {isHtmlContent(chapter.content) ? (
                                 <div className="pl-10">
                                   <ProtectedHtml
-                                    html={sanitizeChapterContent(chapter.content)}
+                                    html={htmlMap.get(chapter.id) || ""}
                                   />
                                 </div>
                               ) : chapter.content ? (
@@ -308,7 +317,7 @@ export default async function SubjectPage({
                               {isHtmlContent(chapter.content) ? (
                                 <div className="pl-10">
                                   <ProtectedHtml
-                                    html={sanitizeChapterContent(chapter.content)}
+                                    html={htmlMap.get(chapter.id) || ""}
                                   />
                                 </div>
                               ) : chapter.content ? (

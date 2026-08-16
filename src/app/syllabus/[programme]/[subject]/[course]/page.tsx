@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
-import { isHtmlContent, sanitizeChapterContent } from "@/lib/content";
+import { isHtmlContent } from "@/lib/content";
+import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
@@ -42,6 +43,8 @@ export default async function CoursePage({
       url: await getSignedUrl(c.url),
     }))
   );
+
+  const courseHtml = await prepareChapterHtml(course.content);
 
   // Parse creditHours "X+Y" into Theory + Practical
   let theoryCredits = 0;
@@ -109,7 +112,7 @@ export default async function CoursePage({
             <CardContent>
               {course.content && !course.content.startsWith("Credit Hours:") ? (
                 isHtmlContent(course.content) ? (
-                  <ProtectedHtml html={sanitizeChapterContent(course.content)} />
+                  <ProtectedHtml html={courseHtml} />
                 ) : (
                   <p className="text-sm text-muted-foreground">{course.content}</p>
                 )
