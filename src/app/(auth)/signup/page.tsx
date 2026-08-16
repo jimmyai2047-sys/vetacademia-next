@@ -26,6 +26,8 @@ import {
   Image as ImageIcon,
   X,
   UserPlus,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const PROGRAMMES = [
@@ -63,14 +65,18 @@ export default function SignupPage() {
   const [role, setRole] = useState("student");
   const [programme, setProgramme] = useState("");
   const [subjects, setSubjects] = useState<string[]>([]);
-
-  const isMvscPhd =
-    role === "student" && (programme === "MVSC" || programme === "PHD");
+  const [subjectDepartment, setSubjectDepartment] = useState("");
+  const [highestDegree, setHighestDegree] = useState("");
+  const [expertDesignation, setExpertDesignation] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const isMvscPhd = role === "student" && (programme === "MVSC" || programme === "PHD");
 
   useEffect(() => {
     if (role === "student" && (programme === "MVSC" || programme === "PHD")) {
@@ -115,16 +121,41 @@ export default function SignupPage() {
 
     const fd = new FormData(e.currentTarget);
     const isStudent = role === "student";
-    const isMvscPhd =
-      isStudent && (programme === "MVSC" || programme === "PHD");
+
+    // Client-side validation. Native inputs are read via FormData; custom
+    // Select components are read from React state (they do NOT submit a form field).
+    const missing: string[] = [];
+    if (isStudent && !programme) missing.push("Programme");
+    if (isStudent && isMvscPhd && !subjectDepartment) missing.push("Subject / Department");
+    if (role === "farmer" && !fd.get("address")) missing.push("Address");
+    if (role === "expert") {
+      if (!highestDegree) missing.push("Highest Degree");
+      if (!fd.get("specialization")) missing.push("Specialization");
+      if (!expertDesignation) missing.push("Role");
+    }
+
+    const password = (fd.get("password") as string) || "";
+    const confirm = (fd.get("confirmPassword") as string) || "";
+    if (password && confirm && password !== confirm) {
+      setError("Passwords do not match.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (missing.length > 0) {
+      setError(`${missing.join(", ")} ${missing.length > 1 ? "are" : "is"} required.`);
+      setIsLoading(false);
+      return;
+    }
 
     const payload: Record<string, unknown> = {
       name: fd.get("name"),
       surname: fd.get("surname"),
       email: fd.get("email"),
-      password: fd.get("password"),
+      password,
       role,
       avatar: avatarUrl || undefined,
+      phone: phone || undefined,
     };
 
     if (isStudent) {
@@ -132,14 +163,14 @@ export default function SignupPage() {
       payload.college = fd.get("college") || undefined;
       payload.university = fd.get("university") || undefined;
       if (isMvscPhd) {
-        payload.subjectDepartment = fd.get("subjectDepartment") || undefined;
+        payload.subjectDepartment = subjectDepartment || undefined;
       }
     } else if (role === "farmer") {
       payload.address = fd.get("address") || undefined;
     } else if (role === "expert") {
-      payload.highestDegree = fd.get("highestDegree") || undefined;
+      payload.highestDegree = highestDegree || undefined;
       payload.specialization = fd.get("specialization") || undefined;
-      payload.expertDesignation = fd.get("expertDesignation") || undefined;
+      payload.expertDesignation = expertDesignation || undefined;
     }
 
     try {
@@ -260,28 +291,66 @@ export default function SignupPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password *</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                required
-                minLength={6}
-                disabled={isLoading}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="password">Password *</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    required
+                    minLength={8}
+                    disabled={isLoading}
+                    className="pr-9"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  required
+                  minLength={8}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Use at least 8 characters.
+            </p>
 
             {/* Role */}
             <div className="space-y-2">
-              <Label>I am a *</Label>
+              <Label htmlFor="role">I am a *</Label>
               <Select
                 value={role}
-                onValueChange={(v) => setRole(v ?? "student")}
+                onValueChange={(v) => {
+                  setRole(v ?? "student");
+                  setSubjectDepartment("");
+                  setHighestDegree("");
+                  setExpertDesignation("");
+                }}
                 disabled={isLoading}
               >
-                <SelectTrigger>
+                <SelectTrigger id="role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -296,13 +365,16 @@ export default function SignupPage() {
             {role === "student" && (
               <>
                 <div className="space-y-2">
-                  <Label>Programme *</Label>
+                  <Label htmlFor="programme">Programme *</Label>
                   <Select
                     value={programme}
-                    onValueChange={(v) => setProgramme(v ?? "")}
+                    onValueChange={(v) => {
+                      setProgramme(v ?? "");
+                      setSubjectDepartment("");
+                    }}
                     disabled={isLoading}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="programme">
                       <SelectValue placeholder="Select programme" />
                     </SelectTrigger>
                     <SelectContent>
@@ -317,9 +389,13 @@ export default function SignupPage() {
 
                 {isMvscPhd && (
                   <div className="space-y-2">
-                    <Label>Subject / Department *</Label>
-                    <Select name="subjectDepartment" disabled={isLoading || subjects.length === 0}>
-                      <SelectTrigger>
+                    <Label htmlFor="subjectDepartment">Subject / Department *</Label>
+                    <Select
+                      value={subjectDepartment}
+                      onValueChange={(v) => setSubjectDepartment(v ?? "")}
+                      disabled={isLoading || subjects.length === 0}
+                    >
+                      <SelectTrigger id="subjectDepartment">
                         <SelectValue
                           placeholder={
                             subjects.length === 0
@@ -359,6 +435,19 @@ export default function SignupPage() {
                     />
                   </div>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone (optional)</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+91 ..."
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
               </>
             )}
 
@@ -381,9 +470,13 @@ export default function SignupPage() {
             {role === "expert" && (
               <>
                 <div className="space-y-2">
-                  <Label>Highest Degree *</Label>
-                  <Select name="highestDegree" disabled={isLoading}>
-                    <SelectTrigger>
+                  <Label htmlFor="highestDegree">Highest Degree *</Label>
+                  <Select
+                    value={highestDegree}
+                    onValueChange={(v) => setHighestDegree(v ?? "")}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger id="highestDegree">
                       <SelectValue placeholder="Select highest degree" />
                     </SelectTrigger>
                     <SelectContent>
@@ -408,9 +501,13 @@ export default function SignupPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Role *</Label>
-                  <Select name="expertDesignation" disabled={isLoading}>
-                    <SelectTrigger>
+                  <Label htmlFor="expertDesignation">Role *</Label>
+                  <Select
+                    value={expertDesignation}
+                    onValueChange={(v) => setExpertDesignation(v ?? "")}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger id="expertDesignation">
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
@@ -421,6 +518,19 @@ export default function SignupPage() {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone (optional)</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+91 ..."
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={isLoading}
+                  />
                 </div>
               </>
             )}
