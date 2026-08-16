@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
+import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,8 @@ export default async function SubjectContentPage({
           </p>
         </div>
       </div>
+
+      <ChapterBulkImporter subjectId={subject.id} />
 
       {hasCourses ? (
         <div className="space-y-4">

@@ -166,6 +166,11 @@
   line-height: 1.7;
   word-break: break-word;
 }
+[contenteditable][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
 .chapter-content h1 {
   font-size: 1.5rem;
   font-weight: 700;
