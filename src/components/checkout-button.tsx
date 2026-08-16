@@ -10,10 +10,14 @@ export default function CheckoutButton({
   planSlug,
   amount,
   alreadyEnrolled,
+  reportId,
+  alreadyUnlocked,
 }: {
-  planSlug: string;
+  planSlug?: string;
   amount: number;
   alreadyEnrolled?: boolean;
+  reportId?: string;
+  alreadyUnlocked?: boolean;
 }) {
   const router = useRouter();
   const { status } = useSession();
@@ -27,13 +31,14 @@ export default function CheckoutButton({
       const res = await fetch("/api/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planSlug }),
+        body: JSON.stringify(reportId ? { projectReportId: reportId } : { planSlug }),
       });
 
       if (res.status === 401) {
-        router.push(
-          `/login?redirect=${encodeURIComponent("/checkout?plan=" + planSlug)}`
-        );
+        const redirectTo = reportId
+          ? `/checkout?report=${reportId}`
+          : `/checkout?plan=${planSlug}`;
+        router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
         return;
       }
 
@@ -55,9 +60,13 @@ export default function CheckoutButton({
         return;
       }
 
-      router.push(
-        `/pricing?success=1&plan=${encodeURIComponent(planSlug)}`
-      );
+      if (reportId) {
+        router.push(`/farmers?unlocked=1`);
+      } else {
+        router.push(
+          `/pricing?success=1&plan=${encodeURIComponent(planSlug || "")}`
+        );
+      }
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -65,10 +74,12 @@ export default function CheckoutButton({
     }
   }
 
-  if (alreadyEnrolled) {
+  if (alreadyEnrolled || alreadyUnlocked) {
     return (
       <p className="text-sm text-emerald-600 font-medium">
-        You are already enrolled in this plan.
+        {alreadyUnlocked
+          ? "You have already unlocked this report."
+          : "You are already enrolled in this plan."}
       </p>
     );
   }

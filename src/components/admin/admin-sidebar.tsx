@@ -13,6 +13,7 @@ import {
   FileText,
   Brain,
   Stethoscope,
+  Tractor,
   ChevronLeft,
   IndianRupee,
   MessageSquare,
@@ -29,6 +30,7 @@ const sidebarItems = [
   { name: "Pricing", href: "/admin/pricing", icon: IndianRupee },
   { name: "Mock / Adaptive / PY Tests", href: "/admin/mock-tests", icon: Brain },
   { name: "Study Material", href: "/admin/exam-materials", icon: FileText },
+  { name: "Farmers Content", href: "/admin/farmers", icon: Tractor },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

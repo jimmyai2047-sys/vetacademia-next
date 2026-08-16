@@ -79,7 +79,11 @@ export async function getAccess(): Promise<AccessInfo> {
 export async function canAccessMockTest(test: {
   subjectId?: string | null;
   exam?: string | null;
+  isDemo?: boolean;
 }): Promise<boolean> {
+  // Demo tests are free for everyone (no purchase required).
+  if (test.isDemo) return true;
+
   const access = await getAccess();
   if (!access.isAuthed) return false;
 
@@ -104,6 +108,8 @@ export async function canAccessMockTest(test: {
     return programmeOwned || yearOwned || subjectOwned;
   }
 
-  // Free general test (no programme, no exam): open to any signed-in user.
-  return access.isAuthed;
+  // Free general test (no programme, no exam): open to everyone. Anonymous
+  // users are still blocked from saving attempts by the 401 check in the
+  // attempt API, but the test player itself is publicly viewable.
+  return true;
 }

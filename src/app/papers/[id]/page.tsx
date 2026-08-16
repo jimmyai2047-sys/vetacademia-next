@@ -45,17 +45,19 @@ export default async function PreviousYearPaperPage({
     ? access.examKeys.has(test.exam)
     : access.examPlanOwned;
 
-  // Free general tests (no programme, no exam) are open to any signed-in user.
-  // Programme tests gate on programme/year/subject plans; exam tests gate on
-  // the matching exam plan. The `!progSlug` shortcut must NOT apply to exam
-  // tests, or they would become publicly accessible.
+  // Free general tests (no programme, no exam) are open to everyone, matching
+  // the original behaviour. Programme tests gate on programme/year/subject
+  // plans; exam tests gate on the matching exam plan. The `!progSlug` shortcut
+  // must NOT apply to exam tests, or they would become publicly accessible.
   let hasAccess: boolean;
-  if (test.exam) {
+  if (test.isDemo) {
+    hasAccess = true;
+  } else if (test.exam) {
     hasAccess = examOwned;
   } else if (progSlug) {
     hasAccess = programmeOwned || yearOwned || subjectOwned;
   } else {
-    hasAccess = access.isAuthed;
+    hasAccess = true;
   }
 
   const questions = test.questions.map((q) => {

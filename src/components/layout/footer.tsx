@@ -14,6 +14,7 @@ const footerLinks = {
     { name: "Study Materials", href: "/study-materials" },
     { name: "Previous Year Papers", href: "/papers" },
     { name: "Flashcards", href: "/flashcards" },
+    { name: "Free Demo & Preview", href: "/demo" },
     { name: "Community", href: "/community" },
   ],
   support: [

@@ -55,6 +55,7 @@ export default function Navbar() {
         { href: "/syllabus", label: "My Syllabus" },
         { href: "/mock-tests", label: "Mock Tests" },
         { href: "/flashcards", label: "Flashcards" },
+        { href: "/demo", label: "Free Demo" },
       ]
     : isFarmer
     ? [

@@ -129,6 +129,7 @@ model ExamMaterial {
   fileSize    Int?
   externalUrl String? // for video/audio embeds (YouTube, etc.)
   published   Boolean  @default(true)
+  isDemo      Boolean  @default(false) // demo content visible to everyone (no purchase)
   order       Int      @default(0)
   subject     String? // Subject name (e.g. "Anatomy") — UG (B.V.Sc/AHDP) or PG (M.V.Sc)
   topic       String? // Chapter / Unit (UG) or Course (PG) title within the subject
@@ -159,7 +160,8 @@ model MockTest {
   year        String?  // exam year for PREVIOUS_YEAR papers (e.g. "2023")
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   planSlug    String?  // if set, the test is premium and requires this paid plan
-  createdAt   DateTime  @default(now())
+  isDemo      Boolean  @default(false) // demo content visible to everyone (no purchase)
+  createdAt   DateTime @default(now())
   updatedAt   DateTime  @updatedAt
 
   subject   Subject?          @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -190,6 +192,72 @@ model Post {
 
   @@index([category])
   @@index([exam])
+}
+
+// ==================== FARMERS CONTENT ====================
+// Admin-managed informational content for livestock farmers.
+
+// Scientific-farming guides grouped by farm type (Dairy, Goat, Sheep,
+// Poultry, Pig, generic Scientific).
+model FarmGuide {
+  id        String   @id @default(cuid())
+  category  String // SCIENTIFIC | DAIRY | GOAT | SHEEP | POULTRY | PIG
+  title     String
+  summary   String?
+  content   String? // rich HTML
+  published Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([published])
+}
+
+// Vaccination calendar (separate admin-managed section).
+model VaccinationSchedule {
+  id        String   @id @default(cuid())
+  disease   String
+  animals   String // e.g. "Cattle, Buffalo"
+  firstDose String
+  booster   String
+  annual    String
+  vaccine   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Deworming calendar (separate admin-managed section).
+model DewormingSchedule {
+  id        String   @id @default(cuid())
+  animal    String
+  firstDose String
+  frequency String
+  bestTime  String
+  products  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Paid project reports. A teaser/demo is visible to everyone; the full
+// report is unlocked after the farmer pays (test mode until Razorpay live).
+model ProjectReport {
+  id          String   @id @default(cuid())
+  title       String
+  farmType    String // SCIENTIFIC | DAIRY | GOAT | SHEEP | POULTRY | PIG
+  summary     String? // short teaser shown to all
+  demoContent String? // visible free (sample section)
+  fullContent String? // unlocked after payment
+  price       Int      @default(99) // INR
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([farmType])
+  @@index([published])
 }
 
 // ==================== VISITOR STATS ====================
@@ -272,6 +340,7 @@ model StudyMaterial {
   subjectId   String?
   userId      String?
   isPublic    Boolean   @default(true)
+  isDemo      Boolean   @default(false) // demo content visible to everyone (no purchase)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -377,6 +446,7 @@ model Payment {
   orderId     String?
   paymentId   String?
   planSlug    String?
+  projectReportId String?
   metadata    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -387,6 +457,7 @@ model Payment {
   @@index([userId])
   @@index([orderId])
   @@index([planSlug])
+  @@index([projectReportId])
 }
 
 // ==================== COMMUNITY LINKS (WhatsApp / Telegram) ====================
