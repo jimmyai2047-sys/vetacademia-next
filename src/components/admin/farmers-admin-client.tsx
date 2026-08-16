@@ -12,6 +12,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { FARM_TYPES } from "@/lib/farm-types";
+import FileExtractField from "@/components/file-extract-field";
 
 const API: Record<string, string> = {
   guides: "/api/admin/farm-guides",
@@ -176,9 +177,17 @@ function Editor({
               <input className={inputCls} value={String(v.summary ?? "")} onChange={(e) => set("summary", e.target.value)} />
             </Field>
             <Field label="Demo Content (visible free)">
+              <FileExtractField
+                label="demo"
+                onExtracted={(html) => set("demoContent", html)}
+              />
               <textarea className={inputCls + " min-h-[100px]"} value={String(v.demoContent ?? "")} onChange={(e) => set("demoContent", e.target.value)} />
             </Field>
             <Field label="Full Content (unlocked after payment)">
+              <FileExtractField
+                label="full"
+                onExtracted={(html) => set("fullContent", html)}
+              />
               <textarea className={inputCls + " min-h-[120px]"} value={String(v.fullContent ?? "")} onChange={(e) => set("fullContent", e.target.value)} />
             </Field>
             <Field label="Price (INR)">
