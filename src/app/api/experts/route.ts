@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       where,
       include: {
         user: {
-          select: { name: true, email: true, avatar: true },
+          select: { name: true, avatar: true },
         },
         _count: {
           select: { consultations: true },

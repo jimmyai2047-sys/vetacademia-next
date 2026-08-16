@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PLAN_BY_SLUG, getExamKeysForPlan } from "@/lib/plans";
@@ -28,7 +29,9 @@ const EMPTY: AccessInfo = {
 
 // Returns the plans the current user has PAID for, derived from Payment rows.
 // Used to gate premium content (syllabus, previous-year papers, mock tests).
-export async function getAccess(): Promise<AccessInfo> {
+// Cached per request so multiple gating checks (page + attempt API + subject
+// lookups) inside a single render/share don't each hit the DB.
+export const getAccess = cache(async (): Promise<AccessInfo> => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) return EMPTY;
@@ -71,7 +74,7 @@ export async function getAccess(): Promise<AccessInfo> {
   }
 
   return info;
-}
+});
 
 // Returns whether the current user may take a given mock/adaptive/PYQ test.
 // Mirrors the gating used by the /mock-tests/[id] and /papers/[id] pages so

@@ -37,6 +37,8 @@ model User {
   payments          Payment[]
   studyMaterials    StudyMaterial[]
   flashcardProgress FlashcardProgress[]
+
+  @@index([role])
 }
 
 // ==================== CURRICULUM ====================
@@ -52,6 +54,8 @@ model Programme {
 
   departments Department[]
   subjects    Subject[]
+
+  @@index([name])
 }
 
 model Department {
@@ -170,6 +174,8 @@ model MockTest {
 
   @@index([subjectId])
   @@index([planSlug])
+  @@index([exam])
+  @@index([track])
 }
 
 // ==================== GENERIC POSTS (Farmers / Vets / Advisory / Previous Year Papers) ====================
@@ -192,6 +198,7 @@ model Post {
 
   @@index([category])
   @@index([exam])
+  @@index([track])
 }
 
 // ==================== FARMERS CONTENT ====================
@@ -349,6 +356,7 @@ model StudyMaterial {
 
   @@index([subjectId])
   @@index([userId])
+  @@index([isPublic])
 }
 
 // ==================== FLASHCARDS ====================
@@ -389,6 +397,7 @@ model Expert {
   consultations Consultation[]
 
   @@index([userId])
+  @@index([isAvailable])
 }
 
 model Consultation {

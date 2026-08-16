@@ -3,7 +3,13 @@ import crypto from "crypto";
 const RESET_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 function secret(): string {
-  return process.env.NEXTAUTH_SECRET || "insecure-dev-secret-change-me";
+  const s = process.env.NEXTAUTH_SECRET;
+  if (!s) {
+    throw new Error(
+      "NEXTAUTH_SECRET is not configured. Refusing to sign or verify reset tokens with a hardcoded fallback secret."
+    );
+  }
+  return s;
 }
 
 export function signResetToken(email: string): string {

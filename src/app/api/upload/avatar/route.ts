@@ -1,11 +1,34 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { getSignedUrl } from "@/lib/blob";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
+// Allowed raster image signatures (no SVG — it can carry active scripts).
+const MAGIC: Record<string, number[]> = {
+  jpg: [0xff, 0xd8, 0xff],
+  jpeg: [0xff, 0xd8, 0xff],
+  png: [0x89, 0x50, 0x4e, 0x47],
+  gif: [0x47, 0x49, 0x46],
+  webp: [0x52, 0x49, 0x46, 0x46],
+};
+
+function hasImageMagic(buf: ArrayBuffer): boolean {
+  const bytes = new Uint8Array(buf.slice(0, 4));
+  return Object.values(MAGIC).some((sig) =>
+    sig.every((b, i) => bytes[i] === b)
+  );
+}
+
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const form = await req.formData();
     const file = form.get("file") as File | null;
 
@@ -15,13 +38,25 @@ export async function POST(req: Request) {
 
     const m = (file.type || "").toLowerCase();
     const ext = file.name.split(".").pop()?.toLowerCase() || "";
-    const isImage =
-      m.startsWith("image/") ||
-      ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext);
+    const isAllowedExt = ["jpg", "jpeg", "png", "gif", "webp"].includes(ext);
+    const isAllowedType = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ].includes(m);
 
-    if (!isImage) {
+    if (!isAllowedExt || !isAllowedType) {
       return NextResponse.json(
-        { error: "Only image files are allowed" },
+        { error: "Only JPG, PNG, GIF or WEBP images are allowed" },
+        { status: 400 }
+      );
+    }
+
+    const head = await file.slice(0, 4).arrayBuffer();
+    if (!hasImageMagic(head)) {
+      return NextResponse.json(
+        { error: "File content is not a valid image" },
         { status: 400 }
       );
     }
@@ -34,7 +69,7 @@ export async function POST(req: Request) {
     }
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const path = `avatars/${Date.now()}-${safeName}`;
+    const path = `avatars/${session.user.id}-${Date.now()}-${safeName}`;
 
     const blob = await put(path, file, {
       access: "private",
