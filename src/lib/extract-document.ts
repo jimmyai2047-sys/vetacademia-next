@@ -20,8 +20,7 @@ function textToParagraphs(text: string): string {
 }
 
 async function extractDocx(file: File): Promise<string> {
-  // @ts-ignore - mammoth browser build has no bundled types
-  const mod = await import("mammoth/mammoth.browser.min.js");
+  const mod: any = await import("mammoth/mammoth.browser.min.js");
   const mammoth = mod.default ?? mod;
   const arrayBuffer = await file.arrayBuffer();
   const result = await mammoth.convertToHtml({ arrayBuffer });
@@ -54,7 +53,7 @@ async function extractPdf(file: File): Promise<string> {
     const page = await doc.getPage(i);
     const content = await page.getTextContent();
     const text = content.items
-      .map((it: { str?: string }) => it.str ?? "")
+      .map((it) => ("str" in it ? it.str : ""))
       .join(" ");
     if (text.trim()) paras.push(`<p>${escapeHtml(text)}</p>`);
   }

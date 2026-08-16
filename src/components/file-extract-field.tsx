@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Upload, Loader2 } from "lucide-react";
 import { extractDocumentToHtml } from "@/lib/extract-document";
 
