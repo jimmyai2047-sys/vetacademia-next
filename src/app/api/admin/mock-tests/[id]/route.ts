@@ -22,6 +22,8 @@ export async function PUT(
       exam,
       track,
       isAdaptive,
+      kind,
+      year,
       file,
     } = body as {
       title?: string;
@@ -32,6 +34,8 @@ export async function PUT(
       exam?: string | null;
       track?: string | null;
       isAdaptive?: boolean;
+      kind?: string;
+      year?: string | null;
       file?: {
         url: string;
         fileName: string;
@@ -44,6 +48,17 @@ export async function PUT(
       return NextResponse.json({ error: "Test not found" }, { status: 404 });
     }
 
+    const resolvedKind = (
+      kind ||
+      (isAdaptive !== undefined ? (isAdaptive ? "ADAPTIVE" : "MOCK") : existing.kind)
+    )?.toUpperCase();
+    const kindValue =
+      resolvedKind === "PREVIOUS_YEAR" ||
+      resolvedKind === "ADAPTIVE" ||
+      resolvedKind === "MOCK"
+        ? resolvedKind
+        : existing.kind;
+
     const test = await prisma.mockTest.update({
       where: { id },
       data: {
@@ -55,7 +70,20 @@ export async function PUT(
         exam: exam !== undefined ? exam : existing.exam,
         track: track !== undefined ? track : existing.track,
         isAdaptive:
-          isAdaptive !== undefined ? isAdaptive : existing.isAdaptive,
+          kindValue === "ADAPTIVE"
+            ? true
+            : kindValue === "PREVIOUS_YEAR"
+            ? false
+            : isAdaptive !== undefined
+            ? isAdaptive
+            : existing.isAdaptive,
+        kind: kindValue,
+        year:
+          kindValue === "PREVIOUS_YEAR"
+            ? year !== undefined
+              ? year || null
+              : existing.year
+            : null,
         fileUrl: file?.url !== undefined ? (file?.url || null) : existing.fileUrl,
         fileName:
           file?.fileName !== undefined ? (file?.fileName || null) : existing.fileName,

@@ -155,6 +155,8 @@ model MockTest {
   exam        String? // exam key the test belongs to (psc | icar-entrance | net | ars | other)
   track       String? // granular content track (veterinary-officer | livestock-assistant | icar-pre | icar-mains | ...)
   isAdaptive  Boolean  @default(false) // true => adaptive test (vs standard mock test)
+  kind        String   @default("MOCK") // MOCK | ADAPTIVE | PREVIOUS_YEAR
+  year        String?  // exam year for PREVIOUS_YEAR papers (e.g. "2023")
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

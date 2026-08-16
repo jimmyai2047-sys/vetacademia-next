@@ -8,6 +8,7 @@ export const metadata = { title: "Flashcards | VetAcademia" };
 export default async function FlashcardsPage() {
   const questions = await prisma.question.findMany({
     take: 20,
+    where: { mockTest: { kind: { not: "PREVIOUS_YEAR" } } },
     orderBy: { createdAt: "desc" },
     include: { mockTest: { select: { title: true } } },
   });

@@ -35,6 +35,8 @@ export async function POST(req: Request) {
       exam,
       track,
       isAdaptive,
+      kind,
+      year,
       file,
     } = body as {
       title?: string;
@@ -45,6 +47,8 @@ export async function POST(req: Request) {
       exam?: string | null;
       track?: string | null;
       isAdaptive?: boolean;
+      kind?: string;
+      year?: string | null;
       file?: {
         url: string;
         fileName: string;
@@ -56,6 +60,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
 
+    const resolvedKind = (kind || (isAdaptive ? "ADAPTIVE" : "MOCK")).toUpperCase();
+    const kindValue =
+      resolvedKind === "PREVIOUS_YEAR" ||
+      resolvedKind === "ADAPTIVE" ||
+      resolvedKind === "MOCK"
+        ? resolvedKind
+        : "MOCK";
+
     const test = await prisma.mockTest.create({
       data: {
         title: title.trim(),
@@ -65,7 +77,9 @@ export async function POST(req: Request) {
         subjectId: subjectId || null,
         exam: exam || null,
         track: track || null,
-        isAdaptive: isAdaptive ?? false,
+        isAdaptive: kindValue === "ADAPTIVE",
+        kind: kindValue,
+        year: kindValue === "PREVIOUS_YEAR" ? year || null : null,
         fileUrl: file?.url || null,
         fileName: file?.fileName || null,
         fileType: file?.fileType || null,

@@ -29,6 +29,8 @@ type MockTest = {
   exam?: string | null;
   track?: string | null;
   isAdaptive?: boolean;
+  kind?: string;
+  year?: string | null;
   _count?: { questions: number };
 };
 
@@ -45,6 +47,8 @@ export default function MockTestManager() {
   const [totalMarks, setTotalMarks] = useState(0);
   const [track, setTrack] = useState("");
   const [isAdaptive, setIsAdaptive] = useState(false);
+  const [kind, setKind] = useState("MOCK");
+  const [year, setYear] = useState("");
   const [file, setFile] = useState<{
     url: string;
     fileName: string;
@@ -80,6 +84,8 @@ export default function MockTestManager() {
     setTotalMarks(0);
     setTrack("");
     setIsAdaptive(false);
+    setKind("MOCK");
+    setYear("");
     setFile(null);
     setError(null);
     setShowForm(true);
@@ -92,7 +98,10 @@ export default function MockTestManager() {
     setDuration(t.duration);
     setTotalMarks(t.totalMarks);
     setTrack(t.track || "");
-    setIsAdaptive(t.isAdaptive || false);
+    const k = t.kind || (t.isAdaptive ? "ADAPTIVE" : "MOCK");
+    setIsAdaptive(k === "ADAPTIVE");
+    setKind(k);
+    setYear(t.year || "");
     setFile(
       t.fileName
         ? { url: "", fileName: t.fileName, fileType: t.fileType || "" }
@@ -141,6 +150,8 @@ export default function MockTestManager() {
         track: track || null,
         exam: examForTrack(track),
         isAdaptive,
+        kind,
+        year: kind === "PREVIOUS_YEAR" ? year || null : null,
         file,
       };
       const res = editing
@@ -245,17 +256,44 @@ export default function MockTestManager() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isAdaptive"
-              checked={isAdaptive}
-              onChange={(e) => setIsAdaptive(e.target.checked)}
-            />
-            <label htmlFor="isAdaptive" className="text-sm">
-              Adaptive Test (vs standard Mock Test)
-            </label>
+          <div className="space-y-1.5">
+            <Label>Type</Label>
+            <select
+              value={kind}
+              onChange={(e) => {
+                setKind(e.target.value);
+                setIsAdaptive(e.target.value === "ADAPTIVE");
+              }}
+              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="MOCK">Mock Test</option>
+              <option value="ADAPTIVE">Adaptive Test</option>
+              <option value="PREVIOUS_YEAR">Previous Year Paper</option>
+            </select>
           </div>
+          {kind === "PREVIOUS_YEAR" && (
+            <div className="space-y-1.5">
+              <Label>Exam Year (e.g. 2023)</Label>
+              <Input
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                placeholder="Optional"
+              />
+            </div>
+          )}
+          {kind === "ADAPTIVE" && (
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isAdaptive"
+                checked={isAdaptive}
+                onChange={(e) => setIsAdaptive(e.target.checked)}
+              />
+              <label htmlFor="isAdaptive" className="text-sm">
+                Adaptive Test (vs standard Mock Test)
+              </label>
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label>Practice Set File (optional PDF)</Label>
             <div className="flex items-center gap-2">
@@ -338,9 +376,17 @@ export default function MockTestManager() {
                       {trackLabel(t.track)}
                     </Badge>
                   )}
-                  {t.isAdaptive && (
+                  {t.kind === "PREVIOUS_YEAR" ? (
+                    <Badge variant="default" className="text-xs">
+                      PY {t.year || ""}
+                    </Badge>
+                  ) : t.isAdaptive || t.kind === "ADAPTIVE" ? (
                     <Badge variant="default" className="text-xs">
                       Adaptive
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="text-xs">
+                      Mock
                     </Badge>
                   )}
                 </div>
