@@ -23,9 +23,61 @@ function textToParagraphs(text: string): string {
 async function extractDocx(file: File): Promise<string> {
   const mammoth = (await import("mammoth/mammoth.browser.min.js")).default;
   const arrayBuffer = await file.arrayBuffer();
-  const result = await mammoth.convertToHtml({ arrayBuffer });
-  const html = result.value || "";
+  const result = await mammoth.convertToHtml({
+    arrayBuffer,
+    includeDefaultStyleMap: true,
+    styleMap: [
+      "p[style-name='Title'] => h1:fresh",
+      "p[style-name='Subtitle'] => p.report-subtitle:fresh",
+      "p[style-name='Heading 1'] => h1:fresh",
+      "p[style-name='Heading 2'] => h2:fresh",
+      "p[style-name='Heading 3'] => h3:fresh",
+      "p[style-name='Heading 4'] => h4:fresh",
+      "p[style-name='Quote'] => blockquote:fresh",
+      "p[style-name='Caption'] => figcaption:fresh",
+    ],
+    convertImage: mammoth.images.imgElement((image) =>
+      image.read("base64").then((src: string) => ({
+        src: `data:${image.contentType};base64,${src}`,
+        alt: image.alt || "",
+      }))
+    ),
+  });
+  let html = result.value || "";
+  html = organizeDocxHtml(html);
   return html.trim() || "<p></p>";
+}
+
+// Turn a flat Word export into a structured report. Docs that use direct
+// formatting (bolded titles instead of Heading styles) come out as plain
+// paragraphs; promote bold-only short paragraphs to headings so the report
+// reads as a proper document. Runs in the browser (DOMParser).
+function organizeDocxHtml(html: string): string {
+  if (typeof window === "undefined" || !html) return html;
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const body = doc.body;
+
+  body.querySelectorAll("p").forEach((p) => {
+    const text = (p.textContent || "").trim();
+    if (!text || text.length > 70) return;
+
+    const onlyStrong =
+      p.children.length === 1 &&
+      p.firstElementChild?.tagName === "STRONG";
+    const allCaps = /^[A-Z0-9][A-Z0-9 \-/:&]+$/.test(text);
+    const looksLikeHeading = onlyStrong || allCaps;
+    // Headings rarely end with sentence punctuation.
+    if (looksLikeHeading && !/[.!?:]$/.test(text)) {
+      const level = text.length > 45 ? "h3" : "h2";
+      const h = doc.createElement(level);
+      h.innerHTML = p.innerHTML;
+      p.replaceWith(h);
+    }
+  });
+
+  body.querySelectorAll("table").forEach((t) => t.classList.add("report-table"));
+
+  return body.innerHTML;
 }
 
 async function extractXlsx(file: File): Promise<string> {
