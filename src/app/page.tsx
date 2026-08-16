@@ -87,6 +87,13 @@ const features = [
     href: "/experts",
     image: "/images/features-experts.jpg",
   },
+  {
+    icon: BookOpen,
+    title: "Syllabus",
+    description: "Complete curriculum & chapter-wise content for every programme",
+    href: "/syllabus",
+    image: "/images/bvsc.jpg",
+  },
 ];
 
 const stats = [
