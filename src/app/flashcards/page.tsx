@@ -30,7 +30,7 @@ export default async function FlashcardsPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl">
+    <div className="container mx-auto px-4 py-12 max-w-5xl">
       <h1 className="text-3xl md:text-4xl font-bold mb-2">Flashcards</h1>
       <p className="text-muted-foreground mb-8">
         Quick-revision flashcards built from real practice questions. Reveal the
@@ -43,7 +43,10 @@ export default async function FlashcardsPage() {
           have been added.
         </div>
       ) : (
-        <FlashcardDeck cards={cards} />
+        <FlashcardDeck
+          cards={cards}
+          duration={Math.max(3, Math.round(cards.length * 0.5))}
+        />
       )}
     </div>
   );

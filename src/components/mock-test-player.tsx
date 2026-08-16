@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, ArrowLeft, RotateCcw } from "lucide-react";
+import { TestStatsSidebar } from "@/components/test-stats";
 
 type Q = {
   id: string;
@@ -33,6 +34,38 @@ export default function MockTestPlayer({
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [saved, setSaved] = useState(false);
+
+  const totalSeconds = duration * 60;
+  const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
+
+  const fmtTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  // Live countdown timer.
+  useEffect(() => {
+    if (submitted || secondsLeft <= 0) return;
+    const t = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [submitted, secondsLeft]);
+
+  // Auto-submit when time runs out.
+  useEffect(() => {
+    if (secondsLeft <= 0 && !submitted) submit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondsLeft]);
+
+  const attempted = Object.keys(answers).length;
+  const correct = submitted
+    ? questions.filter((q) => answers[q.id] === q.correctAnswer).length
+    : 0;
+  const wrong = submitted
+    ? questions.filter(
+        (q) => answers[q.id] !== undefined && answers[q.id] !== q.correctAnswer
+      ).length
+    : 0;
 
   function select(qid: string, idx: number) {
     if (submitted) return;
@@ -108,77 +141,94 @@ export default function MockTestPlayer({
         </Card>
       )}
 
-      <div className="space-y-4">
-        {questions.map((q, i) => {
-          const chosen = answers[q.id];
-          const isCorrect = submitted && chosen === q.correctAnswer;
-          const isWrong = submitted && chosen !== undefined && chosen !== q.correctAnswer;
-          return (
-            <Card key={q.id}>
-              <CardHeader>
-                <CardTitle className="text-base">
-                  {i + 1}. {q.text}
-                  <Badge variant="outline" className="ml-2 text-xs">
-                    {q.marks} marks
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {q.options.map((opt, oi) => {
-                  const showCorrect = submitted && oi === q.correctAnswer;
-                  const showWrong = submitted && chosen === oi && oi !== q.correctAnswer;
-                  return (
-                    <label
-                      key={oi}
-                      className={`flex items-center gap-2 rounded-md border p-3 cursor-pointer transition-colors ${
-                        showCorrect
-                          ? "border-green-500 bg-green-50"
-                          : showWrong
-                          ? "border-red-500 bg-red-50"
-                          : "hover:bg-accent"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={q.id}
-                        checked={chosen === oi}
-                        onChange={() => select(q.id, oi)}
-                        disabled={submitted}
-                      />
-                      <span className="text-sm">
-                        {String.fromCharCode(65 + oi)}. {opt}
-                      </span>
-                      {showCorrect && (
-                        <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
-                      )}
-                      {showWrong && <XCircle className="h-4 w-4 text-red-500 ml-auto" />}
-                    </label>
-                  );
-                })}
-                {submitted && q.explanation && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    <strong>Explanation:</strong> {q.explanation}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      <div className="lg:grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-4">
+          {questions.map((q, i) => {
+            const chosen = answers[q.id];
+            const isCorrect = submitted && chosen === q.correctAnswer;
+            const isWrong = submitted && chosen !== undefined && chosen !== q.correctAnswer;
+            return (
+              <Card key={q.id}>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    {i + 1}. {q.text}
+                    <Badge variant="outline" className="ml-2 text-xs">
+                      {q.marks} marks
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {q.options.map((opt, oi) => {
+                    const showCorrect = submitted && oi === q.correctAnswer;
+                    const showWrong = submitted && chosen === oi && oi !== q.correctAnswer;
+                    return (
+                      <label
+                        key={oi}
+                        className={`flex items-center gap-2 rounded-md border p-3 cursor-pointer transition-colors ${
+                          showCorrect
+                            ? "border-green-500 bg-green-50"
+                            : showWrong
+                            ? "border-red-500 bg-red-50"
+                            : "hover:bg-accent"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name={q.id}
+                          checked={chosen === oi}
+                          onChange={() => select(q.id, oi)}
+                          disabled={submitted}
+                        />
+                        <span className="text-sm">
+                          {String.fromCharCode(65 + oi)}. {opt}
+                        </span>
+                        {showCorrect && (
+                          <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
+                        )}
+                        {showWrong && <XCircle className="h-4 w-4 text-red-500 ml-auto" />}
+                      </label>
+                    );
+                  })}
+                  {submitted && q.explanation && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      <strong>Explanation:</strong> {q.explanation}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
 
-      {!submitted && (
-        <div className="mt-6">
-          <Button size="lg" onClick={submit} disabled={Object.keys(answers).length < questions.length}>
-            Submit Test
-          </Button>
-          {Object.keys(answers).length < questions.length && (
-            <span className="ml-3 text-xs text-muted-foreground">
-              Answer all questions to submit ({Object.keys(answers).length}/
-              {questions.length})
-            </span>
+          {!submitted && (
+            <div className="mt-6">
+              <Button
+                size="lg"
+                onClick={submit}
+                disabled={Object.keys(answers).length < questions.length}
+              >
+                Submit Test
+              </Button>
+              {Object.keys(answers).length < questions.length && (
+                <span className="ml-3 text-xs text-muted-foreground">
+                  Answer all questions to submit ({Object.keys(answers).length}/
+                  {questions.length})
+                </span>
+              )}
+            </div>
           )}
         </div>
-      )}
+
+        <aside className="lg:col-span-1 mt-6 lg:mt-0">
+          <TestStatsSidebar
+            total={questions.length}
+            attempted={attempted}
+            correct={correct}
+            wrong={wrong}
+            totalTime={`${duration} min`}
+            timeRemaining={fmtTime(secondsLeft)}
+          />
+        </aside>
+      </div>
     </div>
   );
 }
