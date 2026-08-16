@@ -65,7 +65,7 @@ export default async function ExamSubjectPage({
   const { discipline, group } = found;
 
   const access = await getAccess();
-  const examUnlocked = access.examKeys.has(exam) || exam === "other";
+  const examUnlocked = access.examKeys.has(exam) || access.examPlanOwned;
   const requiredPlan = group?.planSlug ?? planSlugForExam(exam);
   const unlocked = group?.planSlug
     ? access.planSlugs.has(group.planSlug)

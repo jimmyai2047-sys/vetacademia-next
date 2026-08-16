@@ -167,7 +167,7 @@ export default async function ExamPage({
   );
 
   const access = await getAccess();
-  const examUnlocked = access.examKeys.has(exam) || exam === "other";
+  const examUnlocked = access.examKeys.has(exam) || access.examPlanOwned;
 
   const groups = getExamGroups(exam);
   const disciplines = getExamDisciplines(exam);
