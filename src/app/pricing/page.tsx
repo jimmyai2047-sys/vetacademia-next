@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, GraduationCap, Award, ArrowRight } from "lucide-react";
+import { Check, GraduationCap, Award, ArrowRight, Layers } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +40,25 @@ export default async function PricingPage({
     getAccess(),
   ]);
 
-  const courses = plans.filter(
-    (p) => p.type === "COURSE" && !p.year && !p.subjectId
+  const fullCoursePlans = plans.filter(
+    (p) => p.type === "COURSE" && !p.subjectId
   );
+  const subjectPlans = plans.filter((p) => p.type === "COURSE" && !!p.subjectId);
   const exams = plans.filter((p) => p.type === "EXAM");
+
+  const PROG_LABEL: Record<string, string> = {
+    ahdp: "AHDP",
+    bvsc: "B.V.Sc & A.H.",
+    mvsc: "M.V.Sc",
+    phd: "PhD",
+  };
+
+  const subjectByProgramme = new Map<string, typeof plans>();
+  for (const p of subjectPlans) {
+    const key = p.programmeSlug || "other";
+    if (!subjectByProgramme.has(key)) subjectByProgramme.set(key, []);
+    subjectByProgramme.get(key)!.push(p);
+  }
 
   const renderPlan = (plan: (typeof plans)[number]) => {
     const enrolled = access.planSlugs.has(plan.slug);
@@ -108,9 +123,32 @@ export default async function PricingPage({
           <h2 className="text-2xl font-semibold">Programmes</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {courses.map(renderPlan)}
+          {fullCoursePlans.map(renderPlan)}
         </div>
       </section>
+
+      {subjectByProgramme.size > 0 && (
+        <section className="mb-12">
+          <div className="flex items-center gap-2 mb-2">
+            <Layers className="h-5 w-5 text-primary" />
+            <h2 className="text-2xl font-semibold">Subject-wise Plans</h2>
+          </div>
+          <p className="text-muted-foreground mb-5 max-w-2xl">
+            Don&apos;t need the full course? Buy individual subjects — ideal for
+            M.V.Sc &amp; PhD students who want to pay per subject.
+          </p>
+          {[...subjectByProgramme.entries()].map(([prog, items]) => (
+            <div key={prog} className="mb-6">
+              <h3 className="text-lg font-medium mb-3">
+                {PROG_LABEL[prog] || prog.toUpperCase()}
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+                {items.map(renderPlan)}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section>
         <div className="flex items-center gap-2 mb-5">
