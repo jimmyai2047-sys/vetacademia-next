@@ -8,7 +8,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { getExamKeysForPlan } from "@/lib/plans";
-import { getProgrammeImage, getExamImage } from "@/lib/subject-images";
+import { getProgrammeImage, getExamImage, getSubjectImage } from "@/lib/subject-images";
 import {
   Card,
   CardContent,
@@ -44,10 +44,13 @@ export default async function PricingPage({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const { plan: highlight } = await searchParams;
-  const [plans, access] = await Promise.all([
+  const [plans, access, subjects] = await Promise.all([
     prisma.plan.findMany({ orderBy: { sortOrder: "asc" } }),
     getAccess(),
+    prisma.subject.findMany({ select: { id: true, name: true } }),
   ]);
+
+  const subjectNameMap = new Map(subjects.map((s) => [s.id, s.name]));
 
   const fullCoursePlans = plans.filter(
     (p) => p.type === "COURSE" && !p.subjectId
@@ -75,6 +78,8 @@ export default async function PricingPage({
     const planImage =
       plan.type === "EXAM" && plan.examSlug
         ? getExamImage(plan.examSlug)
+        : plan.subjectId && subjectNameMap.get(plan.subjectId)
+        ? getSubjectImage(subjectNameMap.get(plan.subjectId)!)
         : plan.programmeSlug
         ? getProgrammeImage(plan.programmeSlug)
         : getProgrammeImage("ahdp");
