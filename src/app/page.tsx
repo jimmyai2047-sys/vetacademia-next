@@ -359,7 +359,7 @@ export default function HomePage() {
       {/* Important Links */}
       <section className="py-12 md:py-16 border-y bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto">
             <div className="rounded-2xl border bg-card p-6 md:p-8 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <ExternalLink className="h-5 w-5 text-green-600" />
