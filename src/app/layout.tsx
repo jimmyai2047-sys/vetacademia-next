@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "@/components/providers";
@@ -9,6 +9,14 @@ import Footer from "@/components/layout/footer";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+});
+
+// Covers both Latin (English) and Devanagari (Hindi) so bilingual content such
+// as AHDP material renders uniformly on every device.
+const noto = Noto_Sans({
+  variable: "--font-noto",
+  subsets: ["latin", "devanagari"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -57,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${noto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <TooltipProvider>
           <Providers>
