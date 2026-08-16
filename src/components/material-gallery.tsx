@@ -16,7 +16,7 @@ export type Material = {
   id: string;
   title: string;
   excerpt: string;
-  category: "VETS" | "ADVISORY" | "FARMERS";
+  category: "VETS" | "ADVISORY" | "ANIMAL_OWNER";
   downloadUrl?: string;
 };
 
@@ -24,7 +24,7 @@ const FILTERS = [
   { key: "ALL", label: "All" },
   { key: "VETS", label: "Vets" },
   { key: "ADVISORY", label: "Advisory" },
-  { key: "FARMERS", label: "Farmers" },
+  { key: "ANIMAL_OWNER", label: "Animal Owners" },
 ] as const;
 
 const categoryMeta: Record<
@@ -41,8 +41,8 @@ const categoryMeta: Record<
     className:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   },
-  FARMERS: {
-    label: "Farmers",
+  ANIMAL_OWNER: {
+    label: "Animal Owners",
     className:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
   },

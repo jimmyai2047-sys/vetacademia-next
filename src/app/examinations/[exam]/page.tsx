@@ -34,6 +34,7 @@ import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
+import { programmeNameToSlug } from "@/lib/programme";
 import {
   getExamGroups,
   getExamDisciplines,
@@ -172,16 +173,20 @@ export default async function ExamPage({
   const disciplines = getExamDisciplines(exam);
 
   // For programme-based groups (PSC tracks), fetch the actual subjects.
+  const allProgrammeSubjects = await prisma.subject.findMany({
+    include: { programme: true },
+    orderBy: { name: "asc" },
+  });
   const groupSubjects: Record<string, { slug: string; name: string }[]> = {};
   for (const g of groups) {
     if (g.programmeSlug) {
-      const subs = await prisma.subject.findMany({
-        where: { programme: { name: g.programmeSlug.toUpperCase() } },
-        select: { name: true },
-        orderBy: { name: "asc" },
-      });
       const seen = new Set<string>();
-      groupSubjects[g.slug] = subs
+      groupSubjects[g.slug] = allProgrammeSubjects
+        .filter(
+          (s) =>
+            s.programme &&
+            programmeNameToSlug(s.programme.name) === g.programmeSlug
+        )
         .map((s) => ({ slug: slugify(s.name), name: s.name }))
         .filter((s) => (seen.has(s.slug) ? false : (seen.add(s.slug), true)));
     }

@@ -36,7 +36,7 @@ export default async function AdminFarmersPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Farmers Content</h1>
+            <h1 className="text-3xl font-bold">Animal Owner Content</h1>
             <p className="text-muted-foreground">
               Manage farm guides, vaccination &amp; deworming schedules, and paid
               project reports.

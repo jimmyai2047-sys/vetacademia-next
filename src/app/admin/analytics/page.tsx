@@ -3,6 +3,7 @@
 };
 
 import { prisma } from "@/lib/prisma";
+import { EXPERT_ROLES } from "@/lib/roles";
 import Link from "next/link";
 import {
   Card,
@@ -32,6 +33,8 @@ export default async function AnalyticsPage() {
     totalStudents,
     totalExperts,
     totalAdmins,
+    totalAnimalOwners,
+    totalGuests,
     totalSubjects,
     totalMockTests,
     totalAttempts,
@@ -40,8 +43,10 @@ export default async function AnalyticsPage() {
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: "STUDENT" } }),
-    prisma.user.count({ where: { role: "EXPERT" } }),
+    prisma.user.count({ where: { role: { in: [...EXPERT_ROLES] } } }),
     prisma.user.count({ where: { role: "ADMIN" } }),
+    prisma.user.count({ where: { role: "ANIMAL_OWNER" } }),
+    prisma.user.count({ where: { role: "GUEST" } }),
     prisma.subject.count(),
     prisma.mockTest.count(),
     prisma.mockTestAttempt.count(),
@@ -184,7 +189,9 @@ export default async function AnalyticsPage() {
             <div className="grid grid-cols-3 gap-4">
               {[
                 { role: "Students", count: totalStudents, color: "bg-blue-500" },
+                { role: "Animal Owners", count: totalAnimalOwners, color: "bg-amber-500" },
                 { role: "Experts", count: totalExperts, color: "bg-green-500" },
+                { role: "Guests", count: totalGuests, color: "bg-gray-500" },
                 { role: "Admins", count: totalAdmins, color: "bg-red-500" },
               ].map((item) => (
                 <div key={item.role} className="text-center space-y-2">

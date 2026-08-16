@@ -37,6 +37,7 @@ export async function POST(req: Request) {
       isAdaptive,
       kind,
       year,
+      isDemo,
       file,
     } = body as {
       title?: string;
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
       isAdaptive?: boolean;
       kind?: string;
       year?: string | null;
+      isDemo?: boolean;
       file?: {
         url: string;
         fileName: string;
@@ -80,6 +82,7 @@ export async function POST(req: Request) {
         isAdaptive: kindValue === "ADAPTIVE",
         kind: kindValue,
         year: kindValue === "PREVIOUS_YEAR" ? year || null : null,
+        isDemo: isDemo ?? false,
         fileUrl: file?.url || null,
         fileName: file?.fileName || null,
         fileType: file?.fileType || null,

@@ -62,4 +62,16 @@ export function getProgrammeImage(slug: string): string {
   return programmeImages[slug] || programmeImages.ahdp;
 }
 
+const examImages: Record<string, string> = {
+  "veterinary-officer": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=1200&q=80",
+  "livestock-assistant": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
+  "icar-jrf-srf": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
+  net: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
+  ars: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
+};
+
+export function getExamImage(slug: string): string {
+  return examImages[slug] || "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=1200&q=80";
+}
+
 export default subjectImages;

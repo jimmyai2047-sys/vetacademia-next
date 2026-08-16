@@ -42,6 +42,7 @@ export async function POST(req: Request) {
       order,
       subject,
       topic,
+      isDemo,
     } = body as {
       category?: string;
       type?: string;
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
       order?: number;
       subject?: string | null;
       topic?: string | null;
+      isDemo?: boolean;
     };
 
     if (!category || !type || !title) {
@@ -80,6 +82,7 @@ export async function POST(req: Request) {
         order: order ?? 0,
         subject: subject || null,
         topic: topic || null,
+        isDemo: isDemo ?? false,
       },
     });
     return NextResponse.json(material, { status: 201 });

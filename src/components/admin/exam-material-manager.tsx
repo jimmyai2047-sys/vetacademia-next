@@ -37,6 +37,7 @@ type MaterialRow = {
   order: number;
   subject: string | null;
   topic: string | null;
+  isDemo: boolean;
 };
 
 type FormState = {
@@ -49,6 +50,7 @@ type FormState = {
   order: number;
   subject: string;
   topic: string;
+  isDemo: boolean;
 };
 
 const emptyForm: FormState = {
@@ -61,6 +63,7 @@ const emptyForm: FormState = {
   order: 0,
   subject: "",
   topic: "",
+  isDemo: false,
 };
 
 export default function ExamMaterialManager({
@@ -172,6 +175,7 @@ export default function ExamMaterialManager({
       order: m.order,
       subject: m.subject || "",
       topic: m.topic || "",
+      isDemo: m.isDemo,
     });
     setFile(
       m.fileUrl
@@ -259,6 +263,7 @@ export default function ExamMaterialManager({
       fileSize: file?.fileSize ?? null,
       subject: form.subject || null,
       topic: form.topic || null,
+      isDemo: form.isDemo,
     };
     const method = editingId ? "PUT" : "POST";
     const url = editingId
@@ -521,6 +526,19 @@ export default function ExamMaterialManager({
               Published (visible on site)
             </label>
           </div>
+          <div className="flex items-end gap-2">
+            <input
+              type="checkbox"
+              id="isDemo"
+              checked={form.isDemo}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, isDemo: e.target.checked }))
+              }
+            />
+            <label htmlFor="isDemo" className="text-sm">
+              Demo content (free for everyone, shown on /demo)
+            </label>
+          </div>
 
           <div className="sm:col-span-2 flex items-center gap-2 sm:justify-end">
             {editingId && (
@@ -552,8 +570,9 @@ export default function ExamMaterialManager({
                   <th className="text-left p-3">Title</th>
                   <th className="text-left p-3">Subject / Topic</th>
                   <th className="text-left p-3">Source</th>
-                  <th className="text-left p-3">Published</th>
-                  <th className="text-right p-3">Actions</th>
+                   <th className="text-left p-3">Demo</th>
+                   <th className="text-left p-3">Published</th>
+                   <th className="text-right p-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -576,7 +595,8 @@ export default function ExamMaterialManager({
                         ? "Link"
                         : m.fileName || (m.fileUrl ? "File" : "—")}
                     </td>
-                    <td className="p-3">{m.published ? "Yes" : "No"}</td>
+                     <td className="p-3">{m.isDemo ? "Yes" : "No"}</td>
+                     <td className="p-3">{m.published ? "Yes" : "No"}</td>
                     <td className="p-3 text-right whitespace-nowrap">
                       <button
                         className="text-primary hover:underline mr-3"

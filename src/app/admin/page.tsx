@@ -3,6 +3,7 @@
 };
 
 import { prisma } from "@/lib/prisma";
+import { EXPERT_ROLES, ANIMAL_OWNER, GUEST, ADMIN, STUDENT, isExpertRole } from "@/lib/roles";
 import Link from "next/link";
 import {
   Card,
@@ -76,11 +77,22 @@ export default async function AdminDashboard() {
     { title: "Mock Tests", value: totalMockTests.toString(), icon: Brain, color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
   ];
 
-  const roleColors: Record<string, string> = {
-    ADMIN: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-    STUDENT: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    EXPERT: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  };
+  function roleColor(role: string): string {
+    if (isExpertRole(role))
+      return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+    switch (role) {
+      case ADMIN:
+        return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+      case STUDENT:
+        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+      case ANIMAL_OWNER:
+        return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+      case GUEST:
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+      default:
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -146,7 +158,7 @@ export default async function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge className={roleColors[user.role] || "bg-gray-100 text-gray-700"}>
+                      <Badge className={roleColor(user.role)}>
                         {user.role}
                       </Badge>
                       <p className="text-xs text-muted-foreground mt-1">

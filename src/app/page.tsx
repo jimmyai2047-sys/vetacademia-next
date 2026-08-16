@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/layout/brand-logo";
 import VisitorCounter from "@/components/visitor-counter";
 import Chatbot from "@/components/chatbot";
 import {
@@ -242,6 +243,9 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
+            <div className="flex justify-center mb-6">
+              <BrandLogo tone="light" />
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
               India&apos;s Premier{" "}
               <span className="text-green-400">Veterinary Education</span> Platform
@@ -280,6 +284,28 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Free Demo Banner */}
+      <section className="bg-emerald-50 border-y border-emerald-200">
+        <div className="container mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-emerald-900 font-semibold text-lg">
+              Try before you enroll — free sample study material, mock tests,
+              adaptive tests, previous year papers &amp; flashcards.
+            </p>
+            <p className="text-emerald-700 text-sm">
+              Explore demos across AHDP, B.V.Sc &amp; A.H., M.V.Sc, Ph.D and LSA
+              / VO / ICAR exams.
+            </p>
+          </div>
+          <Link href="/demo">
+            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700 shrink-0">
+              Explore Free Demos
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </section>
 

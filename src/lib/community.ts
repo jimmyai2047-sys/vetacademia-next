@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getExamKeysForPlan } from "@/lib/plans";
+import { roleGroup } from "@/lib/roles";
 export {
   PROGRAMME_REFS,
   EXAM_REFS,
@@ -54,7 +55,7 @@ export async function getEligibleCommunityLinks(
       (l) =>
         (l.category === "PROGRAMME" && programmeSlugs.has(l.ref)) ||
         (l.category === "EXAM" && examKeys.has(l.ref)) ||
-        (l.category === "ROLE" && !!user && l.ref === user.role)
+        (l.category === "ROLE" && !!user && l.ref === roleGroup(user.role))
     )
     .map((l) => ({
       id: l.id,

@@ -16,10 +16,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { startGuestSession } from "@/lib/guest";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [error, setError] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -49,6 +51,29 @@ export default function LoginPage() {
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleGuest() {
+    setGuestLoading(true);
+    setError("");
+    try {
+      const creds = await startGuestSession();
+      const res = await signIn("credentials", {
+        email: creds.email,
+        password: creds.password,
+        redirect: false,
+      });
+      if (res?.error) {
+        setError("Guest login is unavailable right now.");
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setGuestLoading(false);
     }
   }
 
@@ -100,7 +125,7 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || guestLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -108,6 +133,22 @@ export default function LoginPage() {
                 </>
               ) : (
                 "Sign In"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isLoading || guestLoading}
+              onClick={handleGuest}
+            >
+              {guestLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Entering as Guest...
+                </>
+              ) : (
+                "Continue as Guest"
               )}
             </Button>
             <p className="text-sm text-center text-muted-foreground">

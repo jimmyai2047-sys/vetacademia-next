@@ -38,9 +38,9 @@ const PROGRAMMES = [
 ];
 
 const EXAMS = [
-  { slug: "livestock-assistant", label: "LSA", sub: "Livestock Assistant (PSC)", category: "LSA", examKey: "psc" },
-  { slug: "veterinary-officer", label: "VO", sub: "Veterinary Officer (PSC)", category: "VO", examKey: "psc" },
-  { slug: "icar-jrf-srf", label: "ICAR", sub: "ICAR-JRF / SRF", category: "ICAR_ENTRANCE", examKey: "icar-entrance" },
+  { slug: "livestock-assistant", label: "LSA", sub: "Livestock Assistant (PSC)", category: "LSA", examKey: "psc", track: "livestock-assistant" },
+  { slug: "veterinary-officer", label: "VO", sub: "Veterinary Officer (PSC)", category: "VO", examKey: "psc", track: "veterinary-officer" },
+  { slug: "icar-jrf-srf", label: "ICAR", sub: "ICAR-JRF / SRF", category: "ICAR_ENTRANCE", examKey: "icar-entrance", track: "icar-jrf-srf" },
 ];
 
 export default async function DemoPage() {
@@ -187,8 +187,8 @@ export default async function DemoPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {EXAMS.map((e) => {
             const mats = examMaterials.filter((m) => m.category === e.category);
-            const mock = mockTests.filter((t) => t.track === e.slug && t.kind === "MOCK" && !t.isAdaptive);
-            const pyq = mockTests.filter((t) => t.track === e.slug && t.kind === "PREVIOUS_YEAR");
+            const mock = mockTests.filter((t) => t.track === e.track && t.kind === "MOCK" && !t.isAdaptive);
+            const pyq = mockTests.filter((t) => t.track === e.track && t.kind === "PREVIOUS_YEAR");
             return (
               <Card key={e.slug} className="flex flex-col">
                 <CardHeader>

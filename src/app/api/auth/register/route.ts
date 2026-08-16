@@ -3,6 +3,11 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import {
+  ALL_ROLES,
+  ANIMAL_OWNER,
+  isExpertRole,
+} from "@/lib/roles";
 
 const registerSchema = z
   .object({
@@ -13,7 +18,13 @@ const registerSchema = z
     role: z
       .string()
       .transform((v) => v.toUpperCase())
-      .pipe(z.enum(["STUDENT", "FARMER", "EXPERT"]))
+      .pipe(
+        z
+          .string()
+          .refine((v) => (ALL_ROLES as readonly string[]).includes(v), {
+            message: "Invalid role",
+          })
+      )
       .default("STUDENT"),
     programme: z.string().optional(),
     year: z.string().optional(),
@@ -47,14 +58,14 @@ const registerSchema = z
         message: "Subject / Department is required",
       });
     }
-    if (data.role === "FARMER" && !data.address) {
+    if (data.role === ANIMAL_OWNER && !data.address) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["address"],
-        message: "Address is required for farmers",
+        message: "Address is required for animal owners",
       });
     }
-    if (data.role === "EXPERT") {
+    if (isExpertRole(data.role)) {
       if (!data.highestDegree)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

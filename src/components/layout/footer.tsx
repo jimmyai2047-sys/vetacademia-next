@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GraduationCap, Mail, Phone, MapPin } from "lucide-react";
+import { BrandLogo } from "@/components/layout/brand-logo";
 
 const footerLinks = {
   programmes: [
@@ -9,7 +10,7 @@ const footerLinks = {
     { name: "Ph.D", href: "/syllabus/phd" },
   ],
   resources: [
-    { name: "Exam Prep", href: "/prepare" },
+    { name: "My Prep", href: "/prepare" },
     { name: "Mock Tests", href: "/mock-tests" },
     { name: "Study Materials", href: "/study-materials" },
     { name: "Previous Year Papers", href: "/papers" },
@@ -32,17 +33,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xl">
-                VA
-              </div>
-              <div>
-                <span className="text-lg font-bold">VetAcademia</span>
-                <span className="text-xs text-muted-foreground block -mt-1">
-                  Veterinary Education Portal
-                </span>
-              </div>
-            </Link>
+            <BrandLogo />
             <p className="text-sm text-muted-foreground">
               India&apos;s comprehensive veterinary education platform for B.V.Sc, M.V.Sc, and Ph.D students.
             </p>

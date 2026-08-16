@@ -29,6 +29,7 @@ type MockTest = {
   exam?: string | null;
   track?: string | null;
   isAdaptive?: boolean;
+  isDemo?: boolean;
   kind?: string;
   year?: string | null;
   _count?: { questions: number };
@@ -47,6 +48,7 @@ export default function MockTestManager() {
   const [totalMarks, setTotalMarks] = useState(0);
   const [track, setTrack] = useState("");
   const [isAdaptive, setIsAdaptive] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [kind, setKind] = useState("MOCK");
   const [year, setYear] = useState("");
   const [file, setFile] = useState<{
@@ -84,6 +86,7 @@ export default function MockTestManager() {
     setTotalMarks(0);
     setTrack("");
     setIsAdaptive(false);
+    setIsDemo(false);
     setKind("MOCK");
     setYear("");
     setFile(null);
@@ -101,6 +104,7 @@ export default function MockTestManager() {
     const k = t.kind || (t.isAdaptive ? "ADAPTIVE" : "MOCK");
     setIsAdaptive(k === "ADAPTIVE");
     setKind(k);
+    setIsDemo(!!t.isDemo);
     setYear(t.year || "");
     setFile(
       t.fileName
@@ -151,6 +155,7 @@ export default function MockTestManager() {
         exam: examForTrack(track),
         isAdaptive,
         kind,
+        isDemo,
         year: kind === "PREVIOUS_YEAR" ? year || null : null,
         file,
       };
@@ -294,6 +299,17 @@ export default function MockTestManager() {
               </label>
             </div>
           )}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isDemo"
+              checked={isDemo}
+              onChange={(e) => setIsDemo(e.target.checked)}
+            />
+            <label htmlFor="isDemo" className="text-sm">
+              Demo content (free for everyone, shown on /demo)
+            </label>
+          </div>
           <div className="space-y-1.5">
             <Label>Practice Set File (optional PDF)</Label>
             <div className="flex items-center gap-2">
@@ -376,19 +392,24 @@ export default function MockTestManager() {
                       {trackLabel(t.track)}
                     </Badge>
                   )}
-                  {t.kind === "PREVIOUS_YEAR" ? (
-                    <Badge variant="default" className="text-xs">
-                      PY {t.year || ""}
-                    </Badge>
-                  ) : t.isAdaptive || t.kind === "ADAPTIVE" ? (
-                    <Badge variant="default" className="text-xs">
-                      Adaptive
-                    </Badge>
-                  ) : (
-                    <Badge variant="secondary" className="text-xs">
-                      Mock
-                    </Badge>
-                  )}
+                   {t.kind === "PREVIOUS_YEAR" ? (
+                     <Badge variant="default" className="text-xs">
+                       PY {t.year || ""}
+                     </Badge>
+                   ) : t.isAdaptive || t.kind === "ADAPTIVE" ? (
+                     <Badge variant="default" className="text-xs">
+                       Adaptive
+                     </Badge>
+                   ) : (
+                     <Badge variant="secondary" className="text-xs">
+                       Mock
+                     </Badge>
+                   )}
+                   {t.isDemo && (
+                     <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-600">
+                       Demo
+                     </Badge>
+                   )}
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0">

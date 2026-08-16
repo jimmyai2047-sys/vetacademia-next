@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
+import { programmeNameToSlug } from "@/lib/programme";
 import { findDiscipline, getExamGroups, slugify } from "@/lib/exam-subjects";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
@@ -72,23 +73,31 @@ export default async function ExamSubjectPage({
 
   const [matchedSubjects, papers] = await Promise.all([
     discipline.subjectName && discipline.programmeSlug
-      ? prisma.subject.findMany({
+      ? prisma.subject
+          .findMany({
           where: {
             name: { equals: discipline.subjectName, mode: "insensitive" },
-            programme: { name: discipline.programmeSlug.toUpperCase() },
           },
-          include: {
-            chapters: {
-              orderBy: { unitNumber: "asc" },
-              select: { id: true, title: true, unitNumber: true },
+            include: {
+              programme: true,
+              chapters: {
+                orderBy: { unitNumber: "asc" },
+                select: { id: true, title: true, unitNumber: true },
+              },
+              mockTests: {
+                orderBy: { createdAt: "desc" },
+                select: { id: true, title: true, duration: true, totalMarks: true },
+              },
             },
-            mockTests: {
-              orderBy: { createdAt: "desc" },
-              select: { id: true, title: true, duration: true, totalMarks: true },
-            },
-          },
-          orderBy: { year: "asc" },
-        })
+            orderBy: { year: "asc" },
+          })
+          .then((subs) =>
+            subs.filter(
+              (s) =>
+                s.programme &&
+                programmeNameToSlug(s.programme.name) === discipline.programmeSlug
+            )
+          )
       : Promise.resolve([]),
     getPublishedPosts("PREVIOUS_YEAR", exam, subjectSlug),
   ]);

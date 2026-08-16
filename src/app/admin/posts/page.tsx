@@ -10,7 +10,7 @@ export default async function AdminPostsPage() {
       <div>
         <h1 className="text-3xl font-bold">Posts &amp; Resources</h1>
         <p className="text-muted-foreground">
-          Manage content for Farmers, Vets, Advisory and Previous Year Papers
+          Manage content for Animal Owners, Vets, Advisory and Previous Year Papers
           (articles + file uploads)
         </p>
       </div>

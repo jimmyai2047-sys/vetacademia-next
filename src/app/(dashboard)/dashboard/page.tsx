@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { isExpertRole, roleLabel } from "@/lib/roles";
 import Link from "next/link";
 import {
   Card,
@@ -63,9 +64,10 @@ export default async function DashboardPage() {
 
   const role = currentUser.role;
   const isStudent = role === "STUDENT";
-  const isFarmer = role === "FARMER";
-  const isExpert = role === "EXPERT";
+  const isAnimalOwner = role === "ANIMAL_OWNER";
+  const isExpert = isExpertRole(role);
   const isAdmin = role === "ADMIN";
+  const isGuest = role === "GUEST";
 
   const expertProfile = isExpert
     ? await prisma.expert.findUnique({
@@ -127,10 +129,12 @@ export default async function DashboardPage() {
     ? currentUser.programme
       ? `Continue your journey in ${currentUser.programme}`
       : "Track your progress and continue learning"
-    : isFarmer
+    : isAnimalOwner
     ? "Access advisory, helpline and expert consultation for your livestock"
     : isExpert
     ? "Manage your expert profile and consultations"
+    : isGuest
+    ? "You are browsing as a guest — sign up to unlock full access"
     : "Administer VetAcademia from the admin panel";
 
   const stats = isStudent
@@ -142,17 +146,22 @@ export default async function DashboardPage() {
       ]
     : isExpert
     ? [
-        { label: "Role", value: "Expert", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+        { label: "Role", value: roleLabel(role), icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
         { label: "Sessions", value: (expertProfile?._count.consultations ?? 0).toString(), icon: CalendarCheck, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
-        { label: "Rate", value: expertProfile ? `Rs.${expertProfile.hourlyRate}` : "—", icon: Target, color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
+        { label: "Rate", value: expertProfile ? `Rs.${expertProfile.hourlyRate}` : "—", icon: Target, color: "text-orange-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
         { label: "Joined", value: joinedYear, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
       ]
-    : isFarmer
+    : isAnimalOwner
     ? [
-        { label: "Role", value: "Farmer", icon: Tractor, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
+        { label: "Role", value: "Animal Owner", icon: Tractor, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
         { label: "Joined", value: joinedYear, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
         { label: "Advisory", value: "Open", icon: HeartPulse, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
         { label: "Helpline", value: "24x7", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+      ]
+    : isGuest
+    ? [
+        { label: "Role", value: "Guest", icon: Users, color: "text-muted-foreground", bg: "bg-muted" },
+        { label: "Joined", value: joinedYear, icon: CalendarCheck, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
       ]
     : [{ label: "Role", value: "Admin", icon: LayoutDashboard, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" }];
 
@@ -217,12 +226,19 @@ export default async function DashboardPage() {
                     { href: "/flashcards", label: "Flashcards", desc: "Quick revision cards", icon: NotebookPen, color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
                     { href: "/study-materials", label: "Study Materials", desc: "Notes, videos and more", icon: FileText, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
                   ]
-                : isFarmer
+                : isAnimalOwner
                 ? [
                     { href: "/farmers", label: "Advisory & Helpline", desc: "Livestock advisory resources", icon: HeartPulse, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
                     { href: "/experts", label: "Book Consultation", desc: "Talk to a veterinary expert", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
                     { href: "/vets", label: "Vets Resources", desc: "Tools for practicing vets", icon: Tractor, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
-                    { href: "/community", label: "Community", desc: "Farmer groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+                    { href: "/community", label: "Community", desc: "Animal owner groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+                  ]
+                : isGuest
+                ? [
+                    { href: "/syllabus", label: "Browse Syllabus", desc: "Subjects and chapters", icon: BookOpen, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+                    { href: "/mock-tests", label: "Mock Tests", desc: "Practice with mock exams", icon: Brain, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+                    { href: "/experts", label: "Experts", desc: "Browse veterinary experts", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+                    { href: "/community", label: "Community", desc: "Community groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
                   ]
                 : [
                     { href: "/experts", label: "My Expert Profile", desc: "Public profile & sessions", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
@@ -282,15 +298,17 @@ export default async function DashboardPage() {
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle>{isFarmer ? "Get Started" : "Expert Tools"}</CardTitle>
+                <CardTitle>{isAnimalOwner ? "Get Started" : isGuest ? "Explore VetAcademia" : "Expert Tools"}</CardTitle>
                 <CardDescription>
-                  {isFarmer
+                  {isAnimalOwner
                     ? "Reach advisory, helpline and experts"
+                    : isGuest
+                    ? "Browse the platform as a guest"
                     : "Manage your consultations and profile"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {isFarmer ? (
+                {isAnimalOwner ? (
                   <>
                     <Link href="/farmers">
                       <Button className="w-full">Open Advisory & Helpline</Button>

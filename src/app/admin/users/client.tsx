@@ -37,11 +37,31 @@ type User = {
   createdAt: Date;
 };
 
-const roleColors: Record<string, string> = {
-  ADMIN: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  STUDENT: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  EXPERT: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-};
+import {
+  EXPERT_ROLES,
+  ANIMAL_OWNER,
+  GUEST,
+  ADMIN,
+  STUDENT,
+  isExpertRole,
+} from "@/lib/roles";
+
+function roleColor(role: string): string {
+  if (isExpertRole(role))
+    return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+  switch (role) {
+    case ADMIN:
+      return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    case STUDENT:
+      return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+    case ANIMAL_OWNER:
+      return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    case GUEST:
+      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+    default:
+      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+  }
+}
 
 export default function UsersClient({ users }: { users: User[] }) {
   const [search, setSearch] = useState("");
@@ -64,6 +84,13 @@ export default function UsersClient({ users }: { users: User[] }) {
     });
     return counts;
   }, [users]);
+
+  const expertCount = EXPERT_ROLES.reduce(
+    (sum, r) => sum + (roleCounts[r] || 0),
+    0
+  );
+  const animalOwnerCount = roleCounts[ANIMAL_OWNER] || 0;
+  const guestCount = roleCounts[GUEST] || 0;
 
   function handleExport() {
     const headers = ["Name", "Email", "Role", "Programme", "Year", "Joined"];
@@ -115,12 +142,14 @@ export default function UsersClient({ users }: { users: User[] }) {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Users", count: roleCounts.ALL, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
-          { label: "Students", count: roleCounts.STUDENT || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
-          { label: "Experts", count: roleCounts.EXPERT || 0, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
-          { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
-        ].map((item) => (
+          {[
+            { label: "Total Users", count: roleCounts.ALL, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+            { label: "Students", count: roleCounts.STUDENT || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+            { label: "Animal Owners", count: animalOwnerCount, icon: Users, color: "text-amber-600", bg: "bg-amber-100 dark:bg-amber-900/30" },
+            { label: "Experts", count: expertCount, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
+            { label: "Guests", count: guestCount, icon: Users, color: "text-gray-600", bg: "bg-gray-100 dark:bg-gray-800" },
+            { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
+          ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -157,7 +186,13 @@ export default function UsersClient({ users }: { users: User[] }) {
                 <SelectItem value="ALL">All Roles ({roleCounts.ALL})</SelectItem>
                 <SelectItem value="ADMIN">Admin ({roleCounts.ADMIN || 0})</SelectItem>
                 <SelectItem value="STUDENT">Student ({roleCounts.STUDENT || 0})</SelectItem>
-                <SelectItem value="EXPERT">Expert ({roleCounts.EXPERT || 0})</SelectItem>
+                <SelectItem value="ANIMAL_OWNER">Animal Owner ({animalOwnerCount})</SelectItem>
+                <SelectItem value="GUEST">Guest ({guestCount})</SelectItem>
+                {EXPERT_ROLES.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Badge variant="secondary">{filteredUsers.length} users</Badge>
@@ -195,7 +230,7 @@ export default function UsersClient({ users }: { users: User[] }) {
                     </TableCell>
                     <TableCell className="text-muted-foreground">{user.email}</TableCell>
                     <TableCell>
-                      <Badge className={roleColors[user.role] || "bg-gray-100 text-gray-700"}>
+                      <Badge className={roleColor(user.role)}>
                         {user.role}
                       </Badge>
                     </TableCell>

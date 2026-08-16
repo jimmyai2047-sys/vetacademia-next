@@ -1,6 +1,6 @@
 ﻿export const metadata = {
-  title: "VetAcademia | Farmers Corner",
-  description: "Scientific farming guides, vaccination & deworming schedules, and project reports for livestock farmers.",
+  title: "VetAcademia | Animal Owner Corner",
+  description: "Scientific livestock & pet care guides, vaccination & deworming schedules, and project reports for animal owners.",
 };
 
 import Link from "next/link";
@@ -27,6 +27,15 @@ import {
   FileBarChart,
 } from "lucide-react";
 import FarmersExplorer from "@/components/farmers-explorer";
+import { BookOpen, Pill, Newspaper, PhoneCall } from "lucide-react";
+
+const SECTIONS = [
+  { id: "guides-reports", label: "Guides & Reports", icon: BookOpen },
+  { id: "vaccination", label: "Vaccination", icon: Syringe },
+  { id: "deworming", label: "Deworming", icon: Pill },
+  { id: "resources", label: "Resources", icon: Newspaper },
+  { id: "helpline", label: "Helpline", icon: PhoneCall },
+];
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +63,7 @@ export default async function FarmersPage({
         where: { published: true },
         orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
       }),
-      getPublishedPosts("FARMERS"),
+      getPublishedPosts("ANIMAL_OWNER"),
     ]);
 
   let purchasedIds: string[] = [];
@@ -85,7 +94,7 @@ export default async function FarmersPage({
       <div className="mb-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-8 text-white">
         <div className="flex items-center gap-3 mb-2">
           <Users className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">Farmers Corner</h1>
+          <h1 className="text-3xl font-bold">Animal Owner Corner</h1>
         </div>
         <p className="text-white/90 max-w-2xl">
           Scientific farming guides, vaccination &amp; deworming schedules, and
@@ -102,15 +111,33 @@ export default async function FarmersPage({
         <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={`${reports.length}+`} label="Project Reports" />
       </div>
 
+      {/* Sticky in-page section nav */}
+      <nav className="sticky top-2 z-10 -mx-1 mb-8 rounded-xl border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {SECTIONS.map((s) => (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <s.icon className="h-4 w-4" />
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
       {/* Farm guides + project reports (farm-type filtered) */}
-      <FarmersExplorer
-        guides={guides as unknown as Parameters<typeof FarmersExplorer>[0]["guides"]}
-        reports={reports as unknown as Parameters<typeof FarmersExplorer>[0]["reports"]}
-        purchasedIds={purchasedIds}
-      />
+      <div id="guides-reports" className="scroll-mt-20">
+        <FarmersExplorer
+          guides={guides as unknown as Parameters<typeof FarmersExplorer>[0]["guides"]}
+          reports={reports as unknown as Parameters<typeof FarmersExplorer>[0]["reports"]}
+          purchasedIds={purchasedIds}
+        />
+      </div>
 
       {/* Vaccination Schedule — dedicated section */}
-      <Section title="Vaccination Schedule" desc="Complete vaccination calendar for livestock">
+      <Section id="vaccination" title="Vaccination Schedule" desc="Complete vaccination calendar for livestock">
         <Card>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -154,7 +181,7 @@ export default async function FarmersPage({
       </Section>
 
       {/* Deworming Schedule — dedicated section */}
-      <Section title="Deworming Schedule" desc="Deworming calendar by animal">
+      <Section id="deworming" title="Deworming Schedule" desc="Deworming calendar by animal">
         <Card>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -195,13 +222,13 @@ export default async function FarmersPage({
 
       {/* Admin-managed Updates & Resources */}
       {farmerPosts.length > 0 && (
-        <Section title="Updates & Resources" desc="Latest posts from the VetAcademia team">
+        <Section id="resources" title="Updates & Resources" desc="Latest posts from the VetAcademia team">
           <PostList posts={farmerPosts} />
         </Section>
       )}
 
       {/* Helpline Banner */}
-      <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white mt-8">
+      <Card id="helpline" className="bg-gradient-to-r from-green-600 to-emerald-600 text-white mt-8 scroll-mt-20">
         <CardContent className="p-8 text-center">
           <h3 className="text-2xl font-bold mb-2">Need Immediate Help?</h3>
           <p className="opacity-90 mb-4">
@@ -257,16 +284,18 @@ function Stat({
 }
 
 function Section({
+  id,
   title,
   desc,
   children,
 }: {
+  id?: string;
   title: string;
   desc: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-10">
+    <div id={id} className="mb-10 scroll-mt-20">
       <h2 className="text-2xl font-bold mb-1">{title}</h2>
       <p className="text-sm text-muted-foreground mb-4">{desc}</p>
       {children}

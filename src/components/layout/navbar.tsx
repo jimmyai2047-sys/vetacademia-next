@@ -14,6 +14,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { isExpertRole } from "@/lib/roles";
+import { BrandLogo } from "@/components/layout/brand-logo";
 import {
   Menu,
   GraduationCap,
@@ -45,8 +47,9 @@ export default function Navbar() {
   const role = session?.user?.role;
   const isAdmin = role === "ADMIN";
   const isStudent = role === "STUDENT";
-  const isFarmer = role === "FARMER";
-  const isExpert = role === "EXPERT";
+  const isAnimalOwner = role === "ANIMAL_OWNER";
+  const isExpert = isExpertRole(role);
+  const isGuest = role === "GUEST";
 
   const roleLinks = isAdmin
     ? []
@@ -57,17 +60,19 @@ export default function Navbar() {
         { href: "/flashcards", label: "Flashcards" },
         { href: "/demo", label: "Free Demo" },
       ]
-    : isFarmer
+    : isAnimalOwner
     ? [
         { href: "/farmers", label: "Advisory" },
         { href: "/experts", label: "Book Consultation" },
         { href: "/community", label: "Community" },
       ]
-    : [
+    : isExpert
+    ? [
         { href: "/experts", label: "My Profile" },
         { href: "/consultations", label: "My Consultations" },
         { href: "/community", label: "Community" },
-      ];
+      ]
+    : [];
   const initials =
     (session?.user?.name || session?.user?.email || "U")
       .split(" ")
@@ -86,17 +91,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xl">
-            VA
-          </div>
-          <div className="hidden sm:block">
-            <span className="text-lg font-bold">VetAcademia</span>
-            <span className="text-xs text-muted-foreground block -mt-1">
-              Veterinary Education Portal
-            </span>
-          </div>
-        </Link>
+        <BrandLogo />
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
@@ -125,19 +120,19 @@ export default function Navbar() {
           <Link href="/examinations">
             <Button variant="ghost" className="gap-2">
               <FileCheck className="h-4 w-4" />
-              Examinations
+              Exams
             </Button>
           </Link>
           <Link href="/prepare">
             <Button variant="ghost" className="gap-2">
               <BookOpen className="h-4 w-4" />
-              Exam Prep
+              My Prep
             </Button>
           </Link>
           <Link href="/farmers">
             <Button variant="ghost" className="gap-2">
               <Tractor className="h-4 w-4" />
-              Farmers
+              Animal Owner
             </Button>
           </Link>
           <Link href="/vets">
@@ -271,7 +266,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <FileCheck className="h-4 w-4" />
-                  Examinations
+                  Exams
                 </Link>
                 <Link
                   href="/prepare"
@@ -279,7 +274,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <BookOpen className="h-4 w-4" />
-                  Exam Prep
+                  My Prep
                 </Link>
                 <Link
                   href="/farmers"
@@ -287,7 +282,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <Tractor className="h-4 w-4" />
-                  Farmers
+                  Animal Owner
                 </Link>
                 <Link
                   href="/vets"

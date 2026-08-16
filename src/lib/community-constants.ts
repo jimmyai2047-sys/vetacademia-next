@@ -15,8 +15,10 @@ export const EXAM_REFS = [
 
 export const ROLE_REFS = [
   { value: "STUDENT", label: "Students" },
-  { value: "FARMER", label: "Farmers" },
-  { value: "EXPERT", label: "Experts" },
+  { value: "ANIMAL_OWNER", label: "Animal Owners" },
+  { value: "FACULTY", label: "Faculty" },
+  { value: "ARS", label: "Agricultural Research Scientist" },
+  { value: "FIELD_VET", label: "Field Veterinarian" },
 ];
 
 export const CATEGORIES = [

@@ -5,6 +5,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import PlanEditor from "@/components/admin/plan-editor";
+import ReportPriceEditor from "@/components/admin/report-price-editor";
 
 
 
@@ -20,6 +21,10 @@ export default async function AdminPricingPage() {
   const yearPlans = plans.filter((p) => p.type === "COURSE" && !!p.year);
   const subjectPlans = plans.filter((p) => p.type === "COURSE" && !!p.subjectId);
   const exams = plans.filter((p) => p.type === "EXAM");
+
+  const reports = await prisma.projectReport.findMany({
+    orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+  });
 
   return (
     <div className="space-y-8">
@@ -106,6 +111,37 @@ export default async function AdminPricingPage() {
             />
           ))}
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-3">
+          Animal Owner Project Reports
+        </h2>
+        <p className="text-sm text-muted-foreground mb-3">
+          Set the unlock price (INR) for each project report shown on the Animal
+          Owner page. Saving updates the price immediately.
+        </p>
+        {reports.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No project reports yet. Add them from the Animal Owner Content page.
+          </p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {reports.map((r) => (
+              <ReportPriceEditor
+                key={r.id}
+                report={{
+                  id: r.id,
+                  title: r.title,
+                  farmType: r.farmType,
+                  price: r.price,
+                  published: r.published,
+                  order: r.order,
+                }}
+              />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

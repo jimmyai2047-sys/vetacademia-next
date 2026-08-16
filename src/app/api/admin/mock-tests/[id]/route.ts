@@ -24,6 +24,7 @@ export async function PUT(
       isAdaptive,
       kind,
       year,
+      isDemo,
       file,
     } = body as {
       title?: string;
@@ -36,6 +37,7 @@ export async function PUT(
       isAdaptive?: boolean;
       kind?: string;
       year?: string | null;
+      isDemo?: boolean;
       file?: {
         url: string;
         fileName: string;
@@ -84,6 +86,7 @@ export async function PUT(
               ? year || null
               : existing.year
             : null,
+        isDemo: isDemo !== undefined ? (isDemo ?? false) : existing.isDemo,
         fileUrl: file?.url !== undefined ? (file?.url || null) : existing.fileUrl,
         fileName:
           file?.fileName !== undefined ? (file?.fileName || null) : existing.fileName,

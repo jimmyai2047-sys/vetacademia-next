@@ -48,7 +48,7 @@ export default async function StudyMaterialsPage() {
 
   const posts = await prisma.post.findMany({
     where: {
-      category: { in: ["VETS", "ADVISORY", "FARMERS"] },
+      category: { in: ["VETS", "ADVISORY", "ANIMAL_OWNER"] },
       published: true,
     },
     orderBy: { createdAt: "desc" },
@@ -61,7 +61,7 @@ export default async function StudyMaterialsPage() {
         id: p.id,
         title: p.title,
         excerpt: excerptFromHtml(p.content),
-        category: p.category as "VETS" | "ADVISORY" | "FARMERS",
+        category: p.category as "VETS" | "ADVISORY" | "ANIMAL_OWNER",
         downloadUrl: url || undefined,
       };
     })

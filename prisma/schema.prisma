@@ -119,7 +119,7 @@ model Chapter {
 
 model ExamMaterial {
   id          String   @id @default(cuid())
-  category    String // VO | LSA | ARS | ICAR_ENTRANCE
+  category    String // VO | LSA | ARS | ICAR_ENTRANCE | NET
   type        String // PPT | PDF | VIDEO | AUDIO | ANIMATION | IMAGE
   title       String
   description String?
@@ -465,8 +465,8 @@ model Payment {
 model CommunityLink {
   id        String   @id @default(cuid())
   platform  String // WHATSAPP | TELEGRAM
-  category  String // PROGRAMME | EXAM
-  ref       String // programmeSlug (ahdp|bvsc|mvsc|phd) or examKey (psc|icar-entrance|net|ars|other)
+  category  String // PROGRAMME | EXAM | ROLE
+  ref       String // programmeSlug (ahdp|bvsc|mvsc|phd) | examKey (psc|icar-entrance|net|ars|other) | role (STUDENT|EXPERT|...)
   title     String
   url       String
   active    Boolean  @default(true)

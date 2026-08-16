@@ -17,7 +17,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,23 +31,18 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import {
+  EXPERT_ROLE_GROUPS,
+  EXPERT_ROLE_LABELS,
+} from "@/lib/roles";
+import { startGuestSession } from "@/lib/guest";
+import { signIn } from "next-auth/react";
 
 const PROGRAMMES = [
   { value: "AHDP", label: "A.H.D.P." },
   { value: "BVSC", label: "B.V.Sc & A.H." },
   { value: "MVSC", label: "M.V.Sc" },
   { value: "PHD", label: "Ph.D" },
-];
-
-const EXPERT_ROLES = [
-  "Veterinary Officer",
-  "Senior Veterinary Officer",
-  "Scientist",
-  "Senior Scientist",
-  "Principal Scientist",
-  "Assistant Professor",
-  "Associate Professor",
-  "Professor",
 ];
 
 const EXPERT_DEGREES = [
@@ -62,7 +59,8 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [role, setRole] = useState("student");
+  const [roleCategory, setRoleCategory] = useState("student");
+  const [expertRole, setExpertRole] = useState("");
   const [programme, setProgramme] = useState("");
   const [subjects, setSubjects] = useState<string[]>([]);
   const [subjectDepartment, setSubjectDepartment] = useState("");
@@ -70,16 +68,27 @@ export default function SignupPage() {
   const [expertDesignation, setExpertDesignation] = useState("");
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const isMvscPhd = role === "student" && (programme === "MVSC" || programme === "PHD");
+  const finalRole =
+    roleCategory === "expert"
+      ? expertRole
+      : roleCategory === "animal_owner"
+      ? "ANIMAL_OWNER"
+      : "STUDENT";
+
+  const isStudent = roleCategory === "student";
+  const isAnimalOwner = roleCategory === "animal_owner";
+  const isExpert = roleCategory === "expert";
+  const isMvscPhd = isStudent && (programme === "MVSC" || programme === "PHD");
 
   useEffect(() => {
-    if (role === "student" && (programme === "MVSC" || programme === "PHD")) {
+    if (isStudent && (programme === "MVSC" || programme === "PHD")) {
       fetch(`/api/subjects?programme=${programme}`)
         .then((r) => r.json())
         .then((d) => setSubjects(d.subjects || []))
@@ -87,7 +96,7 @@ export default function SignupPage() {
     } else {
       setSubjects([]);
     }
-  }, [role, programme]);
+  }, [roleCategory, programme]);
 
   async function handleAvatar(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -120,15 +129,15 @@ export default function SignupPage() {
     setError("");
 
     const fd = new FormData(e.currentTarget);
-    const isStudent = role === "student";
 
     // Client-side validation. Native inputs are read via FormData; custom
     // Select components are read from React state (they do NOT submit a form field).
     const missing: string[] = [];
     if (isStudent && !programme) missing.push("Programme");
     if (isStudent && isMvscPhd && !subjectDepartment) missing.push("Subject / Department");
-    if (role === "farmer" && !fd.get("address")) missing.push("Address");
-    if (role === "expert") {
+    if (isAnimalOwner && !fd.get("address")) missing.push("Address");
+    if (isExpert) {
+      if (!expertRole) missing.push("Role");
       if (!highestDegree) missing.push("Highest Degree");
       if (!fd.get("specialization")) missing.push("Specialization");
       if (!expertDesignation) missing.push("Role");
@@ -153,7 +162,7 @@ export default function SignupPage() {
       surname: fd.get("surname"),
       email: fd.get("email"),
       password,
-      role,
+      role: finalRole,
       avatar: avatarUrl || undefined,
       phone: phone || undefined,
     };
@@ -165,9 +174,9 @@ export default function SignupPage() {
       if (isMvscPhd) {
         payload.subjectDepartment = subjectDepartment || undefined;
       }
-    } else if (role === "farmer") {
+    } else if (isAnimalOwner) {
       payload.address = fd.get("address") || undefined;
-    } else if (role === "expert") {
+    } else if (isExpert) {
       payload.highestDegree = highestDegree || undefined;
       payload.specialization = fd.get("specialization") || undefined;
       payload.expertDesignation = expertDesignation || undefined;
@@ -192,6 +201,29 @@ export default function SignupPage() {
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleGuest() {
+    setGuestLoading(true);
+    setError("");
+    try {
+      const creds = await startGuestSession();
+      const res = await signIn("credentials", {
+        email: creds.email,
+        password: creds.password,
+        redirect: false,
+      });
+      if (res?.error) {
+        setError("Guest login is unavailable right now.");
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setGuestLoading(false);
     }
   }
 
@@ -341,9 +373,10 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="role">I am a *</Label>
               <Select
-                value={role}
+                value={roleCategory}
                 onValueChange={(v) => {
-                  setRole(v ?? "student");
+                  setRoleCategory(v ?? "student");
+                  setExpertRole("");
                   setSubjectDepartment("");
                   setHighestDegree("");
                   setExpertDesignation("");
@@ -355,14 +388,14 @@ export default function SignupPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="student">Student</SelectItem>
-                  <SelectItem value="farmer">Farmer</SelectItem>
+                  <SelectItem value="animal_owner">Animal Owner</SelectItem>
                   <SelectItem value="expert">Expert</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Student fields */}
-            {role === "student" && (
+            {isStudent && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="programme">Programme *</Label>
@@ -451,8 +484,8 @@ export default function SignupPage() {
               </>
             )}
 
-            {/* Farmer fields */}
-            {role === "farmer" && (
+            {/* Animal Owner fields */}
+            {isAnimalOwner && (
               <div className="space-y-2">
                 <Label htmlFor="address">Address *</Label>
                 <textarea
@@ -467,7 +500,7 @@ export default function SignupPage() {
             )}
 
             {/* Expert fields */}
-            {role === "expert" && (
+            {isExpert && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="highestDegree">Highest Degree *</Label>
@@ -504,17 +537,25 @@ export default function SignupPage() {
                   <Label htmlFor="expertDesignation">Role *</Label>
                   <Select
                     value={expertDesignation}
-                    onValueChange={(v) => setExpertDesignation(v ?? "")}
+                    onValueChange={(v) => {
+                      setExpertRole(v ?? "");
+                      setExpertDesignation(v ? EXPERT_ROLE_LABELS[v] : "");
+                    }}
                     disabled={isLoading}
                   >
                     <SelectTrigger id="expertDesignation">
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {EXPERT_ROLES.map((r) => (
-                        <SelectItem key={r} value={r}>
-                          {r}
-                        </SelectItem>
+                      {EXPERT_ROLE_GROUPS.map((group) => (
+                        <SelectGroup key={group.label}>
+                          <SelectLabel>{group.label}</SelectLabel>
+                          {group.roles.map((r) => (
+                            <SelectItem key={r} value={r}>
+                              {EXPERT_ROLE_LABELS[r]}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       ))}
                     </SelectContent>
                   </Select>
@@ -537,7 +578,7 @@ export default function SignupPage() {
           </CardContent>
 
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || guestLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -545,6 +586,22 @@ export default function SignupPage() {
                 </>
               ) : (
                 "Create Account"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isLoading || guestLoading}
+              onClick={handleGuest}
+            >
+              {guestLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Entering as Guest...
+                </>
+              ) : (
+                "Continue as Guest"
               )}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
