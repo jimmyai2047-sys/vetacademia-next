@@ -4,9 +4,12 @@
 };
 
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { getExamKeysForPlan } from "@/lib/plans";
+import { getProgrammeImage } from "@/lib/subject-images";
+import { getExamImage } from "@/lib/page-images";
 import {
   Card,
   CardContent,
@@ -70,11 +73,27 @@ export default async function PricingPage({
   const renderPlan = (plan: (typeof plans)[number]) => {
     const enrolled = access.planSlugs.has(plan.slug);
     const isHighlight = highlight === plan.slug;
+    const planImage =
+      plan.type === "EXAM" && plan.examSlug
+        ? getExamImage(plan.examSlug)
+        : plan.programmeSlug
+        ? getProgrammeImage(plan.programmeSlug)
+        : getProgrammeImage("ahdp");
     return (
       <Card
         key={plan.slug}
-        className={`flex flex-col ${isHighlight ? "ring-2 ring-primary" : ""}`}
+        className={`flex flex-col overflow-hidden ${isHighlight ? "ring-2 ring-primary" : ""}`}
       >
+        <div className="relative h-36 w-full overflow-hidden">
+          <Image
+            src={planImage}
+            alt={plan.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 300px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        </div>
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-lg">{plan.name}</CardTitle>

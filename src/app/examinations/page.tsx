@@ -4,6 +4,8 @@
 };
 
 import Link from "next/link";
+import Image from "next/image";
+import { getExamImage } from "@/lib/page-images";
 import {
   Card,
   CardContent,
@@ -102,7 +104,7 @@ export default function ExaminationsPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Examinations</h1>
+        <h1 className="text-3xl font-bold mb-2">Exams</h1>
         <p className="text-muted-foreground">
           Comprehensive preparation for all major veterinary competitive examinations
         </p>
@@ -139,9 +141,22 @@ export default function ExaminationsPage() {
       {/* Examination Categories */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {examinations.map((exam) => (
-          <Link key={exam.id} href={`/examinations/${exam.id}`}>
-            <Card className="hover:shadow-lg transition-all duration-300 h-full cursor-pointer group">
-              <CardHeader>
+            <Link key={exam.id} href={`/examinations/${exam.id}`}>
+              <Card className="hover:shadow-lg transition-all duration-300 h-full cursor-pointer group overflow-hidden">
+                <div className="relative h-40 w-full overflow-hidden">
+                  <Image
+                    src={getExamImage(exam.id)}
+                    alt={exam.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <exam.icon className="h-12 w-12 text-white/70" />
+                  </div>
+                </div>
+                <CardHeader>
                 <div className="flex items-start gap-4">
                   <div
                     className={`w-14 h-14 rounded-xl ${exam.lightColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}

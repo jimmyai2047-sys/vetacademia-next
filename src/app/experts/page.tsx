@@ -4,6 +4,8 @@
 };
 
 import Link from "next/link";
+import Image from "next/image";
+import { getExpertHeroImage } from "@/lib/page-images";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
+import { EXPERT_ROLES } from "@/lib/roles";
 
 
 
@@ -24,7 +27,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ExpertsPage() {
   const experts = await prisma.expert.findMany({
-    where: { user: { role: "EXPERT" } },
+    where: { user: { role: { in: [...EXPERT_ROLES] } } },
     include: {
       user: { select: { name: true } },
       _count: { select: { consultations: true } },
@@ -56,11 +59,22 @@ export default async function ExpertsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Expert Consultations</h1>
-        <p className="text-muted-foreground">
-          Book one-on-one sessions with veterinary experts and professionals
-        </p>
+      <div className="relative mb-8 overflow-hidden rounded-2xl">
+        <Image
+          src={getExpertHeroImage()}
+          alt="Veterinary expert consultation"
+          fill
+          sizes="(max-width: 768px) 100vw, 1200px"
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />
+        <div className="relative p-8 text-white">
+          <h1 className="text-3xl font-bold mb-2">Expert Consultations</h1>
+          <p className="text-white/90 max-w-2xl">
+            Book one-on-one sessions with veterinary experts and professionals
+          </p>
+        </div>
       </div>
 
       {cards.length === 0 ? (

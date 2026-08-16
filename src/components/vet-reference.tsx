@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { getVetHeroImage } from "@/lib/page-images";
 import {
   Card,
   CardContent,
@@ -437,15 +439,26 @@ export default function VetReference() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero */}
-      <div className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-        <div className="flex items-center gap-3 mb-2">
-          <Stethoscope className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">Veterinary Reference Guide</h1>
+      <div className="relative mb-8 overflow-hidden rounded-2xl">
+        <Image
+          src={getVetHeroImage()}
+          alt="Veterinary clinical reference"
+          fill
+          sizes="(max-width: 768px) 100vw, 1200px"
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/70 to-transparent" />
+        <div className="relative p-8 text-white">
+          <div className="flex items-center gap-3 mb-2">
+            <Stethoscope className="h-8 w-8" />
+            <h1 className="text-3xl font-bold">Veterinary Reference Guide</h1>
+          </div>
+          <p className="text-white/90 max-w-2xl">
+            Quick reference for normal physiological parameters and blood profiles of domestic animals.
+            Essential for clinical diagnosis and health assessment.
+          </p>
         </div>
-        <p className="text-white/90 max-w-2xl">
-          Quick reference for normal physiological parameters and blood profiles of domestic animals.
-          Essential for clinical diagnosis and health assessment.
-        </p>
       </div>
 
       {/* Search */}

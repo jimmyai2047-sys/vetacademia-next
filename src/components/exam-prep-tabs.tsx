@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { getExamPrepImage } from "@/lib/page-images";
 import {
   Card,
   CardContent,
@@ -183,6 +185,21 @@ export default function ExamPrepTabs({
           Study materials, previous year papers, mock tests and adaptive tests —
           organised by exam category.
         </p>
+      </div>
+
+      <div className="relative h-44 w-full overflow-hidden rounded-xl mb-6">
+        <Image
+          key={cat.key}
+          src={getExamPrepImage(cat.key)}
+          alt={cat.label}
+          fill
+          sizes="(max-width: 768px) 100vw, 800px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute bottom-3 left-4 right-4">
+          <h2 className="text-xl font-bold text-white">{cat.label}</h2>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
