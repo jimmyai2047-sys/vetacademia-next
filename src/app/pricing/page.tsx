@@ -50,7 +50,15 @@ export default async function PricingPage({
     prisma.subject.findMany({ select: { id: true, name: true } }),
   ]);
 
-  const subjectNameMap = new Map(subjects.map((s) => [s.id, s.name]));
+  const allSubjectNames = new Set(subjects.map((s) => s.name));
+
+  function resolveSubjectImage(planName: string): string {
+    if (allSubjectNames.has(planName)) return getSubjectImage(planName);
+    for (const name of allSubjectNames) {
+      if (planName.includes(name) || name.includes(planName)) return getSubjectImage(name);
+    }
+    return "";
+  }
 
   const fullCoursePlans = plans.filter(
     (p) => p.type === "COURSE" && !p.subjectId
@@ -78,8 +86,8 @@ export default async function PricingPage({
     const planImage =
       plan.type === "EXAM" && plan.examSlug
         ? getExamImage(plan.examSlug)
-        : plan.subjectId && subjectNameMap.get(plan.subjectId)
-        ? getSubjectImage(subjectNameMap.get(plan.subjectId)!)
+        : plan.subjectId
+        ? resolveSubjectImage(plan.name) || getProgrammeImage(plan.programmeSlug || "ahdp")
         : plan.programmeSlug
         ? getProgrammeImage(plan.programmeSlug)
         : getProgrammeImage("ahdp");
