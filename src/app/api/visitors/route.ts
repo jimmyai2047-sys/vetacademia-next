@@ -30,29 +30,39 @@ export async function POST() {
     }
 
     const fiveMinAgo = new Date(Date.now() - LIVE_WINDOW_MS);
-    await prisma.siteVisit.deleteMany({ where: { lastSeen: { lt: fiveMinAgo } } });
 
     const existing = await prisma.siteVisit.findFirst({ where: { visitorId } });
+    let total = 0;
     if (existing) {
       await prisma.siteVisit.update({
         where: { id: existing.id },
         data: { lastSeen: new Date() },
       });
+      total = (await prisma.siteCounter.findUnique({ where: { id: "total" } }))
+        ?.total ?? 0;
     } else {
       await prisma.siteVisit.create({ data: { visitorId } });
+      total = (
+        await prisma.siteCounter.upsert({
+          where: { id: "total" },
+          create: { id: "total", total: 1 },
+          update: { total: { increment: 1 } },
+        })
+      ).total;
     }
 
-    const counter = await prisma.siteCounter.upsert({
-      where: { id: "total" },
-      create: { id: "total", total: 1 },
-      update: { total: { increment: 1 } },
-    });
+    // Throttled cleanup of stale visits (avoid a full-table scan on every hit).
+    if (Math.random() < 0.05) {
+      await prisma.siteVisit
+        .deleteMany({ where: { lastSeen: { lt: fiveMinAgo } } })
+        .catch(() => {});
+    }
 
     const live = await prisma.siteVisit.count({
       where: { lastSeen: { gt: fiveMinAgo } },
     });
 
-    return NextResponse.json({ total: counter.total, live });
+    return NextResponse.json({ total, live });
   } catch {
     return NextResponse.json({ total: 0, live: 0 });
   }

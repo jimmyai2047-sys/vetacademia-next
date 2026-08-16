@@ -42,7 +42,31 @@ export default function Navbar() {
   const { data: session, status } = useSession();
 
   const isAuthed = status === "authenticated" && !!session?.user;
-  const isAdmin = session?.user?.role === "ADMIN";
+  const role = session?.user?.role;
+  const isAdmin = role === "ADMIN";
+  const isStudent = role === "STUDENT";
+  const isFarmer = role === "FARMER";
+  const isExpert = role === "EXPERT";
+
+  const roleLinks = isAdmin
+    ? []
+    : isStudent
+    ? [
+        { href: "/syllabus", label: "My Syllabus" },
+        { href: "/mock-tests", label: "Mock Tests" },
+        { href: "/flashcards", label: "Flashcards" },
+      ]
+    : isFarmer
+    ? [
+        { href: "/farmers", label: "Advisory" },
+        { href: "/experts", label: "Book Consultation" },
+        { href: "/community", label: "Community" },
+      ]
+    : [
+        { href: "/experts", label: "My Profile" },
+        { href: "/consultations", label: "My Consultations" },
+        { href: "/community", label: "Community" },
+      ];
   const initials =
     (session?.user?.name || session?.user?.email || "U")
       .split(" ")
@@ -165,6 +189,15 @@ export default function Navbar() {
                   <LayoutDashboard className="h-4 w-4" />
                   {isAdmin ? "Admin Panel" : "Dashboard"}
                 </DropdownMenuItem>
+                {roleLinks.map((rl) => (
+                  <DropdownMenuItem
+                    key={rl.href}
+                    onClick={() => router.push(rl.href)}
+                    className="cursor-pointer"
+                  >
+                    {rl.label}
+                  </DropdownMenuItem>
+                ))}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut()}
@@ -281,8 +314,18 @@ export default function Navbar() {
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
                     >
                       <LayoutDashboard className="h-4 w-4" />
-                      {isAdmin ? "Admin Panel" : "Dashboard"}
-                    </Link>
+                        {isAdmin ? "Admin Panel" : "Dashboard"}
+                      </Link>
+                      {roleLinks.map((rl) => (
+                        <Link
+                          key={rl.href}
+                          href={rl.href}
+                          onClick={() => setIsOpen(false)}
+                          className="px-3 py-2 rounded-md hover:bg-accent"
+                        >
+                          {rl.label}
+                        </Link>
+                      ))}
                     <Button
                       variant="outline"
                       className="w-full"

@@ -3,6 +3,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, requestIp } from "@/lib/rate-limit";
 
 declare module "next-auth" {
   interface User {
@@ -34,8 +35,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const rl = rateLimit(`login:${requestIp(req)}`, 10, 60_000);
+        if (!rl.success) {
           return null;
         }
 

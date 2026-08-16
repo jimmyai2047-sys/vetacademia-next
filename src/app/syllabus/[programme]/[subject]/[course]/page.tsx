@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Course Content",
+  description: "Detailed course content, theory, and practicals on VetAcademia.",
+};
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -12,6 +17,8 @@ import { getSignedUrl } from "@/lib/blob";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
 
+
+
 export default async function CoursePage({
   params,
 }: {
@@ -24,7 +31,9 @@ export default async function CoursePage({
     include: {
       subject: {
         select: {
+          id: true,
           name: true,
+          year: true,
           programme: { select: { name: true } },
         },
       },
@@ -35,7 +44,32 @@ export default async function CoursePage({
   if (!course) notFound();
 
   const access = await getAccess();
-  const hasAccess = access.programmeSlugs.has(progSlug);
+  const programmeOwned = access.programmeSlugs.has(progSlug);
+  const yearOwned =
+    (progSlug === "bvsc" || progSlug === "ahdp") && course.subject.year
+      ? access.ownedYearScopes.has(`${progSlug}:${course.subject.year}`)
+      : false;
+  const subjectOwned = access.ownedSubjectIds.has(course.subject.id);
+  const hasAccess = programmeOwned || yearOwned || subjectOwned;
+
+  let purchasePlanSlug: string = progSlug;
+  if (!hasAccess) {
+    if (progSlug === "bvsc" || progSlug === "ahdp") {
+      if (course.subject.year) {
+        const yearPlan = await prisma.plan.findFirst({
+          where: { programmeSlug: progSlug, year: course.subject.year },
+          select: { slug: true },
+        });
+        if (yearPlan) purchasePlanSlug = yearPlan.slug;
+      }
+    } else if (progSlug === "mvsc" || progSlug === "phd") {
+      const subjPlan = await prisma.plan.findFirst({
+        where: { subjectId: course.subject.id },
+        select: { slug: true },
+      });
+      if (subjPlan) purchasePlanSlug = subjPlan.slug;
+    }
+  }
 
   const signedContents = await Promise.all(
     course.chapterContents.map(async (c) => ({
@@ -88,10 +122,12 @@ export default async function CoursePage({
           {course.courseCode && (
             <Badge variant="secondary" className="font-mono">{course.courseCode}</Badge>
           )}
+          {course.creditHours && (
           <Badge variant="secondary" className="gap-1">
             <Clock className="h-3 w-3" />
             {course.creditHours} Credits
           </Badge>
+          )}
         </div>
       </div>
 
@@ -144,11 +180,11 @@ export default async function CoursePage({
       </div>
       ) : (
         <EnrollCta
-          planSlug={progSlug}
+          planSlug={purchasePlanSlug}
           title="Enroll to access this course"
           message="Enroll in this programme to unlock the full course content and resources."
         />
       )}
     </div>
   );
-}
+}

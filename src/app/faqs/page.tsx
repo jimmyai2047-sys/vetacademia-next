@@ -1,6 +1,13 @@
+﻿export const metadata = {
+  title: "VetAcademia | FAQs",
+  description: "Frequently asked questions about VetAcademia courses, exams, and subscriptions.",
+};
+
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+
+
 
 const faqs = [
   {
@@ -33,7 +40,7 @@ const faqs = [
   },
 ];
 
-export const metadata = { title: "FAQs | VetAcademia" };
+
 
 export default function FaqsPage() {
   return (
@@ -71,4 +78,4 @@ export default function FaqsPage() {
       </div>
     </div>
   );
-}
+}

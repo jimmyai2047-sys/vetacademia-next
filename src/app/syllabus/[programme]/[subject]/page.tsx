@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Subject Syllabus",
+  description: "Chapters, notes, and resources for this veterinary subject on VetAcademia.",
+};
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -18,6 +23,8 @@ import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
+
+
 
 export default async function SubjectPage({
   params,
@@ -392,4 +399,4 @@ export default async function SubjectPage({
       </Tabs>
     </div>
   );
-}
+}

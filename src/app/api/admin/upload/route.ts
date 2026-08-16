@@ -2,41 +2,10 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { getSignedUrl } from "@/lib/blob";
+import { logAudit } from "@/lib/audit";
+import { detectFileType } from "@/lib/file-type";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
-
-function detectFileType(fileName: string, mime: string): string | null {
-  const ext = fileName.split(".").pop()?.toLowerCase() || "";
-  const m = (mime || "").toLowerCase();
-
-  if (m === "application/pdf" || ext === "pdf") return "PDF";
-  if (m.includes("presentation") || ["ppt", "pptx", "key"].includes(ext))
-    return "PPT";
-  if (
-    m.includes("word") ||
-    m.includes("document") ||
-    ["doc", "docx", "txt", "rtf"].includes(ext)
-  )
-    return "DOC";
-  if (
-    m.includes("sheet") ||
-    m.includes("excel") ||
-    ["xls", "xlsx", "csv"].includes(ext)
-  )
-    return "XLS";
-  if (
-    m.startsWith("video/") ||
-    ["mp4", "webm", "mov", "avi", "mkv"].includes(ext)
-  )
-    return "VIDEO";
-  if (
-    m.startsWith("image/") ||
-    ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext)
-  )
-    return "IMAGE";
-  if (ext === "zip" || ext === "rar" || m.includes("zip")) return "ZIP";
-  return null;
-}
 
 export async function POST(req: Request) {
   try {
@@ -74,6 +43,13 @@ export async function POST(req: Request) {
       token: process.env.BLOB_READ_WRITE_TOKEN,
       addRandomSuffix: false,
       multipart: true,
+    });
+
+    logAudit({
+      action: "upload",
+      actor: session.user.email,
+      target: blob.url,
+      meta: { fileType, fileSize: file.size },
     });
 
     return NextResponse.json(

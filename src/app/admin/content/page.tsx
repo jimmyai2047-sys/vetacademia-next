@@ -1,3 +1,7 @@
+﻿export const metadata = {
+  title: "VetAcademia | Content Management",
+};
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
@@ -27,6 +31,8 @@ import {
   Layers,
   Award,
 } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -268,4 +274,4 @@ export default async function ContentPage() {
       </Tabs>
     </div>
   );
-}
+}

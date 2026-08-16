@@ -1,9 +1,16 @@
+﻿export const metadata = {
+  title: "VetAcademia | Flashcards",
+  description: "Revision flashcards to reinforce key veterinary concepts.",
+};
+
 import { prisma } from "@/lib/prisma";
 import FlashcardDeck from "@/components/flashcard-deck";
 
+
+
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Flashcards | VetAcademia" };
+
 
 export default async function FlashcardsPage() {
   const questions = await prisma.question.findMany({
@@ -51,4 +58,4 @@ export default async function FlashcardsPage() {
       )}
     </div>
   );
-}
+}

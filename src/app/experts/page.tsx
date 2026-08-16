@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Expert Consultation",
+  description: "Book one-on-one consultations with experienced veterinary professionals on VetAcademia.",
+};
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -117,7 +124,7 @@ export default async function ExpertsPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <IndianRupee className="h-4 w-4 text-muted-foreground" />
-                    <span>₹{expert.hourlyRate}/hour</span>
+                    <span>â‚¹{expert.hourlyRate}/hour</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
@@ -159,4 +166,4 @@ export default async function ExpertsPage() {
       </div>
     </div>
   );
-}
+}

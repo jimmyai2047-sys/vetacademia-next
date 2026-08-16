@@ -1,8 +1,16 @@
+﻿export const metadata = {
+  title: "VetAcademia | Search",
+  description: "Search subjects across all veterinary programmes on VetAcademia.",
+};
+
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Search as SearchIcon, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { programmeNameToSlug } from "@/lib/programme";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +27,7 @@ export default async function SearchPage({
     name: string;
     code: string | null;
     programmeName: string;
+    programmeSlug: string;
   }[] = [];
 
   if (term) {
@@ -33,6 +42,7 @@ export default async function SearchPage({
       name: s.name,
       code: s.code,
       programmeName: s.programme.name,
+      programmeSlug: programmeNameToSlug(s.programme.name),
     }));
   }
 
@@ -64,7 +74,7 @@ export default async function SearchPage({
           {results.map((r) => (
             <Link
               key={r.id}
-              href={`/syllabus/${r.programmeName.toLowerCase()}/${r.id}`}
+              href={`/syllabus/${r.programmeSlug}/${r.id}`}
             >
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
@@ -96,4 +106,4 @@ export default async function SearchPage({
       )}
     </div>
   );
-}
+}

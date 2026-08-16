@@ -1,8 +1,15 @@
+﻿export const metadata = {
+  title: "VetAcademia | Contact Us",
+  description: "Get in touch with the VetAcademia team for support and inquiries.",
+};
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 
-export const metadata = { title: "Contact Us | VetAcademia" };
+
+
+
 
 export default function ContactPage() {
   return (
@@ -86,4 +93,4 @@ export default function ContactPage() {
       </div>
     </div>
   );
-}
+}

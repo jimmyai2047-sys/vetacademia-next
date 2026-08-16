@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Examinations",
+  description: "Exam preparation hubs for ICAR, PSC, NET, ARS and other veterinary exams on VetAcademia.",
+};
+
 import Link from "next/link";
 import {
   Card,
@@ -16,6 +21,8 @@ import {
   ChevronRight,
   BookOpen,
 } from "lucide-react";
+
+
 
 const examinations = [
   {
@@ -218,4 +225,4 @@ export default function ExaminationsPage() {
       </div>
     </div>
   );
-}
+}

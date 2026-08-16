@@ -34,6 +34,7 @@ export default function MockTestPlayer({
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const totalSeconds = duration * 60;
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
@@ -81,7 +82,7 @@ export default function MockTestPlayer({
     setSubmitted(true);
 
     try {
-      await fetch(`/api/mock-tests/${testId}/attempt`, {
+      const res = await fetch(`/api/mock-tests/${testId}/attempt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,9 +91,14 @@ export default function MockTestPlayer({
           answers,
         }),
       });
-      setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+      } else {
+        setSaveError(true);
+      }
     } catch {
-      // progress not persisted, but the result is still shown locally
+      // Network error: progress not persisted, but the result is still shown locally.
+      setSaveError(true);
     }
   }
 
@@ -100,6 +106,8 @@ export default function MockTestPlayer({
     setAnswers({});
     setSubmitted(false);
     setScore(0);
+    setSaved(false);
+    setSaveError(false);
   }
 
   return (
@@ -135,6 +143,11 @@ export default function MockTestPlayer({
             {saved && (
               <p className="text-xs text-green-600 mt-1">
                 Saved to your progress
+              </p>
+            )}
+            {saveError && (
+              <p className="text-xs text-amber-600 mt-1">
+                Couldn&apos;t save to your progress. Please retry.
               </p>
             )}
           </CardContent>

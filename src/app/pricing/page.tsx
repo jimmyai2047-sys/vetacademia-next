@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Pricing",
+  description: "Affordable subscription plans for veterinary students, farmers, and exam aspirants on VetAcademia.",
+};
+
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
@@ -11,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, GraduationCap, Award, ArrowRight, Layers } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -134,7 +141,7 @@ export default async function PricingPage({
             <h2 className="text-2xl font-semibold">Subject-wise Plans</h2>
           </div>
           <p className="text-muted-foreground mb-5 max-w-2xl">
-            Don&apos;t need the full course? Buy individual subjects — ideal for
+            Don&apos;t need the full course? Buy individual subjects â€” ideal for
             M.V.Sc &amp; PhD students who want to pay per subject.
           </p>
           {[...subjectByProgramme.entries()].map(([prog, items]) => (
@@ -170,4 +177,4 @@ export default async function PricingPage({
       </div>
     </div>
   );
-}
+}

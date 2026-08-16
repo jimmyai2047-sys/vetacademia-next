@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Syllabus",
+  description: "Browse B.V.Sc, M.V.Sc, Ph.D and AHDP curricula, subjects, and course content on VetAcademia.",
+};
+
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +12,9 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight } from "
 
 export const dynamic = "force-dynamic";
 import { getProgrammeImage } from "@/lib/subject-images";
+import { programmeNameToSlug } from "@/lib/programme";
+
+
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,
@@ -58,7 +66,7 @@ export default async function SyllabusPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {programmes.map((programme) => {
-          const slug = programme.name.toLowerCase().replace(/[.\s&]/g, "");
+          const slug = programmeNameToSlug(programme.name);
           const Icon = iconMap[programme.icon || "BookOpen"] || BookOpen;
           const gradientColor = colorMap[slug] || "from-primary to-primary/80";
           const description = descriptionMap[slug] || "";
@@ -111,4 +119,4 @@ export default async function SyllabusPage() {
       </div>
     </div>
   );
-}
+}

@@ -155,7 +155,25 @@ export default function ExamPrepTabs({
   categories: PreparedCategory[];
 }) {
   const [active, setActive] = useState(0);
-  const cat = categories[active];
+  const safeActive = categories.length > 0 ? Math.min(active, categories.length - 1) : 0;
+  const cat = categories[safeActive];
+
+  if (categories.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Examination Preparation</h1>
+          <p className="text-muted-foreground">
+            Study materials, previous year papers, mock tests and adaptive tests —
+            organised by exam category.
+          </p>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          No preparation categories available yet. Check back soon.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -173,7 +191,7 @@ export default function ExamPrepTabs({
             key={c.key}
             onClick={() => setActive(i)}
             className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
-              i === active
+              i === safeActive
                 ? "bg-primary text-primary-foreground border-primary"
                 : "border-input hover:bg-muted"
             }`}

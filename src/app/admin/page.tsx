@@ -1,3 +1,7 @@
+﻿export const metadata = {
+  title: "VetAcademia | Admin Dashboard",
+};
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
@@ -19,6 +23,8 @@ import {
   Activity,
   GraduationCap,
 } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -188,7 +194,9 @@ export default async function AdminDashboard() {
                     </div>
                     <div className="text-right shrink-0">
                       <Badge variant={attempt.score >= attempt.totalMarks * 0.7 ? "default" : "destructive"}>
-                        {Math.round((attempt.score / attempt.totalMarks) * 100)}%
+                        {attempt.totalMarks
+                          ? Math.round((attempt.score / attempt.totalMarks) * 100)
+                          : 0}%
                       </Badge>
                       <p className="text-xs text-muted-foreground mt-1">
                         {timeAgo(attempt.createdAt)}
@@ -238,4 +246,4 @@ export default async function AdminDashboard() {
       </Card>
     </div>
   );
-}
+}

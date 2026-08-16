@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Farmers Corner",
+  description: "Government schemes, vaccination schedules, feed formulations, and expert advisory for livestock farmers.",
+};
+
 import Link from "next/link";
 import {
   Card,
@@ -22,6 +27,8 @@ import {
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { prisma } from "@/lib/prisma";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -171,7 +178,7 @@ const feedFormulation = [
     ingredients: "Maize, Soybean meal, Fish meal, Oil, Vitamin premix",
     protein: "20-22%",
     energy: "3.0-3.2 Mcal/kg",
-    tips: "Phase feeding: Starter → Grower → Finisher",
+    tips: "Phase feeding: Starter â†’ Grower â†’ Finisher",
   },
 ];
 
@@ -206,7 +213,7 @@ export default async function FarmersPage() {
                 <Landmark className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">12+</div>
+                <div className="text-2xl font-bold">{schemes.length}+</div>
                 <div className="text-xs text-muted-foreground">Govt Schemes</div>
               </div>
             </div>
@@ -219,7 +226,7 @@ export default async function FarmersPage() {
                 <Syringe className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">8+</div>
+                <div className="text-2xl font-bold">{vaccinationSchedule.length}+</div>
                 <div className="text-xs text-muted-foreground">Vaccines Covered</div>
               </div>
             </div>
@@ -232,7 +239,7 @@ export default async function FarmersPage() {
                 <Wheat className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">10+</div>
+                <div className="text-2xl font-bold">{feedFormulation.length}+</div>
                 <div className="text-xs text-muted-foreground">Feed Recipes</div>
               </div>
             </div>
@@ -398,11 +405,11 @@ export default async function FarmersPage() {
           <CardContent>
             <div className="space-y-3">
               {[
-                { title: "Monsoon Management for Livestock", type: "Seasonal", date: "Updated: July 2026", icon: "🌧️" },
-                { title: "Heat Stress Prevention Tips", type: "Health", date: "Updated: May 2026", icon: "🌡️" },
-                { title: "FMD Alert - Vaccination Drive", type: "Alert", date: "Updated: Aug 2026", icon: "⚠️" },
-                { title: "Best Practices for Feed Storage", type: "Management", date: "Updated: June 2026", icon: "🌾" },
-                { title: "Disease Outbreak Prevention", type: "Health", date: "Updated: Aug 2026", icon: "🛡️" },
+                { title: "Monsoon Management for Livestock", type: "Seasonal", date: "Updated: July 2026", icon: "ðŸŒ§ï¸" },
+                { title: "Heat Stress Prevention Tips", type: "Health", date: "Updated: May 2026", icon: "ðŸŒ¡ï¸" },
+                { title: "FMD Alert - Vaccination Drive", type: "Alert", date: "Updated: Aug 2026", icon: "âš ï¸" },
+                { title: "Best Practices for Feed Storage", type: "Management", date: "Updated: June 2026", icon: "ðŸŒ¾" },
+                { title: "Disease Outbreak Prevention", type: "Health", date: "Updated: Aug 2026", icon: "ðŸ›¡ï¸" },
               ].map((advisory, i) => (
                 <div key={i} className="p-3 rounded-lg border hover:bg-accent transition-colors">
                   <div className="flex items-center gap-2 mb-1">
@@ -453,7 +460,7 @@ export default async function FarmersPage() {
                       {expert.specialization}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      ⭐ {expert.rating.toFixed(1)} &middot; ₹{expert.hourlyRate}/hr
+                      â­ {expert.rating.toFixed(1)} &middot; â‚¹{expert.hourlyRate}/hr
                     </div>
                   </div>
                 ))
@@ -532,4 +539,4 @@ export default async function FarmersPage() {
       </Card>
     </div>
   );
-}
+}

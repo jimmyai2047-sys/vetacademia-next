@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sanitizeChapterContent } from "@/lib/content";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
   try {
@@ -54,7 +56,7 @@ export async function POST(req: Request) {
       data: {
         title: title.trim(),
         category,
-        content: content || null,
+        content: content ? sanitizeChapterContent(content) : null,
         exam: exam || null,
         track: track || null,
         published: published ?? true,
@@ -63,6 +65,12 @@ export async function POST(req: Request) {
         fileType: file?.fileType || null,
         fileSize: file?.fileSize ?? null,
       },
+    });
+    logAudit({
+      action: "post.create",
+      actor: session.user.email,
+      target: post.id,
+      meta: { category },
     });
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

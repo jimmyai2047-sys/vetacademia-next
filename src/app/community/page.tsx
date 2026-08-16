@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Community",
+  description: "Join the VetAcademia community of veterinary students, professionals, and farmers.",
+};
+
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -5,7 +10,6 @@ import { getEligibleCommunityLinks, PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
 
-export const metadata = { title: "Community | VetAcademia" };
 
 function refLabel(category: string, ref: string) {
   let list = EXAM_REFS;
@@ -33,23 +37,7 @@ export default async function CommunityPage() {
     );
   }
 
-  const userId = session.user.id;
-  if (!userId) {
-    return (
-      <div className="container mx-auto px-4 py-16 max-w-xl text-center">
-        <h1 className="text-3xl font-bold mb-3">Community</h1>
-        <p className="text-muted-foreground mb-6">
-          Please log in to view your WhatsApp groups and Telegram channels.
-        </p>
-        <Link
-          href="/login"
-          className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          Log In
-        </Link>
-      </div>
-    );
-  }
+  const userId = session.user.id ?? "";
 
   const links = await getEligibleCommunityLinks(userId);
 
@@ -132,4 +120,4 @@ export default async function CommunityPage() {
       )}
     </div>
   );
-}
+}

@@ -16,7 +16,7 @@ export const MATERIAL_TYPES: { value: MaterialType; label: string }[] = [
 ];
 
 export type ExamPrepCategory = {
-  key: "VO" | "LSA" | "ARS" | "ICAR_ENTRANCE";
+  key: "VO" | "LSA" | "ARS" | "ICAR_ENTRANCE" | "NET";
   label: string;
   // granular content tracks that belong to this prep category
   tracks: string[];
@@ -49,6 +49,12 @@ export const EXAM_PREP_CATEGORIES: ExamPrepCategory[] = [
     tracks: ["icar-jrf-srf"],
     examKey: "icar-entrance",
   },
+  {
+    key: "NET",
+    label: "ICAR-NET",
+    tracks: ["icar-net"],
+    examKey: "net",
+  },
 ];
 
 export function getExamPrepCategory(key: string) {
@@ -63,6 +69,7 @@ export const EXAM_CONTENT_TRACK_TO_CATEGORY: Record<string, string> = {
   "livestock-assistant": "LSA",
   "icar-jrf-srf": "ICAR_ENTRANCE",
   "icar-ars-net": "ARS",
+  "icar-net": "NET",
 };
 
 export function categoryForExamContentTrack(key: string) {
@@ -79,6 +86,7 @@ export const CATEGORY_TO_PROGRAMME: Record<string, Programme> = {
   LSA: "ahdp",
   ICAR_ENTRANCE: "bvsc",
   ARS: "mvsc",
+  NET: "mvsc",
 };
 
 export function programmeForCategory(category?: string | null): Programme | null {
@@ -114,6 +122,9 @@ export const EXAM_CONTENT_MATERIAL_SECTIONS: Record<string, MaterialSection[]> =
   ],
   "icar-ars-net": [
     { label: "Study Materials (M.V.Sc Subjects / Course)", category: "ARS" },
+  ],
+  "icar-net": [
+    { label: "Study Materials (M.V.Sc Subjects / Course)", category: "NET" },
   ],
 };
 

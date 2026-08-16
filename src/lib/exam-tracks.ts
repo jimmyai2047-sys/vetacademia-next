@@ -21,6 +21,7 @@ export const TRACK_OPTIONS: TrackOption[] = [
   { value: "icar-jrf-srf", label: "ICAR-JRF/SRF", exam: "icar-entrance" },
   { value: "icar-pre", label: "ICAR Pre (ARS/NET)", exam: "ars" },
   { value: "icar-mains", label: "ICAR Mains (ARS/NET)", exam: "ars" },
+  { value: "icar-net", label: "ICAR-NET", exam: "net" },
 ];
 
 export function examForTrack(track?: string | null): string | null {
@@ -64,6 +65,11 @@ export const EXAM_CONTENT_TRACKS: ExamTrack[] = [
       { tag: "icar-pre", label: "ICAR Pre" },
       { tag: "icar-mains", label: "ICAR Mains" },
     ],
+  },
+  {
+    key: "icar-net",
+    label: "ICAR-NET",
+    subs: [{ tag: "icar-net", label: "NET" }],
   },
 ];
 

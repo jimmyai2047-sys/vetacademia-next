@@ -1,35 +1,114 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import Razorpay from "razorpay";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { logAudit } from "@/lib/audit";
+import { isRazorpayLive } from "@/lib/razorpay-config";
+
+const keyId = process.env.RAZORPAY_KEY_ID;
+const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
 export async function POST(req: Request) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = await req.json();
+    const rl = rateLimit(`pay-verify:${clientIp(req)}`, 20, 60_000);
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!keySecret) {
+      return NextResponse.json(
+        { error: "Payments are not configured" },
+        { status: 400 }
+      );
+    }
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      await req.json();
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return NextResponse.json({ error: "Missing payment details" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing payment details" },
+        { status: 400 }
+      );
     }
 
-    // Verify signature
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
-      .update(body.toString())
-      .digest("hex");
+    // Verify the Razorpay signature (timing-safe comparison).
+    const expected = crypto
+      .createHmac("sha256", keySecret)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest();
+    const provided = Buffer.from(razorpay_signature);
+    const signatureValid =
+      expected.length === provided.length &&
+      crypto.timingSafeEqual(expected, provided);
 
-    const isAuthentic = expectedSignature === razorpay_signature;
-
-    if (!isAuthentic) {
-      return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 });
+    if (!signatureValid) {
+      return NextResponse.json(
+        { error: "Invalid payment signature" },
+        { status: 400 }
+      );
     }
 
-    // Here you would save the payment to your database
-    // For now, we just return success
-    return NextResponse.json({
-      success: true,
-      message: "Payment verified successfully",
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
+    const payment = await prisma.payment.findFirst({
+      where: { orderId: razorpay_order_id, userId: session.user.id },
     });
+    if (!payment) {
+      return NextResponse.json(
+        { error: "Payment not found" },
+        { status: 404 }
+      );
+    }
+
+    // Idempotent: already marked paid -> succeed without double-processing.
+    if (payment.status === "PAID") {
+      logAudit({
+        action: "payment.verified",
+        actor: session.user.email,
+        target: payment.id,
+        meta: { planSlug: payment.planSlug, alreadyPaid: true },
+      });
+      return NextResponse.json({ success: true, alreadyPaid: true });
+    }
+
+    // Confirm the captured amount matches our stored amount.
+    if (isRazorpayLive()) {
+      const razorpay = new Razorpay({ key_id: keyId!, key_secret: keySecret });
+      const order = await razorpay.orders.fetch(razorpay_order_id);
+      if (Number(order.amount) !== payment.amount * 100) {
+        return NextResponse.json(
+          { error: "Amount mismatch" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const updated = await prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: "PAID",
+        method: "RAZORPAY",
+        paymentId: razorpay_payment_id,
+      },
+    });
+
+    logAudit({
+      action: "payment.verified",
+      actor: session.user.email,
+      target: payment.id,
+      meta: { planSlug: payment.planSlug, method: "RAZORPAY" },
+    });
+
+    return NextResponse.json({ success: true, status: updated.status });
   } catch (error) {
     console.error("Payment verification error:", error);
     return NextResponse.json(

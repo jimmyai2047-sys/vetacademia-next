@@ -1,3 +1,7 @@
+﻿export const metadata = {
+  title: "VetAcademia | Analytics",
+};
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
@@ -17,6 +21,8 @@ import {
   ArrowLeft,
   GraduationCap,
 } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -59,8 +65,8 @@ export default async function AnalyticsPage() {
   });
 
   const calculatedAvg =
-    scoreAgg._sum.totalMarks && scoreAgg._sum.score
-      ? Math.round((scoreAgg._sum.score / scoreAgg._sum.totalMarks) * 100)
+    scoreAgg._sum.totalMarks
+      ? Math.round((scoreAgg._sum.score || 0) / scoreAgg._sum.totalMarks * 100)
       : 0;
 
   const programmeAttempts = await prisma.mockTest.findMany({
@@ -228,4 +234,4 @@ export default async function AnalyticsPage() {
       </Card>
     </div>
   );
-}
+}

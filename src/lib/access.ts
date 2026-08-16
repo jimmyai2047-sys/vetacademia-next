@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PLAN_BY_SLUG, getExamKeysForPlan } from "@/lib/plans";
+import { programmeNameToSlug } from "@/lib/programme";
 
 export type AccessInfo = {
   userId: string | null;
@@ -70,4 +71,39 @@ export async function getAccess(): Promise<AccessInfo> {
   }
 
   return info;
+}
+
+// Returns whether the current user may take a given mock/adaptive/PYQ test.
+// Mirrors the gating used by the /mock-tests/[id] and /papers/[id] pages so
+// the attempt-save API cannot be bypassed by calling it directly.
+export async function canAccessMockTest(test: {
+  subjectId?: string | null;
+  exam?: string | null;
+}): Promise<boolean> {
+  const access = await getAccess();
+  if (!access.isAuthed) return false;
+
+  if (test.exam) {
+    return access.examKeys.has(test.exam) || access.examPlanOwned;
+  }
+
+  if (test.subjectId) {
+    const { prisma } = await import("@/lib/prisma");
+    const subject = await prisma.subject.findUnique({
+      where: { id: test.subjectId },
+      select: { id: true, year: true, programme: { select: { name: true } } },
+    });
+    if (!subject) return false;
+    const progSlug = programmeNameToSlug(subject.programme.name);
+    const programmeOwned = access.programmeSlugs.has(progSlug);
+    const yearOwned =
+      (progSlug === "bvsc" || progSlug === "ahdp") && subject.year
+        ? access.ownedYearScopes.has(`${progSlug}:${subject.year}`)
+        : false;
+    const subjectOwned = access.ownedSubjectIds.has(subject.id);
+    return programmeOwned || yearOwned || subjectOwned;
+  }
+
+  // Free general test (no programme, no exam): open to any signed-in user.
+  return access.isAuthed;
 }

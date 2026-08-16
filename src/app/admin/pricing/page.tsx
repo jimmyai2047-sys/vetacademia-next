@@ -1,6 +1,12 @@
+﻿export const metadata = {
+  title: "VetAcademia | Plans & Pricing",
+};
+
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import PlanEditor from "@/components/admin/plan-editor";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -103,4 +109,4 @@ export default async function AdminPricingPage() {
       </section>
     </div>
   );
-}
+}

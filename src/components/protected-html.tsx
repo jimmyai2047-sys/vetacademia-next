@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 export default function ProtectedHtml({ html }: { html: string }) {
   return (
     <div

@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Exam Subject",
+  description: "Topic-wise preparation material for this veterinary exam subject on VetAcademia.",
+};
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -16,6 +21,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Brain, FileText, ArrowLeft } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -211,7 +218,7 @@ export default async function ExamSubjectPage({
               </CardHeader>
               <CardContent className="space-y-6">
                 {studySections.map((sec, i) => (
-                  <div key={i}>
+                  <div key={`${sec.subjectId ?? ""}-${sec.year ?? ""}-${i}`}>
                     <div className="flex items-center gap-2 mb-2">
                       {sec.year && <Badge variant="secondary">{sec.year}</Badge>}
                       {sec.creditHours && (
@@ -240,4 +247,4 @@ export default async function ExamSubjectPage({
       )}
     </div>
   );
-}
+}

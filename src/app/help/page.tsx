@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Help Center",
+  description: "Guides and support to help you get the most out of VetAcademia.",
+};
+
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,7 +15,7 @@ import {
   Users,
 } from "lucide-react";
 
-export const metadata = { title: "Help Center | VetAcademia" };
+
 
 const helpTopics = [
   {
@@ -89,4 +94,4 @@ export default function HelpPage() {
       </div>
     </div>
   );
-}
+}

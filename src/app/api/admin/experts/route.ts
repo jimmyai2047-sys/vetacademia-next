@@ -73,7 +73,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const password = body.password ? String(body.password) : "expert123";
+    const generated = !body.password;
+    const password = body.password
+      ? String(body.password)
+      : Array.from(crypto.getRandomValues(new Uint8Array(9)))
+          .map((b) => "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"[b % 56])
+          .join("") + "!";
     const hashed = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
@@ -97,7 +102,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { id: expert.id, userId: user.id },
+      {
+        id: expert.id,
+        userId: user.id,
+        // Return the generated password once so the admin can share it.
+        temporaryPassword: generated ? password : undefined,
+      },
       { status: 201 }
     );
   } catch (error) {

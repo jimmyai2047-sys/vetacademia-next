@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Programme Syllabus",
+  description: "Subject-wise syllabus and course content for veterinary programmes on VetAcademia.",
+};
+
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -7,6 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft } from "lucide-react";
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
+import { slugToProgrammeName } from "@/lib/programme";
+
+
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,
@@ -34,7 +42,7 @@ export default async function ProgrammePage({
   const programme = await prisma.programme.findFirst({
     where: {
       name: {
-        equals: slug === "ahdp" ? "AHDP" : slug === "bvsc" ? "BVSC" : slug === "mvsc" ? "MVSC" : slug === "phd" ? "PHD" : slug,
+        equals: slugToProgrammeName(slug),
         mode: "insensitive",
       },
     },
@@ -122,6 +130,9 @@ export default async function ProgrammePage({
           unlocked = access.ownedYearScopes.has(`${slug}:${subject.year}`);
           buySlug = ys;
         }
+      } else if (isYearProgramme) {
+        // Subject with no assigned year: offer the full programme plan.
+        buySlug = slug;
       } else if (isSubjectProgramme) {
         const ss = subjectPlanBySubject.get(subject.id);
         if (ss) {
@@ -220,4 +231,4 @@ export default async function ProgrammePage({
       )}
     </div>
   );
-}
+}

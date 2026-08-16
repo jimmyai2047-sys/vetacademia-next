@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Mock Tests",
+  description: "Practice mock tests with performance analytics on VetAcademia.",
+};
+
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
@@ -11,6 +16,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brain, Clock, FileText, Download } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -85,4 +92,4 @@ export default async function MockTestsPage() {
       )}
     </div>
   );
-}
+}

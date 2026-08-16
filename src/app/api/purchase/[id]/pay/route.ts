@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isRazorpayLive } from "@/lib/razorpay-config";
 
 export async function POST(
   req: Request,
@@ -20,6 +21,20 @@ export async function POST(
     }
     if (payment.status === "PAID") {
       return NextResponse.json({ ok: true, alreadyPaid: true });
+    }
+
+    // When Razorpay is configured for live payments, this test-mode shortcut
+    // must NOT be used — doing so would let users enroll for free without
+    // paying. Force the real Razorpay flow (create-order -> verify) instead.
+    if (isRazorpayLive()) {
+      return NextResponse.json(
+        {
+          error:
+            "Live payments must be completed via Razorpay. Use /api/payments/create-order and /api/payments/verify.",
+          code: "LIVE_MODE_REQUIRED",
+        },
+        { status: 402 }
+      );
     }
 
     // TEST MODE: mark the payment as paid directly.

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sanitizeChapterContent } from "@/lib/content";
+import { logAudit } from "@/lib/audit";
 
 export async function PUT(
   req: Request,
@@ -38,7 +40,12 @@ export async function PUT(
       data: {
         title: title?.trim() ?? existing.title,
         category: category ?? existing.category,
-        content: content !== undefined ? content : existing.content,
+        content:
+          content !== undefined
+            ? content
+              ? sanitizeChapterContent(content)
+              : content
+            : existing.content,
         exam: exam !== undefined ? exam : existing.exam,
         track: track !== undefined ? track : existing.track,
         published: published ?? existing.published,
@@ -50,6 +57,11 @@ export async function PUT(
         fileSize:
           file?.fileSize !== undefined ? (file?.fileSize ?? null) : existing.fileSize,
       },
+    });
+    logAudit({
+      action: "post.update",
+      actor: session.user.email,
+      target: id,
     });
     return NextResponse.json(post);
   } catch (error) {
@@ -69,6 +81,11 @@ export async function DELETE(
     }
     const { id } = await params;
     await prisma.post.delete({ where: { id } });
+    logAudit({
+      action: "post.delete",
+      actor: session.user.email,
+      target: id,
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Post delete error:", error);

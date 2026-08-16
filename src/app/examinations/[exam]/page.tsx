@@ -1,3 +1,8 @@
+﻿export const metadata = {
+  title: "VetAcademia | Exam Preparation",
+  description: "Subjects and resources for this veterinary examination on VetAcademia.",
+};
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -35,6 +40,8 @@ import {
   slugify,
 } from "@/lib/exam-subjects";
 import EnrollCta from "@/components/enroll-cta";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -289,7 +296,13 @@ export default async function ExamPage({
             </div>
           </CardHeader>
           <CardContent>
-            {examMaterialsWithLinks.length === 0 ? (
+            {!examUnlocked ? (
+              <EnrollCta
+                planSlug={planSlugForExam(exam) || "veterinary-officer"}
+                title="Enroll to access study materials"
+                message="Enroll in this exam track to unlock its study materials, PPTs, PDFs, and videos."
+              />
+            ) : examMaterialsWithLinks.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 No study materials uploaded yet.
               </p>
@@ -306,8 +319,8 @@ export default async function ExamPage({
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {m.type}
-                        {m.subject ? ` · ${m.subject}` : ""}
-                        {m.topic ? ` → ${m.topic}` : ""}
+                        {m.subject ? ` Â· ${m.subject}` : ""}
+                        {m.topic ? ` â†’ ${m.topic}` : ""}
                       </div>
                     </div>
                     {m.signedUrl ? (
@@ -337,7 +350,8 @@ export default async function ExamPage({
         </Card>
 
         {/* Mock & Adaptive Tests (DB-driven), grouped by track */}
-        {mockTestGroups.map((group) => (
+        {examUnlocked ? (
+          mockTestGroups.map((group) => (
           <Card key={group.key}>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -390,7 +404,18 @@ export default async function ExamPage({
               </Link>
             </CardContent>
           </Card>
-        ))}
+        ))
+        ) : (
+          <Card>
+            <CardContent>
+              <EnrollCta
+                planSlug={planSlugForExam(exam) || "veterinary-officer"}
+                title="Enroll to access mock tests"
+                message="Enroll in this exam track to unlock its mock and adaptive tests."
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Subjects / Disciplines */}
@@ -468,4 +493,4 @@ export default async function ExamPage({
       </Card>
     </div>
   );
-}
+}

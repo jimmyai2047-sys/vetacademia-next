@@ -1,6 +1,13 @@
+﻿export const metadata = {
+  title: "VetAcademia | Advisory Services",
+  description: "Expert veterinary advisory and consultation services for livestock and practice.",
+};
+
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { Megaphone } from "lucide-react";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -26,4 +33,4 @@ export default async function AdvisoryPage() {
       )}
     </div>
   );
-}
+}

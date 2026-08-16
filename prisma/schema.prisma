@@ -158,6 +158,7 @@ model MockTest {
   kind        String   @default("MOCK") // MOCK | ADAPTIVE | PREVIOUS_YEAR
   year        String?  // exam year for PREVIOUS_YEAR papers (e.g. "2023")
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
+  planSlug    String?  // if set, the test is premium and requires this paid plan
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -166,6 +167,7 @@ model MockTest {
   attempts  MockTestAttempt[]
 
   @@index([subjectId])
+  @@index([planSlug])
 }
 
 // ==================== GENERIC POSTS (Farmers / Vets / Advisory / Previous Year Papers) ====================

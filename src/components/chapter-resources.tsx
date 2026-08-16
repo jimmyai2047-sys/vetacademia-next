@@ -56,11 +56,11 @@ export default function ChapterResources({
       <ul className="space-y-1.5">
         {contents.map((c) => {
           const Icon = iconFor(c.fileType);
-          const href = c.url;
+          if (!c.url) return null;
           return (
             <li key={c.id}>
               <a
-                href={href}
+                href={c.url}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-1.5 text-xs hover:bg-muted hover:underline"

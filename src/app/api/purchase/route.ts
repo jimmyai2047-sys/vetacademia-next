@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logAudit } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -28,6 +29,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ id: existing.id, alreadyPaid: true });
     }
 
+    // Reuse an existing pending payment for this user+plan instead of
+    // creating duplicates (e.g. on double-clicks / abandoned attempts).
+    const pending = await prisma.payment.findFirst({
+      where: { userId: session.user.id, planSlug: slug, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    });
+    if (pending) {
+      return NextResponse.json(
+        { id: pending.id, amount: pending.amount },
+        { status: 201 }
+      );
+    }
+
     const payment = await prisma.payment.create({
       data: {
         userId: session.user.id,
@@ -37,6 +51,13 @@ export async function POST(req: Request) {
         planSlug: slug,
         method: "TEST",
       },
+    });
+
+    logAudit({
+      action: "purchase.create",
+      actor: session.user.email,
+      target: payment.id,
+      meta: { planSlug: slug, amount: payment.amount },
     });
 
     return NextResponse.json(

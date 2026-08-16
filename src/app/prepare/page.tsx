@@ -1,7 +1,18 @@
+﻿export const metadata = {
+  title: "VetAcademia | Exam Preparation",
+  description: "Structured preparation tracks for ICAR, PSC, and other veterinary entrance exams.",
+};
+
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
 import ExamPrepTabs from "@/components/exam-prep-tabs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +50,22 @@ type PreparedCategory = {
 };
 
 export default async function PreparePage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return (
+      <div className="container mx-auto px-4 py-20 max-w-md text-center">
+        <h1 className="text-2xl font-bold mb-2">Log in to access exam preparation</h1>
+        <p className="text-muted-foreground mb-6">
+          Structured tracks, previous year papers, and mock tests are available to
+          enrolled members.
+        </p>
+        <Link href="/login" className={buttonVariants()}>
+          Log In
+        </Link>
+      </div>
+    );
+  }
+
   const categories: PreparedCategory[] = await Promise.all(
     EXAM_PREP_CATEGORIES.map(async (c) => {
       const materials = await prisma.examMaterial.findMany({
@@ -108,4 +135,4 @@ export default async function PreparePage() {
   );
 
   return <ExamPrepTabs categories={categories} />;
-}
+}

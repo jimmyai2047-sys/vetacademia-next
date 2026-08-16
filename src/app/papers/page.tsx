@@ -1,11 +1,18 @@
+﻿export const metadata = {
+  title: "VetAcademia | Previous Year Papers",
+  description: "Previous year question papers for veterinary and animal-sciences examinations.",
+};
+
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, ArrowLeft, NotebookPen } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getPublishedPosts } from "@/lib/posts";
 
+
+
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Previous Year Papers | VetAcademia" };
+
 
 export default async function PapersPage() {
   const [papers, posts] = await Promise.all([
@@ -101,4 +108,4 @@ export default async function PapersPage() {
       )}
     </div>
   );
-}
+}

@@ -1,6 +1,13 @@
+﻿export const metadata = {
+  title: "VetAcademia | For Veterinarians",
+  description: "Resources, consultation tools, and community for practicing veterinarians.",
+};
+
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import VetReference from "@/components/vet-reference";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -22,4 +29,4 @@ export default async function VetsPage() {
       </div>
     </div>
   );
-}
+}

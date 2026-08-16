@@ -18,10 +18,33 @@ import { GraduationCap, Mail } from "lucide-react";
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [resetUrl, setResetUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      if (data.resetUrl) setResetUrl(data.resetUrl);
+      setSubmitted(true);
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -44,13 +67,27 @@ export default function ForgotPasswordPage() {
               </p>
               <p className="text-muted-foreground">
                 If an account exists for <span className="font-medium">{email}</span>,
-                a password reset link would be sent there. Automated email reset is
-                not enabled yet — please contact support from the{" "}
-                <Link href="/contact" className="text-primary hover:underline">
-                  contact page
-                </Link>{" "}
-                to reset your password.
+                a password reset link has been sent. In this environment an email
+                provider is not configured, so the link is shown below for
+                testing:
               </p>
+              {resetUrl ? (
+                <a
+                  href={resetUrl}
+                  className="block break-all font-medium text-primary hover:underline"
+                >
+                  Open reset link
+                </a>
+              ) : (
+                <p className="text-muted-foreground">
+                  Automated email reset is not enabled yet — please contact
+                  support from the{" "}
+                  <Link href="/contact" className="text-primary hover:underline">
+                    contact page
+                  </Link>{" "}
+                  to reset your password.
+                </p>
+              )}
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-4">
@@ -60,14 +97,19 @@ export default function ForgotPasswordPage() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full gap-2">
-                <Mail className="h-4 w-4" /> Send reset link
+              {error && (
+                <p className="text-sm text-red-600">{error}</p>
+              )}
+              <Button type="submit" className="w-full gap-2" disabled={loading}>
+                <Mail className="h-4 w-4" />
+                {loading ? "Sending..." : "Send reset link"}
               </Button>
             </form>
           )}
