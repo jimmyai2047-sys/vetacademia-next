@@ -49,8 +49,8 @@ const subjectImages: Record<string, string> = {
 
 const programmeImages: Record<string, string> = {
   ahdp: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  bvsc: "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=1200&q=80",
-  mvsc: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
+  bvsc: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80",
+  mvsc: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
   phd: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80",
 };
 
@@ -63,11 +63,11 @@ export function getProgrammeImage(slug: string): string {
 }
 
 const examImages: Record<string, string> = {
-  "veterinary-officer": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=1200&q=80",
-  "livestock-assistant": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  "icar-jrf-srf": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
-  net: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
-  ars: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
+  "veterinary-officer": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1200&q=80",
+  "livestock-assistant": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200&q=80",
+  "icar-jrf-srf": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
+  net: "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=1200&q=80",
+  ars: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80",
 };
 
 export function getExamImage(slug: string): string {

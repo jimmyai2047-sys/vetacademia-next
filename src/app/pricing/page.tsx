@@ -8,8 +8,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { getExamKeysForPlan } from "@/lib/plans";
-import { getProgrammeImage } from "@/lib/subject-images";
-import { getExamImage } from "@/lib/page-images";
+import { getProgrammeImage, getExamImage } from "@/lib/subject-images";
 import {
   Card,
   CardContent,
