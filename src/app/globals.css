@@ -161,67 +161,98 @@
   background: oklch(0.4 0 0);
 }
 
-/* Rendered rich chapter content */
+/* Rendered rich chapter content — uniform typography */
 .chapter-content {
-  line-height: 1.7;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--foreground);
   word-break: break-word;
 }
+.chapter-content > *:first-child { margin-top: 0; }
+.chapter-content > *:last-child { margin-bottom: 0; }
+
 [contenteditable][data-placeholder]:empty::before {
   content: attr(data-placeholder);
   color: var(--muted-foreground);
   pointer-events: none;
 }
-.chapter-content h1 {
-  font-size: 1.5rem;
+
+.chapter-content h1,
+.chapter-content h2,
+.chapter-content h3,
+.chapter-content h4 {
+  font-family: inherit;
   font-weight: 700;
-  margin: 0.75em 0 0.5em;
+  line-height: 1.25;
+  margin: 1.25em 0 0.6em;
+}
+.chapter-content h1 {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--primary);
 }
 .chapter-content h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0.75em 0 0.5em;
+  font-size: 1.4rem;
+  color: var(--primary);
 }
 .chapter-content h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0.75em 0 0.5em;
+  font-size: 1.15rem;
+  color: var(--foreground);
+  border-left: 3px solid var(--primary);
+  padding-left: 0.5em;
 }
-.chapter-content p {
-  margin: 0.5em 0;
+.chapter-content h4 {
+  font-size: 1rem;
+  color: var(--foreground);
 }
-.chapter-content ul {
-  list-style: disc;
-  padding-left: 1.5em;
-  margin: 0.5em 0;
-}
-.chapter-content ol {
-  list-style: decimal;
-  padding-left: 1.5em;
-  margin: 0.5em 0;
-}
+
+.chapter-content p { margin: 0.75em 0; }
+.chapter-content ul { list-style: disc; padding-left: 1.6em; margin: 0.75em 0; }
+.chapter-content ol { list-style: decimal; padding-left: 1.6em; margin: 0.75em 0; }
+.chapter-content li { margin: 0.25em 0; }
+
 .chapter-content img {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  margin: 0.5em 0;
+  margin: 0.75em auto;
+  display: block;
 }
-.chapter-content a {
-  color: #2563eb;
-  text-decoration: underline;
+.chapter-content figure { margin: 0.75em 0; text-align: center; }
+.chapter-content figure img { margin: 0 auto; border: 1px solid var(--border); }
+.chapter-content figcaption {
+  font-size: 0.8em;
+  font-style: italic;
+  color: var(--primary);
+  margin-top: 0.35em;
 }
+
+.chapter-content a { color: var(--primary); text-decoration: underline; }
+
 .chapter-content blockquote {
   border-left: 3px solid var(--border);
   padding-left: 1em;
   color: var(--muted-foreground);
-  margin: 0.5em 0;
+  margin: 0.75em 0;
 }
+
+.chapter-content code,
+.chapter-content pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--muted);
+  border-radius: 6px;
+}
+.chapter-content code { padding: 0.15em 0.35em; font-size: 0.9em; }
+.chapter-content pre { padding: 0.75em 1em; overflow-x: auto; margin: 0.75em 0; }
+
 .chapter-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 0.75em 0;
-  font-size: 0.95em;
-  overflow-x: auto;
+  font-size: 0.95rem;
   display: block;
+  overflow-x: auto;
 }
 .chapter-content caption {
   caption-side: bottom;
@@ -235,10 +266,12 @@
   padding: 0.5em 0.75em;
   text-align: left;
   vertical-align: top;
+  color: var(--foreground);
 }
 .chapter-content th {
-  background: var(--muted);
-  font-weight: 600;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
 }
 
 /* Important Links continuous circular marquee */

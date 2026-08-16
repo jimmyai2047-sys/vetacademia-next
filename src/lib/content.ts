@@ -53,8 +53,6 @@ export function sanitizeChapterContent(html: string): string {
     allowedStyles: {
       "*": {
         "text-align": [/^(left|center|right|justify)$/],
-        color: [/^([a-z]+|#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)$)/],
-        "background-color": [/^([a-z]+|#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)$)/],
         "font-weight": [/^(normal|bold|bolder|lighter|\d+)$/],
         "font-style": [/^(normal|italic|oblique)$/],
         "font-size": [

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import { isFarmType } from "@/lib/farm-types";
 import { logAudit } from "@/lib/audit";
 
@@ -49,7 +50,9 @@ export async function POST(req: Request) {
         title: title.trim(),
         category,
         summary: summary?.trim() || null,
-        content: content ? sanitizeChapterContent(content) : null,
+        content: content
+          ? sanitizeChapterContent(await processInlineImages(content))
+          : null,
         published: published ?? true,
         order: order ?? 0,
       },

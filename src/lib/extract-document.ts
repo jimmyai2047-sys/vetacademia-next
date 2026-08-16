@@ -48,16 +48,44 @@ async function extractPdf(file: File): Promise<string> {
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   const data = await file.arrayBuffer();
   const doc = await pdfjs.getDocument({ data }).promise;
-  const paras: string[] = [];
-  for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i);
-    const content = await page.getTextContent();
-    const text = content.items
-      .map((it) => ("str" in it ? it.str : ""))
-      .join(" ");
-    if (text.trim()) paras.push(`<p>${escapeHtml(text)}</p>`);
+
+  // Render each page to an image so tables and embedded images are preserved
+  // (plain text extraction loses layout and figures). The resulting <img> data
+  // URLs are later uploaded to Blob by processInlineImages() on save.
+  const MAX_PAGES = 40;
+  const pageCount = Math.min(doc.numPages, MAX_PAGES);
+  const parts: string[] = [];
+
+  for (let i = 1; i <= pageCount; i++) {
+    try {
+      const page = await doc.getPage(i);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        page.cleanup();
+        continue;
+      }
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvas, viewport }).promise;
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+      parts.push(
+        `<figure class="pdf-page"><img src="${dataUrl}" alt="Page ${i}" loading="lazy" /><figcaption>Page ${i}</figcaption></figure>`
+      );
+      page.cleanup();
+    } catch (err) {
+      console.error("extractPdf: failed on page", i, err);
+    }
   }
-  return paras.join("\n") || "<p></p>";
+
+  if (pageCount < doc.numPages) {
+    parts.push(
+      `<p><em>Showing the first ${pageCount} of ${doc.numPages} pages.</em></p>`
+    );
+  }
+
+  return parts.join("\n") || "<p></p>";
 }
 
 export async function extractDocumentToHtml(file: File): Promise<string> {
