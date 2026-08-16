@@ -167,6 +167,20 @@ const importantLinks = [
     short: "AS",
     color: "#0d9488",
   },
+  {
+    name: "WOAH",
+    href: "https://www.woah.org/en/home/",
+    logo: "/logos/woah.png",
+    short: "WO",
+    color: "#1e40af",
+  },
+  {
+    name: "FAO",
+    href: "https://www.fao.org/home/en",
+    logo: "/logos/fao.svg",
+    short: "FA",
+    color: "#15803d",
+  },
 ];
 
 function ImportantLinkCard({
