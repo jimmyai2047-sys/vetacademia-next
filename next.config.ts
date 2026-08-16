@@ -28,6 +28,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Disable Turbopack's persistent filesystem cache for builds. The cache
+    // uses RocksDB SST files which fail to write under paths containing
+    // parentheses (e.g. "VetAcademia (VA)") on Windows ("os error 3").
+    turbopackFileSystemCacheForBuild: false,
+  },
   images: {
     remotePatterns: [
       {

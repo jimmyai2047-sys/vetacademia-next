@@ -1,3 +1,4 @@
+/// <reference types="../types/mammoth-browser" />
 // Client-only document extraction: turns Excel / Word / PDF (and plain text,
 // markdown, csv, html) files into an HTML string that can be stored in the
 // project report's demo / full content fields. Parsing libs are loaded lazily
@@ -20,8 +21,7 @@ function textToParagraphs(text: string): string {
 }
 
 async function extractDocx(file: File): Promise<string> {
-  const mod: any = await import("mammoth/mammoth.browser.min.js");
-  const mammoth = mod.default ?? mod;
+  const mammoth = (await import("mammoth/mammoth.browser.min.js")).default;
   const arrayBuffer = await file.arrayBuffer();
   const result = await mammoth.convertToHtml({ arrayBuffer });
   const html = result.value || "";
@@ -43,9 +43,9 @@ async function extractXlsx(file: File): Promise<string> {
 
 async function extractPdf(file: File): Promise<string> {
   const pdfjs = await import("pdfjs-dist");
-  // Run the worker from a CDN pinned to the installed version so the admin
-  // bundle doesn't need custom webpack worker config.
-  pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+  // Serve the worker locally (copied to /public) so it isn't blocked by the
+  // site's Content-Security-Policy (connect-src 'self').
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   const data = await file.arrayBuffer();
   const doc = await pdfjs.getDocument({ data }).promise;
   const paras: string[] = [];
