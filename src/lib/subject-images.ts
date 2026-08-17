@@ -132,7 +132,7 @@ const subjectImages: Record<string, string> = {
 
 const programmeImages: Record<string, string> = {
   ahdp: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  bvsc: "https://images.unsplash.com/photo-1628301001739-dab3705a0bd4?w=1200&q=80",
+  bvsc: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80",
   mvsc: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
   phd: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80",
 };
