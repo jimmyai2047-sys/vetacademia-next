@@ -123,11 +123,11 @@ export default function ChapterBulkImporter({
     fd.append("file", file);
     try {
       const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) return dataUrl;
+      if (!res.ok) return "";
       const data = await res.json();
-      return data.url || data.downloadUrl || dataUrl;
+      return data.url || data.downloadUrl || "";
     } catch {
-      return dataUrl;
+      return "";
     }
   }
 
@@ -140,15 +140,42 @@ export default function ChapterBulkImporter({
 
     let out = html;
     let count = 0;
+    let failed = 0;
     for (const dataUrl of urls) {
       count++;
       setUploadProgress(`Uploading image ${count}/${urls.size}...`);
       const blobUrl = await uploadBase64Image(dataUrl);
-      if (blobUrl !== dataUrl) {
+      if (blobUrl) {
         out = out.split(dataUrl).join(blobUrl);
+      } else {
+        // Upload failed — strip the image entirely instead of keeping base64
+        const imgRegex = new RegExp(`<img[^>]*src=["']${dataUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]*>`, "gi");
+        out = out.replace(imgRegex, "");
+        failed++;
       }
     }
+    if (failed > 0) {
+      setUploadProgress(`${failed} image(s) upload nahi ho payi, wo remove ho gayi.`);
+    }
     return out;
+  }
+
+  /** Strip Word-specific junk that inflates HTML size massively */
+  function stripWordJunk(html: string): string {
+    return html
+      .replace(/<xml[\s\S]*?<\/xml>/gi, "")
+      .replace(/<style[\s\S]*?<\/style>/gi, "")
+      .replace(/<o:p[\s\S]*?<\/o:p>/gi, "")
+      .replace(/<w:sdt[\s\S]*?<\/w:sdt>/gi, "")
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/class="Mso[^"]*"/gi, "")
+      .replace(/<span\s+lang="[^"]*"/gi, "<span")
+      .replace(/<span\s+style="[^"]*mso[^"]*"/gi, "<span")
+      .replace(/<p\s+class="Mso[^"]*"/gi, "<p")
+      .replace(/<p\s+style="[^"]*mso[^"]*"/gi, "<p")
+      .replace(/\s*style="[^"]*mso[^"]*;?\s*"/gi, "")
+      .replace(/<font[^>]*>/gi, "")
+      .replace(/<\/font>/gi, "");
   }
 
   async function create() {
@@ -159,12 +186,13 @@ export default function ChapterBulkImporter({
     try {
       let chaptersPayload = sections.map((s, i) => ({
         title: s.title,
-        content: s.html,
+        content: stripWordJunk(s.html),
         unitNumber: i + 1,
         type: s.type,
       }));
 
-      // Step 0: Compress all base64 images in HTML before anything else
+      // Step 1: Compress all base64 images in HTML
+      setUploadProgress("Compressing images...");
       for (let i = 0; i < chaptersPayload.length; i++) {
         if (/data:image\//.test(chaptersPayload[i].content)) {
           chaptersPayload[i] = {
@@ -174,12 +202,11 @@ export default function ChapterBulkImporter({
         }
       }
 
-      // Step 1: Upload all base64 images to Blob storage
+      // Step 2: Upload all base64 images to Blob storage
       const totalImages = chaptersPayload.reduce(
         (acc, ch) => acc + (ch.content.match(/data:image\//g) || []).length,
         0
       );
-      let imagesUploaded = 0;
       if (totalImages > 0) {
         for (let i = 0; i < chaptersPayload.length; i++) {
           const ch = chaptersPayload[i];
@@ -189,19 +216,28 @@ export default function ChapterBulkImporter({
             ...ch,
             content: await uploadAllBase64Images(ch.content),
           };
-          imagesUploaded++;
         }
         setUploadProgress(null);
       }
 
-      // Step 2: Check final payload size
-      const payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
+      // Step 3: If still too large, strip remaining base64 images
+      let payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
       if (payloadSize > 4 * 1024 * 1024) {
-        setError("Content abhi bhi bahut bada hai. Kam chapters try karein.");
+        setUploadProgress("Stripping remaining large images...");
+        chaptersPayload = chaptersPayload.map((ch) => ({
+          ...ch,
+          content: ch.content.replace(/<img\b[^>]*\ssrc=["']data:[^"']+["'][^>]*>/gi, ""),
+        }));
+        payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
+      }
+
+      if (payloadSize > 4 * 1024 * 1024) {
+        setError("Content bahut bada hai. File ko 2-3 chhote parts mein divide karke try karein.");
         return;
       }
 
-      // Step 3: Send chapters
+      // Step 4: Send chapters
+      setUploadProgress("Creating chapters...");
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
