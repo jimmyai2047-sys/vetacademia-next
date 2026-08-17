@@ -10,7 +10,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, Search, FileText } from "lucide-react";
+import { Download, Search, FileText, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export type Material = {
   id: string;
@@ -104,7 +105,7 @@ export default function MaterialGallery({
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((m) => (
-            <Card key={m.id} className="hover:shadow-lg transition-shadow">
+            <Card key={m.id} className="hover:shadow-lg transition-shadow flex flex-col">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg">{m.title}</CardTitle>
@@ -118,28 +119,32 @@ export default function MaterialGallery({
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex flex-col flex-1">
                 {m.excerpt && (
                   <p className="text-sm text-muted-foreground mb-4">
                     {m.excerpt}
                   </p>
                 )}
-                {m.downloadUrl ? (
-                  <a
-                    href={m.downloadUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                <div className="mt-auto flex items-center gap-4">
+                  <Link
+                    href={`/study-materials/${m.id}`}
+                    className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
                   >
-                    <FileText className="h-4 w-4" />
-                    Download
-                    <Download className="h-3.5 w-3.5" />
-                  </a>
-                ) : (
-                  <span className="text-sm text-muted-foreground">
-                    No downloadable file attached.
-                  </span>
-                )}
+                    Read More <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  {m.downloadUrl && (
+                    <a
+                      href={m.downloadUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Download
+                      <Download className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
