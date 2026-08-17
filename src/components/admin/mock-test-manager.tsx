@@ -35,8 +35,14 @@ type MockTest = {
   _count?: { questions: number };
 };
 
-export default function MockTestManager() {
+export default function MockTestManager({
+  scope = "ALL",
+}: {
+  scope?: "ALL" | "PREVIOUS_YEAR";
+}) {
   const router = useRouter();
+  const isPY = scope === "PREVIOUS_YEAR";
+  const defaultKind: string = isPY ? "PREVIOUS_YEAR" : "MOCK";
   const [tests, setTests] = useState<MockTest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -87,7 +93,8 @@ export default function MockTestManager() {
     setTrack("");
     setIsAdaptive(false);
     setIsDemo(false);
-    setKind("MOCK");
+    setKind(defaultKind);
+    setIsAdaptive(defaultKind === "ADAPTIVE");
     setYear("");
     setFile(null);
     setError(null);
@@ -202,10 +209,12 @@ export default function MockTestManager() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground">
-          Create online quizzes (questions + auto-check) and attach practice-set PDFs.
+          {isPY
+            ? "Add and manage previous year question papers (tagged by exam year)."
+            : "Create online quizzes (questions + auto-check) and attach practice-set PDFs."}
         </p>
         <Button size="sm" onClick={openNew}>
-          <Plus className="h-4 w-4 mr-1" /> New Test
+          <Plus className="h-4 w-4 mr-1" /> {isPY ? "New Paper" : "New Test"}
         </Button>
       </div>
 
@@ -261,21 +270,23 @@ export default function MockTestManager() {
               ))}
             </select>
           </div>
-          <div className="space-y-1.5">
-            <Label>Type</Label>
-            <select
-              value={kind}
-              onChange={(e) => {
-                setKind(e.target.value);
-                setIsAdaptive(e.target.value === "ADAPTIVE");
-              }}
-              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="MOCK">Mock Test</option>
-              <option value="ADAPTIVE">Adaptive Test</option>
-              <option value="PREVIOUS_YEAR">Previous Year Paper</option>
-            </select>
-          </div>
+          {!isPY && (
+            <div className="space-y-1.5">
+              <Label>Type</Label>
+              <select
+                value={kind}
+                onChange={(e) => {
+                  setKind(e.target.value);
+                  setIsAdaptive(e.target.value === "ADAPTIVE");
+                }}
+                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="MOCK">Mock Test</option>
+                <option value="ADAPTIVE">Adaptive Test</option>
+                <option value="PREVIOUS_YEAR">Previous Year Paper</option>
+              </select>
+            </div>
+          )}
           {kind === "PREVIOUS_YEAR" && (
             <div className="space-y-1.5">
               <Label>Exam Year (e.g. 2023)</Label>
@@ -364,11 +375,21 @@ export default function MockTestManager() {
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
-      ) : tests.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No tests yet.</p>
       ) : (
+        (() => {
+          const visibleTests = isPY
+            ? tests.filter((t) => (t.kind || "MOCK") === "PREVIOUS_YEAR")
+            : tests;
+          if (visibleTests.length === 0) {
+            return (
+              <p className="text-sm text-muted-foreground">
+                {isPY ? "No previous year papers yet." : "No tests yet."}
+              </p>
+            );
+          }
+          return (
         <div className="space-y-2">
-          {tests.map((t) => (
+          {visibleTests.map((t) => (
             <div
               key={t.id}
               className="flex items-center justify-between rounded-lg border p-3"
@@ -430,6 +451,8 @@ export default function MockTestManager() {
             </div>
           ))}
         </div>
+          );
+        })()
       )}
     </div>
   );

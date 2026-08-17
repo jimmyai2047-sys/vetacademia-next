@@ -29,6 +29,7 @@ const sidebarItems = [
   { name: "Community", href: "/admin/community", icon: MessageSquare },
   { name: "Pricing", href: "/admin/pricing", icon: IndianRupee },
   { name: "Mock / Adaptive / PY Tests", href: "/admin/mock-tests", icon: Brain },
+  { name: "Previous Year Papers", href: "/admin/py-papers", icon: FileText },
   { name: "Study Material", href: "/admin/exam-materials", icon: FileText },
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: FileText },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
