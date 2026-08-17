@@ -28,6 +28,18 @@ import {
   LogOut,
   LayoutDashboard,
   Search,
+  Shield,
+  BookMarked,
+  Microscope,
+  Award,
+  FileQuestion,
+  Beaker,
+  Syringe,
+  Bug,
+  Newspaper,
+  Phone,
+  Siren,
+  BookOpenCheck,
 } from "lucide-react";
 
 const programmes = [
@@ -35,6 +47,35 @@ const programmes = [
   { name: "B.V.Sc & A.H.", href: "/syllabus/bvsc", icon: GraduationCap },
   { name: "M.V.Sc", href: "/syllabus/mvsc", icon: FlaskConical },
   { name: "Ph.D", href: "/syllabus/phd", icon: Stethoscope },
+];
+
+const examCategories = [
+  { name: "Public Service Commission", href: "/examinations/psc", icon: Shield, desc: "Vet. Officer / LSA" },
+  { name: "ICAR Entrance", href: "/examinations/icar-entrance", icon: BookMarked, desc: "JRF / SRF" },
+  { name: "NET", href: "/examinations/net", icon: Microscope, desc: "ICAR / CSIR / UGC" },
+  { name: "ARS", href: "/examinations/ars", icon: Award, desc: "Research Scientist" },
+  { name: "Other Exams", href: "/examinations/other", icon: FileQuestion, desc: "Various Exams" },
+];
+
+const prepCategories = [
+  { name: "Veterinary Officer", href: "/prepare", icon: Stethoscope, desc: "VO/VS" },
+  { name: "Livestock Assistant", href: "/prepare", icon: BookOpen, desc: "LSA" },
+  { name: "ARS / NET", href: "/prepare", icon: Beaker, desc: "ARS & NET" },
+  { name: "ICAR Entrance", href: "/prepare", icon: BookMarked, desc: "JRF / SRF" },
+  { name: "ICAR-NET", href: "/prepare", icon: Microscope, desc: "ICAR-NET" },
+];
+
+const farmerSections = [
+  { name: "Farm Guides & Reports", href: "/farmers#guides-reports", icon: BookOpen },
+  { name: "Vaccination Schedule", href: "/farmers#vaccination", icon: Syringe },
+  { name: "Deworming Schedule", href: "/farmers#deworming", icon: Bug },
+  { name: "Resources & Updates", href: "/farmers#resources", icon: Newspaper },
+  { name: "Veterinary Helpline", href: "/farmers#helpline", icon: Phone },
+];
+
+const vetSections = [
+  { name: "Reference Guide", href: "/vets", icon: Siren, desc: "Vital Signs & Blood Profiles" },
+  { name: "Articles & Resources", href: "/vets", icon: Newspaper, desc: "Expert Content" },
 ];
 
 export default function Navbar() {
@@ -117,30 +158,98 @@ export default function Navbar() {
             </div>
           </div>
 
-          <Link href="/examinations">
+          <div className="group relative">
             <Button variant="ghost" className="gap-2">
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-          </Link>
-          <Link href="/prepare">
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+              {examCategories.map((c) => (
+                <Link
+                  key={c.name}
+                  href={c.href}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <c.icon className="h-4 w-4 shrink-0" />
+                  <div>
+                    <div>{c.name}</div>
+                    <div className="text-xs text-muted-foreground">{c.desc}</div>
+                  </div>
+                </Link>
+              ))}
+              <div className="my-1 h-px bg-border" />
+              <Link
+                href="/study-materials"
+                className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <BookOpenCheck className="h-4 w-4" />
+                Study Materials
+              </Link>
+            </div>
+          </div>
+
+          <div className="group relative">
             <Button variant="ghost" className="gap-2">
               <BookOpen className="h-4 w-4" />
               My Prep
             </Button>
-          </Link>
-          <Link href="/farmers">
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+              {prepCategories.map((c) => (
+                <Link
+                  key={c.name}
+                  href={c.href}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <c.icon className="h-4 w-4 shrink-0" />
+                  <div>
+                    <div>{c.name}</div>
+                    <div className="text-xs text-muted-foreground">{c.desc}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="group relative">
             <Button variant="ghost" className="gap-2">
               <Tractor className="h-4 w-4" />
               Animal Owner
             </Button>
-          </Link>
-          <Link href="/vets">
+            <div className="absolute left-0 top-full z-50 mt-1 w-60 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+              {farmerSections.map((s) => (
+                <Link
+                  key={s.name}
+                  href={s.href}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <s.icon className="h-4 w-4 shrink-0" />
+                  {s.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="group relative">
             <Button variant="ghost" className="gap-2">
               <HeartPulse className="h-4 w-4" />
               Vets
             </Button>
-          </Link>
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+              {vetSections.map((s) => (
+                <Link
+                  key={s.name}
+                  href={s.href}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <s.icon className="h-4 w-4 shrink-0" />
+                  <div>
+                    <div>{s.name}</div>
+                    {s.desc && <div className="text-xs text-muted-foreground">{s.desc}</div>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
           <Link href="/experts">
             <Button variant="ghost">Experts</Button>
           </Link>
