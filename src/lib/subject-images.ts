@@ -132,7 +132,7 @@ const subjectImages: Record<string, string> = {
 
 const programmeImages: Record<string, string> = {
   ahdp: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  bvsc: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80",
+  bvsc: "https://images.unsplash.com/photo-1628301001739-dab3705a0bd4?w=1200&q=80",
   mvsc: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
   phd: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80",
 };
@@ -147,14 +147,14 @@ export function getProgrammeImage(slug: string): string {
 
 const programmeYearImages: Record<string, Record<string, string>> = {
   ahdp: {
-    "1st Year": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80",
-    "2nd Year": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80",
+    "1st Year": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
+    "2nd Year": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80",
   },
   bvsc: {
-    "1st Year": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80",
-    "2nd Year": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80",
-    "3rd Year": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
-    "4th Year": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
+    "1st Year": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80",
+    "2nd Year": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+    "3rd Year": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
+    "4th Year": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
   },
 };
 
