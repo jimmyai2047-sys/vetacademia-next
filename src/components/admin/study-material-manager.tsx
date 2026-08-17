@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, X, Upload, Loader2, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Loader2, FileText, GraduationCap } from "lucide-react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
 
@@ -21,7 +21,7 @@ type StudyMaterialRow = {
   subjectId: string | null;
   isDemo: boolean;
   isPublic: boolean;
-  subject?: { programme?: { name: string | null } } | null;
+  subject?: { name: string; programme?: { name: string | null } } | null;
 };
 
 const TYPES = ["NOTE", "PDF", "DOC", "XLS", "PPT", "VIDEO", "LINK", "IMAGE"];
@@ -408,52 +408,80 @@ export default function StudyMaterialManager() {
       ) : rows.length === 0 ? (
         <p className="text-sm text-muted-foreground">No study materials yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="text-left p-3">Title</th>
-                <th className="text-left p-3">Type</th>
-                <th className="text-left p-3">Programme</th>
-                <th className="text-left p-3">Demo</th>
-                <th className="text-left p-3">Public</th>
-                <th className="text-right p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((m) => (
-                <tr key={m.id} className="border-t">
-                  <td className="p-3">{m.title}</td>
-                  <td className="p-3">{m.type}</td>
-                  <td className="p-3">{programmeFor(m) || "—"}</td>
-                  <td className="p-3">
-                    {m.isDemo ? (
-                      <Badge variant="outline" className="text-emerald-600 border-emerald-600">
-                        Demo
-                      </Badge>
-                    ) : (
-                      "No"
-                    )}
-                  </td>
-                  <td className="p-3">{m.isPublic ? "Yes" : "No"}</td>
-                  <td className="p-3 text-right whitespace-nowrap">
-                    <button
-                      className="text-primary hover:underline mr-3"
-                      onClick={() => openEdit(m)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => handleDelete(m.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-6">
+          {(() => {
+            const map = new Map<string, StudyMaterialRow[]>();
+            for (const m of rows) {
+              const key = m.subject?.programme?.name || "Uncategorized";
+              if (!map.has(key)) map.set(key, []);
+              map.get(key)!.push(m);
+            }
+            const entries = Array.from(map.entries()).sort((a, b) =>
+              a[0].localeCompare(b[0])
+            );
+            return entries.map(([programme, items]) => (
+              <div
+                key={programme}
+                className="rounded-xl border bg-card overflow-hidden"
+              >
+                <div className="flex items-center gap-2 px-4 py-3 bg-muted/40 border-b">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">{programme}</h3>
+                  <Badge variant="secondary">{items.length}</Badge>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted/30">
+                      <tr>
+                        <th className="text-left p-3">Title</th>
+                        <th className="text-left p-3">Type</th>
+                        <th className="text-left p-3">Subject</th>
+                        <th className="text-left p-3">Demo</th>
+                        <th className="text-left p-3">Public</th>
+                        <th className="text-right p-3">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((m) => (
+                        <tr key={m.id} className="border-t">
+                          <td className="p-3">{m.title}</td>
+                          <td className="p-3">{m.type}</td>
+                          <td className="p-3">{m.subject?.name || "—"}</td>
+                          <td className="p-3">
+                            {m.isDemo ? (
+                              <Badge
+                                variant="outline"
+                                className="text-emerald-600 border-emerald-600"
+                              >
+                                Demo
+                              </Badge>
+                            ) : (
+                              "No"
+                            )}
+                          </td>
+                          <td className="p-3">{m.isPublic ? "Yes" : "No"}</td>
+                          <td className="p-3 text-right whitespace-nowrap">
+                            <button
+                              className="text-primary hover:underline mr-3"
+                              onClick={() => openEdit(m)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="text-red-600 hover:underline"
+                              onClick={() => handleDelete(m.id)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ));
+          })()}
         </div>
       )}
     </div>
