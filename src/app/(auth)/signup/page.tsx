@@ -37,6 +37,7 @@ import {
 } from "@/lib/roles";
 import { startGuestSession } from "@/lib/guest";
 import { signIn } from "next-auth/react";
+import { getCsrfToken } from "@/lib/csrf-client";
 
 const PROGRAMMES = [
   { value: "AHDP", label: "A.H.D.P." },
@@ -183,9 +184,10 @@ export default function SignupPage() {
     }
 
     try {
+      const csrf = await getCsrfToken();
       const res = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify(payload),
       });
 

@@ -10,13 +10,15 @@ const BLOB_IMG_RE =
   /<img\b[^>]*\ssrc=["'](https:\/\/[^"']*blob\.vercel-storage\.com\/[^"']+)["'][^>]*>/gi;
 
 const MAX_INLINE_IMAGES = 60;
-const MAX_DIMENSION = 1600;
+const MAX_DIMENSION = 1200;
+const WEBP_QUALITY = 72;
 
 /**
  * Uploads inline base64 images (e.g. pasted from Word) to Vercel Blob and
  * rewrites the HTML to reference the Blob URLs instead. This keeps the stored
  * HTML small, lets images be CDN-cached, and avoids shipping multi-MB base64
  * blobs to the browser. Images are compressed/resized via sharp when available.
+ * Client-side compression should also be applied before calling this.
  */
 export async function processInlineImages(html: string): Promise<string> {
   if (!html || !/data:image\//.test(html)) return html;
@@ -39,13 +41,20 @@ export async function processInlineImages(html: string): Promise<string> {
       if (ext !== "svg") {
         try {
           const sharp = (await import("sharp")).default;
-          const resized = await sharp(buffer)
-            .rotate()
-            .resize({ width: MAX_DIMENSION, withoutEnlargement: true })
-            .webp({ quality: 82 })
-            .toBuffer();
-          buffer = resized;
-          ext = "webp";
+          const meta = await sharp(buffer).metadata();
+          const isLarge = buffer.length > 50 * 1024 || (meta.width && meta.width > MAX_DIMENSION);
+          if (isLarge) {
+            const resized = await sharp(buffer)
+              .rotate()
+              .resize({ width: MAX_DIMENSION, withoutEnlargement: true })
+              .webp({ quality: WEBP_QUALITY })
+              .toBuffer();
+            buffer = resized;
+            ext = "webp";
+          } else {
+            ext = "webp";
+            buffer = await sharp(buffer).webp({ quality: WEBP_QUALITY }).toBuffer();
+          }
         } catch {
           // sharp unavailable or failed → keep original bytes
         }

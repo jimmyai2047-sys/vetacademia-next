@@ -20,11 +20,13 @@ import {
   Image as ImageIcon,
   Table as TableIcon,
 } from "lucide-react";
+import { compressDataUrl, compressAllDataUrls } from "@/lib/client-image-compress";
 
-function insertImageAsBase64(editor: Editor | null, file: File) {
+async function insertImageAsBase64(editor: Editor | null, file: File) {
   const reader = new FileReader();
-  reader.onload = () => {
-    const dataUrl = reader.result as string;
+  reader.onload = async () => {
+    const raw = reader.result as string;
+    const dataUrl = await compressDataUrl(raw);
     editor?.chain().focus().setImage({ src: dataUrl }).run();
   };
   reader.readAsDataURL(file);
@@ -121,10 +123,17 @@ export default function ChapterRichEditor({
     setError(null);
     setSaved(false);
     try {
+      const html = await compressAllDataUrls(editor.getHTML());
+      const payloadSize = new Blob([JSON.stringify({ content: html })]).size;
+      if (payloadSize > 4 * 1024 * 1024) {
+        setError("Content bahut bada hai. Kam images ya chhoti images try karein.");
+        setSaving(false);
+        return;
+      }
       const res = await fetch(`/api/admin/chapter/${chapterId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: editor.getHTML() }),
+        body: JSON.stringify({ content: html }),
       });
       if (!res.ok) {
         const d = await res.json();

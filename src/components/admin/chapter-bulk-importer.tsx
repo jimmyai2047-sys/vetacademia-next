@@ -9,6 +9,7 @@ import {
   Check,
   Layers,
 } from "lucide-react";
+import { compressDataUrl, compressAllDataUrls } from "@/lib/client-image-compress";
 
 type Section = {
   title: string;
@@ -107,8 +108,13 @@ export default function ChapterBulkImporter({
   async function uploadBase64Image(dataUrl: string): Promise<string> {
     const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
     if (!match) return dataUrl;
-    const ext = match[1] === "jpeg" ? "jpg" : match[1];
-    const binary = atob(match[2]);
+
+    const compressed = await compressDataUrl(dataUrl);
+    const compressedMatch = compressed.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!compressedMatch) return dataUrl;
+
+    const ext = compressedMatch[1] === "jpeg" ? "jpg" : compressedMatch[1];
+    const binary = atob(compressedMatch[2]);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     const blob = new Blob([bytes], { type: `image/${ext}` });
@@ -157,6 +163,16 @@ export default function ChapterBulkImporter({
         unitNumber: i + 1,
         type: s.type,
       }));
+
+      // Step 0: Compress all base64 images in HTML before anything else
+      for (let i = 0; i < chaptersPayload.length; i++) {
+        if (/data:image\//.test(chaptersPayload[i].content)) {
+          chaptersPayload[i] = {
+            ...chaptersPayload[i],
+            content: await compressAllDataUrls(chaptersPayload[i].content),
+          };
+        }
+      }
 
       // Step 1: Upload all base64 images to Blob storage
       const totalImages = chaptersPayload.reduce(

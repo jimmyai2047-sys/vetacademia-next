@@ -37,6 +37,20 @@ export async function POST(
       );
     }
 
+    // Test mode may ONLY be used when explicitly enabled (e.g. local dev).
+    // In any other environment (notably production without live Razorpay),
+    // never grant free access — require the real payment flow instead.
+    if (process.env.ALLOW_TEST_PAYMENTS !== "true") {
+      return NextResponse.json(
+        {
+          error:
+            "Payments are not available. Complete checkout via Razorpay.",
+          code: "PAYMENT_DISABLED",
+        },
+        { status: 402 }
+      );
+    }
+
     // TEST MODE: mark the payment as paid directly.
     // When Razorpay goes live, replace this block with signature verification
     // of the Razorpay payment (razorpay_order_id / razorpay_payment_id /

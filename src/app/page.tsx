@@ -252,7 +252,7 @@ export default function HomePage() {
             </h1>
             <p className="text-lg md:text-xl text-gray-200 mb-8">
               Access comprehensive curricula, mock tests, study materials, and expert
-              consultations for B.V.Sc, M.V.Sc, and Ph.D students.
+              consultations for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/syllabus/ahdp">

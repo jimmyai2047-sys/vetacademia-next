@@ -41,7 +41,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-muted-foreground">
-              India&apos;s comprehensive veterinary education platform for B.V.Sc, M.V.Sc, and Ph.D students.
+              India&apos;s comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.
             </p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">

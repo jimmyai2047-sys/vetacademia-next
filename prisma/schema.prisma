@@ -114,6 +114,7 @@ model Chapter {
 
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   chapterContents ChapterContent[]
+  studyMaterials StudyMaterial[]
 
   @@index([subjectId])
 }
@@ -350,16 +351,19 @@ model StudyMaterial {
   fileType    String?
   content     String?
   subjectId   String?
+  chapterId   String?
   userId      String?
   isPublic    Boolean   @default(true)
   isDemo      Boolean   @default(false) // demo content visible to everyone (no purchase)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  chapter Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([subjectId])
+  @@index([chapterId])
   @@index([userId])
   @@index([isPublic])
 }

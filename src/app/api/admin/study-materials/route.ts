@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       fileName,
       fileType,
       subjectId,
+      chapterId,
       isDemo,
       isPublic,
     } = body as {
@@ -45,12 +46,23 @@ export async function POST(req: Request) {
       fileName?: string | null;
       fileType?: string | null;
       subjectId?: string | null;
+      chapterId?: string | null;
       isDemo?: boolean;
       isPublic?: boolean;
     };
 
     if (!title) {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
+    }
+
+    // Resolve the owning subject from the chapter when bound to one.
+    let resolvedSubjectId = subjectId || null;
+    if (chapterId) {
+      const chapter = await prisma.chapter.findUnique({
+        where: { id: chapterId },
+        select: { subjectId: true },
+      });
+      if (chapter) resolvedSubjectId = chapter.subjectId;
     }
 
     const material = await prisma.studyMaterial.create({
@@ -61,7 +73,8 @@ export async function POST(req: Request) {
         url: url || null,
         fileName: fileName || null,
         fileType: fileType || null,
-        subjectId: subjectId || null,
+        subjectId: resolvedSubjectId,
+        chapterId: chapterId || null,
         userId: null,
         isDemo: isDemo ?? false,
         isPublic: isPublic ?? true,

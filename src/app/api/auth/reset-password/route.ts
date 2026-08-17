@@ -1,16 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyResetToken } from "@/lib/reset-token";
+import { validateCsrf } from "@/lib/csrf";
 
 const schema = z.object({
   token: z.string().min(1),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { token, password } = schema.parse(body);
 

@@ -9,6 +9,14 @@ export default function VisitorCounter() {
   );
 
   useEffect(() => {
+    // Throttle: at most one ping per minute per tab, so frequent reloads
+    // don't each trigger a DB write on the visitors endpoint.
+    const KEY = "va_visitor_ping";
+    const last = Number(sessionStorage.getItem(KEY) || 0);
+    const now = Date.now();
+    if (now - last < 60_000) return;
+    sessionStorage.setItem(KEY, String(now));
+
     fetch("/api/visitors", { method: "POST" })
       .then((r) => r.json())
       .then((d) => setStats(d))

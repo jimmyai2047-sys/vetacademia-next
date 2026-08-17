@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GraduationCap, Mail } from "lucide-react";
+import { getCsrfToken } from "@/lib/csrf-client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -27,9 +28,10 @@ export default function ForgotPasswordPage() {
     setError(null);
     setLoading(true);
     try {
+      const csrf = await getCsrfToken();
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify({ email }),
       });
       if (!res.ok) {

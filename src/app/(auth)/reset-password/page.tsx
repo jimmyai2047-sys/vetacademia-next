@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GraduationCap, Lock } from "lucide-react";
+import { getCsrfToken } from "@/lib/csrf-client";
 
 function ResetForm() {
   const params = useSearchParams();
@@ -43,9 +44,10 @@ function ResetForm() {
     }
     setLoading(true);
     try {
+      const csrf = await getCsrfToken();
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
         body: JSON.stringify({ token, password }),
       });
       if (!res.ok) {

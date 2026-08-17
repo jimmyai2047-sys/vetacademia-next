@@ -5,6 +5,14 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, requestIp } from "@/lib/rate-limit";
 
+// Fail fast if the session secret is missing. Without it NextAuth cannot
+// sign/verify session tokens, and silently falling back would be insecure.
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error(
+    "NEXTAUTH_SECRET is not configured. Set it in your environment to enable authentication."
+  );
+}
+
 declare module "next-auth" {
   interface User {
     role?: string;

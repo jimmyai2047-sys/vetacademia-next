@@ -22,6 +22,7 @@ export async function PUT(
       fileName,
       fileType,
       subjectId,
+      chapterId,
       isDemo,
       isPublic,
     } = body as {
@@ -32,6 +33,7 @@ export async function PUT(
       fileName?: string | null;
       fileType?: string | null;
       subjectId?: string | null;
+      chapterId?: string | null;
       isDemo?: boolean;
       isPublic?: boolean;
     };
@@ -39,6 +41,22 @@ export async function PUT(
     const existing = await prisma.studyMaterial.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // When re-bound to a chapter, derive the owning subject from it.
+    let resolvedSubjectId: string | null | undefined = undefined;
+    if (chapterId !== undefined) {
+      if (chapterId) {
+        const chapter = await prisma.chapter.findUnique({
+          where: { id: chapterId },
+          select: { subjectId: true },
+        });
+        resolvedSubjectId = chapter?.subjectId ?? subjectId ?? null;
+      } else {
+        resolvedSubjectId = subjectId ?? null;
+      }
+    } else {
+      resolvedSubjectId = subjectId !== undefined ? subjectId : existing.subjectId;
     }
 
     const material = await prisma.studyMaterial.update({
@@ -55,7 +73,8 @@ export async function PUT(
         url: url !== undefined ? url : existing.url,
         fileName: fileName !== undefined ? fileName : existing.fileName,
         fileType: fileType !== undefined ? fileType : existing.fileType,
-        subjectId: subjectId !== undefined ? subjectId : existing.subjectId,
+        subjectId: resolvedSubjectId,
+        chapterId: chapterId !== undefined ? chapterId : existing.chapterId,
         isDemo: isDemo !== undefined ? (isDemo ?? false) : existing.isDemo,
         isPublic: isPublic !== undefined ? isPublic : existing.isPublic,
       },

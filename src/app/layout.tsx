@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "VetAcademia | Unified Veterinary Education Portal",
     description:
-      "India's comprehensive veterinary education platform for B.V.Sc, M.V.Sc, and Ph.D students.",
+      "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
     type: "website",
     siteName: "VetAcademia",
   },
