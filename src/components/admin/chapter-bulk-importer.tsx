@@ -2,14 +2,16 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import mammoth from "mammoth";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Loader2,
-  FileDown,
   Check,
   Layers,
+  FileUp,
+  AlertTriangle,
 } from "lucide-react";
-import { compressDataUrl, compressAllDataUrls } from "@/lib/client-image-compress";
 
 type Section = {
   title: string;
@@ -25,7 +27,6 @@ function splitHtmlByHeadings(
   const doc = new DOMParser().parseFromString(html, "text/html");
   const body = doc.body;
   let nodes: Node[] = Array.from(body.childNodes);
-  // Word often wraps the pasted content in a single element — descend into it.
   if (body.childElementCount === 1) {
     nodes = Array.from((body.firstElementChild as Element).childNodes);
   }
@@ -73,13 +74,35 @@ function splitHtmlByHeadings(
   return sections;
 }
 
+async function uploadBase64Image(dataUrl: string): Promise<string> {
+  const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
+  if (!match) return "";
+
+  const ext = match[1] === "jpeg" ? "jpg" : match[1];
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const blob = new Blob([bytes], { type: `image/${ext}` });
+  const file = new File([blob], `docx-img-${Date.now()}.${ext}`, { type: `image/${ext}` });
+  const fd = new FormData();
+  fd.append("file", file);
+  try {
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    if (!res.ok) return "";
+    const data = await res.json();
+    return data.url || data.downloadUrl || "";
+  } catch {
+    return "";
+  }
+}
+
 export default function ChapterBulkImporter({
   subjectId,
 }: {
   subjectId: string;
 }) {
   const router = useRouter();
-  const pasteRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [defaultType, setDefaultType] = useState<"THEORY" | "PRACTICAL">("THEORY");
   const [replace, setReplace] = useState(false);
   const [sections, setSections] = useState<Section[] | null>(null);
@@ -87,95 +110,63 @@ export default function ChapterBulkImporter({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
 
-  function preview() {
-    const html = pasteRef.current?.innerHTML || "";
-    const textOnly = html.replace(/<[^>]*>/g, "").trim();
-    if (!textOnly) {
-      setError("Pehle apni Word document ka content yahan paste (Ctrl+V) karein.");
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".docx") && !file.name.endsWith(".doc")) {
+      setError("Sirf .docx file upload karein.");
       return;
     }
-    const secs = splitHtmlByHeadings(html, defaultType);
-    if (secs.length === 0) {
-      setError("Koi content nahi mila.");
-      return;
-    }
-    setSections(secs);
+
+    setProcessing(true);
     setError(null);
+    setSections(null);
     setDone(null);
-  }
+    setFileName(file.name);
+    setUploadProgress("File parse ho rahi hai...");
 
-  async function uploadBase64Image(dataUrl: string): Promise<string> {
-    const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
-    if (!match) return dataUrl;
-
-    const compressed = await compressDataUrl(dataUrl);
-    const compressedMatch = compressed.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
-    if (!compressedMatch) return dataUrl;
-
-    const ext = compressedMatch[1] === "jpeg" ? "jpg" : compressedMatch[1];
-    const binary = atob(compressedMatch[2]);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    const blob = new Blob([bytes], { type: `image/${ext}` });
-    const file = new File([blob], `paste-${Date.now()}.${ext}`, { type: `image/${ext}` });
-    const fd = new FormData();
-    fd.append("file", file);
     try {
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) return "";
-      const data = await res.json();
-      return data.url || data.downloadUrl || "";
-    } catch {
-      return "";
-    }
-  }
+      const arrayBuffer = await file.arrayBuffer();
 
-  async function uploadAllBase64Images(html: string): Promise<string> {
-    const regex = /<img\b[^>]*\ssrc=["'](data:image\/[^"']+)["'][^>]*>/gi;
-    const urls = new Set<string>();
-    let m: RegExpExecArray | null;
-    while ((m = regex.exec(html)) !== null) urls.add(m[1]);
-    if (urls.size === 0) return html;
+      setUploadProgress("Word file convert ho rahi hai HTML mein...");
 
-    let out = html;
-    let count = 0;
-    let failed = 0;
-    for (const dataUrl of urls) {
-      count++;
-      setUploadProgress(`Uploading image ${count}/${urls.size}...`);
-      const blobUrl = await uploadBase64Image(dataUrl);
-      if (blobUrl) {
-        out = out.split(dataUrl).join(blobUrl);
-      } else {
-        // Upload failed — strip the image entirely instead of keeping base64
-        const imgRegex = new RegExp(`<img[^>]*src=["']${dataUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]*>`, "gi");
-        out = out.replace(imgRegex, "");
-        failed++;
+      const result = await mammoth.convertToHtml(
+        { arrayBuffer },
+        {
+          convertImage: mammoth.images.dataUri as any,
+        }
+      );
+
+      const html = result.value;
+      if (!html || html.replace(/<[^>]*>/g, "").trim().length === 0) {
+        setError("File mein koi content nahi mila.");
+        setProcessing(false);
+        setUploadProgress(null);
+        return;
       }
-    }
-    if (failed > 0) {
-      setUploadProgress(`${failed} image(s) upload nahi ho payi, wo remove ho gayi.`);
-    }
-    return out;
-  }
 
-  /** Strip Word-specific junk that inflates HTML size massively */
-  function stripWordJunk(html: string): string {
-    return html
-      .replace(/<xml[\s\S]*?<\/xml>/gi, "")
-      .replace(/<style[\s\S]*?<\/style>/gi, "")
-      .replace(/<o:p[\s\S]*?<\/o:p>/gi, "")
-      .replace(/<w:sdt[\s\S]*?<\/w:sdt>/gi, "")
-      .replace(/<!--[\s\S]*?-->/g, "")
-      .replace(/class="Mso[^"]*"/gi, "")
-      .replace(/<span\s+lang="[^"]*"/gi, "<span")
-      .replace(/<span\s+style="[^"]*mso[^"]*"/gi, "<span")
-      .replace(/<p\s+class="Mso[^"]*"/gi, "<p")
-      .replace(/<p\s+style="[^"]*mso[^"]*"/gi, "<p")
-      .replace(/\s*style="[^"]*mso[^"]*;?\s*"/gi, "")
-      .replace(/<font[^>]*>/gi, "")
-      .replace(/<\/font>/gi, "");
+      const secs = splitHtmlByHeadings(html, defaultType);
+      if (secs.length === 0) {
+        setError("File mein headings nahi mili. Content Heading style mein hona chahiye.");
+        setProcessing(false);
+        setUploadProgress(null);
+        return;
+      }
+
+      setSections(secs);
+      setUploadProgress(null);
+    } catch (err) {
+      console.error("DOCX parse error:", err);
+      setError("File parse nahi ho payi. File check karein.");
+    } finally {
+      setProcessing(false);
+      setUploadProgress(null);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   }
 
   async function create() {
@@ -183,44 +174,51 @@ export default function ChapterBulkImporter({
     setCreating(true);
     setError(null);
     setUploadProgress(null);
+
     try {
+      // Step 1: Upload all base64 images to Blob
       let chaptersPayload = sections.map((s, i) => ({
         title: s.title,
-        content: stripWordJunk(s.html),
+        content: s.html,
         unitNumber: i + 1,
         type: s.type,
       }));
 
-      // Step 1: Compress all base64 images in HTML
-      setUploadProgress("Compressing images...");
-      for (let i = 0; i < chaptersPayload.length; i++) {
-        if (/data:image\//.test(chaptersPayload[i].content)) {
-          chaptersPayload[i] = {
-            ...chaptersPayload[i],
-            content: await compressAllDataUrls(chaptersPayload[i].content),
-          };
-        }
-      }
-
-      // Step 2: Upload all base64 images to Blob storage
       const totalImages = chaptersPayload.reduce(
         (acc, ch) => acc + (ch.content.match(/data:image\//g) || []).length,
         0
       );
+
       if (totalImages > 0) {
         for (let i = 0; i < chaptersPayload.length; i++) {
           const ch = chaptersPayload[i];
           if (!/data:image\//.test(ch.content)) continue;
           setUploadProgress(`Uploading images: chapter ${i + 1}/${chaptersPayload.length}...`);
-          chaptersPayload[i] = {
-            ...ch,
-            content: await uploadAllBase64Images(ch.content),
-          };
+
+          const regex = /<img\b[^>]*\ssrc=["'](data:image\/[^"']+)["'][^>]*>/gi;
+          const dataUrls = new Set<string>();
+          let m: RegExpExecArray | null;
+          while ((m = regex.exec(ch.content)) !== null) dataUrls.add(m[1]);
+
+          let updatedHtml = ch.content;
+          let imgCount = 0;
+          for (const dataUrl of dataUrls) {
+            imgCount++;
+            setUploadProgress(`Uploading image ${imgCount}/${dataUrls.size} (chapter ${i + 1})...`);
+            const blobUrl = await uploadBase64Image(dataUrl);
+            if (blobUrl) {
+              updatedHtml = updatedHtml.split(dataUrl).join(blobUrl);
+            } else {
+              const imgRe = new RegExp(`<img[^>]*src=["']${dataUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["'][^>]*>`, "gi");
+              updatedHtml = updatedHtml.replace(imgRe, "");
+            }
+          }
+
+          chaptersPayload[i] = { ...ch, content: updatedHtml };
         }
-        setUploadProgress(null);
       }
 
-      // Step 3: If still too large, strip remaining base64 images
+      // Step 2: Strip remaining base64 if still too large
       let payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
       if (payloadSize > 4 * 1024 * 1024) {
         setUploadProgress("Stripping remaining large images...");
@@ -228,24 +226,14 @@ export default function ChapterBulkImporter({
           ...ch,
           content: ch.content.replace(/<img\b[^>]*\ssrc=["']data:[^"']+["'][^>]*>/gi, ""),
         }));
-        payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
       }
 
-      if (payloadSize > 4 * 1024 * 1024) {
-        setError("Content bahut bada hai. File ko 2-3 chhote parts mein divide karke try karein.");
-        return;
-      }
-
-      // Step 4: Send chapters
+      // Step 3: Send
       setUploadProgress("Creating chapters...");
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subjectId,
-          replace,
-          chapters: chaptersPayload,
-        }),
+        body: JSON.stringify({ subjectId, replace, chapters: chaptersPayload }),
       });
 
       const text = await res.text();
@@ -261,12 +249,13 @@ export default function ChapterBulkImporter({
         setError((d.error as string) || "Chapters create nahi ho paye.");
         return;
       }
+
       setDone(sections.length);
       setSections(null);
-      if (pasteRef.current) pasteRef.current.innerHTML = "";
+      setFileName(null);
       router.refresh();
     } catch {
-      setError("Chapters create nahi ho paye. Network check karein.");
+      setError("Chapters create nahi ho paye.");
     } finally {
       setCreating(false);
       setUploadProgress(null);
@@ -278,14 +267,12 @@ export default function ChapterBulkImporter({
       <div className="flex items-center gap-2">
         <Layers className="h-5 w-5 text-amber-600" />
         <h2 className="font-semibold">
-          Bulk Import — puri Word document ek saath paste karein
+          Bulk Import — .docx file upload karein
         </h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Apni puri Word chapter document (text + images) copy karein aur neeche
-        paste (Ctrl+V) karein. Har <strong>Heading (Heading 1–4)</strong> par
-        content alag Unit/Chapter mein split hoga. Har unit is subject ke
-        neeche ek editable chapter ban jayega.
+        Apni Word (.docx) file select karein. Har <strong>Heading (Heading 1–4)</strong> par
+        content alag Unit/Chapter mein split hoga. Images bhi upload ho jayengi.
       </p>
 
       <div className="flex flex-wrap items-center gap-4">
@@ -308,26 +295,44 @@ export default function ChapterBulkImporter({
         </label>
       </div>
 
-      <div
-        ref={pasteRef}
-        contentEditable
-        suppressContentEditableWarning
-        className="chapter-content min-h-[220px] p-3 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-        data-placeholder="Yahan apni Word document paste karein (Ctrl+V)…"
-      />
+      <div className="flex items-center gap-3">
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".docx,.doc"
+          className="hidden"
+          onChange={handleFileUpload}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileRef.current?.click()}
+          disabled={processing || creating}
+          className="gap-2"
+        >
+          {processing ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <FileUp className="h-4 w-4" />
+          )}
+          {processing ? "Processing..." : "Select .docx File"}
+        </Button>
+        {fileName && !processing && (
+          <span className="text-sm text-muted-foreground">{fileName}</span>
+        )}
+      </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <Button onClick={preview} disabled={creating || !sections}>
-          Split &amp; Preview
-        </Button>
-        {sections && (
-          <Button onClick={create} disabled={creating}>
-            {creating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Check className="h-4 w-4" />
-            )}
+        {sections && !creating && (
+          <Button onClick={create}>
+            <Check className="h-4 w-4 mr-1" />
             Create {sections.length} Chapters
+          </Button>
+        )}
+        {creating && (
+          <Button disabled>
+            <Loader2 className="h-4 w-4 animate-spin mr-1" />
+            Creating...
           </Button>
         )}
         {done !== null && (
@@ -336,12 +341,17 @@ export default function ChapterBulkImporter({
           </span>
         )}
       </div>
+
       {uploadProgress && (
         <p className="text-sm text-blue-600 flex items-center gap-2">
           <Loader2 className="h-3.5 w-3.5 animate-spin" /> {uploadProgress}
         </p>
       )}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="text-sm text-red-600 flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4" /> {error}
+        </p>
+      )}
 
       {sections && (
         <div className="space-y-2">
