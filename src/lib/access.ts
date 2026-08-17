@@ -1,12 +1,13 @@
 import { cache } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PLAN_BY_SLUG, getExamKeysForPlan } from "@/lib/plans";
+import { PLANS, getExamKeysForPlan } from "@/lib/plans";
 import { programmeNameToSlug } from "@/lib/programme";
 
 export type AccessInfo = {
   userId: string | null;
   isAuthed: boolean;
+  isAdmin: boolean;
   planSlugs: Set<string>;
   programmeSlugs: Set<string>;
   examKeys: Set<string>;
@@ -19,6 +20,7 @@ export type AccessInfo = {
 const EMPTY: AccessInfo = {
   userId: null,
   isAuthed: false,
+  isAdmin: false,
   planSlugs: new Set(),
   programmeSlugs: new Set(),
   examKeys: new Set(),
@@ -27,6 +29,13 @@ const EMPTY: AccessInfo = {
   ownedSubjectIds: new Set(),
 };
 
+const ALL_PROGRAMME_SLUGS = new Set(PLANS.filter((p) => p.type === "COURSE" && p.programmeSlug).map((p) => p.programmeSlug!));
+const ALL_EXAM_KEYS = new Set(["psc", "icar-entrance", "net", "ars"]);
+const ALL_PLAN_SLUGS = new Set(PLANS.map((p) => p.slug));
+const ALL_YEAR_SCOPES = new Set(
+  ["ahdp", "bvsc"].flatMap((prog) => ["I Year", "II Year", "III Year", "IV Year", "V Year"].map((y) => `${prog}:${y}`))
+);
+
 // Returns the plans the current user has PAID for, derived from Payment rows.
 // Used to gate premium content (syllabus, previous-year papers, mock tests).
 // Cached per request so multiple gating checks (page + attempt API + subject
@@ -34,7 +43,23 @@ const EMPTY: AccessInfo = {
 export const getAccess = cache(async (): Promise<AccessInfo> => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
+  const role = session?.user?.role;
   if (!userId) return EMPTY;
+
+  // Admin gets full access to all content — no payment required
+  if (role === "ADMIN") {
+    return {
+      userId,
+      isAuthed: true,
+      isAdmin: true,
+      planSlugs: ALL_PLAN_SLUGS,
+      programmeSlugs: ALL_PROGRAMME_SLUGS,
+      examKeys: ALL_EXAM_KEYS,
+      examPlanOwned: true,
+      ownedYearScopes: ALL_YEAR_SCOPES,
+      ownedSubjectIds: new Set(),
+    };
+  }
 
   const { prisma } = await import("@/lib/prisma");
   const payments = await prisma.payment.findMany({
@@ -45,6 +70,7 @@ export const getAccess = cache(async (): Promise<AccessInfo> => {
   const info: AccessInfo = {
     userId,
     isAuthed: true,
+    isAdmin: false,
     planSlugs: new Set(),
     programmeSlugs: new Set(),
     examKeys: new Set(),
