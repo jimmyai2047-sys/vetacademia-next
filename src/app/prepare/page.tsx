@@ -50,7 +50,12 @@ type PreparedCategory = {
   }[];
 };
 
-export default async function PreparePage() {
+export default async function PreparePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
@@ -136,5 +141,5 @@ export default async function PreparePage() {
     })
   );
 
-  return <ExamPrepTabs categories={categories} />;
+  return <ExamPrepTabs categories={categories} initialTab={tab || undefined} />;
 }

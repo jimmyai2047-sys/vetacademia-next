@@ -58,11 +58,11 @@ const examCategories = [
 ];
 
 const prepCategories = [
-  { name: "Veterinary Officer", href: "/prepare", icon: Stethoscope, desc: "VO/VS" },
-  { name: "Livestock Assistant", href: "/prepare", icon: BookOpen, desc: "LSA" },
-  { name: "ARS / NET", href: "/prepare", icon: Beaker, desc: "ARS & NET" },
-  { name: "ICAR Entrance", href: "/prepare", icon: BookMarked, desc: "JRF / SRF" },
-  { name: "ICAR-NET", href: "/prepare", icon: Microscope, desc: "ICAR-NET" },
+  { name: "Veterinary Officer", href: "/prepare?tab=VO", icon: Stethoscope, desc: "VO/VS" },
+  { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA" },
+  { name: "ARS / NET", href: "/prepare?tab=ARS", icon: Beaker, desc: "ARS & NET" },
+  { name: "ICAR Entrance", href: "/prepare?tab=ICAR_ENTRANCE", icon: BookMarked, desc: "JRF / SRF" },
+  { name: "ICAR-NET", href: "/prepare?tab=NET", icon: Microscope, desc: "ICAR-NET" },
 ];
 
 const farmerSections = [

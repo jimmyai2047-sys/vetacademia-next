@@ -161,10 +161,15 @@ function Section({
 
 export default function ExamPrepTabs({
   categories,
+  initialTab,
 }: {
   categories: PreparedCategory[];
+  initialTab?: string;
 }) {
-  const [active, setActive] = useState(0);
+  const initialIndex = initialTab
+    ? categories.findIndex((c) => c.key === initialTab)
+    : 0;
+  const [active, setActive] = useState(initialIndex >= 0 ? initialIndex : 0);
   const safeActive = categories.length > 0 ? Math.min(active, categories.length - 1) : 0;
   const cat = categories[safeActive];
 
