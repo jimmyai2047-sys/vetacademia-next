@@ -64,15 +64,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const form = await req.formData();
-    const file = form.get("file") as File | null;
-    const subjectId = form.get("subjectId") as string | null;
-    const replace = form.get("replace") === "true";
+    const { fileUrl, subjectId, replace } = await req.json();
 
-    if (!file || file.size === 0) {
-      return NextResponse.json({ error: "File required" }, { status: 400 });
+    if (!fileUrl || typeof fileUrl !== "string") {
+      return NextResponse.json({ error: "fileUrl required" }, { status: 400 });
     }
-    if (!subjectId) {
+    if (!subjectId || typeof subjectId !== "string") {
       return NextResponse.json({ error: "subjectId required" }, { status: 400 });
     }
 
@@ -84,7 +81,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Subject not found" }, { status: 404 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
+    const fileRes = await fetch(fileUrl);
+    if (!fileRes.ok) {
+      return NextResponse.json({ error: "File download failed" }, { status: 400 });
+    }
+    const arrayBuffer = await fileRes.arrayBuffer();
 
     const result = await mammoth.convertToHtml(
       { arrayBuffer },
