@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
-import { EXPERT_ROLES } from "@/lib/roles";
 
 
 
@@ -27,7 +26,6 @@ export const dynamic = "force-dynamic";
 
 export default async function ExpertsPage() {
   const experts = await prisma.expert.findMany({
-    where: { user: { role: { in: [...EXPERT_ROLES] } } },
     include: {
       user: { select: { name: true } },
       _count: { select: { consultations: true } },
