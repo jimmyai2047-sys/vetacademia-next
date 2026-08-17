@@ -74,8 +74,8 @@ const farmerSections = [
 ];
 
 const vetSections = [
-  { name: "Reference Guide", href: "/vets", icon: Siren, desc: "Vital Signs & Blood Profiles" },
-  { name: "Articles & Resources", href: "/vets", icon: Newspaper, desc: "Expert Content" },
+  { name: "Reference Guide", href: "/vets#reference", icon: Siren, desc: "Vital Signs & Blood Profiles" },
+  { name: "Articles & Resources", href: "/vets#articles", icon: Newspaper, desc: "Expert Content" },
 ];
 
 export default function Navbar() {
@@ -132,7 +132,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <BrandLogo src="/favicon-192x192.png" />
+        <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto" />
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">

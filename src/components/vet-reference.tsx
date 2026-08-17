@@ -437,7 +437,7 @@ export default function VetReference() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div id="reference" className="container mx-auto px-4 py-8">
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-2xl">
         <Image

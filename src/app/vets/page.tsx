@@ -17,7 +17,7 @@ export default async function VetsPage() {
     <div>
       <VetReference />
 
-      <div className="container mx-auto px-4 py-8">
+      <div id="articles" className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-4">Articles &amp; Resources</h2>
         {vetPosts.length === 0 ? (
           <p className="text-muted-foreground">
