@@ -98,24 +98,24 @@ export default function Navbar() {
           <Link href="/">
             <Button variant="ghost">Home</Button>
           </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="ghost" className="gap-2">
-                <GraduationCap className="h-4 w-4" />
-                Syllabus
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
+          <div className="group relative">
+            <Button variant="ghost" className="gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Syllabus
+            </Button>
+            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
               {programmes.map((p) => (
-                <DropdownMenuItem key={p.name}>
-                  <Link href={p.href} className="flex items-center gap-2 w-full">
-                    <p.icon className="h-4 w-4" />
-                    {p.name}
-                  </Link>
-                </DropdownMenuItem>
+                <Link
+                  key={p.name}
+                  href={p.href}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <p.icon className="h-4 w-4" />
+                  {p.name}
+                </Link>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </div>
+          </div>
 
           <Link href="/examinations">
             <Button variant="ghost" className="gap-2">
