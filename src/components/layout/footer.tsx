@@ -37,7 +37,7 @@ export default function Footer() {
               <img
                 src="/favicon-192x192.png"
                 alt="VetAcademia"
-                className="h-12 w-12 object-contain rounded-lg"
+                className="h-24 w-24 object-contain rounded-lg"
               />
             </Link>
             <p className="text-sm text-muted-foreground">
