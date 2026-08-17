@@ -41,10 +41,10 @@ export default function ContactPage() {
             <div>
               <p className="font-semibold">Phone / WhatsApp</p>
               <a
-                href="tel:+919876543210"
+                href="tel:+918949929291"
                 className="text-muted-foreground hover:text-primary"
               >
-                +91 98765 43210
+                +91-89499 29291
               </a>
             </div>
           </CardContent>

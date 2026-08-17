@@ -66,7 +66,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="contactPhone">Contact Phone</Label>
-                  <Input id="contactPhone" defaultValue="+91 98765 43210" disabled />
+                  <Input id="contactPhone" defaultValue="+91 89499 29291" disabled />
                 </div>
               </div>
             </CardContent>
