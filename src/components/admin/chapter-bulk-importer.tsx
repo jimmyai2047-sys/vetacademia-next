@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -38,34 +39,23 @@ export default function ChapterBulkImporter({
     setDone(null);
 
     try {
-      // Step 1: Upload file to Blob
-      setStatus("File upload ho rahi hai Blob storage mein...");
-      const fd = new FormData();
-      fd.append("file", file);
-      const uploadRes = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: fd,
+      // Step 1: Upload directly to Blob from browser (bypasses 4.5MB serverless limit!)
+      setStatus("File directly Blob storage mein upload ho rahi hai...");
+      const blobResult = await upload(file.name, file, {
+        access: "private",
+        handleUploadUrl: "/api/admin/upload-client",
       });
-      if (!uploadRes.ok) {
-        const uploadText = await uploadRes.text();
-        setError(`File upload failed (${uploadRes.status}): ${uploadText.slice(0, 200)}`);
-        setStatus(null);
-        return;
-      }
-      const uploadData = await uploadRes.json();
-      const fileUrl = uploadData.url || uploadData.downloadUrl;
-      if (!fileUrl) {
-        setError("Upload se URL nahi mila.");
-        setStatus(null);
-        return;
-      }
 
-      // Step 2: Send URL to server for processing
-      setStatus("File Blob mein upload ho gayi. Ab server pe chapters ban rahe hain...");
+      // Step 2: Send Blob URL to server for parsing
+      setStatus("Upload ho gaya! Ab server pe chapters ban rahe hain...");
       const res = await fetch("/api/admin/chapters/import-docx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileUrl, subjectId, replace }),
+        body: JSON.stringify({
+          fileUrl: blobResult.url,
+          subjectId,
+          replace,
+        }),
       });
 
       const text = await res.text();
@@ -87,8 +77,11 @@ export default function ChapterBulkImporter({
       setDone((d.created as number) || 0);
       setStatus(null);
       router.refresh();
-    } catch {
-      setError("Chapters create nahi ho paye. Network check karein.");
+    } catch (err) {
+      console.error("Import error:", err);
+      setError(
+        `Import failed: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
       setStatus(null);
     } finally {
       setCreating(false);
@@ -105,9 +98,9 @@ export default function ChapterBulkImporter({
         </h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Apni Word (.docx) file select karein. Pehle file Blob storage mein
-        upload hogi (200 MB tak), phir server pe mammoth.js se parse hoke
-        chapters ban jayenge. Images bhi automatically upload ho jayengi.
+        Apni Word (.docx) file select karein. File directly browser se Blob
+        storage mein upload hogi (no serverless limit), phir server pe mammoth.js
+        se parse hoke chapters ban jayenge.
       </p>
 
       <label className="flex items-center gap-2 text-sm">
