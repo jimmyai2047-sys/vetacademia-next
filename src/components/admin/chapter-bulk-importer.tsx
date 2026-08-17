@@ -108,31 +108,65 @@ export default function ChapterBulkImporter({
     setCreating(true);
     setError(null);
     try {
+      let chaptersPayload = sections.map((s, i) => ({
+        title: s.title,
+        content: s.html,
+        unitNumber: i + 1,
+        type: s.type,
+      }));
+
+      // Vercel serverless has ~4.5 MB body limit.  If the JSON payload
+      // would exceed ~3 MB, strip base64 data-URL images so the request
+      // can still go through.  The user can re-add images afterwards
+      // via the file manager.
+      let payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
+      let strippedImages = false;
+      if (payloadSize > 3 * 1024 * 1024) {
+        strippedImages = true;
+        chaptersPayload = chaptersPayload.map((ch) => ({
+          ...ch,
+          content: ch.content.replace(/<img[^>]+src="data:[^"]*"[^>]*>/gi, "[image removed — too large for upload]"),
+        }));
+        payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
+      }
+
+      if (payloadSize > 4 * 1024 * 1024) {
+        setError("Content bahut bada hai. Kam chapters ya bina images ke try karein.");
+        return;
+      }
+
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subjectId,
           replace,
-          chapters: sections.map((s, i) => ({
-            title: s.title,
-            content: s.html,
-            unitNumber: i + 1,
-            type: s.type,
-          })),
+          chapters: chaptersPayload,
         }),
       });
-      const d = await res.json();
+
+      const text = await res.text();
+      let d: Record<string, unknown>;
+      try {
+        d = JSON.parse(text);
+      } catch {
+        setError(`Server error (${res.status}): ${text.slice(0, 200)}`);
+        return;
+      }
+
       if (!res.ok) {
-        setError(d.error || "Chapters create nahi ho paye.");
+        setError((d.error as string) || "Chapters create nahi ho paye.");
         return;
       }
       setDone(sections.length);
       setSections(null);
       if (pasteRef.current) pasteRef.current.innerHTML = "";
       router.refresh();
+      if (strippedImages) {
+        setError("Chapters ban gaye lekin bade images remove ho gaye. Images dobara upload karein — file manager se.");
+      }
     } catch {
-      setError("Chapters create nahi ho paye.");
+      setError("Chapters create nahi ho paye. Network check karein.");
     } finally {
       setCreating(false);
     }
