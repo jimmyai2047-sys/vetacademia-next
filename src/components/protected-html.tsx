@@ -5,7 +5,7 @@ import DOMPurify, { type Config } from "dompurify";
 
 const SANITIZE_OPTS: Config = {
   USE_PROFILES: { html: true },
-  FORBID_TAGS: ["script", "iframe", "object", "embed", "link", "base", "svg"],
+  FORBID_TAGS: ["style", "script", "iframe", "object", "embed", "link", "base", "svg"],
   FORBID_ATTR: [
     "onerror",
     "onload",
