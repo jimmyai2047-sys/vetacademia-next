@@ -85,6 +85,7 @@ export default function ChapterBulkImporter({
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
 
   function preview() {
     const html = pasteRef.current?.innerHTML || "";
@@ -103,10 +104,52 @@ export default function ChapterBulkImporter({
     setDone(null);
   }
 
+  async function uploadBase64Image(dataUrl: string): Promise<string> {
+    const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!match) return dataUrl;
+    const ext = match[1] === "jpeg" ? "jpg" : match[1];
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: `image/${ext}` });
+    const file = new File([blob], `paste-${Date.now()}.${ext}`, { type: `image/${ext}` });
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) return dataUrl;
+      const data = await res.json();
+      return data.url || data.downloadUrl || dataUrl;
+    } catch {
+      return dataUrl;
+    }
+  }
+
+  async function uploadAllBase64Images(html: string): Promise<string> {
+    const regex = /<img\b[^>]*\ssrc=["'](data:image\/[^"']+)["'][^>]*>/gi;
+    const urls = new Set<string>();
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(html)) !== null) urls.add(m[1]);
+    if (urls.size === 0) return html;
+
+    let out = html;
+    let count = 0;
+    for (const dataUrl of urls) {
+      count++;
+      setUploadProgress(`Uploading image ${count}/${urls.size}...`);
+      const blobUrl = await uploadBase64Image(dataUrl);
+      if (blobUrl !== dataUrl) {
+        out = out.split(dataUrl).join(blobUrl);
+      }
+    }
+    return out;
+  }
+
   async function create() {
     if (!sections) return;
     setCreating(true);
     setError(null);
+    setUploadProgress(null);
     try {
       let chaptersPayload = sections.map((s, i) => ({
         title: s.title,
@@ -115,26 +158,34 @@ export default function ChapterBulkImporter({
         type: s.type,
       }));
 
-      // Vercel serverless has ~4.5 MB body limit.  If the JSON payload
-      // would exceed ~3 MB, strip base64 data-URL images so the request
-      // can still go through.  The user can re-add images afterwards
-      // via the file manager.
-      let payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
-      let strippedImages = false;
-      if (payloadSize > 3 * 1024 * 1024) {
-        strippedImages = true;
-        chaptersPayload = chaptersPayload.map((ch) => ({
-          ...ch,
-          content: ch.content.replace(/<img[^>]+src="data:[^"]*"[^>]*>/gi, "[image removed — too large for upload]"),
-        }));
-        payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
+      // Step 1: Upload all base64 images to Blob storage
+      const totalImages = chaptersPayload.reduce(
+        (acc, ch) => acc + (ch.content.match(/data:image\//g) || []).length,
+        0
+      );
+      let imagesUploaded = 0;
+      if (totalImages > 0) {
+        for (let i = 0; i < chaptersPayload.length; i++) {
+          const ch = chaptersPayload[i];
+          if (!/data:image\//.test(ch.content)) continue;
+          setUploadProgress(`Uploading images: chapter ${i + 1}/${chaptersPayload.length}...`);
+          chaptersPayload[i] = {
+            ...ch,
+            content: await uploadAllBase64Images(ch.content),
+          };
+          imagesUploaded++;
+        }
+        setUploadProgress(null);
       }
 
+      // Step 2: Check final payload size
+      const payloadSize = new Blob([JSON.stringify({ subjectId, replace, chapters: chaptersPayload })]).size;
       if (payloadSize > 4 * 1024 * 1024) {
-        setError("Content bahut bada hai. Kam chapters ya bina images ke try karein.");
+        setError("Content abhi bhi bahut bada hai. Kam chapters try karein.");
         return;
       }
 
+      // Step 3: Send chapters
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -162,13 +213,11 @@ export default function ChapterBulkImporter({
       setSections(null);
       if (pasteRef.current) pasteRef.current.innerHTML = "";
       router.refresh();
-      if (strippedImages) {
-        setError("Chapters ban gaye lekin bade images remove ho gaye. Images dobara upload karein — file manager se.");
-      }
     } catch {
       setError("Chapters create nahi ho paye. Network check karein.");
     } finally {
       setCreating(false);
+      setUploadProgress(null);
     }
   }
 
@@ -235,6 +284,11 @@ export default function ChapterBulkImporter({
           </span>
         )}
       </div>
+      {uploadProgress && (
+        <p className="text-sm text-blue-600 flex items-center gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" /> {uploadProgress}
+        </p>
+      )}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {sections && (
