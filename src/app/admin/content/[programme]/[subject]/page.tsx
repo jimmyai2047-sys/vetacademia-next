@@ -15,6 +15,7 @@ import {
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
+import ChapterTitleEditor from "@/components/admin/chapter-title-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -84,12 +85,15 @@ export default async function SubjectContentPage({
             {subject.chapters.length})
           </h2>
           {subject.chapters.map((course) => (
-            <div key={course.id}>
-              <div className="flex items-center gap-2 mb-2">
+            <div key={course.id} className="rounded-lg border p-4 space-y-3">
+              <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="font-mono">
                   {course.courseCode}
                 </Badge>
-                <span className="text-sm font-medium">{course.title}</span>
+                <ChapterTitleEditor
+                  chapterId={course.id}
+                  initialTitle={course.title}
+                />
               </div>
               <ChapterRichEditor
                 chapterId={course.id}
@@ -112,18 +116,22 @@ export default async function SubjectContentPage({
             </h2>
             <div className="space-y-3">
               {theoryChapters.map((ch) => (<>
-
+                <div key={`title-${ch.id}`} className="rounded-lg border p-4 space-y-3">
+                  <ChapterTitleEditor
+                    chapterId={ch.id}
+                    initialTitle={ch.title}
+                    unitNumber={ch.unitNumber}
+                  />
                 <ChapterRichEditor
-                  key={`txt-${ch.id}`}
                   chapterId={ch.id}
                   initialContent={ch.content}
                 />
                 <ChapterContentManager
-                  key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={signedMap.get(ch.id) ?? []}
                 />
+                </div>
               </>))}
             </div>
           </div>
@@ -134,18 +142,22 @@ export default async function SubjectContentPage({
             </h2>
             <div className="space-y-3">
               {practicalChapters.map((ch) => (<>
-
+                <div key={`title-${ch.id}`} className="rounded-lg border p-4 space-y-3">
+                  <ChapterTitleEditor
+                    chapterId={ch.id}
+                    initialTitle={ch.title}
+                    unitNumber={ch.unitNumber}
+                  />
                 <ChapterRichEditor
-                  key={`txt-${ch.id}`}
                   chapterId={ch.id}
                   initialContent={ch.content}
                 />
                 <ChapterContentManager
-                  key={ch.id}
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={signedMap.get(ch.id) ?? []}
                 />
+                </div>
               </>))}
             </div>
           </div>

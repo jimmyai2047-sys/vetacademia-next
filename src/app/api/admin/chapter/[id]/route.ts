@@ -15,7 +15,6 @@ export async function PATCH(
 
     const { id } = await ctx.params;
     const body = await req.json();
-    const content = typeof body.content === "string" ? body.content : "";
 
     const chapter = await prisma.chapter.findUnique({
       where: { id },
@@ -25,11 +24,29 @@ export async function PATCH(
       return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
     }
 
-    const nextContent = await processInlineImages(content || "");
+    const data: Record<string, unknown> = {};
+
+    if (typeof body.title === "string" && body.title.trim()) {
+      data.title = body.title.trim();
+    }
+    if (typeof body.content === "string") {
+      data.content = await processInlineImages(body.content);
+    }
+    if (typeof body.unitNumber === "number" && body.unitNumber > 0) {
+      data.unitNumber = body.unitNumber;
+    }
+    if (body.type === "THEORY" || body.type === "PRACTICAL") {
+      data.type = body.type;
+    }
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+    }
+
     const updated = await prisma.chapter.update({
       where: { id },
-      data: { content: nextContent },
-      select: { id: true, content: true },
+      data,
+      select: { id: true, title: true, content: true, unitNumber: true, type: true },
     });
 
     return NextResponse.json(updated);
