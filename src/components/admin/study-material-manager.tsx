@@ -4,36 +4,74 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, X, Upload, Loader2, FileText, GraduationCap } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  Upload,
+  Loader2,
+  FileText,
+  GraduationCap,
+  ChevronRight,
+  BookOpen,
+  Folder,
+} from "lucide-react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
 
-type SubjectOption = { id: string; name: string; programme: string | null };
-
-type StudyMaterialRow = {
+type Chapter = {
+  id: string;
+  title: string;
+  unitNumber: number;
+  courseCode: string | null;
+  type: string | null;
+};
+type Subject = { id: string; name: string; chapters: Chapter[] };
+type Programme = {
+  id: string;
+  name: string;
+  slug: string;
+  isPG: boolean;
+  subjects: Subject[];
+};
+type Material = {
   id: string;
   title: string;
   type: string;
-  content: string | null;
-  url: string | null;
-  fileName: string | null;
-  fileType: string | null;
-  subjectId: string | null;
   isDemo: boolean;
   isPublic: boolean;
-  subject?: { name: string; programme?: { name: string | null } } | null;
+  subjectId: string | null;
+  chapterId: string | null;
+  content?: string | null;
+  url?: string | null;
+  fileName?: string | null;
+  fileType?: string | null;
 };
 
 const TYPES = ["NOTE", "PDF", "DOC", "XLS", "PPT", "VIDEO", "LINK", "IMAGE"];
 const FILE_TYPES_SM = ["PDF", "DOC", "XLS", "PPT", "IMAGE"];
 
-export default function StudyMaterialManager() {
-  const [rows, setRows] = useState<StudyMaterialRow[]>([]);
-  const [subjects, setSubjects] = useState<SubjectOption[]>([]);
+function courseLabel(code: string | null) {
+  return code || "General";
+}
+
+export default function StudyMaterialManager({
+  programmeTree,
+}: {
+  programmeTree: Programme[];
+}) {
+  const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // navigation state (drill-down path)
+  const [progId, setProgId] = useState<string | null>(null);
+  const [subjId, setSubjId] = useState<string | null>(null);
+  const [courseCode, setCourseCode] = useState<string | null>(null);
+
+  // form state
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-
   const [title, setTitle] = useState("");
   const [type, setType] = useState("NOTE");
   const [content, setContent] = useState("");
@@ -46,7 +84,8 @@ export default function StudyMaterialManager() {
     fileType: string;
   } | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [subjectId, setSubjectId] = useState("");
+  const [chapterId, setChapterId] = useState<string | null>(null);
+  const [subjectId, setSubjectId] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -58,12 +97,8 @@ export default function StudyMaterialManager() {
   async function load() {
     setLoading(true);
     try {
-      const [m, s] = await Promise.all([
-        fetch("/api/admin/study-materials").then((r) => r.json()),
-        fetch("/api/admin/subjects").then((r) => r.json()),
-      ]);
-      setRows(m);
-      setSubjects(s);
+      const m = await fetch("/api/admin/study-materials").then((r) => r.json());
+      setMaterials(m);
     } catch {
       // ignore
     } finally {
@@ -75,7 +110,47 @@ export default function StudyMaterialManager() {
     load();
   }, []);
 
-  function openNew() {
+  const programme = programmeTree.find((p) => p.id === progId) || null;
+  const subject = programme?.subjects.find((s) => s.id === subjId) || null;
+
+  function selectProgramme(id: string) {
+    setProgId(id);
+    setSubjId(null);
+    setCourseCode(null);
+  }
+  function selectSubject(id: string) {
+    setSubjId(id);
+    setCourseCode(null);
+  }
+  function selectCourse(code: string) {
+    setCourseCode(code);
+  }
+  function resetNav() {
+    setProgId(null);
+    setSubjId(null);
+    setCourseCode(null);
+  }
+
+  // PG: distinct course codes across the subject's chapters
+  const courses = subject
+    ? Array.from(
+        new Set(subject.chapters.map((c) => courseLabel(c.courseCode)))
+      ).sort()
+    : [];
+
+  function chaptersFor(subj: Subject, course: string | null) {
+    if (course == null) return subj.chapters;
+    return subj.chapters.filter((c) => courseLabel(c.courseCode) === course);
+  }
+
+  function chapterMaterials(chId: string) {
+    return materials.filter((m) => m.chapterId === chId);
+  }
+  function subjectLevelMaterials(sId: string) {
+    return materials.filter((m) => m.subjectId === sId && !m.chapterId);
+  }
+
+  function openNew(chId: string | null, subjId: string | null) {
     setEditingId(null);
     setTitle("");
     setType("NOTE");
@@ -84,14 +159,15 @@ export default function StudyMaterialManager() {
     setFileName("");
     setFileType("");
     setFile(null);
-    setSubjectId("");
+    setChapterId(chId);
+    setSubjectId(subjId);
     setIsDemo(false);
     setIsPublic(true);
     setError(null);
     setShowForm(true);
   }
 
-  function openEdit(m: StudyMaterialRow) {
+  function openEdit(m: Material) {
     setEditingId(m.id);
     setTitle(m.title);
     setType(m.type);
@@ -104,7 +180,8 @@ export default function StudyMaterialManager() {
         ? { url: m.url, fileName: m.fileName || "", fileType: m.fileType || "" }
         : null
     );
-    setSubjectId(m.subjectId || "");
+    setChapterId(m.chapterId);
+    setSubjectId(m.subjectId);
     setIsDemo(m.isDemo);
     setIsPublic(m.isPublic);
     setError(null);
@@ -119,7 +196,10 @@ export default function StudyMaterialManager() {
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd,
+      });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Upload failed");
@@ -169,6 +249,7 @@ export default function StudyMaterialManager() {
         fileName: fileName || null,
         fileType: fileType || null,
         subjectId: subjectId || null,
+        chapterId: chapterId || null,
         isDemo,
         isPublic,
       };
@@ -205,28 +286,17 @@ export default function StudyMaterialManager() {
     if (res.ok) load();
   }
 
-  const subjectName = (id: string | null) =>
-    subjects.find((s) => s.id === id)?.name || "—";
-  const programmeFor = (m: StudyMaterialRow) =>
-    m.subject?.programme?.name ?? (subjectId && m.subjectId ? subjectName(m.subjectId) : null);
+  const card =
+    "rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer";
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">
-          Add UG/PG study notes and resources. Tick &quot;Demo&quot; to show them
-          free on the /demo page.
-        </p>
-        <Button size="sm" onClick={openNew}>
-          <Plus className="h-4 w-4 mr-1" /> New Material
-        </Button>
-      </div>
-
       {showForm && (
         <div className="rounded-lg border p-4 bg-card space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">
               {editingId ? "Edit" : "New"} Study Material
+              {chapterId ? " (bound to chapter)" : " (subject level)"}
             </h3>
             <Button variant="ghost" size="icon" onClick={() => setShowForm(false)}>
               <X className="h-4 w-4" />
@@ -251,22 +321,6 @@ export default function StudyMaterialManager() {
                 ))}
               </select>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium block">Subject (programme)</label>
-              <select
-                value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">— None —</option>
-                {subjects.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                    {s.programme ? ` (${s.programme})` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
             {type === "LINK" || type === "VIDEO" ? (
               <div className="space-y-1.5">
                 <label className="text-sm font-medium block">URL</label>
@@ -283,7 +337,8 @@ export default function StudyMaterialManager() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
                 <label className="text-sm font-medium block">
-                  Content (paste chapter from Word — formatting is kept &amp; cleaned)
+                  Content (paste chapter from Word — formatting is kept &amp;
+                  cleaned)
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -403,87 +458,289 @@ export default function StudyMaterialManager() {
         </div>
       )}
 
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1 text-sm text-muted-foreground flex-wrap">
+        <button className="hover:underline" onClick={resetNav}>
+          All Programmes
+        </button>
+        {programme && (
+          <>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <button
+              className="hover:underline"
+              onClick={() => selectProgramme(programme.id)}
+            >
+              {programme.name}
+            </button>
+          </>
+        )}
+        {subject && (
+          <>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <button
+              className="hover:underline"
+              onClick={() => selectSubject(subject.id)}
+            >
+              {subject.name}
+            </button>
+          </>
+        )}
+        {programme?.isPG && courseCode && (
+          <>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span>{courseCode}</span>
+          </>
+        )}
+      </nav>
+
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
-      ) : rows.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No study materials yet.</p>
       ) : (
-        <div className="space-y-6">
-          {(() => {
-            const map = new Map<string, StudyMaterialRow[]>();
-            for (const m of rows) {
-              const key = m.subject?.programme?.name || "Uncategorized";
-              if (!map.has(key)) map.set(key, []);
-              map.get(key)!.push(m);
-            }
-            const entries = Array.from(map.entries()).sort((a, b) =>
-              a[0].localeCompare(b[0])
-            );
-            return entries.map(([programme, items]) => (
-              <div
-                key={programme}
-                className="rounded-xl border bg-card overflow-hidden"
-              >
-                <div className="flex items-center gap-2 px-4 py-3 bg-muted/40 border-b">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  <h3 className="font-semibold">{programme}</h3>
-                  <Badge variant="secondary">{items.length}</Badge>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/30">
-                      <tr>
-                        <th className="text-left p-3">Title</th>
-                        <th className="text-left p-3">Type</th>
-                        <th className="text-left p-3">Subject</th>
-                        <th className="text-left p-3">Demo</th>
-                        <th className="text-left p-3">Public</th>
-                        <th className="text-right p-3">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((m) => (
-                        <tr key={m.id} className="border-t">
-                          <td className="p-3">{m.title}</td>
-                          <td className="p-3">{m.type}</td>
-                          <td className="p-3">{m.subject?.name || "—"}</td>
-                          <td className="p-3">
-                            {m.isDemo ? (
-                              <Badge
-                                variant="outline"
-                                className="text-emerald-600 border-emerald-600"
-                              >
-                                Demo
-                              </Badge>
-                            ) : (
-                              "No"
-                            )}
-                          </td>
-                          <td className="p-3">{m.isPublic ? "Yes" : "No"}</td>
-                          <td className="p-3 text-right whitespace-nowrap">
-                            <button
-                              className="text-primary hover:underline mr-3"
-                              onClick={() => openEdit(m)}
+        <div className="space-y-4">
+          {/* LEVEL 0: Programmes */}
+          {!programme && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {programmeTree.map((p) => {
+                const total = p.subjects.reduce(
+                  (a, s) => a + s.chapters.length,
+                  0
+                );
+                return (
+                  <div
+                    key={p.id}
+                    className={card + " p-4"}
+                    onClick={() => selectProgramme(p.id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="h-5 w-5 text-primary" />
+                      <h3 className="font-semibold">{p.name}</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {p.subjects.length} subjects
+                      {p.isPG ? " · PG (Courses → Chapters)" : " · UG (Chapters)"}
+                      {` · ${total} chapters`}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* LEVEL 1: Subjects */}
+          {programme && !subject && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {programme.subjects.map((s) => {
+                const subjMats = subjectLevelMaterials(s.id).length;
+                const chapMats = materials.filter(
+                  (m) => m.subjectId === s.id
+                ).length;
+                return (
+                  <div
+                    key={s.id}
+                    className={card + " p-4"}
+                    onClick={() => selectSubject(s.id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                      <h3 className="font-semibold">{s.name}</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {s.chapters.length} chapters
+                      {programme.isPG ? " · drill into Courses" : ""}
+                      {` · ${chapMats} materials`}
+                    </p>
+                  </div>
+                );
+              })}
+              {programme.subjects.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No subjects under this programme yet.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* LEVEL 2 (PG): Courses */}
+          {programme && subject && programme.isPG && courseCode === null && (
+            <div className="space-y-4">
+              {courses.map((code) => {
+                const chaps = chaptersFor(subject, code);
+                const mats = chaps.reduce(
+                  (a, c) => a + chapterMaterials(c.id).length,
+                  0
+                );
+                return (
+                  <div
+                    key={code}
+                    className={card + " p-4"}
+                    onClick={() => selectCourse(code)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Folder className="h-5 w-5 text-primary" />
+                      <h3 className="font-semibold">{code}</h3>
+                      <Badge variant="secondary">{chaps.length} chapters</Badge>
+                      <Badge variant="outline">{mats} materials</Badge>
+                    </div>
+                  </div>
+                );
+              })}
+              <SubjectLevelMaterials
+                materials={subjectLevelMaterials(subject.id)}
+                onEdit={openEdit}
+                onDelete={handleDelete}
+              />
+            </div>
+          )}
+
+          {/* LEVEL 2 (UG) / LEVEL 3 (PG): Chapters */}
+          {programme && subject && (!programme.isPG || courseCode !== null) && (
+            <div className="space-y-4">
+              {subjectLevelMaterials(subject.id).length > 0 && (
+                <SubjectLevelMaterials
+                  materials={subjectLevelMaterials(subject.id)}
+                  onEdit={openEdit}
+                  onDelete={handleDelete}
+                />
+              )}
+              {chaptersFor(subject, programme.isPG ? courseCode : null).map(
+                (ch) => {
+                  const mats = chapterMaterials(ch.id);
+                  return (
+                    <div
+                      key={ch.id}
+                      className="rounded-xl border bg-card overflow-hidden"
+                    >
+                      <div className="flex items-center justify-between gap-2 px-4 py-3 bg-muted/40 border-b">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-primary" />
+                          <h3 className="font-semibold">
+                            {ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}
+                            {ch.title}
+                          </h3>
+                          <Badge variant="secondary">{mats.length}</Badge>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openNew(ch.id, subject.id)}
+                        >
+                          <Plus className="h-4 w-4 mr-1" /> Add Material
+                        </Button>
+                      </div>
+                      <div className="divide-y">
+                        {mats.length === 0 ? (
+                          <p className="text-sm text-muted-foreground px-4 py-3">
+                            No materials yet for this chapter.
+                          </p>
+                        ) : (
+                          mats.map((m) => (
+                            <div
+                              key={m.id}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm"
                             >
-                              Edit
-                            </button>
-                            <button
-                              className="text-red-600 hover:underline"
-                              onClick={() => handleDelete(m.id)}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ));
-          })()}
+                              <span className="font-medium truncate">
+                                {m.title}
+                              </span>
+                              <Badge variant="outline">{m.type}</Badge>
+                              {m.isDemo && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-emerald-600 border-emerald-600"
+                                >
+                                  Demo
+                                </Badge>
+                              )}
+                              <span className="text-xs text-muted-foreground">
+                                {m.isPublic ? "Public" : "Private"}
+                              </span>
+                              <div className="ml-auto flex items-center gap-3">
+                                <button
+                                  className="text-primary hover:underline"
+                                  onClick={() => openEdit(m)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="text-red-600 hover:underline"
+                                  onClick={() => handleDelete(m.id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+              )}
+              {chaptersFor(subject, programme.isPG ? courseCode : null)
+                .length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No chapters under this
+                  {programme.isPG ? " course" : " subject"} yet.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+function SubjectLevelMaterials({
+  materials,
+  onEdit,
+  onDelete,
+}: {
+  materials: Material[];
+  onEdit: (m: Material) => void;
+  onDelete: (id: string) => void;
+}) {
+  if (materials.length === 0) return null;
+  return (
+    <div className="rounded-xl border bg-card overflow-hidden">
+      <div className="px-4 py-3 bg-muted/40 border-b">
+        <h3 className="font-semibold text-sm">Subject-level materials</h3>
+      </div>
+      <div className="divide-y">
+        {materials.map((m) => (
+          <div
+            key={m.id}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm"
+          >
+            <span className="font-medium truncate">{m.title}</span>
+            <Badge variant="outline">{m.type}</Badge>
+            {m.isDemo && (
+              <Badge
+                variant="outline"
+                className="text-emerald-600 border-emerald-600"
+              >
+                Demo
+              </Badge>
+            )}
+            <span className="text-xs text-muted-foreground">
+              {m.isPublic ? "Public" : "Private"}
+            </span>
+            <div className="ml-auto flex items-center gap-3">
+              <button
+                className="text-primary hover:underline"
+                onClick={() => onEdit(m)}
+              >
+                Edit
+              </button>
+              <button
+                className="text-red-600 hover:underline"
+                onClick={() => onDelete(m.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

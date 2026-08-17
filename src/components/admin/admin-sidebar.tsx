@@ -30,7 +30,7 @@ const sidebarItems = [
   { name: "Pricing", href: "/admin/pricing", icon: IndianRupee },
   { name: "Mock / Adaptive / PY Tests", href: "/admin/mock-tests", icon: Brain },
   { name: "Previous Year Papers", href: "/admin/py-papers", icon: FileText },
-  { name: "Study Material", href: "/admin/exam-materials", icon: FileText },
+  { name: "Study Material (Exams)", href: "/admin/exam-materials", icon: GraduationCap },
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: FileText },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
