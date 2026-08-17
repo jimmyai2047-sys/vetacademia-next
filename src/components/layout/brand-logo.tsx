@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils";
 export function BrandLogo({
   className,
   src = "/logos/fexicon.png",
+  imgClassName,
 }: {
   className?: string;
   src?: string;
   tone?: "dark" | "light";
+  imgClassName?: string;
 }) {
   return (
     <Link href="/" className={cn("flex items-center", className)}>
@@ -15,7 +17,7 @@ export function BrandLogo({
       <img
         src={src}
         alt="VetAcademia"
-        className="h-9 w-auto object-contain"
+        className={cn("h-9 w-auto object-contain", imgClassName)}
       />
     </Link>
   );
