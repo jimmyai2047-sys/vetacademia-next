@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, X, Upload, Loader2, FileText } from "lucide-react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import { importDocxAsHtml } from "@/lib/docx-import";
 
 type SubjectOption = { id: string; name: string; programme: string | null };
 
@@ -50,7 +51,9 @@ export default function StudyMaterialManager() {
   const [isPublic, setIsPublic] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const docxRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoading(true);
@@ -131,6 +134,22 @@ export default function StudyMaterialManager() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function handleDocxImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setImporting(true);
+    setError(null);
+    try {
+      const html = await importDocxAsHtml(f);
+      setContent(html);
+    } catch (err: any) {
+      setError(err?.message || "Word file conversion failed");
+    } finally {
+      setImporting(false);
+      if (docxRef.current) docxRef.current.value = "";
     }
   }
 
@@ -262,9 +281,34 @@ export default function StudyMaterialManager() {
 
           {type === "NOTE" ? (
             <div className="space-y-1.5">
-              <label className="text-sm font-medium block">
-                Content (paste chapter from Word — formatting is kept &amp; cleaned)
-              </label>
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-sm font-medium block">
+                  Content (paste chapter from Word — formatting is kept &amp; cleaned)
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={docxRef}
+                    type="file"
+                    accept=".doc,.docx"
+                    className="hidden"
+                    onChange={handleDocxImport}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => docxRef.current?.click()}
+                    disabled={importing}
+                  >
+                    {importing ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="h-3.5 w-3.5" />
+                    )}
+                    Import from Word (.docx)
+                  </Button>
+                </div>
+              </div>
               <RichTextEditor value={content} onChange={setContent} />
             </div>
           ) : FILE_TYPES_SM.includes(type) ? (

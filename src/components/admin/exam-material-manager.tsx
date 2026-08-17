@@ -14,6 +14,7 @@ import {
   levelForProgramme,
 } from "@/lib/exam-prep";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import { importDocxAsHtml } from "@/lib/docx-import";
 import {
   Plus,
   Pencil,
@@ -91,9 +92,11 @@ export default function ExamMaterialManager({
     fileSize: number | null;
   } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const docxRef = useRef<HTMLInputElement>(null);
 
   const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
   const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
@@ -231,6 +234,22 @@ export default function ExamMaterialManager({
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function handleDocxImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setImporting(true);
+    setError(null);
+    try {
+      const html = await importDocxAsHtml(f);
+      setForm((fm) => ({ ...fm, body: html }));
+    } catch (err: any) {
+      setError(err?.message || "Word file conversion failed");
+    } finally {
+      setImporting(false);
+      if (docxRef.current) docxRef.current.value = "";
     }
   }
 
@@ -440,9 +459,34 @@ export default function ExamMaterialManager({
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-sm font-medium block mb-1">
-              Chapter Content (paste from Word — formatting is kept &amp; cleaned)
-            </label>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <label className="text-sm font-medium block">
+                Chapter Content (paste from Word — formatting is kept &amp; cleaned)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  ref={docxRef}
+                  type="file"
+                  accept=".doc,.docx"
+                  className="hidden"
+                  onChange={handleDocxImport}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => docxRef.current?.click()}
+                  disabled={importing}
+                >
+                  {importing ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="h-3.5 w-3.5" />
+                  )}
+                  Import from Word (.docx)
+                </Button>
+              </div>
+            </div>
             <RichTextEditor
               value={form.body}
               onChange={(html) => setForm((f) => ({ ...f, body: html }))}
