@@ -37,19 +37,13 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function ContentPage() {
-  const allProgrammes = await prisma.programme.findMany({
+  const [programmes, subjects, departments] = await Promise.all([
+    prisma.programme.findMany({
       include: {
         _count: { select: { subjects: true, departments: true } },
       },
       orderBy: { name: "asc" },
-    });
-  const seen = new Set<string>();
-  const programmes = allProgrammes.filter((p) => {
-    if (seen.has(p.name)) return false;
-    seen.add(p.name);
-    return true;
-  });
-  const [subjects, departments] = await Promise.all([
+    }),
     prisma.subject.findMany({
       include: {
         programme: { select: { name: true } },
