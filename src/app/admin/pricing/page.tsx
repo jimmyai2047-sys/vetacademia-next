@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import PlanEditor from "@/components/admin/plan-editor";
 import ReportPriceEditor from "@/components/admin/report-price-editor";
+import PlanCreateForm from "@/components/admin/plan-create-form";
 
 
 
@@ -27,17 +28,19 @@ export default async function AdminPricingPage() {
   });
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Pricing</h1>
-        <p className="text-muted-foreground">
-          Set the one-time price and description for each programme, exam
-          preparation plan, and granular year/subject plan. Changes apply
-          immediately on the public pricing page.
-        </p>
-      </div>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold">Pricing</h1>
+          <p className="text-muted-foreground">
+            Set the one-time price and description for each programme, exam
+            preparation plan, and granular year/subject plan. Changes apply
+            immediately on the public pricing page.
+          </p>
+        </div>
 
-      <section>
+        <PlanCreateForm />
+
+        <section>
         <h2 className="text-lg font-semibold mb-3">Programmes (Full)</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {fullCourses.map((p) => (

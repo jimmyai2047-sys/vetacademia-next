@@ -53,6 +53,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (user.banned) {
+          return null;
+        }
+
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
           user.password

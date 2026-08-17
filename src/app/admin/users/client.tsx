@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -24,18 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Users, ArrowLeft } from "lucide-react";
+import { Search, Download, Users, ArrowLeft, Ban, Trash2 } from "lucide-react";
 import Link from "next/link";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  programme: string | null;
-  year: string | null;
-  createdAt: Date;
-};
 
 import {
   EXPERT_ROLES,
@@ -45,6 +36,25 @@ import {
   STUDENT,
   isExpertRole,
 } from "@/lib/roles";
+
+const ALL_ROLES = [
+  STUDENT,
+  ANIMAL_OWNER,
+  GUEST,
+  ADMIN,
+  ...EXPERT_ROLES,
+];
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  programme: string | null;
+  year: string | null;
+  banned?: boolean;
+  createdAt: Date;
+};
 
 function roleColor(role: string): string {
   if (isExpertRole(role))
@@ -63,7 +73,14 @@ function roleColor(role: string): string {
   }
 }
 
-export default function UsersClient({ users }: { users: User[] }) {
+export default function UsersClient({
+  users,
+  currentUserId,
+}: {
+  users: User[];
+  currentUserId: string;
+}) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
 
@@ -92,13 +109,49 @@ export default function UsersClient({ users }: { users: User[] }) {
   const animalOwnerCount = roleCounts[ANIMAL_OWNER] || 0;
   const guestCount = roleCounts[GUEST] || 0;
 
+  async function changeRole(id: string, role: string) {
+    const res = await fetch(`/api/admin/users/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role }),
+    });
+    if (res.ok) {
+      router.refresh();
+    } else {
+      const d = await res.json().catch(() => ({}));
+      alert(d.error || "Failed to update role");
+    }
+  }
+
+  async function toggleBan(id: string) {
+    const res = await fetch(`/api/admin/users/${id}/ban`, { method: "POST" });
+    if (res.ok) {
+      router.refresh();
+    } else {
+      const d = await res.json().catch(() => ({}));
+      alert(d.error || "Failed to update ban status");
+    }
+  }
+
+  async function removeUser(id: string) {
+    if (!confirm("Delete this user? This cannot be undone.")) return;
+    const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      router.refresh();
+    } else {
+      const d = await res.json().catch(() => ({}));
+      alert(d.error || "Failed to delete user");
+    }
+  }
+
   function handleExport() {
-    const headers = ["Name", "Email", "Role", "Programme", "Year", "Joined"];
+    const headers = ["Name", "Email", "Role", "Banned", "Programme", "Year", "Joined"];
     const escape = (value: string) => `"${value.replace(/"/g, '""')}"`;
     const rows = users.map((u) => [
       u.name,
       u.email,
       u.role,
+      u.banned ? "YES" : "no",
       u.programme ?? "",
       u.year ?? "",
       new Date(u.createdAt).toLocaleDateString("en-IN", {
@@ -142,14 +195,14 @@ export default function UsersClient({ users }: { users: User[] }) {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: "Total Users", count: roleCounts.ALL, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
-            { label: "Students", count: roleCounts.STUDENT || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
-            { label: "Animal Owners", count: animalOwnerCount, icon: Users, color: "text-amber-600", bg: "bg-amber-100 dark:bg-amber-900/30" },
-            { label: "Experts", count: expertCount, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
-            { label: "Guests", count: guestCount, icon: Users, color: "text-gray-600", bg: "bg-gray-100 dark:bg-gray-800" },
-            { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
-          ].map((item) => (
+        {[
+          { label: "Total Users", count: roleCounts.ALL, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+          { label: "Students", count: roleCounts.STUDENT || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
+          { label: "Animal Owners", count: animalOwnerCount, icon: Users, color: "text-amber-600", bg: "bg-amber-100 dark:bg-amber-900/30" },
+          { label: "Experts", count: expertCount, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
+          { label: "Guests", count: guestCount, icon: Users, color: "text-gray-600", bg: "bg-gray-100 dark:bg-gray-800" },
+          { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
+        ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -208,12 +261,14 @@ export default function UsersClient({ users }: { users: User[] }) {
                 <TableHead>Programme</TableHead>
                 <TableHead>Year</TableHead>
                 <TableHead>Joined</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     No users found
                   </TableCell>
                 </TableRow>
@@ -230,9 +285,25 @@ export default function UsersClient({ users }: { users: User[] }) {
                     </TableCell>
                     <TableCell className="text-muted-foreground">{user.email}</TableCell>
                     <TableCell>
-                      <Badge className={roleColor(user.role)}>
-                        {user.role}
-                      </Badge>
+                      <Select
+                        value={user.role}
+                        onValueChange={(v) => {
+                          if (v) changeRole(user.id, v);
+                        }}
+                      >
+                        <SelectTrigger className="w-[160px] h-8">
+                          <SelectValue>
+                            <Badge className={roleColor(user.role)}>{user.role}</Badge>
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ALL_ROLES.map((r) => (
+                            <SelectItem key={r} value={r}>
+                              {r}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>{user.programme || "-"}</TableCell>
                     <TableCell>{user.year || "-"}</TableCell>
@@ -242,6 +313,37 @@ export default function UsersClient({ users }: { users: User[] }) {
                         month: "short",
                         year: "numeric",
                       })}
+                    </TableCell>
+                    <TableCell>
+                      {user.banned ? (
+                        <Badge variant="destructive">Banned</Badge>
+                      ) : (
+                        <Badge variant="secondary">Active</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          title={user.banned ? "Unban" : "Ban"}
+                          disabled={user.id === currentUserId}
+                          onClick={() => toggleBan(user.id)}
+                        >
+                          <Ban className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-red-600"
+                          title="Delete"
+                          disabled={user.id === currentUserId}
+                          onClick={() => removeUser(user.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

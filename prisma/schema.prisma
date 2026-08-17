@@ -14,6 +14,7 @@ model User {
   email         String    @unique
   password      String
   role          String    @default("STUDENT")
+  banned        Boolean   @default(false)
   phone         String?
   institution   String?
   programme     String?
