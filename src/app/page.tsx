@@ -244,7 +244,7 @@ export default function HomePage() {
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex justify-center mb-6">
-              <BrandLogo tone="light" />
+              <BrandLogo tone="light" src="/favicon-192x192.png" />
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
               India&apos;s Premier{" "}
