@@ -8,7 +8,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { getExamKeysForPlan } from "@/lib/plans";
-import { getProgrammeImage, getExamImage, getSubjectImage } from "@/lib/subject-images";
+import { getProgrammeImage, getExamImage, getSubjectImage, getProgrammeYearImage } from "@/lib/subject-images";
 import {
   Card,
   CardContent,
@@ -61,8 +61,9 @@ export default async function PricingPage({
   }
 
   const fullCoursePlans = plans.filter(
-    (p) => p.type === "COURSE" && !p.subjectId
+    (p) => p.type === "COURSE" && !p.subjectId && !p.year
   );
+  const yearPlans = plans.filter((p) => p.type === "COURSE" && !!p.year && !p.subjectId);
   const subjectPlans = plans.filter((p) => p.type === "COURSE" && !!p.subjectId);
   const exams = plans.filter((p) => p.type === "EXAM");
 
@@ -80,6 +81,13 @@ export default async function PricingPage({
     subjectByProgramme.get(key)!.push(p);
   }
 
+  const yearByProgramme = new Map<string, typeof plans>();
+  for (const p of yearPlans) {
+    const key = p.programmeSlug || "other";
+    if (!yearByProgramme.has(key)) yearByProgramme.set(key, []);
+    yearByProgramme.get(key)!.push(p);
+  }
+
   const renderPlan = (plan: (typeof plans)[number]) => {
     const enrolled = access.planSlugs.has(plan.slug);
     const isHighlight = highlight === plan.slug;
@@ -88,6 +96,8 @@ export default async function PricingPage({
         ? getExamImage(plan.examSlug)
         : plan.subjectId
         ? resolveSubjectImage(plan.name) || getProgrammeImage(plan.programmeSlug || "ahdp")
+        : plan.year && plan.programmeSlug
+        ? getProgrammeYearImage(plan.programmeSlug, plan.year)
         : plan.programmeSlug
         ? getProgrammeImage(plan.programmeSlug)
         : getProgrammeImage("ahdp");
@@ -164,6 +174,28 @@ export default async function PricingPage({
           {fullCoursePlans.map(renderPlan)}
         </div>
       </section>
+
+      {yearByProgramme.size > 0 && (
+        <section className="mb-12">
+          <div className="flex items-center gap-2 mb-2">
+            <GraduationCap className="h-5 w-5 text-primary" />
+            <h2 className="text-2xl font-semibold">Year-wise Plans</h2>
+          </div>
+          <p className="text-muted-foreground mb-5 max-w-2xl">
+            Buy individual year packages for AHDP &amp; B.V.Sc &amp; A.H. programmes.
+          </p>
+          {[...yearByProgramme.entries()].map(([prog, items]) => (
+            <div key={prog} className="mb-6">
+              <h3 className="text-lg font-medium mb-3">
+                {PROG_LABEL[prog] || prog.toUpperCase()}
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+                {items.map(renderPlan)}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       {subjectByProgramme.size > 0 && (
         <section className="mb-12">

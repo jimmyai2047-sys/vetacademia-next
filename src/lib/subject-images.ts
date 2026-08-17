@@ -145,6 +145,23 @@ export function getProgrammeImage(slug: string): string {
   return programmeImages[slug] || programmeImages.ahdp;
 }
 
+const programmeYearImages: Record<string, Record<string, string>> = {
+  ahdp: {
+    "1st Year": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80",
+    "2nd Year": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80",
+  },
+  bvsc: {
+    "1st Year": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80",
+    "2nd Year": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80",
+    "3rd Year": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+    "4th Year": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
+  },
+};
+
+export function getProgrammeYearImage(programmeSlug: string, year: string): string {
+  return programmeYearImages[programmeSlug]?.[year] || getProgrammeImage(programmeSlug);
+}
+
 const examImages: Record<string, string> = {
   "veterinary-officer": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1200&q=80",
   "livestock-assistant": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200&q=80",
