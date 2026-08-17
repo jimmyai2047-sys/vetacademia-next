@@ -5,12 +5,16 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const specialization = searchParams.get("specialization");
+    const limit = Math.min(Number(searchParams.get("limit")) || 100, 200);
+    const skip = Math.max(Number(searchParams.get("skip")) || 0, 0);
 
     const where: Record<string, unknown> = { isAvailable: true };
     if (specialization) where.specialization = specialization;
 
     const experts = await prisma.expert.findMany({
       where,
+      take: limit,
+      skip,
       include: {
         user: {
           select: { name: true, avatar: true },

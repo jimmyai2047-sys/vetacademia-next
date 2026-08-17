@@ -6,6 +6,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const subjectId = searchParams.get("subjectId");
     const type = searchParams.get("type");
+    const limit = Math.min(Number(searchParams.get("limit")) || 100, 200);
+    const skip = Math.max(Number(searchParams.get("skip")) || 0, 0);
 
     const where: Record<string, unknown> = { isPublic: true };
     if (subjectId) where.subjectId = subjectId;
@@ -13,6 +15,8 @@ export async function GET(req: Request) {
 
     const materials = await prisma.studyMaterial.findMany({
       where,
+      take: limit,
+      skip,
       include: {
         subject: true,
         user: {

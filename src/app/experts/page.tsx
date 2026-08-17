@@ -31,13 +31,20 @@ export default async function ExpertsPage() {
       _count: { select: { consultations: true } },
     },
     orderBy: { createdAt: "asc" },
+  }).catch((err) => {
+    console.error("Experts page DB error:", err);
+    return [];
   });
 
   const cards = await Promise.all(
-    experts.map(async (e) => {
+    experts.map(async (e: typeof experts[number]) => {
       let photo: string | null = null;
       if (e.photoUrl) {
-        photo = await getSignedUrl(e.photoUrl);
+        try {
+          photo = await getSignedUrl(e.photoUrl);
+        } catch {
+          photo = e.photoUrl;
+        }
       }
       return {
         id: e.id,
@@ -96,7 +103,7 @@ export default async function ExpertsPage() {
                     <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold">
                       {expert.name
                         .split(" ")
-                        .map((n) => n[0])
+                        .map((n: string) => n[0])
                         .slice(0, 2)
                         .join("")}
                     </div>
