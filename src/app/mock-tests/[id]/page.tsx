@@ -81,6 +81,7 @@ export default async function MockTestAttemptPage({
       correctAnswer: q.correctAnswer,
       marks: q.marks,
       explanation: q.explanation,
+      difficulty: q.difficulty,
     };
   });
 
@@ -105,6 +106,7 @@ export default async function MockTestAttemptPage({
       duration={test.duration}
       totalMarks={test.totalMarks}
       questions={questions}
+      adaptive={test.isAdaptive}
     />
   );
 }

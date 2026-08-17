@@ -13,13 +13,15 @@ export async function PUT(
     }
     const { qid } = await params;
     const body = await req.json();
-    const { text, options, correctAnswer, marks, explanation } = body as {
-      text?: string;
-      options?: string[];
-      correctAnswer?: number;
-      marks?: number;
-      explanation?: string;
-    };
+    const { text, options, correctAnswer, marks, explanation, difficulty } =
+      body as {
+        text?: string;
+        options?: string[];
+        correctAnswer?: number;
+        marks?: number;
+        explanation?: string;
+        difficulty?: number;
+      };
 
     const question = await prisma.question.update({
       where: { id: qid },
@@ -29,6 +31,10 @@ export async function PUT(
         correctAnswer,
         marks,
         explanation,
+        difficulty:
+          typeof difficulty === "number" && difficulty >= 1 && difficulty <= 3
+            ? difficulty
+            : undefined,
       },
     });
     return NextResponse.json(question);

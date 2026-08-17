@@ -291,6 +291,7 @@ model Question {
   correctAnswer Int
   marks         Int       @default(1)
   explanation   String?
+  difficulty    Int?      @default(2) // 1 = easy, 2 = medium, 3 = hard (for adaptive tests)
   mockTestId    String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

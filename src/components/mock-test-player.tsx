@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, ArrowLeft, RotateCcw } from "lucide-react";
 import { TestStatsSidebar } from "@/components/test-stats";
+import { nextDifficulty, difficultyLabel } from "@/lib/adaptive";
 
 type Q = {
   id: string;
@@ -15,7 +16,17 @@ type Q = {
   correctAnswer: number;
   marks: number;
   explanation: string | null;
+  difficulty?: number | null;
 };
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export default function MockTestPlayer({
   testId,
@@ -23,12 +34,14 @@ export default function MockTestPlayer({
   duration,
   totalMarks,
   questions,
+  adaptive = false,
 }: {
   testId: string;
   title: string;
   duration: number;
   totalMarks: number;
   questions: Q[];
+  adaptive?: boolean;
 }) {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -108,7 +121,83 @@ export default function MockTestPlayer({
     setScore(0);
     setSaved(false);
     setSaveError(false);
+    setCurrentDifficulty(2);
+    setAskedOrder([]);
+    setCurrentQid(
+      adaptive
+        ? (pools[2][0] ?? pools[1][0] ?? pools[3][0] ?? null)
+        : null
+    );
   }
+
+  // ---- Adaptive (CAT) state ----
+  const pools = useMemo(() => {
+    const p: Record<number, string[]> = { 1: [], 2: [], 3: [] };
+    questions.forEach((q) => {
+      const d =
+        q.difficulty && q.difficulty >= 1 && q.difficulty <= 3
+          ? q.difficulty
+          : 2;
+      p[d].push(q.id);
+    });
+    p[1] = shuffle(p[1]);
+    p[2] = shuffle(p[2]);
+    p[3] = shuffle(p[3]);
+    return p;
+  }, [questions]);
+
+  const [currentDifficulty, setCurrentDifficulty] = useState<number>(2);
+  const [askedOrder, setAskedOrder] = useState<string[]>([]);
+  const [currentQid, setCurrentQid] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (adaptive && !currentQid && !submitted && askedOrder.length === 0) {
+      const first = pools[2][0] ?? pools[1][0] ?? pools[3][0] ?? null;
+      setCurrentQid(first);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adaptive, pools, submitted]);
+
+  function advanceAdaptive() {
+    const qid = currentQid;
+    if (!qid) return;
+    const q = questions.find((x) => x.id === qid);
+    if (!q) return;
+    const isCorrect = answers[qid] === q.correctAnswer;
+    const nd = nextDifficulty(currentDifficulty, isCorrect);
+
+    let nextQid: string | null = null;
+    const candidates = [nd, nd - 1, nd + 1, 1, 2, 3];
+    for (const d of candidates) {
+      const cand = pools[d]?.find(
+        (id) => id !== qid && !askedOrder.includes(id)
+      );
+      if (cand) {
+        nextQid = cand;
+        break;
+      }
+    }
+
+    const newOrder = [...askedOrder, qid];
+    setAskedOrder(newOrder);
+    setCurrentDifficulty(nd);
+
+    if (nextQid) {
+      setCurrentQid(nextQid);
+    } else {
+      setCurrentQid(null);
+      submit();
+    }
+  }
+
+  // ---- Adaptive: pick the single question to show ----
+  const currentQ = adaptive
+    ? questions.find((q) => q.id === currentQid) ?? null
+    : null;
+  const resultQuestions =
+    submitted && adaptive
+      ? questions.filter((q) => askedOrder.includes(q.id))
+      : questions;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -124,6 +213,11 @@ export default function MockTestPlayer({
           <h1 className="text-3xl font-bold">{title}</h1>
           <p className="text-muted-foreground">
             {duration} min &middot; {questions.length} questions &middot; {totalMarks} marks
+            {adaptive && (
+              <Badge variant="secondary" className="ml-2">
+                Adaptive
+              </Badge>
+            )}
           </p>
         </div>
         {submitted && (
@@ -141,9 +235,7 @@ export default function MockTestPlayer({
             </div>
             <p className="text-muted-foreground">Your score</p>
             {saved && (
-              <p className="text-xs text-green-600 mt-1">
-                Saved to your progress
-              </p>
+              <p className="text-xs text-green-600 mt-1">Saved to your progress</p>
             )}
             {saveError && (
               <p className="text-xs text-amber-600 mt-1">
@@ -156,63 +248,83 @@ export default function MockTestPlayer({
 
       <div className="lg:grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          {questions.map((q, i) => {
-            const chosen = answers[q.id];
-            const isCorrect = submitted && chosen === q.correctAnswer;
-            const isWrong = submitted && chosen !== undefined && chosen !== q.correctAnswer;
-            return (
-              <Card key={q.id}>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    {i + 1}. {q.text}
-                    <Badge variant="outline" className="ml-2 text-xs">
-                      {q.marks} marks
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {q.options.map((opt, oi) => {
-                    const showCorrect = submitted && oi === q.correctAnswer;
-                    const showWrong = submitted && chosen === oi && oi !== q.correctAnswer;
-                    return (
-                      <label
-                        key={oi}
-                        className={`flex items-center gap-2 rounded-md border p-3 cursor-pointer transition-colors ${
-                          showCorrect
-                            ? "border-green-500 bg-green-50"
-                            : showWrong
-                            ? "border-red-500 bg-red-50"
-                            : "hover:bg-accent"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={q.id}
-                          checked={chosen === oi}
-                          onChange={() => select(q.id, oi)}
-                          disabled={submitted}
-                        />
-                        <span className="text-sm">
-                          {String.fromCharCode(65 + oi)}. {opt}
-                        </span>
-                        {showCorrect && (
-                          <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
-                        )}
-                        {showWrong && <XCircle className="h-4 w-4 text-red-500 ml-auto" />}
-                      </label>
-                    );
-                  })}
-                  {submitted && q.explanation && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      <strong>Explanation:</strong> {q.explanation}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+          {adaptive && !submitted && currentQ ? (
+            <AdaptiveQuestion
+              q={currentQ}
+              index={askedOrder.length + 1}
+              difficulty={currentDifficulty}
+              chosen={answers[currentQ.id]}
+              onSelect={(idx) => select(currentQ.id, idx)}
+              onNext={advanceAdaptive}
+              canNext={answers[currentQ.id] !== undefined}
+              total={questions.length}
+              asked={askedOrder.length + 1}
+            />
+          ) : (
+            resultQuestions.map((q, i) => {
+              const chosen = answers[q.id];
+              const isCorrect = submitted && chosen === q.correctAnswer;
+              const isWrong =
+                submitted &&
+                chosen !== undefined &&
+                chosen !== q.correctAnswer;
+              return (
+                <Card key={q.id}>
+                  <CardHeader>
+                    <CardTitle className="text-base">
+                      {i + 1}. {q.text}
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {q.marks} marks
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {q.options.map((opt, oi) => {
+                      const showCorrect = submitted && oi === q.correctAnswer;
+                      const showWrong =
+                        submitted && chosen === oi && oi !== q.correctAnswer;
+                      return (
+                        <label
+                          key={oi}
+                          className={`flex items-center gap-2 rounded-md border p-3 cursor-pointer transition-colors ${
+                            showCorrect
+                              ? "border-green-500 bg-green-50"
+                              : showWrong
+                                ? "border-red-500 bg-red-50"
+                                : "hover:bg-accent"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name={q.id}
+                            checked={chosen === oi}
+                            onChange={() => select(q.id, oi)}
+                            disabled={submitted}
+                          />
+                          <span className="text-sm">
+                            {String.fromCharCode(65 + oi)}. {opt}
+                          </span>
+                          {showCorrect && (
+                            <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
+                          )}
+                          {showWrong && (
+                            <XCircle className="h-4 w-4 text-red-500 ml-auto" />
+                          )}
+                        </label>
+                      );
+                    })}
+                    {submitted && q.explanation && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        <strong>Explanation:</strong> {q.explanation}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
 
-          {!submitted && (
+          {!submitted && !adaptive && (
             <div className="mt-6">
               <Button
                 size="lg"
@@ -223,10 +335,36 @@ export default function MockTestPlayer({
               </Button>
               {Object.keys(answers).length < questions.length && (
                 <span className="ml-3 text-xs text-muted-foreground">
-                  Answer all questions to submit ({Object.keys(answers).length}/
-                  {questions.length})
+                  Answer all questions to submit (
+                  {Object.keys(answers).length}/{questions.length})
                 </span>
               )}
+            </div>
+          )}
+
+          {!submitted && adaptive && (
+            <div className="mt-6 flex items-center gap-3">
+              <Button
+                size="lg"
+                onClick={advanceAdaptive}
+                disabled={!currentQ || answers[currentQ.id] === undefined}
+              >
+                {askedOrder.length + 1 >= questions.length
+                  ? "Finish Test"
+                  : "Next Question"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCurrentQid(null);
+                  submit();
+                }}
+              >
+                End Test
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                Question {askedOrder.length + 1} of {questions.length}
+              </span>
             </div>
           )}
         </div>
@@ -243,5 +381,66 @@ export default function MockTestPlayer({
         </aside>
       </div>
     </div>
+  );
+}
+
+function AdaptiveQuestion({
+  q,
+  index,
+  difficulty,
+  chosen,
+  onSelect,
+  onNext,
+  canNext,
+  total,
+  asked,
+}: {
+  q: Q;
+  index: number;
+  difficulty: number;
+  chosen: number | undefined;
+  onSelect: (idx: number) => void;
+  onNext: () => void;
+  canNext: boolean;
+  total: number;
+  asked: number;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">
+            {index}. {q.text}
+            <Badge variant="outline" className="ml-2 text-xs">
+              {q.marks} marks
+            </Badge>
+          </CardTitle>
+          <Badge variant="secondary">{difficultyLabel(difficulty)}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {q.options.map((opt, oi) => {
+          const isChosen = chosen === oi;
+          return (
+            <label
+              key={oi}
+              className={`flex items-center gap-2 rounded-md p-3 cursor-pointer transition-colors ${
+                isChosen ? "border-primary bg-primary/5 border" : "border hover:bg-accent"
+              }`}
+            >
+              <input
+                type="radio"
+                name={q.id}
+                checked={isChosen}
+                onChange={() => onSelect(oi)}
+              />
+              <span className="text-sm">
+                {String.fromCharCode(65 + oi)}. {opt}
+              </span>
+            </label>
+          );
+        })}
+      </CardContent>
+    </Card>
   );
 }

@@ -40,12 +40,14 @@ export async function POST(
       correctAnswer,
       marks,
       explanation,
+      difficulty,
     } = body as {
       text?: string;
       options?: string[];
       correctAnswer?: number;
       marks?: number;
       explanation?: string;
+      difficulty?: number;
     };
 
     if (!text || !Array.isArray(options) || options.length < 2) {
@@ -81,6 +83,10 @@ export async function POST(
         correctAnswer,
         marks: marks ?? 1,
         explanation: explanation || null,
+        difficulty:
+          typeof difficulty === "number" && difficulty >= 1 && difficulty <= 3
+            ? difficulty
+            : 2,
       },
     });
     return NextResponse.json(question, { status: 201 });

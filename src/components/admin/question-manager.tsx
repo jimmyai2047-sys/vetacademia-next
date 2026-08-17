@@ -16,6 +16,7 @@ import {
   FileUp,
 } from "lucide-react";
 import { parseQuestions, ParsedQuestion } from "@/lib/parse-questions";
+import { difficultyLabel } from "@/lib/adaptive";
 
 type Question = {
   id: string;
@@ -24,6 +25,7 @@ type Question = {
   correctAnswer: number;
   marks: number;
   explanation: string | null;
+  difficulty?: number | null;
 };
 
 export default function QuestionManager({ testId }: { testId: string }) {
@@ -37,6 +39,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [marks, setMarks] = useState(1);
+  const [difficulty, setDifficulty] = useState(2);
   const [explanation, setExplanation] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +74,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
     setOptions(["", "", "", ""]);
     setCorrectAnswer(0);
     setMarks(1);
+    setDifficulty(2);
     setExplanation("");
     setError(null);
     setShowForm(true);
@@ -87,6 +91,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
     }
     setCorrectAnswer(q.correctAnswer);
     setMarks(q.marks);
+    setDifficulty(q.difficulty ?? 2);
     setExplanation(q.explanation || "");
     setError(null);
     setShowForm(true);
@@ -154,7 +159,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
     setSaving(true);
     setError(null);
     try {
-      const payload = { text, options, correctAnswer, marks, explanation };
+      const payload = { text, options, correctAnswer, marks, explanation, difficulty };
       const res = editing
         ? await fetch(`/api/admin/mock-tests/${testId}/questions/${editing.id}`, {
             method: "PUT",
@@ -362,6 +367,18 @@ export default function QuestionManager({ testId }: { testId: string }) {
                 onChange={(e) => setMarks(Number(e.target.value))}
               />
             </div>
+            <div className="space-y-1.5">
+              <Label>Difficulty</Label>
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(Number(e.target.value))}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value={1}>{difficultyLabel(1)}</option>
+                <option value={2}>{difficultyLabel(2)}</option>
+                <option value={3}>{difficultyLabel(3)}</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-1.5">
@@ -432,6 +449,9 @@ export default function QuestionManager({ testId }: { testId: string }) {
                     </div>
                     <Badge variant="outline" className="text-xs mt-1">
                       {q.marks} marks
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs mt-1 ml-1">
+                      {difficultyLabel(q.difficulty ?? 2)}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
