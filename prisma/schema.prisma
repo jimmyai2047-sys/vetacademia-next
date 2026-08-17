@@ -128,6 +128,7 @@ model ExamMaterial {
   type        String // PPT | PDF | VIDEO | AUDIO | ANIMATION | IMAGE
   title       String
   description String?
+  body        String? // rich HTML chapter content (pasted from Word, cleaned)
   fileUrl     String? // uploaded file (Blob URL)
   fileName    String?
   fileType    String?
@@ -345,6 +346,8 @@ model StudyMaterial {
   title       String
   type        String
   url         String?
+  fileName    String?
+  fileType    String?
   content     String?
   subjectId   String?
   userId      String?

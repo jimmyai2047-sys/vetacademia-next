@@ -35,6 +35,7 @@ type PreparedCategory = {
     type: string;
     title: string;
     description: string | null;
+    body: string | null;
     downloadUrl: string | null;
     externalUrl: string | null;
     embedUrl: string | null;
@@ -78,6 +79,7 @@ export default async function PreparePage() {
           type: m.type,
           title: m.title,
           description: m.description,
+          body: m.body,
           downloadUrl: m.fileUrl ? await getSignedUrl(m.fileUrl) : null,
           externalUrl: m.externalUrl,
           embedUrl: ytEmbed(m.externalUrl),

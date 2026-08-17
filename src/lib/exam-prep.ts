@@ -4,11 +4,21 @@
 // everything (study materials, previous year papers, mock & adaptive tests)
 // for one exam in one place.
 
-export type MaterialType = "PPT" | "PDF" | "VIDEO" | "AUDIO" | "ANIMATION" | "IMAGE";
+export type MaterialType =
+  | "PPT"
+  | "PDF"
+  | "DOC"
+  | "XLS"
+  | "VIDEO"
+  | "AUDIO"
+  | "ANIMATION"
+  | "IMAGE";
 
 export const MATERIAL_TYPES: { value: MaterialType; label: string }[] = [
   { value: "PPT", label: "PPT" },
   { value: "PDF", label: "PDF" },
+  { value: "DOC", label: "Word" },
+  { value: "XLS", label: "Excel" },
   { value: "VIDEO", label: "Video" },
   { value: "AUDIO", label: "Audio" },
   { value: "ANIMATION", label: "Animation" },
@@ -133,7 +143,14 @@ export function materialSectionsForTrack(key: string): MaterialSection[] {
 }
 
 // Material types that are typically an uploaded file vs. an external link.
-export const FILE_TYPES: MaterialType[] = ["PPT", "PDF", "ANIMATION", "IMAGE"];
+export const FILE_TYPES: MaterialType[] = [
+  "PPT",
+  "PDF",
+  "DOC",
+  "XLS",
+  "ANIMATION",
+  "IMAGE",
+];
 export const LINK_TYPES: MaterialType[] = ["VIDEO", "AUDIO"];
 
 export function materialTypeLabel(type: string) {

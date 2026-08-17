@@ -13,6 +13,7 @@ import {
   programmeForCategory,
   levelForProgramme,
 } from "@/lib/exam-prep";
+import RichTextEditor from "@/components/admin/rich-text-editor";
 import {
   Plus,
   Pencil,
@@ -37,6 +38,7 @@ type MaterialRow = {
   order: number;
   subject: string | null;
   topic: string | null;
+  body?: string | null;
   isDemo: boolean;
 };
 
@@ -45,6 +47,7 @@ type FormState = {
   type: string;
   title: string;
   description: string;
+  body: string;
   externalUrl: string;
   published: boolean;
   order: number;
@@ -58,6 +61,7 @@ const emptyForm: FormState = {
   type: "PDF",
   title: "",
   description: "",
+  body: "",
   externalUrl: "",
   published: true,
   order: 0,
@@ -175,6 +179,7 @@ export default function ExamMaterialManager({
       order: m.order,
       subject: m.subject || "",
       topic: m.topic || "",
+      body: m.body || "",
       isDemo: m.isDemo,
     });
     setFile(
@@ -431,6 +436,16 @@ export default function ExamMaterialManager({
               }
               placeholder="Short description"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="text-sm font-medium block mb-1">
+              Chapter Content (paste from Word — formatting is kept &amp; cleaned)
+            </label>
+            <RichTextEditor
+              value={form.body}
+              onChange={(html) => setForm((f) => ({ ...f, body: html }))}
             />
           </div>
 

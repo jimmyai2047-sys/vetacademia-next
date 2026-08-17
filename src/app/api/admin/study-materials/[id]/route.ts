@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sanitizeChapterContent } from "@/lib/content";
 
 export async function PUT(
   req: Request,
@@ -18,6 +19,8 @@ export async function PUT(
       type,
       content,
       url,
+      fileName,
+      fileType,
       subjectId,
       isDemo,
       isPublic,
@@ -26,6 +29,8 @@ export async function PUT(
       type?: string;
       content?: string | null;
       url?: string | null;
+      fileName?: string | null;
+      fileType?: string | null;
       subjectId?: string | null;
       isDemo?: boolean;
       isPublic?: boolean;
@@ -41,8 +46,15 @@ export async function PUT(
       data: {
         title: title?.trim() ?? existing.title,
         type: type ?? existing.type,
-        content: content !== undefined ? content : existing.content,
+        content:
+          content !== undefined
+            ? content
+              ? sanitizeChapterContent(content)
+              : null
+            : existing.content,
         url: url !== undefined ? url : existing.url,
+        fileName: fileName !== undefined ? fileName : existing.fileName,
+        fileType: fileType !== undefined ? fileType : existing.fileType,
         subjectId: subjectId !== undefined ? subjectId : existing.subjectId,
         isDemo: isDemo !== undefined ? (isDemo ?? false) : existing.isDemo,
         isPublic: isPublic !== undefined ? isPublic : existing.isPublic,

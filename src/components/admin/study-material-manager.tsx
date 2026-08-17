@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Loader2, FileText } from "lucide-react";
+import RichTextEditor from "@/components/admin/rich-text-editor";
 
 type SubjectOption = { id: string; name: string; programme: string | null };
 
@@ -14,13 +15,16 @@ type StudyMaterialRow = {
   type: string;
   content: string | null;
   url: string | null;
+  fileName: string | null;
+  fileType: string | null;
   subjectId: string | null;
   isDemo: boolean;
   isPublic: boolean;
   subject?: { programme?: { name: string | null } } | null;
 };
 
-const TYPES = ["NOTE", "PDF", "VIDEO", "LINK", "IMAGE"];
+const TYPES = ["NOTE", "PDF", "DOC", "XLS", "PPT", "VIDEO", "LINK", "IMAGE"];
+const FILE_TYPES_SM = ["PDF", "DOC", "XLS", "PPT", "IMAGE"];
 
 export default function StudyMaterialManager() {
   const [rows, setRows] = useState<StudyMaterialRow[]>([]);
@@ -33,11 +37,20 @@ export default function StudyMaterialManager() {
   const [type, setType] = useState("NOTE");
   const [content, setContent] = useState("");
   const [url, setUrl] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [fileType, setFileType] = useState("");
+  const [file, setFile] = useState<{
+    url: string;
+    fileName: string;
+    fileType: string;
+  } | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [subjectId, setSubjectId] = useState("");
   const [isDemo, setIsDemo] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoading(true);
@@ -65,6 +78,9 @@ export default function StudyMaterialManager() {
     setType("NOTE");
     setContent("");
     setUrl("");
+    setFileName("");
+    setFileType("");
+    setFile(null);
     setSubjectId("");
     setIsDemo(false);
     setIsPublic(true);
@@ -78,11 +94,44 @@ export default function StudyMaterialManager() {
     setType(m.type);
     setContent(m.content || "");
     setUrl(m.url || "");
+    setFileName(m.fileName || "");
+    setFileType(m.fileType || "");
+    setFile(
+      m.url
+        ? { url: m.url, fileName: m.fileName || "", fileType: m.fileType || "" }
+        : null
+    );
     setSubjectId(m.subjectId || "");
     setIsDemo(m.isDemo);
     setIsPublic(m.isPublic);
     setError(null);
     setShowForm(true);
+  }
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", f);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Upload failed");
+        return;
+      }
+      setFile({ url: data.url, fileName: data.fileName, fileType: data.fileType });
+      setUrl(data.url);
+      setFileName(data.fileName);
+      setFileType(data.fileType);
+    } catch {
+      setError("Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   }
 
   async function handleSave() {
@@ -98,6 +147,8 @@ export default function StudyMaterialManager() {
         type,
         content: content || null,
         url: url || null,
+        fileName: fileName || null,
+        fileType: fileType || null,
         subjectId: subjectId || null,
         isDemo,
         isPublic,
@@ -197,26 +248,81 @@ export default function StudyMaterialManager() {
                 ))}
               </select>
             </div>
+            {type === "LINK" || type === "VIDEO" ? (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium block">URL</label>
+                <Input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://…"
+                />
+              </div>
+            ) : null}
+          </div>
+
+          {type === "NOTE" ? (
             <div className="space-y-1.5">
               <label className="text-sm font-medium block">
-                URL (for PDF/VIDEO/LINK)
+                Content (paste chapter from Word — formatting is kept &amp; cleaned)
               </label>
+              <RichTextEditor value={content} onChange={setContent} />
+            </div>
+          ) : FILE_TYPES_SM.includes(type) ? (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium block">
+                Upload File ({type})
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFile}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="h-3.5 w-3.5" />
+                  )}
+                  Upload File
+                </Button>
+                {file && (
+                  <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <FileText className="h-3.5 w-3.5" />
+                    {file.fileName}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFile(null);
+                        setUrl("");
+                        setFileName("");
+                        setFileType("");
+                      }}
+                      className="text-red-500"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Or paste an external URL instead:
+              </p>
               <Input
+                className="mt-1"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://… (optional)"
+                placeholder="https://…"
               />
             </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium block">Content (NOTE)</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Study note text (optional)"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[100px]"
-            />
-          </div>
+          ) : null}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <input

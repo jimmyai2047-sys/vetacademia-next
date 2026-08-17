@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { materialTypeLabel } from "@/lib/exam-prep";
+import ProtectedHtml from "@/components/protected-html";
 import {
   FileText,
   Download,
@@ -29,6 +30,7 @@ type Material = {
   type: string;
   title: string;
   description: string | null;
+  body: string | null;
   downloadUrl: string | null;
   externalUrl: string | null;
   embedUrl: string | null;
@@ -94,6 +96,12 @@ function MaterialCard({ m }: { m: Material }) {
             alt={m.title}
             className="w-full max-h-48 object-contain rounded-md border bg-muted/30"
           />
+        ) : null}
+
+        {m.body ? (
+          <div className="mt-3 rounded-md border bg-muted/30 p-3">
+            <ProtectedHtml html={m.body} />
+          </div>
         ) : null}
 
         <div className="mt-3 flex flex-wrap gap-2">

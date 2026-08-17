@@ -34,6 +34,7 @@ import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
+import ProtectedHtml from "@/components/protected-html";
 import { programmeNameToSlug } from "@/lib/programme";
 import {
   getExamGroups,
@@ -327,6 +328,11 @@ export default async function ExamPage({
                         {m.subject ? ` Â· ${m.subject}` : ""}
                         {m.topic ? ` â†’ ${m.topic}` : ""}
                       </div>
+                      {m.body ? (
+                        <div className="mt-2 rounded-md border bg-muted/30 p-3">
+                          <ProtectedHtml html={m.body} />
+                        </div>
+                      ) : null}
                     </div>
                     {m.signedUrl ? (
                       <a

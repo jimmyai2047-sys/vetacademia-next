@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sanitizeChapterContent } from "@/lib/content";
 
 export async function GET(req: Request) {
   try {
@@ -31,6 +32,8 @@ export async function POST(req: Request) {
       type,
       content,
       url,
+      fileName,
+      fileType,
       subjectId,
       isDemo,
       isPublic,
@@ -39,6 +42,8 @@ export async function POST(req: Request) {
       type?: string;
       content?: string | null;
       url?: string | null;
+      fileName?: string | null;
+      fileType?: string | null;
       subjectId?: string | null;
       isDemo?: boolean;
       isPublic?: boolean;
@@ -52,8 +57,10 @@ export async function POST(req: Request) {
       data: {
         title: title.trim(),
         type: type || "NOTE",
-        content: content || null,
+        content: content ? sanitizeChapterContent(content) : null,
         url: url || null,
+        fileName: fileName || null,
+        fileType: fileType || null,
         subjectId: subjectId || null,
         userId: null,
         isDemo: isDemo ?? false,

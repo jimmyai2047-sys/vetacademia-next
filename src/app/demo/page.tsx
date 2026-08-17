@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import EnrollCta from "@/components/enroll-cta";
+import ProtectedHtml from "@/components/protected-html";
 import {
   BookOpen,
   FileText,
@@ -126,9 +127,11 @@ export default async function DemoPage() {
                         <span className="font-medium text-sm">Study Material</span>
                       </div>
                       <p className="text-sm font-medium">{n.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-3">
-                        {n.content}
-                      </p>
+                      {n.content ? (
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          <ProtectedHtml html={n.content} />
+                        </div>
+                      ) : null}
                     </div>
                   ))}
 
@@ -210,6 +213,11 @@ export default async function DemoPage() {
                           {m.description}
                         </p>
                       )}
+                      {m.body ? (
+                        <div className="mt-2">
+                          <ProtectedHtml html={m.body} />
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                   <PreviewLink

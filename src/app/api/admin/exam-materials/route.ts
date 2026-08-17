@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sanitizeChapterContent } from "@/lib/content";
 
 export async function GET(req: Request) {
   try {
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
       type,
       title,
       description,
+      body: chapterBody,
       fileUrl,
       fileName,
       fileType,
@@ -48,6 +50,7 @@ export async function POST(req: Request) {
       type?: string;
       title?: string;
       description?: string | null;
+      body?: string | null;
       fileUrl?: string | null;
       fileName?: string | null;
       fileType?: string | null;
@@ -73,6 +76,7 @@ export async function POST(req: Request) {
         type,
         title: title.trim(),
         description: description || null,
+        body: chapterBody ? sanitizeChapterContent(chapterBody) : null,
         fileUrl: fileUrl || null,
         fileName: fileName || null,
         fileType: fileType || null,
