@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -39,23 +38,46 @@ export default function ChapterBulkImporter({
     setDone(null);
 
     try {
-      // Step 1: Upload directly to Blob from browser (bypasses 4.5MB serverless limit!)
-      setStatus("File directly Blob storage mein upload ho rahi hai...");
-      const blobResult = await upload(file.name, file, {
-        access: "private",
-        handleUploadUrl: "/api/admin/upload-client",
+      // Step 1: Get presigned PUT URL from server (small JSON request)
+      setStatus("Upload URL mil raha hai...");
+      const tokenRes = await fetch("/api/admin/upload-client", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name }),
       });
+      if (!tokenRes.ok) {
+        const t = await tokenRes.text();
+        setError(`Token error (${tokenRes.status}): ${t.slice(0, 200)}`);
+        setStatus(null);
+        return;
+      }
+      const { presignedUrl, pathname } = await tokenRes.json();
 
-      // Step 2: Send Blob URL to server for parsing
+      // Step 2: Upload file DIRECTLY to Blob via PUT (NO serverless involved!)
+      setStatus("File directly Blob storage mein ja rahi hai...");
+      const putRes = await fetch(presignedUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type || "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        },
+      });
+      if (!putRes.ok) {
+        const t = await putRes.text();
+        setError(`Blob upload failed (${putRes.status}): ${t.slice(0, 200)}`);
+        setStatus(null);
+        return;
+      }
+
+      // Step 3: Construct blob URL from pathname
+      const blobUrl = `https://blob.vercel-storage.com/${pathname}`;
+
+      // Step 4: Send URL to server for parsing + chapter creation
       setStatus("Upload ho gaya! Ab server pe chapters ban rahe hain...");
       const res = await fetch("/api/admin/chapters/import-docx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileUrl: blobResult.url,
-          subjectId,
-          replace,
-        }),
+        body: JSON.stringify({ fileUrl: blobUrl, subjectId, replace }),
       });
 
       const text = await res.text();
