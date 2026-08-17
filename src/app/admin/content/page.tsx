@@ -24,9 +24,6 @@ import {
 } from "@/components/ui/table";
 import { EXAM_CONTENT_TRACKS } from "@/lib/exam-tracks";
 import {
-  BookOpen,
-  GraduationCap,
-  FlaskConical,
   ArrowLeft,
   Layers,
   Award,
@@ -37,13 +34,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function ContentPage() {
-  const [programmes, subjects, departments] = await Promise.all([
-    prisma.programme.findMany({
-      include: {
-        _count: { select: { subjects: true, departments: true } },
-      },
-      orderBy: { name: "asc" },
-    }),
+  const [subjects, departments] = await Promise.all([
     prisma.subject.findMany({
       include: {
         programme: { select: { name: true } },
@@ -74,20 +65,6 @@ export default async function ContentPage() {
     return a.name.localeCompare(b.name);
   });
 
-  const iconMap: Record<string, typeof BookOpen> = {
-    AHDP: BookOpen,
-    BVSC: GraduationCap,
-    MVSC: FlaskConical,
-    PHD: GraduationCap,
-  };
-
-  const colorMap: Record<string, string> = {
-    AHDP: "text-green-600",
-    BVSC: "text-blue-600",
-    MVSC: "text-purple-600",
-    PHD: "text-orange-600",
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -106,50 +83,12 @@ export default async function ContentPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="programmes">
+      <Tabs defaultValue="subjects">
         <TabsList>
-          <TabsTrigger value="programmes">Programmes ({programmes.length})</TabsTrigger>
           <TabsTrigger value="subjects">Subjects ({subjects.length})</TabsTrigger>
           <TabsTrigger value="departments">Departments ({departments.length})</TabsTrigger>
           <TabsTrigger value="examinations">Examinations ({EXAM_CONTENT_TRACKS.length})</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="programmes" className="space-y-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {programmes.map((prog) => {
-              const Icon = iconMap[prog.name] || BookOpen;
-              const color = colorMap[prog.name] || "text-primary";
-              return (
-                <Link key={prog.id} href={`/admin/content/${prog.name.toLowerCase()}`}>
-                  <Card className="hover:shadow-lg transition-all cursor-pointer">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Icon className={`h-5 w-5 ${color}`} />
-                          <CardTitle className="text-lg">{prog.name}</CardTitle>
-                        </div>
-                      </div>
-                      <CardDescription className="text-xs">{prog.fullName}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
-                          <Badge variant="secondary">
-                            {prog._count.subjects} Subjects
-                          </Badge>
-                          <Badge variant="outline">
-                            {prog._count.departments} Depts
-                          </Badge>
-                        </div>
-                        <Button variant="outline" size="sm">Manage</Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </TabsContent>
 
         <TabsContent value="subjects">
           <Card>
