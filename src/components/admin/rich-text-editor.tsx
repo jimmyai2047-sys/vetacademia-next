@@ -4,6 +4,7 @@ import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import { TableKit } from "@tiptap/extension-table";
 import { useRef, useEffect } from "react";
 import {
   Bold,
@@ -16,13 +17,60 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 function insertImageAsBase64(editor: Editor | null, file: File) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    const dataUrl = reader.result as string;
-    editor?.chain().focus().setImage({ src: dataUrl }).run();
-  };
-  reader.readAsDataURL(file);
+  fileToDataUrl(file)
+    .then((dataUrl) => {
+      editor?.chain().focus().setImage({ src: dataUrl }).run();
+    })
+    .catch(() => {});
+}
+
+// Recover images pasted/dropped from Word: Word embeds images as broken
+// `file:///` srcs in the HTML, while the actual bytes arrive as clipboard
+// image files. We swap each broken <img> for the next available image file
+// (as an inline base64 data URI) and then insert the combined HTML so that
+// tables/text flow through untouched.
+async function handleRichContent(
+  editor: Editor | null,
+  html: string | null,
+  imageFiles: File[]
+) {
+  if (html) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const imgs = Array.from(doc.querySelectorAll("img"));
+    let fileIdx = 0;
+    const tasks: Promise<void>[] = [];
+    for (const img of imgs) {
+      const src = img.getAttribute("src") || "";
+      const broken = !src || /^file:/i.test(src) || /^blob:/i.test(src);
+      if (broken && fileIdx < imageFiles.length) {
+        const file = imageFiles[fileIdx++];
+        tasks.push(
+          fileToDataUrl(file).then((url) => {
+            img.setAttribute("src", url);
+            img.removeAttribute("srcset");
+          })
+        );
+      }
+    }
+    await Promise.all(tasks);
+    const finalHtml = doc.body.innerHTML;
+    if (finalHtml) editor?.commands.insertContent(finalHtml);
+    for (; fileIdx < imageFiles.length; fileIdx++) {
+      insertImageAsBase64(editor, imageFiles[fileIdx]);
+    }
+  } else {
+    imageFiles.forEach((f) => insertImageAsBase64(editor, f));
+  }
 }
 
 export default function RichTextEditor({
@@ -39,6 +87,7 @@ export default function RichTextEditor({
     extensions: [
       StarterKit,
       Image,
+      TableKit,
       Placeholder.configure({ placeholder: "Type or paste content here (text + images)..." }),
     ],
     content: value || "",
@@ -49,18 +98,27 @@ export default function RichTextEditor({
           "chapter-content min-h-[180px] p-3 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary",
       },
       handlePaste: (_view, event) => {
-        const files = event.clipboardData?.files;
-        if (files && files.length > 0) {
-          let handled = false;
-          Array.from(files).forEach((file) => {
-            if (file.type.startsWith("image/")) {
-              handled = true;
-              insertImageAsBase64(editor, file);
-            }
-          });
-          return handled;
-        }
-        return false;
+        const clip = event.clipboardData;
+        if (!clip) return false;
+        const html = clip.getData("text/html") || null;
+        const imageFiles = Array.from(clip.files || []).filter((f) =>
+          f.type.startsWith("image/")
+        );
+        if (!html && imageFiles.length === 0) return false;
+        event.preventDefault();
+        handleRichContent(editor, html, imageFiles);
+        return true;
+      },
+      handleDrop: (_view, event) => {
+        const files = (event as DragEvent).dataTransfer?.files;
+        if (!files || files.length === 0) return false;
+        const imageFiles = Array.from(files).filter((f) =>
+          f.type.startsWith("image/")
+        );
+        if (imageFiles.length === 0) return false;
+        event.preventDefault();
+        handleRichContent(editor, null, imageFiles);
+        return true;
       },
     },
   });
