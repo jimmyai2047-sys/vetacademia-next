@@ -24,10 +24,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const colorMap: Record<string, string> = {
-  ahdp: "from-green-600 to-green-800",
-  bvsc: "from-blue-600 to-blue-800",
-  mvsc: "from-purple-600 to-purple-800",
-  phd: "from-orange-600 to-orange-800",
+  ahdp: "from-green-900/80 via-green-900/30 to-transparent",
+  bvsc: "from-blue-900/80 via-blue-900/30 to-transparent",
+  mvsc: "from-purple-900/80 via-purple-900/30 to-transparent",
+  phd: "from-orange-900/80 via-orange-900/30 to-transparent",
 };
 
 const descriptionMap: Record<string, string> = {
@@ -82,7 +82,7 @@ export default async function SyllabusPage() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} opacity-80`} />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor}`} />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Icon className="h-16 w-16 text-white/60" />
                   </div>
