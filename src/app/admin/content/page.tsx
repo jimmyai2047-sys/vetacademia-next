@@ -37,12 +37,20 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function ContentPage() {
-  const programmes = (await prisma.programme.findMany({
+  const allProgrammes = (await prisma.programme.findMany({
       include: {
         _count: { select: { subjects: true, departments: true } },
       },
       orderBy: { name: "asc" },
     })).filter((p) => !["A.H.D.P.", "B.V.Sc & A.H.", "M.V.Sc", "Ph.D"].includes(p.name));
+  const byName = new Map<string, typeof allProgrammes[number]>();
+  for (const p of allProgrammes) {
+    const existing = byName.get(p.name);
+    if (!existing || p._count.subjects > existing._count.subjects) {
+      byName.set(p.name, p);
+    }
+  }
+  const programmes = Array.from(byName.values());
   const [subjects, departments] = await Promise.all([
     prisma.subject.findMany({
       include: {
