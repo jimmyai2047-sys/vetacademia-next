@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { GraduationCap, Mail, Phone, MapPin } from "lucide-react";
-import { BrandLogo } from "@/components/layout/brand-logo";
 
 const footerLinks = {
   programmes: [
@@ -33,7 +32,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <BrandLogo />
+            <Link href="/" className="inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/favicon-192x192.png"
+                alt="VetAcademia"
+                className="h-12 w-12 object-contain rounded-lg"
+              />
+            </Link>
             <p className="text-sm text-muted-foreground">
               India&apos;s comprehensive veterinary education platform for B.V.Sc, M.V.Sc, and Ph.D students.
             </p>
