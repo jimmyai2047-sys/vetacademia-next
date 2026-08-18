@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   IndianRupee,
   MessageSquare,
+  Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -31,6 +32,7 @@ const sidebarItems = [
   { name: "Mock / Adaptive / PY Tests", href: "/admin/mock-tests", icon: Brain },
   { name: "Previous Year Papers", href: "/admin/py-papers", icon: FileText },
   { name: "Study Material (Exams)", href: "/admin/exam-materials", icon: GraduationCap },
+  { name: "Live Classes", href: "/admin/live-classes", icon: Radio },
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: FileText },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },

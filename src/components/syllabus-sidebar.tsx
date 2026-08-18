@@ -84,7 +84,7 @@ export default function SyllabusSidebar({ units, subjectName }: SyllabusSidebarP
         className={`
           fixed top-0 left-0 z-40 h-full w-72 bg-card border-r shadow-xl
           transform transition-transform duration-300
-          lg:sticky lg:top-0 lg:z-0 lg:transform-none lg:shadow-none lg:border-r lg:w-64 xl:w-72
+          lg:relative lg:h-auto lg:z-0 lg:transform-none lg:shadow-none lg:border-r lg:w-64 xl:w-72 lg:shrink-0
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >

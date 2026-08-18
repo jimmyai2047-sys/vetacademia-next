@@ -143,14 +143,14 @@ export default async function SubjectPage({
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
       {!hasCourses && hasAccess && sidebarUnits.length > 0 && (
         <SyllabusSidebar units={sidebarUnits} subjectName={subject.name} />
       )}
 
       {/* Main content */}
-      <div className={`${!hasCourses && hasAccess && sidebarUnits.length > 0 ? "lg:ml-64 xl:ml-72" : ""} transition-all`}>
+      <div className="flex-1 min-w-0">
         <div className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">

@@ -25,6 +25,7 @@ import {
   Brain,
   ArrowLeft,
   ChevronRight,
+  Radio,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { trackLabel } from "@/lib/exam-tracks";
@@ -154,6 +155,24 @@ export default async function ExamPage({
   const examMaterialCats = EXAM_PREP_CATEGORIES.filter(
     (c) => c.examKey === exam
   ).map((c) => c.key);
+
+  const liveClasses = await prisma.liveClass.findMany({
+    where: { exam, status: { in: ["SCHEDULED", "LIVE", "ENDED"] } },
+    orderBy: [{ scheduledAt: "desc" }],
+    take: 10,
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      subject: true,
+      scheduledAt: true,
+      duration: true,
+      status: true,
+      recordingUrl: true,
+      isDemo: true,
+    },
+  });
+
   const examMaterials = examMaterialCats.length
     ? await prisma.examMaterial.findMany({
         where: { category: { in: examMaterialCats }, published: true },
@@ -359,6 +378,51 @@ export default async function ExamPage({
             )}
           </CardContent>
         </Card>
+
+        {/* Live Classes */}
+        {liveClasses.length > 0 && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                  <Radio className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <CardTitle>Live Classes</CardTitle>
+                  <CardDescription>Scheduled and recorded live sessions</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {liveClasses.map((lc) => (
+                  <Link
+                    key={lc.id}
+                    href={`/examinations/${exam}/live/${lc.id}`}
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-2 h-2 rounded-full shrink-0 ${
+                        lc.status === "LIVE" ? "bg-red-500 animate-pulse" :
+                        lc.status === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"
+                      }`} />
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm truncate">{lc.title}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {lc.scheduledAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                          {lc.subject && <> &middot; {lc.subject}</>}
+                          {lc.status === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}
+                          {lc.status === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Mock & Adaptive Tests (DB-driven), grouped by track */}
         {examUnlocked ? (
