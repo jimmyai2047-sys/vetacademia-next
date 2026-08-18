@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -39,23 +38,43 @@ export default function ChapterBulkImporter({
     setDone(null);
 
     try {
-      // Step 1: Upload directly to Blob via client SDK (bypasses serverless!)
-      setStatus("File directly Blob storage mein upload ho rahi hai...");
-      const blob = await upload(file.name, file, {
-        access: "private",
-        handleUploadUrl: "/api/admin/upload-client",
+      // Step 1: Get presigned PUT URL from server (tiny JSON request)
+      setStatus("Upload URL mil raha hai...");
+      const tokenRes = await fetch("/api/admin/upload-client", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name }),
       });
+      if (!tokenRes.ok) {
+        const t = await tokenRes.text();
+        setError(`Token error: ${t.slice(0, 200)}`);
+        setStatus(null);
+        return;
+      }
+      const { presignedUrl, pathname } = await tokenRes.json();
 
-      // Step 2: Send Blob URL to server for parsing + chapter creation
+      // Step 2: PUT file directly to Vercel Blob CDN (NO serverless!)
+      setStatus("File directly Vercel CDN pe upload ho rahi hai...");
+      const putRes = await fetch(presignedUrl, {
+        method: "PUT",
+        body: file,
+      });
+      if (!putRes.ok) {
+        const t = await putRes.text();
+        setError(`Blob upload failed (${putRes.status}): ${t.slice(0, 300)}`);
+        setStatus(null);
+        return;
+      }
+
+      // Step 3: Get the blob URL from the presigned URL (strip query params)
+      const blobUrl = presignedUrl.split("?")[0];
+
+      // Step 4: Import the file
       setStatus("Upload ho gaya! Ab server pe chapters ban rahe hain...");
       const res = await fetch("/api/admin/chapters/import-docx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileUrl: blob.url,
-          subjectId,
-          replace,
-        }),
+        body: JSON.stringify({ fileUrl: blobUrl, subjectId, replace }),
       });
 
       const text = await res.text();
@@ -98,8 +117,8 @@ export default function ChapterBulkImporter({
         </h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Apni Word (.docx) file select karein. File directly browser se Blob
-        storage mein upload hogi (no serverless limit), phir server pe mammoth.js
+        Apni Word (.docx) file select karein. File directly browser se Vercel
+        Blob CDN pe upload hogi (no serverless limit), phir server pe mammoth.js
         se parse hoke chapters ban jayenge.
       </p>
 
