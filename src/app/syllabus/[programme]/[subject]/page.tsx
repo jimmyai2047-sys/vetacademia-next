@@ -233,9 +233,9 @@ export default async function SubjectPage({
               ))}
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-6">
+            <>
               {/* Theory Section */}
-              <div>
+              <div className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                     <BookOpen className="h-4 w-4 text-blue-600" />
@@ -265,13 +265,6 @@ export default async function SubjectPage({
                             <AccordionContent className="pb-4">
                               {isHtmlContent(chapter.content) ? (
                                 <div className="pl-10">
-                                  <Link
-                                    href={`/reader/${chapter.id}`}
-                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:text-amber-800 mb-3 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all"
-                                  >
-                                    <BookMarked className="h-3.5 w-3.5" />
-                                    Open in Reader
-                                  </Link>
                                   <ProtectedHtml
                                     html={htmlMap.get(chapter.id) || ""}
                                   />
@@ -300,70 +293,65 @@ export default async function SubjectPage({
               </div>
 
               {/* Practical Section */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <FlaskConical className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <h2 className="text-xl font-bold">Practical</h2>
-                  <Badge variant="secondary">{practicalChapters.length}</Badge>
-                </div>
-                {Object.keys(practicalGrouped).length > 0 ? (
-                  Object.entries(practicalGrouped).map(([unit, chapters]) => (
-                    <div key={unit} className="border rounded-lg overflow-hidden mb-4">
-                      <div className="bg-muted/50 px-6 py-3 border-b">
-                        <h3 className="text-base font-semibold flex items-center gap-2">
-                          <Badge variant="outline">{unit}</Badge>
-                        </h3>
-                      </div>
-                      <Accordion className="px-6">
-                        {chapters.map((chapter, index) => (
-                          <AccordionItem key={chapter.id} value={chapter.id}>
-                            <AccordionTrigger className="py-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
-                                  {index + 1}
-                                </div>
-                                <span className="text-left">{chapter.title}</span>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="pb-4">
-                              {isHtmlContent(chapter.content) ? (
-                                <div className="pl-10">
-                                  <Link
-                                    href={`/reader/${chapter.id}`}
-                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:text-amber-800 mb-3 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all"
-                                  >
-                                    <BookMarked className="h-3.5 w-3.5" />
-                                    Open in Reader
-                                  </Link>
-                                  <ProtectedHtml
-                                    html={htmlMap.get(chapter.id) || ""}
-                                  />
-                                </div>
-                              ) : chapter.content ? (
-                                <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
-                                  {chapter.content}
-                                </div>
-                              ) : (
-                                <div className="pl-10 text-muted-foreground italic">
-                                  Content coming soon...
-                                </div>
-                              )}
-                              <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
+              {practicalChapters.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <FlaskConical className="h-4 w-4 text-emerald-600" />
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground border rounded-lg">
-                    Practical units coming soon
+                    <h2 className="text-xl font-bold">Practical</h2>
+                    <Badge variant="secondary">{practicalChapters.length}</Badge>
                   </div>
-                )}
-              </div>
-            </div>
+                  {Object.keys(practicalGrouped).length > 0 ? (
+                    Object.entries(practicalGrouped).map(([unit, chapters]) => (
+                      <div key={unit} className="border rounded-lg overflow-hidden mb-4">
+                        <div className="bg-muted/50 px-6 py-3 border-b">
+                          <h3 className="text-base font-semibold flex items-center gap-2">
+                            <Badge variant="outline">{unit}</Badge>
+                          </h3>
+                        </div>
+                        <Accordion className="px-6">
+                          {chapters.map((chapter, index) => (
+                            <AccordionItem key={chapter.id} value={chapter.id}>
+                              <AccordionTrigger className="py-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                                    {index + 1}
+                                  </div>
+                                  <span className="text-left">{chapter.title}</span>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="pb-4">
+                                {isHtmlContent(chapter.content) ? (
+                                  <div className="pl-10">
+                                    <ProtectedHtml
+                                      html={htmlMap.get(chapter.id) || ""}
+                                    />
+                                  </div>
+                                ) : chapter.content ? (
+                                  <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
+                                    {chapter.content}
+                                  </div>
+                                ) : (
+                                  <div className="pl-10 text-muted-foreground italic">
+                                    Content coming soon...
+                                  </div>
+                                )}
+                                <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground border rounded-lg">
+                      Practical units coming soon
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
           {subject.chapters.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
