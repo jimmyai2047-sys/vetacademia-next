@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import mammoth from "mammoth";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -85,10 +84,18 @@ export default function ChapterBulkImporter({
 
     try {
       setStatus("File parse ho rahi hai...");
+      const mammoth = (await import("mammoth/mammoth.browser.min.js")).default;
       const arrayBuffer = await file.arrayBuffer();
-      const result = await (mammoth as any).convertToHtml(
+      const result = await mammoth.convertToHtml(
         { arrayBuffer },
-        { convertImage: (mammoth as any).images?.dataUri }
+        {
+          convertImage: mammoth.images.imgElement((image) =>
+            image.read("base64").then((data: string) => ({
+              src: `data:${image.contentType};base64,${data}`,
+              alt: image.alt || "",
+            }))
+          ),
+        }
       );
       const html = result.value;
       if (!html || html.replace(/<[^>]*>/g, "").trim().length === 0) {

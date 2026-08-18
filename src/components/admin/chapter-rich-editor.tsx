@@ -293,13 +293,6 @@ export default function ChapterRichEditor({
               Images ke liye Word file (.docx) select karein — mammoth server-side images extract karega.
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <input
-                ref={docxRef}
-                type="file"
-                accept=".doc,.docx"
-                className="hidden"
-                onChange={handleDocxImport}
-              />
               <Button
                 type="button"
                 size="sm"
@@ -393,6 +386,35 @@ export default function ChapterRichEditor({
         >
           <ImageIcon className="h-3.5 w-3.5" />
         </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) insertImageAsBase64(editor, f);
+            if (fileRef.current) fileRef.current.value = "";
+          }}
+        />
+        <input
+          ref={docxRef}
+          type="file"
+          accept=".doc,.docx"
+          className="hidden"
+          onChange={handleDocxImport}
+        />
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          className="h-7 w-7"
+          disabled={importing}
+          onClick={() => docxRef.current?.click()}
+          title="Import from Word (.docx)"
+        >
+          {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileUp className="h-3.5 w-3.5" />}
+        </Button>
         <Button
           type="button"
           size="icon"
@@ -409,17 +431,6 @@ export default function ChapterRichEditor({
         >
           <TableIcon className="h-3.5 w-3.5" />
         </Button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) insertImageAsBase64(editor, f);
-            if (fileRef.current) fileRef.current.value = "";
-          }}
-        />
       </div>
 
       <EditorContent editor={editor} />

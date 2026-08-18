@@ -195,24 +195,23 @@ export default function StudyMaterialManager({
     setUploading(true);
     setError(null);
     try {
-      const { upload } = await import("@vercel/blob/client");
-      const blob = await upload(f.name, f, {
-        access: "private",
-        handleUploadUrl: "/api/admin/upload-client",
+      const fd = new FormData();
+      fd.append("file", f);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd,
       });
-      const ext = f.name.split(".").pop()?.toLowerCase() || "";
-      const extTypeMap: Record<string, string> = {
-        pdf: "PDF", doc: "DOC", docx: "DOC", xls: "XLS", xlsx: "XLS",
-        ppt: "PPT", pptx: "PPT", jpg: "IMAGE", jpeg: "IMAGE", png: "IMAGE",
-        gif: "IMAGE", webp: "IMAGE",
-      };
-      const ft = extTypeMap[ext] || "DOC";
-      setFile({ url: blob.url, fileName: f.name, fileType: ft });
-      setUrl(blob.url);
-      setFileName(f.name);
-      setFileType(ft);
-    } catch (err: any) {
-      setError(err?.message || "Upload failed");
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Upload failed");
+        return;
+      }
+      setFile({ url: data.url, fileName: data.fileName, fileType: data.fileType });
+      setUrl(data.url);
+      setFileName(data.fileName);
+      setFileType(data.fileType);
+    } catch {
+      setError("Upload failed");
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

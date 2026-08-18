@@ -14,11 +14,14 @@ declare module "mammoth/mammoth.browser.min.js" {
   }
   interface MammothImageConverter {
     imgElement: (
-      cb: (image: MammothImage) => Promise<{ src: string; alt: string }>
+      cb: (image: MammothImage) => Promise<{ src: string; alt?: string }>
     ) => unknown;
   }
   const mammoth: {
-    convertToHtml: (input: MammothInput) => Promise<MammothResult>;
+    convertToHtml: (
+      input: MammothInput,
+      options?: { convertImage?: unknown }
+    ) => Promise<MammothResult>;
     images: MammothImageConverter;
   };
   export default mammoth;

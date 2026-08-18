@@ -161,13 +161,6 @@ export default function RichTextEditor({
               Images ke liye Word file (.docx) select karein — mammoth server-side images extract karega.
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <input
-                ref={docxRef}
-                type="file"
-                accept=".doc,.docx"
-                className="hidden"
-                onChange={handleDocxImport}
-              />
               <Button
                 type="button"
                 size="sm"
@@ -272,6 +265,24 @@ export default function RichTextEditor({
             if (fileRef.current) fileRef.current.value = "";
           }}
         />
+        <input
+          ref={docxRef}
+          type="file"
+          accept=".doc,.docx"
+          className="hidden"
+          onChange={handleDocxImport}
+        />
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          className="h-7 w-7"
+          disabled={importing}
+          onClick={() => docxRef.current?.click()}
+          title="Import from Word (.docx)"
+        >
+          {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileUp className="h-3.5 w-3.5" />}
+        </Button>
       </div>
       <EditorContent editor={editor} />
       {error && <p className="text-xs text-red-500">{error}</p>}
