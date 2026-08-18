@@ -36,6 +36,26 @@ async function insertImageAsBase64(editor: Editor | null, file: File) {
   editor?.chain().focus().setImage({ src: dataUrl }).run();
 }
 
+async function readClipboardImages(): Promise<File[]> {
+  try {
+    if (!navigator.clipboard?.read) return [];
+    const items = await navigator.clipboard.read();
+    const files: File[] = [];
+    for (const item of items) {
+      for (const type of item.types) {
+        if (type.startsWith("image/")) {
+          const blob = await item.getType(type);
+          const ext = type.split("/")[1] || "png";
+          files.push(new File([blob], `clipboard.${ext}`, { type }));
+        }
+      }
+    }
+    return files;
+  } catch {
+    return [];
+  }
+}
+
 async function handleRichContent(
   editor: Editor | null,
   html: string | null,
@@ -44,6 +64,16 @@ async function handleRichContent(
   if (html) {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const imgs = Array.from(doc.querySelectorAll("img"));
+    const brokenImgs = imgs.filter((img) => {
+      const src = img.getAttribute("src") || "";
+      return !src || /^file:/i.test(src) || /^blob:/i.test(src);
+    });
+
+    if (brokenImgs.length > 0 && imageFiles.length === 0) {
+      const clipboardFiles = await readClipboardImages();
+      if (clipboardFiles.length > 0) imageFiles = clipboardFiles;
+    }
+
     let fileIdx = 0;
     const tasks: Promise<void>[] = [];
     for (const img of imgs) {
@@ -61,6 +91,14 @@ async function handleRichContent(
       }
     }
     await Promise.all(tasks);
+
+    doc.querySelectorAll("img").forEach((img) => {
+      const src = img.getAttribute("src") || "";
+      if (!src || /^file:/i.test(src) || /^blob:/i.test(src)) {
+        img.remove();
+      }
+    });
+
     const finalHtml = doc.body.innerHTML;
     if (finalHtml) editor?.commands.insertContent(finalHtml);
     for (; fileIdx < imageFiles.length; fileIdx++) {
