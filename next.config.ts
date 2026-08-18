@@ -7,7 +7,7 @@ const ContentSecurityPolicy = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.blob.vercel-storage.com",
-  "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com",
+  "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://youtube.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

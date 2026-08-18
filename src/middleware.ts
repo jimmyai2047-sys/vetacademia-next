@@ -14,7 +14,7 @@ const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
 
 // Rate-limit all admin API mutations/reads to mitigate abuse of privileged
 // endpoints.
-export function proxy(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const authLimit = AUTH_LIMITS[pathname];
