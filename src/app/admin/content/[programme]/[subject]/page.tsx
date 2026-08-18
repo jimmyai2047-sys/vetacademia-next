@@ -16,6 +16,7 @@ import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 import ChapterTitleEditor from "@/components/admin/chapter-title-editor";
+import AddChapterButton from "@/components/admin/add-chapter-button";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,10 @@ export default async function SubjectContentPage({
         </div>
       </div>
 
-      <ChapterBulkImporter subjectId={subject.id} />
+      <div className="flex items-center gap-3">
+        <ChapterBulkImporter subjectId={subject.id} />
+        <AddChapterButton subjectId={subject.id} />
+      </div>
 
       {hasCourses ? (
         <div className="space-y-4">

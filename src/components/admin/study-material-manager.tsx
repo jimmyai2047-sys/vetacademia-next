@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
+import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 
 type Chapter = {
   id: string;
@@ -565,6 +566,15 @@ export default function StudyMaterialManager({
           {/* LEVEL 2 (PG): Courses */}
           {programme && subject && programme.isPG && courseCode === null && (
             <div className="space-y-4">
+              {courses.length === 0 && (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    No courses found for this subject. Pehle chapters create karein
+                    (course code chapters me set hoga):
+                  </p>
+                  <ChapterBulkImporter subjectId={subject.id} />
+                </div>
+              )}
               {courses.map((code) => {
                 const chaps = chaptersFor(subject, code);
                 const mats = chaps.reduce(
@@ -679,10 +689,14 @@ export default function StudyMaterialManager({
               )}
               {chaptersFor(subject, programme.isPG ? courseCode : null)
                 .length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  No chapters under this
-                  {programme.isPG ? " course" : " subject"} yet.
-                </p>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    No chapters under this
+                    {programme.isPG ? " course" : " subject"} yet. Pehle chapters
+                    create karein:
+                  </p>
+                  <ChapterBulkImporter subjectId={subject.id} />
+                </div>
               )}
             </div>
           )}

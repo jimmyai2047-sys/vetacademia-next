@@ -87,8 +87,8 @@ export default function ChapterBulkImporter({
       setStatus("File parse ho rahi hai...");
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml(
-        { arrayBuffer },
-        { convertImage: mammoth.images.dataUri as any }
+        { buffer: Buffer.from(arrayBuffer) } as any,
+        { convertImage: (mammoth as any).images.dataUri }
       );
       const html = result.value;
       if (!html || html.replace(/<[^>]*>/g, "").trim().length === 0) {

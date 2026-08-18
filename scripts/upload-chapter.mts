@@ -76,7 +76,7 @@ async function main() {
   const buffer = readFileSync(FILE_PATH);
 
   console.log("Parsing with mammoth...");
-  const result = await mammoth.convertToHtml({ buffer }, { convertImage: mammoth.images.dataUri as any });
+  const result = await mammoth.convertToHtml({ buffer }, { convertImage: (mammoth as any).images.dataUri });
   console.log("HTML length:", result.value.length, "chars");
 
   console.log("Deleting existing chapters for this subject...");
