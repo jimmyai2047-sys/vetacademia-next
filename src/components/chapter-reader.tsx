@@ -159,7 +159,7 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
           else if (x > rect.width * 0.7) goNext();
         }}
       >
-        <div className="max-w-2xl mx-auto h-full px-6 py-8">
+        <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6">
           <div
             className="chapter-content h-full overflow-hidden"
             style={{ fontSize: `${fontScale}rem`, lineHeight: "1.85" }}
@@ -179,7 +179,7 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
 
       {/* Bottom navigation */}
       <div className="border-t border-amber-200/50 dark:border-slate-700/50 bg-[#f5e6c8]/80 dark:bg-[#16213e]/80 backdrop-blur-sm">
-        <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
+        <div className="w-full flex items-center justify-between px-4 sm:px-8 md:px-12 lg:px-16 py-3">
           <button
             onClick={goPrev}
             disabled={page === 0}
