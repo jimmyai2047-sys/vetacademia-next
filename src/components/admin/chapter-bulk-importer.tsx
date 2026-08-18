@@ -11,6 +11,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+const CHUNK_SIZE = 3 * 1024 * 1024;
+
 export default function ChapterBulkImporter({
   subjectId,
 }: {
@@ -23,6 +25,7 @@ export default function ChapterBulkImporter({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<number | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [progress, setProgress] = useState<string | null>(null);
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -38,70 +41,84 @@ export default function ChapterBulkImporter({
     setDone(null);
 
     try {
-      // Step 1: Get presigned PUT URL from server (tiny JSON request)
-      setStatus("Upload URL mil raha hai...");
-      const tokenRes = await fetch("/api/admin/upload-client", {
+      setStatus("File padh rahi hai...");
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = "";
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      const base64 = btoa(binary);
+      const dataUrl = `data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${base64}`;
+
+      const totalChunks = Math.ceil(dataUrl.length / CHUNK_SIZE);
+      setStatus(`File ${totalChunks} parts mein split ho rahi hai...`);
+
+      const initRes = await fetch("/api/admin/chapters/import-docx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name }),
+        body: JSON.stringify({ action: "init", filename: file.name, totalChunks }),
       });
-      if (!tokenRes.ok) {
-        const t = await tokenRes.text();
-        setError(`Token error: ${t.slice(0, 200)}`);
+      if (!initRes.ok) {
+        const t = await initRes.text();
+        setError(`Init failed: ${t.slice(0, 200)}`);
         setStatus(null);
         return;
       }
-      const { presignedUrl, pathname } = await tokenRes.json();
+      const { sessionId } = await initRes.json();
 
-      // Step 2: PUT file directly to Vercel Blob CDN (NO serverless!)
-      setStatus("File directly Vercel CDN pe upload ho rahi hai...");
-      const putRes = await fetch(presignedUrl, {
-        method: "PUT",
-        body: file,
-      });
-      if (!putRes.ok) {
-        const t = await putRes.text();
-        setError(`Blob upload failed (${putRes.status}): ${t.slice(0, 300)}`);
-        setStatus(null);
-        return;
+      for (let i = 0; i < totalChunks; i++) {
+        const chunk = dataUrl.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+        setProgress(`${i + 1}/${totalChunks}`);
+
+        const isLast = i === totalChunks - 1;
+        const chunkBody: Record<string, unknown> = {
+          action: "chunk",
+          sessionId,
+          index: i,
+          data: chunk,
+        };
+        if (isLast) {
+          chunkBody.subjectId = subjectId;
+          chunkBody.replace = replace;
+        }
+
+        const chunkRes = await fetch("/api/admin/chapters/import-docx", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(chunkBody),
+        });
+
+        const text = await chunkRes.text();
+        let d: Record<string, unknown>;
+        try {
+          d = JSON.parse(text);
+        } catch {
+          setError(`Chunk ${i + 1} error (${chunkRes.status}): ${text.slice(0, 200)}`);
+          setStatus(null);
+          setProgress(null);
+          return;
+        }
+
+        if (!chunkRes.ok) {
+          setError((d.error as string) || `Chunk ${i + 1} failed`);
+          setStatus(null);
+          setProgress(null);
+          return;
+        }
+
+        if (isLast && d.created !== undefined) {
+          setDone(d.created as number);
+          setStatus(null);
+          setProgress(null);
+          router.refresh();
+        }
       }
-
-      // Step 3: Get the blob URL from the presigned URL (strip query params)
-      const blobUrl = presignedUrl.split("?")[0];
-
-      // Step 4: Import the file
-      setStatus("Upload ho gaya! Ab server pe chapters ban rahe hain...");
-      const res = await fetch("/api/admin/chapters/import-docx", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileUrl: blobUrl, subjectId, replace }),
-      });
-
-      const text = await res.text();
-      let d: Record<string, unknown>;
-      try {
-        d = JSON.parse(text);
-      } catch {
-        setError(`Server error (${res.status}): ${text.slice(0, 300)}`);
-        setStatus(null);
-        return;
-      }
-
-      if (!res.ok) {
-        setError((d.error as string) || "Chapters create nahi ho paye.");
-        setStatus(null);
-        return;
-      }
-
-      setDone((d.created as number) || 0);
-      setStatus(null);
-      router.refresh();
     } catch (err) {
       console.error("Import error:", err);
-      setError(
-        `Import failed: ${err instanceof Error ? err.message : "Unknown error"}`
-      );
+      setError(`Import failed: ${err instanceof Error ? err.message : "Unknown error"}`);
       setStatus(null);
+      setProgress(null);
     } finally {
       setCreating(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -117,9 +134,9 @@ export default function ChapterBulkImporter({
         </h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Apni Word (.docx) file select karein. File directly browser se Vercel
-        Blob CDN pe upload hogi (no serverless limit), phir server pe mammoth.js
-        se parse hoke chapters ban jayenge.
+        Apni Word (.docx) file select karein. File browser se chhote-chhote
+        parts mein server pe bheji jayegi. Images bhi automatically upload
+        ho jayengi. <strong>Koi size limit nahi hai.</strong>
       </p>
 
       <label className="flex items-center gap-2 text-sm">
@@ -159,6 +176,9 @@ export default function ChapterBulkImporter({
         <p className="text-sm text-blue-600 flex items-center gap-2">
           <Loader2 className="h-3.5 w-3.5 animate-spin" /> {status}
         </p>
+      )}
+      {progress && (
+        <p className="text-sm text-blue-600">{progress}</p>
       )}
       {done !== null && (
         <p className="text-sm text-green-600 flex items-center gap-2">
