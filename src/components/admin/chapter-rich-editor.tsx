@@ -131,6 +131,58 @@ export default function ChapterRichEditor({
       handlePaste: (_view, event) => {
         const clip = event.clipboardData;
         if (!clip) return false;
+
+        // Check for image files in clipboard (Word paste includes images as items)
+        const imageItems = Array.from(clip.items).filter((item) =>
+          item.type.startsWith("image/")
+        );
+
+        if (imageItems.length > 0) {
+          event.preventDefault();
+
+          // Extract images from clipboard asynchronously
+          (async () => {
+            const imageMap = new Map<string, string>();
+            for (let i = 0; i < imageItems.length; i++) {
+              const blob = imageItems[i].getAsFile();
+              if (!blob) continue;
+              const dataUrl = await compressDataUrl(await fileToDataUrl(blob));
+              imageMap.set(`clipboard-img-${i}`, dataUrl);
+            }
+
+            // Try to get HTML, replace broken image URLs with clipboard images
+            const html = clip.getData("text/html") || null;
+            if (html && imageMap.size > 0) {
+              const doc = new DOMParser().parseFromString(html, "text/html");
+              const imgs = doc.querySelectorAll("img");
+              let imgIdx = 0;
+              imgs.forEach((img) => {
+                const src = img.getAttribute("src") || "";
+                const isBroken = !src || /^file:/i.test(src) || /^blob:/i.test(src) || src.startsWith("data:");
+                if (isBroken && imgIdx < imageMap.size) {
+                  img.setAttribute("src", imageMap.get(`clipboard-img-${imgIdx}`) || "");
+                  imgIdx++;
+                }
+              });
+              const cleanHtml = doc.body.innerHTML;
+              if (cleanHtml.trim()) {
+                editor?.commands.insertContent(cleanHtml);
+                setWordWarning(false);
+                return;
+              }
+            }
+
+            // Fallback: insert images directly
+            for (const dataUrl of imageMap.values()) {
+              editor?.chain().focus().setImage({ src: dataUrl }).run();
+            }
+            setWordWarning(false);
+          })();
+
+          return true;
+        }
+
+        // No images — handle text/html paste as before
         const html = clip.getData("text/html") || null;
         if (!html) return false;
         event.preventDefault();

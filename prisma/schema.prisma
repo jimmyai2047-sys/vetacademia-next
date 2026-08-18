@@ -38,6 +38,7 @@ model User {
   payments          Payment[]
   studyMaterials    StudyMaterial[]
   flashcardProgress FlashcardProgress[]
+  chatMessages      ChatMessage[]
 
   @@index([role])
 }
@@ -509,5 +510,46 @@ model UserProgress {
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, subjectId])
+  @@index([userId])
+}
+
+// ==================== LIVE CLASSES ====================
+
+model LiveClass {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  exam         String   // "psc" | "icar-entrance" | "net" | "ars" | "other"
+  track        String?  // granular: "veterinary-officer" | "icar-jrf-srf" etc.
+  subject      String?  // discipline/subject label
+  youtubeUrl   String?  // YouTube Live embed URL (for video stream)
+  scheduledAt  DateTime // when the class is scheduled
+  duration     Int      @default(60) // minutes
+  status       String   @default("SCHEDULED") // SCHEDULED | LIVE | ENDED | CANCELLED
+  recordingUrl String?  // YouTube recorded video URL (populated after live ends)
+  thumbnailUrl String?
+  isDemo       Boolean  @default(false)
+  planSlug     String?  // premium gating
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  messages ChatMessage[]
+
+  @@index([exam, status])
+  @@index([scheduledAt])
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  liveClassId String
+  userId      String
+  text        String
+  createdAt   DateTime @default(now())
+
+  liveClass LiveClass @relation(fields: [liveClassId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([liveClassId, createdAt])
   @@index([userId])
 }
