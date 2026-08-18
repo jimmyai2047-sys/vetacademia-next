@@ -1,47 +1,19 @@
-# dependencies
-node_modules/
-.pnp
-.pnp.js
+# Environment secrets — NEVER commit
+.env
+.env.local
+.env*.local
 
-# testing
-coverage/
-
-# next.js
+# Build output
 .next/
 out/
 
-# production
-build/
+# Dependencies
+node_modules/
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+*.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# local env files
-.env
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# prisma
-prisma/dev.db
-prisma/dev.db-journal
-dev.db
-
-# generated
-src/generated/
-
-# local backups (created by backup.bat)
-backups/
-server.log
-
+# OS / editor
+.DS_Store
+Thumbs.db

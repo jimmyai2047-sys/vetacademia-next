@@ -1,0 +1,177 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/admin";
+import { prisma } from "@/lib/prisma";
+import { getSignedUrl } from "@/lib/blob";
+import { getExamTrack, trackLabel } from "@/lib/exam-tracks";
+import { materialSectionsForTrack } from "@/lib/exam-prep";
+import ExamMaterialManager from "@/components/admin/exam-material-manager";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, FileText, Brain, Plus } from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+export default async function ExamContentPage({
+  params,
+}: {
+  params: Promise<{ track: string }>;
+}) {
+  await requireAdmin();
+  const { track } = await params;
+  const trackInfo = getExamTrack(track);
+  if (!trackInfo) notFound();
+
+  const multi = trackInfo.subs.length > 1;
+  const materialSections = materialSectionsForTrack(track);
+
+  const subData = await Promise.all(
+    trackInfo.subs.map(async (sub) => {
+      const posts = await prisma.post.findMany({
+        where: {
+          category: "PREVIOUS_YEAR",
+          track: sub.tag,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      const postsWithLinks = await Promise.all(
+        posts.map(async (p) => ({
+          ...p,
+          signedUrl: await getSignedUrl(p.fileUrl),
+        }))
+      );
+      const mockTests = await prisma.mockTest.findMany({
+        where: { track: sub.tag },
+        orderBy: { createdAt: "desc" },
+        include: { _count: { select: { questions: true } } },
+      });
+      return { sub, posts: postsWithLinks, mockTests };
+    })
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Link href="/admin/content">
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-3xl font-bold">{trackInfo.label}</h1>
+          <p className="text-muted-foreground">
+            Manage Study Materials, Previous Year Papers and Mock / Adaptive
+            Tests for this exam track.
+          </p>
+        </div>
+      </div>
+
+      {subData.map(({ sub, posts, mockTests }) => (
+        <section key={sub.tag} className="space-y-4">
+          {multi && <h2 className="text-xl font-semibold">{sub.label}</h2>}
+
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" /> Previous Year
+                Papers
+              </h3>
+              <Link href="/admin/posts">
+                <Button size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-1" /> Add Paper
+                </Button>
+              </Link>
+            </div>
+            {posts.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No previous year papers yet. Use &quot;Add Paper&quot; (category
+                &quot;Previous Year Papers&quot;, set Track to {trackLabel(sub.tag)}).
+              </p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {posts.map((p) => (
+                  <Card key={p.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{p.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between">
+                      <Badge variant="outline">{p.exam || "—"}</Badge>
+                      {p.signedUrl && (
+                        <a
+                          href={p.signedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline"
+                        >
+                          Download
+                        </a>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Brain className="h-4 w-4 text-primary" /> Mock / Adaptive Tests
+              </h3>
+              <Link href="/admin/mock-tests">
+                <Button size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-1" /> Add Test
+                </Button>
+              </Link>
+            </div>
+            {mockTests.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No tests yet. Use &quot;Add Test&quot; and set Track to{" "}
+                {trackLabel(sub.tag)}.
+              </p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {mockTests.map((t) => (
+                  <Card key={t.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{t.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between">
+                      <Badge variant="outline">{t._count.questions} Qs</Badge>
+                      <Link
+                        href={`/admin/mock-tests/${t.id}`}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Edit
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+       ))}
+
+      {materialSections.map((section) => (
+        <section key={section.category} className="space-y-4">
+          <h2 className="text-xl font-semibold">{section.label}</h2>
+          <p className="text-muted-foreground">
+            Add PPT / PDF / Video / Audio / Animation / Image resources for this
+            exam, organised by Subject and {section.category === "ARS" ? "Course" : "Chapter / Unit"}. These appear on the public exam-prep hub and the exam page.
+          </p>
+          <ExamMaterialManager
+            category={section.category}
+            showHeading={false}
+          />
+        </section>
+      ))}
+    </div>
+  );
+}
