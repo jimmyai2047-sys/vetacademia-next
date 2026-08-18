@@ -23,6 +23,7 @@ import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
+import SyllabusSidebar from "@/components/syllabus-sidebar";
 
 
 
@@ -107,6 +108,24 @@ export default async function SubjectPage({
   const theoryGrouped = groupByUnit(theoryChapters);
   const practicalGrouped = groupByUnit(practicalChapters);
 
+  // Sidebar data
+  const sidebarUnits: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[] = [];
+  let globalIdx = 0;
+  for (const [unit, chapters] of Object.entries(theoryGrouped)) {
+    sidebarUnits.push({
+      unit,
+      type: "theory",
+      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++globalIdx })),
+    });
+  }
+  for (const [unit, chapters] of Object.entries(practicalGrouped)) {
+    sidebarUnits.push({
+      unit,
+      type: "practical",
+      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++globalIdx })),
+    });
+  }
+
   const signedContents = new Map<string, (typeof subject.chapters)[number]["chapterContents"]>();
   await Promise.all(
     subject.chapters.map(async (ch) => {
@@ -123,56 +142,64 @@ export default async function SubjectPage({
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
-        <span>/</span>
-        <Link href={`/syllabus/${progSlug}`} className="hover:text-primary">
-          {subject.programme.name}
-        </Link>
-        <span>/</span>
-        <span className="text-foreground">{subject.name}</span>
-      </div>
+    <div className="min-h-screen">
+      {/* Sidebar */}
+      {!hasCourses && hasAccess && sidebarUnits.length > 0 && (
+        <SyllabusSidebar units={sidebarUnits} subjectName={subject.name} />
+      )}
 
-      {/* Header */}
-      <div className="mb-8">
-        <Link
-          href={`/syllabus/${progSlug}`}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to {subject.programme.name}
-        </Link>
-        <h1 className="text-3xl font-bold mb-2">{subject.name}</h1>
-        {subject.description && (
-          <p className="text-muted-foreground max-w-3xl">{subject.description}</p>
-        )}
-        <div className="flex items-center gap-4 mt-4 flex-wrap">
-          {subject.code && (
-            <Badge variant="secondary" className="gap-1">
-              <BookOpen className="h-3 w-3" />
-              {subject.code}
-            </Badge>
-          )}
-          {subject.year && <Badge variant="secondary">{subject.year}</Badge>}
-          {subject.semester && <Badge variant="outline">{subject.semester}</Badge>}
-          {subject.paper && <Badge variant="outline">{subject.paper}</Badge>}
-          <Badge variant="secondary" className="gap-1">
-            <FileText className="h-3 w-3" />
-            {hasCourses
-              ? `${subject.chapters.length} ${subject.chapters.length === 1 ? "Course" : "Courses"}`
-              : `${theoryChapters.length} Theory + ${practicalChapters.length} Practical`
-            }
-          </Badge>
-          {!hasCourses && (
-            <Badge variant="secondary" className="gap-1">
-              <Clock className="h-3 w-3" />
-              {subject.chapters.length} {subject.chapters.length === 1 ? "Chapter" : "Chapters"}
-            </Badge>
-          )}
-        </div>
-      </div>
+      {/* Main content */}
+      <div className={`${!hasCourses && hasAccess && sidebarUnits.length > 0 ? "lg:ml-64 xl:ml-72" : ""} transition-all`}>
+        <div className="container mx-auto px-4 py-8">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+            <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
+            <span>/</span>
+            <Link href={`/syllabus/${progSlug}`} className="hover:text-primary">
+              {subject.programme.name}
+            </Link>
+            <span>/</span>
+            <span className="text-foreground">{subject.name}</span>
+          </div>
+
+          {/* Header */}
+          <div className="mb-8">
+            <Link
+              href={`/syllabus/${progSlug}`}
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to {subject.programme.name}
+            </Link>
+            <h1 className="text-3xl font-bold mb-2">{subject.name}</h1>
+            {subject.description && (
+              <p className="text-muted-foreground max-w-3xl">{subject.description}</p>
+            )}
+            <div className="flex items-center gap-4 mt-4 flex-wrap">
+              {subject.code && (
+                <Badge variant="secondary" className="gap-1">
+                  <BookOpen className="h-3 w-3" />
+                  {subject.code}
+                </Badge>
+              )}
+              {subject.year && <Badge variant="secondary">{subject.year}</Badge>}
+              {subject.semester && <Badge variant="outline">{subject.semester}</Badge>}
+              {subject.paper && <Badge variant="outline">{subject.paper}</Badge>}
+              <Badge variant="secondary" className="gap-1">
+                <FileText className="h-3 w-3" />
+                {hasCourses
+                  ? `${subject.chapters.length} ${subject.chapters.length === 1 ? "Course" : "Courses"}`
+                  : `${theoryChapters.length} Theory + ${practicalChapters.length} Practical`
+                }
+              </Badge>
+              {!hasCourses && (
+                <Badge variant="secondary" className="gap-1">
+                  <Clock className="h-3 w-3" />
+                  {subject.chapters.length} {subject.chapters.length === 1 ? "Chapter" : "Chapters"}
+                </Badge>
+              )}
+            </div>
+          </div>
 
       {/* Content */}
       <Tabs defaultValue="syllabus" className="space-y-6">
@@ -253,7 +280,7 @@ export default async function SubjectPage({
                       </div>
                       <Accordion className="px-6">
                         {chapters.map((chapter, index) => (
-                          <AccordionItem key={chapter.id} value={chapter.id}>
+                          <AccordionItem key={chapter.id} value={chapter.id} id={`chapter-${chapter.id}`} className="scroll-mt-20">
                             <AccordionTrigger className="py-3.5 hover:no-underline">
                               <div className="flex items-center gap-3 w-full min-w-0">
                                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
@@ -314,7 +341,7 @@ export default async function SubjectPage({
                         </div>
                         <Accordion className="px-6">
                           {chapters.map((chapter, index) => (
-                            <AccordionItem key={chapter.id} value={chapter.id}>
+                            <AccordionItem key={chapter.id} value={chapter.id} id={`chapter-${chapter.id}`} className="scroll-mt-20">
                               <AccordionTrigger className="py-3">
                                 <div className="flex items-center gap-3">
                                   <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
@@ -401,6 +428,8 @@ export default async function SubjectPage({
           </div>
         </TabsContent>
       </Tabs>
+        </div>
+      </div>
     </div>
   );
 }
