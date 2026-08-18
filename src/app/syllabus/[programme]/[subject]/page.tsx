@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical, BookMarked } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
+import ChapterContentViewer from "@/components/chapter-content-viewer";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
 import { prepareChapterHtml } from "@/lib/chapter-images";
@@ -292,12 +293,12 @@ export default async function SubjectPage({
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="pb-6 pt-2">
-                              {isHtmlContent(chapter.content) ? (
-                                <div className="px-2">
-                                  <ProtectedHtml
-                                    html={htmlMap.get(chapter.id) || ""}
-                                  />
-                                </div>
+                              {isHtmlContent(chapter.content) || (signedContents.get(chapter.id)?.length ?? 0) > 0 ? (
+                                <ChapterContentViewer
+                                  htmlContent={htmlMap.get(chapter.id) || ""}
+                                  files={signedContents.get(chapter.id) ?? []}
+                                  chapterTitle={chapter.title}
+                                />
                               ) : chapter.content ? (
                                 <div className="px-2 text-muted-foreground whitespace-pre-wrap leading-relaxed">
                                   {chapter.content}
@@ -307,7 +308,6 @@ export default async function SubjectPage({
                                   Content coming soon...
                                 </div>
                               )}
-                              <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
                             </AccordionContent>
                           </AccordionItem>
                         ))}
@@ -351,12 +351,12 @@ export default async function SubjectPage({
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent className="pb-4">
-                                {isHtmlContent(chapter.content) ? (
-                                  <div className="pl-10">
-                                    <ProtectedHtml
-                                      html={htmlMap.get(chapter.id) || ""}
-                                    />
-                                  </div>
+                                {isHtmlContent(chapter.content) || (signedContents.get(chapter.id)?.length ?? 0) > 0 ? (
+                                  <ChapterContentViewer
+                                    htmlContent={htmlMap.get(chapter.id) || ""}
+                                    files={signedContents.get(chapter.id) ?? []}
+                                    chapterTitle={chapter.title}
+                                  />
                                 ) : chapter.content ? (
                                   <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
                                     {chapter.content}
@@ -366,7 +366,6 @@ export default async function SubjectPage({
                                     Content coming soon...
                                   </div>
                                 )}
-                                <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
                               </AccordionContent>
                             </AccordionItem>
                           ))}

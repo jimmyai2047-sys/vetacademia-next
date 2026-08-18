@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
-import ChapterResources from "@/components/chapter-resources";
+import ChapterContentViewer from "@/components/chapter-content-viewer";
 import { ArrowLeft, BookOpen } from "lucide-react";
 
 interface Props {
@@ -22,7 +22,7 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
   return (
     <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a]">
       {/* Pre-reader screen */}
-      <div className="max-w-2xl mx-auto px-4 py-12">
+      <div className="max-w-3xl mx-auto px-4 py-12">
         <Link
           href={`/syllabus/${programmeSlug}/${subjectId}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-8"
@@ -31,7 +31,7 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
           {subjectName} — {programmeName}
         </Link>
 
-        <div className="text-center">
+        <div className="text-center mb-10">
           <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg">
             <BookOpen className="h-10 w-10 text-white" />
           </div>
@@ -47,12 +47,16 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
           </button>
         </div>
 
-        {resources.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-lg font-semibold mb-4">Attachments</h2>
-            <ChapterResources contents={resources} />
+        {/* Content/PPT/Video tabs */}
+        {(html && html.replace(/<[^>]*>/g, "").trim().length > 0) || resources.length > 0 ? (
+          <div className="mt-8">
+            <ChapterContentViewer
+              htmlContent={html}
+              files={resources}
+              chapterTitle={title}
+            />
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Kindle Reader */}
