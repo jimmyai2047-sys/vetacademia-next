@@ -245,36 +245,38 @@ export default async function SubjectPage({
                 </div>
                 {Object.keys(theoryGrouped).length > 0 ? (
                   Object.entries(theoryGrouped).map(([unit, chapters]) => (
-                    <div key={unit} className="border rounded-lg overflow-hidden mb-4">
-                      <div className="bg-muted/50 px-6 py-3 border-b">
-                        <h3 className="text-base font-semibold flex items-center gap-2">
-                          <Badge variant="outline">{unit}</Badge>
+                    <div key={unit} className="border rounded-xl overflow-hidden mb-6 shadow-sm">
+                      <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-3.5 border-b">
+                        <h3 className="text-base font-bold flex items-center gap-2.5">
+                          <Badge variant="outline" className="text-xs font-bold px-2.5 py-0.5">{unit}</Badge>
                         </h3>
                       </div>
                       <Accordion className="px-6">
                         {chapters.map((chapter, index) => (
                           <AccordionItem key={chapter.id} value={chapter.id}>
-                            <AccordionTrigger className="py-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                            <AccordionTrigger className="py-3.5 hover:no-underline">
+                              <div className="flex items-center gap-3 w-full min-w-0">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
                                   {index + 1}
                                 </div>
-                                <span className="text-left">{chapter.title}</span>
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-left font-semibold text-[0.95rem] leading-snug block truncate">{chapter.title}</span>
+                                </div>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="pb-4">
+                            <AccordionContent className="pb-6 pt-2">
                               {isHtmlContent(chapter.content) ? (
-                                <div className="pl-10">
+                                <div className="pl-11 border-l-2 border-primary/20 ml-4">
                                   <ProtectedHtml
                                     html={htmlMap.get(chapter.id) || ""}
                                   />
                                 </div>
                               ) : chapter.content ? (
-                                <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
+                                <div className="pl-11 text-muted-foreground whitespace-pre-wrap leading-relaxed">
                                   {chapter.content}
                                 </div>
                               ) : (
-                                <div className="pl-10 text-muted-foreground italic">
+                                <div className="pl-11 text-muted-foreground italic">
                                   Content coming soon...
                                 </div>
                               )}
