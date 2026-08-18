@@ -6,7 +6,7 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Extension } from "@tiptap/core";
 import { TableKit } from "@tiptap/extension-table/kit";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -19,8 +19,11 @@ import {
   ListOrdered,
   Image as ImageIcon,
   Table as TableIcon,
+  FileUp,
+  AlertTriangle,
 } from "lucide-react";
 import { compressDataUrl, compressAllDataUrls } from "@/lib/client-image-compress";
+import { importDocxAsHtml } from "@/lib/docx-import";
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -36,77 +39,13 @@ async function insertImageAsBase64(editor: Editor | null, file: File) {
   editor?.chain().focus().setImage({ src: dataUrl }).run();
 }
 
-async function readClipboardImages(): Promise<File[]> {
-  try {
-    if (!navigator.clipboard?.read) return [];
-    const items = await navigator.clipboard.read();
-    const files: File[] = [];
-    for (const item of items) {
-      for (const type of item.types) {
-        if (type.startsWith("image/")) {
-          const blob = await item.getType(type);
-          const ext = type.split("/")[1] || "png";
-          files.push(new File([blob], `clipboard.${ext}`, { type }));
-        }
-      }
-    }
-    return files;
-  } catch {
-    return [];
-  }
-}
-
-async function handleRichContent(
-  editor: Editor | null,
-  html: string | null,
-  imageFiles: File[]
-) {
-  if (html) {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const imgs = Array.from(doc.querySelectorAll("img"));
-    const brokenImgs = imgs.filter((img) => {
-      const src = img.getAttribute("src") || "";
-      return !src || /^file:/i.test(src) || /^blob:/i.test(src);
-    });
-
-    if (brokenImgs.length > 0 && imageFiles.length === 0) {
-      const clipboardFiles = await readClipboardImages();
-      if (clipboardFiles.length > 0) imageFiles = clipboardFiles;
-    }
-
-    let fileIdx = 0;
-    const tasks: Promise<void>[] = [];
-    for (const img of imgs) {
-      const src = img.getAttribute("src") || "";
-      const broken = !src || /^file:/i.test(src) || /^blob:/i.test(src);
-      if (broken && fileIdx < imageFiles.length) {
-        const file = imageFiles[fileIdx++];
-        tasks.push(
-          fileToDataUrl(file).then(async (url) => {
-            const compressed = await compressDataUrl(url);
-            img.setAttribute("src", compressed);
-            img.removeAttribute("srcset");
-          })
-        );
-      }
-    }
-    await Promise.all(tasks);
-
-    doc.querySelectorAll("img").forEach((img) => {
-      const src = img.getAttribute("src") || "";
-      if (!src || /^file:/i.test(src) || /^blob:/i.test(src)) {
-        img.remove();
-      }
-    });
-
-    const finalHtml = doc.body.innerHTML;
-    if (finalHtml) editor?.commands.insertContent(finalHtml);
-    for (; fileIdx < imageFiles.length; fileIdx++) {
-      insertImageAsBase64(editor, imageFiles[fileIdx]);
-    }
-  } else {
-    imageFiles.forEach((f) => insertImageAsBase64(editor, f));
-  }
+function hasBrokenImages(html: string): boolean {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const imgs = Array.from(doc.querySelectorAll("img"));
+  return imgs.some((img) => {
+    const src = img.getAttribute("src") || "";
+    return !src || /^file:/i.test(src) || /^blob:/i.test(src);
+  });
 }
 
 // Keep inline `style` attributes (e.g. colours, alignment, fonts) coming from
@@ -157,7 +96,19 @@ export default function ChapterRichEditor({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [wordWarning, setWordWarning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const docxRef = useRef<HTMLInputElement>(null);
+
+  const insertHtml = useCallback(
+    (html: string) => {
+      const editor = instanceRef.current;
+      if (!editor) return;
+      editor.commands.setContent(html);
+    },
+    []
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -181,12 +132,25 @@ export default function ChapterRichEditor({
         const clip = event.clipboardData;
         if (!clip) return false;
         const html = clip.getData("text/html") || null;
-        const imageFiles = Array.from(clip.files || []).filter((f) =>
-          f.type.startsWith("image/")
-        );
-        if (!html && imageFiles.length === 0) return false;
+        if (!html) return false;
         event.preventDefault();
-        handleRichContent(editor, html, imageFiles);
+
+        if (hasBrokenImages(html)) {
+          setWordWarning(true);
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          doc.querySelectorAll("img").forEach((img) => {
+            const src = img.getAttribute("src") || "";
+            if (!src || /^file:/i.test(src) || /^blob:/i.test(src)) {
+              img.remove();
+            }
+          });
+          const cleanHtml = doc.body.innerHTML;
+          if (cleanHtml.trim()) {
+            editor?.commands.insertContent(cleanHtml);
+          }
+        } else {
+          editor?.commands.insertContent(html);
+        }
         return true;
       },
       handleDrop: (_view, event) => {
@@ -197,11 +161,33 @@ export default function ChapterRichEditor({
         );
         if (imageFiles.length === 0) return false;
         event.preventDefault();
-        handleRichContent(editor, null, imageFiles);
+        imageFiles.forEach((f) => insertImageAsBase64(editor, f));
         return true;
       },
     },
   });
+
+  // Keep a stable ref so insertHtml can access the editor instance
+  const instanceRef = useRef(editor);
+  instanceRef.current = editor;
+
+  async function handleDocxImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setImporting(true);
+    setError(null);
+    try {
+      const html = await importDocxAsHtml(f);
+      insertHtml(html);
+      setWordWarning(false);
+      setSaved(false);
+    } catch (err: any) {
+      setError(err?.message || "Word file import failed");
+    } finally {
+      setImporting(false);
+      if (docxRef.current) docxRef.current.value = "";
+    }
+  }
 
   async function save() {
     if (!editor) return;
@@ -243,6 +229,53 @@ export default function ChapterRichEditor({
       <label className="text-xs font-medium text-muted-foreground">
         Chapter Content (rich text + images)
       </label>
+
+      {wordWarning && (
+        <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950">
+          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <div className="flex-1 space-y-1">
+            <p className="font-medium text-amber-800 dark:text-amber-200">
+              Word se paste kiya gaya hai — images paste nahi ho sakti.
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-300">
+              Images ke liye Word file (.docx) select karein — mammoth server-side images extract karega.
+            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                ref={docxRef}
+                type="file"
+                accept=".doc,.docx"
+                className="hidden"
+                onChange={handleDocxImport}
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs"
+                disabled={importing}
+                onClick={() => docxRef.current?.click()}
+              >
+                {importing ? (
+                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <FileUp className="h-3 w-3 mr-1" />
+                )}
+                {importing ? "Importing..." : "Import Word File (.docx)"}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs"
+                onClick={() => setWordWarning(false)}
+              >
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-1 mb-1">
         <Button
