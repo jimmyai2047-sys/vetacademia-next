@@ -54,6 +54,13 @@ export const ALL_ROLES: readonly string[] = [
   ...EXPERT_ROLES,
 ];
 
+// Roles that may be claimed via public self-registration. ADMIN is intentionally
+// excluded — admins must be promoted by an existing admin, never self-assigned
+// (otherwise anyone could register as a full admin).
+export const SELF_REGISTERABLE_ROLES: readonly string[] = ALL_ROLES.filter(
+  (r) => r !== ADMIN
+);
+
 export type RoleGroup =
   | "STUDENT"
   | "ANIMAL_OWNER"

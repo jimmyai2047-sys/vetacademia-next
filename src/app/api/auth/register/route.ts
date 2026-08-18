@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import {
-  ALL_ROLES,
+  SELF_REGISTERABLE_ROLES,
   ANIMAL_OWNER,
   isExpertRole,
 } from "@/lib/roles";
@@ -22,9 +22,13 @@ const registerSchema = z
       .pipe(
         z
           .string()
-          .refine((v) => (ALL_ROLES as readonly string[]).includes(v), {
-            message: "Invalid role",
-          })
+          .refine(
+            (v) =>
+              (SELF_REGISTERABLE_ROLES as readonly string[]).includes(v),
+            {
+              message: "Invalid or unauthorized role",
+            }
+          )
       )
       .default("STUDENT"),
     programme: z.string().optional(),

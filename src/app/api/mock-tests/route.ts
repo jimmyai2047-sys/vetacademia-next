@@ -6,9 +6,14 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const subjectId = searchParams.get("subjectId");
     const difficulty = searchParams.get("difficulty");
+    const limit = Math.min(Number(searchParams.get("limit")) || 100, 200);
+    const skip = Math.max(Number(searchParams.get("offset")) || 0, 0);
 
     const where: Record<string, unknown> = {};
     if (subjectId) where.subjectId = subjectId;
+    if (difficulty) {
+      where.title = { contains: difficulty, mode: "insensitive" };
+    }
 
     const mockTests = await prisma.mockTest.findMany({
       where,
@@ -19,13 +24,11 @@ export async function GET(req: Request) {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: limit,
+      skip,
     });
 
-    const filtered = difficulty
-      ? mockTests.filter((t: (typeof mockTests)[number]) => t.title.toLowerCase().includes(difficulty.toLowerCase()))
-      : mockTests;
-
-    return NextResponse.json(filtered);
+    return NextResponse.json(mockTests);
   } catch (error) {
     console.error("Mock tests API error:", error);
     return NextResponse.json(
