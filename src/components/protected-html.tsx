@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import DOMPurify, { type Config } from "dompurify";
 
 const SANITIZE_OPTS: Config = {
@@ -20,25 +20,32 @@ const SANITIZE_OPTS: Config = {
 };
 
 export default function ProtectedHtml({ html }: { html: string }) {
-  const [clean, setClean] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!html) {
-      setClean("");
-      return;
-    }
-    setClean(DOMPurify.sanitize(html, SANITIZE_OPTS));
+    if (!ref.current || !html) return;
+    const clean = DOMPurify.sanitize(html, SANITIZE_OPTS);
+    ref.current.innerHTML = clean;
+
+    // Wrap every <table> in a scrollable div
+    ref.current.querySelectorAll("table").forEach((table) => {
+      if (table.parentElement?.classList.contains("table-wrap")) return;
+      const wrap = document.createElement("div");
+      wrap.className = "table-wrap";
+      table.parentNode?.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
   }, [html]);
 
   return (
     <div
+      ref={ref}
       className="chapter-content"
       style={{ userSelect: "none", WebkitUserSelect: "none" }}
       onContextMenu={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
       onCut={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
-      dangerouslySetInnerHTML={{ __html: clean }}
     />
   );
 }

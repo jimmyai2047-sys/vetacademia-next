@@ -70,6 +70,7 @@ function buildPages(blocks: string[], maxChars: number = 3000): string[][] {
 
 export default function ChapterReader({ title, html, onClose }: ChapterReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [pages, setPages] = useState<string[][]>([[]]);
   const [page, setPage] = useState(0);
   const [fontScale, setFontScale] = useState(1);
@@ -81,6 +82,18 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
     setPages(p);
     setPage(0);
   }, [html, fontScale]);
+
+  // Wrap tables in scrollable div after render
+  useEffect(() => {
+    if (!contentRef.current) return;
+    contentRef.current.querySelectorAll("table").forEach((table) => {
+      if (table.parentElement?.classList.contains("table-wrap")) return;
+      const wrap = document.createElement("div");
+      wrap.className = "table-wrap";
+      table.parentNode?.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
+  }, [page, fontScale]);
 
   const goNext = useCallback(() => {
     setPage((p) => Math.min(p + 1, totalPages - 1));
@@ -150,7 +163,7 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
       {/* Content area */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-hidden relative"
+        className="flex-1 overflow-y-auto relative"
         onClick={(e) => {
           const rect = containerRef.current?.getBoundingClientRect();
           if (!rect) return;
@@ -159,9 +172,10 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
           else if (x > rect.width * 0.7) goNext();
         }}
       >
-        <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6">
+        <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6 overflow-y-auto">
           <div
-            className="chapter-content h-full overflow-hidden"
+            ref={contentRef}
+            className="chapter-content"
             style={{ fontSize: `${fontScale}rem`, lineHeight: "1.85" }}
             dangerouslySetInnerHTML={{ __html: pages[page]?.join("") || "" }}
           />

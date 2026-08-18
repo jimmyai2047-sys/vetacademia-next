@@ -266,17 +266,17 @@ export default async function SubjectPage({
                             </AccordionTrigger>
                             <AccordionContent className="pb-6 pt-2">
                               {isHtmlContent(chapter.content) ? (
-                                <div className="pl-11 border-l-2 border-primary/20 ml-4">
+                                <div className="px-2">
                                   <ProtectedHtml
                                     html={htmlMap.get(chapter.id) || ""}
                                   />
                                 </div>
                               ) : chapter.content ? (
-                                <div className="pl-11 text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                                <div className="px-2 text-muted-foreground whitespace-pre-wrap leading-relaxed">
                                   {chapter.content}
                                 </div>
                               ) : (
-                                <div className="pl-11 text-muted-foreground italic">
+                                <div className="px-2 text-muted-foreground italic">
                                   Content coming soon...
                                 </div>
                               )}

@@ -206,6 +206,7 @@
   line-height: 1.85;
   color: var(--foreground);
   word-break: break-word;
+  overflow-wrap: break-word;
 }
 .chapter-content > *:first-child { margin-top: 0; }
 .chapter-content > *:last-child { margin-bottom: 0; }
@@ -248,16 +249,17 @@
   color: var(--foreground);
 }
 
-/* Paragraphs */
+/* Paragraphs — justified */
 .chapter-content p {
   margin: 0.9em 0;
   text-align: justify;
+  hyphens: auto;
 }
 
 /* Lists */
 .chapter-content ul { list-style: disc; padding-left: 1.8em; margin: 0.8em 0; }
 .chapter-content ol { list-style: decimal; padding-left: 1.8em; margin: 0.8em 0; }
-.chapter-content li { margin: 0.3em 0; line-height: 1.75; }
+.chapter-content li { margin: 0.3em 0; line-height: 1.75; text-align: justify; }
 
 /* ── Images & Figures ─────────────────────────────────────────────────── */
 .chapter-content img {
@@ -269,9 +271,12 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .chapter-content figure {
-  margin: 1.5em auto;
+  margin: 1.8em auto;
   text-align: center;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .chapter-content figure img {
   margin: 0 auto;
@@ -279,11 +284,14 @@
   border-radius: 8px;
 }
 .chapter-content figcaption {
-  font-size: 0.82em;
+  font-size: 0.85em;
   font-style: italic;
   color: var(--primary);
-  margin-top: 0.5em;
-  line-height: 1.4;
+  margin-top: 0.6em;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 100%;
+  padding: 0 1em;
 }
 
 /* Links */
@@ -294,7 +302,7 @@
   border-left: 4px solid var(--primary);
   padding: 0.6em 1em;
   margin: 1.2em 0;
-  background: var(--muted)/50;
+  background: var(--muted);
   border-radius: 0 6px 6px 0;
   color: var(--muted-foreground);
 }
@@ -309,21 +317,25 @@
 .chapter-content code { padding: 0.15em 0.35em; font-size: 0.9em; }
 .chapter-content pre { padding: 0.85em 1em; overflow-x: auto; margin: 1em 0; }
 
-/* ── Tables ───────────────────────────────────────────────────────────── */
+/* ── Tables — full width, scrollable on mobile ─────────────────────────── */
 .chapter-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5em 0;
   font-size: 0.92rem;
   display: table;
-  overflow: visible;
+  table-layout: auto;
 }
-.chapter-content table-wrapper,
-.chapter-content div[style*="overflow"] {
+.chapter-content table-wrap {
   overflow-x: auto;
   margin: 1.5em 0;
   border-radius: 8px;
   border: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+}
+.chapter-content table-wrap table {
+  margin: 0;
+  border: none;
 }
 .chapter-content caption {
   caption-side: top;
@@ -338,7 +350,7 @@
   border: 1px solid var(--border);
   padding: 0.6em 0.9em;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
   color: var(--foreground);
 }
 .chapter-content th {
@@ -348,10 +360,10 @@
   white-space: nowrap;
 }
 .chapter-content tr:nth-child(even) {
-  background: var(--muted)/30;
+  background: rgba(0,0,0,0.03);
 }
 .chapter-content tr:hover {
-  background: var(--muted)/60;
+  background: rgba(0,0,0,0.06);
 }
 
 /* Horizontal rule */
