@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical, BookMarked } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
@@ -265,6 +265,13 @@ export default async function SubjectPage({
                             <AccordionContent className="pb-4">
                               {isHtmlContent(chapter.content) ? (
                                 <div className="pl-10">
+                                  <Link
+                                    href={`/reader/${chapter.id}`}
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:text-amber-800 mb-3 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all"
+                                  >
+                                    <BookMarked className="h-3.5 w-3.5" />
+                                    Open in Reader
+                                  </Link>
                                   <ProtectedHtml
                                     html={htmlMap.get(chapter.id) || ""}
                                   />
@@ -323,6 +330,13 @@ export default async function SubjectPage({
                             <AccordionContent className="pb-4">
                               {isHtmlContent(chapter.content) ? (
                                 <div className="pl-10">
+                                  <Link
+                                    href={`/reader/${chapter.id}`}
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:text-amber-800 mb-3 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all"
+                                  >
+                                    <BookMarked className="h-3.5 w-3.5" />
+                                    Open in Reader
+                                  </Link>
                                   <ProtectedHtml
                                     html={htmlMap.get(chapter.id) || ""}
                                   />
