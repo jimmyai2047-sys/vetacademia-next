@@ -83,9 +83,30 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
     setPage(0);
   }, [html, fontScale]);
 
-  // Wrap tables in scrollable div after render
+  // Post-process: wrap images+captions in <figure>, tables in scrollable div
   useEffect(() => {
     if (!contentRef.current) return;
+
+    // Wrap images + captions
+    contentRef.current.querySelectorAll("p > img, img").forEach((img) => {
+      if (img.closest("figure")) return;
+      const imgP = img.parentElement?.tagName === "P" ? img.parentElement : img;
+      const nextP = imgP?.nextElementSibling;
+      if (!nextP || nextP.tagName !== "P") return;
+      const text = nextP.textContent?.trim() || "";
+      const isCaption = /चित्र|figure|fig\.|diagram|map|chart/i.test(text) && nextP.querySelectorAll("img").length === 0;
+      if (!isCaption) return;
+      const figure = document.createElement("figure");
+      figure.appendChild(imgP.cloneNode(true));
+      const fc = document.createElement("figcaption");
+      fc.innerHTML = nextP.innerHTML;
+      figure.appendChild(fc);
+      imgP.parentNode?.insertBefore(figure, imgP);
+      imgP.remove();
+      nextP.remove();
+    });
+
+    // Wrap tables
     contentRef.current.querySelectorAll("table").forEach((table) => {
       if (table.parentElement?.classList.contains("table-wrap")) return;
       const wrap = document.createElement("div");
