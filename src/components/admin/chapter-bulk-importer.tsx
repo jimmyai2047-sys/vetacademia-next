@@ -30,33 +30,27 @@ async function uploadDataUrl(dataUrl: string): Promise<string> {
 }
 
 async function processImagesInHtml(html: string, onProgress: (msg: string) => void): Promise<string> {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const imgs = doc.querySelectorAll("img");
-  const dataUrls: string[] = [];
-  imgs.forEach((img) => {
-    const src = img.getAttribute("src") || "";
-    if (src.startsWith("data:image/")) dataUrls.push(src);
-  });
-  if (dataUrls.length === 0) return html;
+  const regex = /<img\b[^>]*\ssrc=["'](data:image\/[^"']+)["'][^>]*>/gi;
+  const dataUrls = new Set<string>();
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(html)) !== null) dataUrls.add(m[1]);
+  if (dataUrls.size === 0) return html;
 
   const urlMap = new Map<string, string>();
-  for (let i = 0; i < dataUrls.length; i++) {
-    const dataUrl = dataUrls[i];
+  const arr = Array.from(dataUrls);
+  for (let i = 0; i < arr.length; i++) {
+    const dataUrl = arr[i];
     if (urlMap.has(dataUrl)) continue;
-    onProgress(`Uploading image ${i + 1}/${dataUrls.length}...`);
+    onProgress(`Uploading image ${i + 1}/${arr.length}...`);
     const blobUrl = await uploadDataUrl(dataUrl);
     urlMap.set(dataUrl, blobUrl);
   }
 
-  imgs.forEach((img) => {
-    const src = img.getAttribute("src") || "";
-    const mapped = urlMap.get(src);
-    if (mapped && mapped !== src) {
-      img.setAttribute("src", mapped);
-      img.removeAttribute("srcset");
-    }
-  });
-  return doc.body.innerHTML;
+  let out = html;
+  for (const [old, fresh] of urlMap) {
+    out = out.split(old).join(fresh);
+  }
+  return out;
 }
 
 export default function ChapterBulkImporter({
@@ -66,10 +60,11 @@ export default function ChapterBulkImporter({
 }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState("");
   const [replace, setReplace] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState<number | null>(null);
+  const [done, setDone] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -79,13 +74,17 @@ export default function ChapterBulkImporter({
       setError("Sirf .docx file upload karein.");
       return;
     }
+    if (!title.trim()) {
+      setError("Pehle chapter title daalein.");
+      return;
+    }
 
     setCreating(true);
     setError(null);
-    setDone(null);
+    setDone(false);
 
     try {
-      setStatus("File parse ho rahi hai browser mein...");
+      setStatus("File parse ho rahi hai...");
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml(
         { arrayBuffer },
@@ -97,79 +96,48 @@ export default function ChapterBulkImporter({
         return;
       }
 
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      const nodes = doc.body.childElementCount === 1
-        ? Array.from(doc.body.firstElementChild!.childNodes)
-        : Array.from(doc.body.childNodes);
+      setStatus("Images upload ho rahi hain...");
+      const cleanedHtml = await processImagesInHtml(html, (msg) => setStatus(msg));
 
-      const isHeading = (n: Node) =>
-        n.nodeType === 1 && /^H[1-4]$/.test((n as Element).tagName);
+      setStatus("Chapter save ho raha hai...");
 
-      type Section = { title: string; nodes: Node[] };
-      const sections: Section[] = [];
-      let cur: Section | null = null;
-      const flush = () => {
-        if (!cur) return;
-        sections.push(cur);
-        cur = null;
-      };
-      nodes.forEach((n) => {
-        if (isHeading(n)) {
-          flush();
-          cur = {
-            title: (n as Element).textContent?.trim() || `Unit ${sections.length + 1}`,
-            nodes: [],
-          };
-        } else {
-          if (!cur) cur = { title: sections.length === 0 ? "Introduction" : `Unit ${sections.length + 1}`, nodes: [] };
-          cur.nodes.push(n);
-        }
+      if (replace) {
+        await fetch(`/api/admin/chapters/import-docx`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subjectId, replace: true }),
+        }).catch(() => {});
+      }
+
+      const res = await fetch("/api/admin/chapters", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectId,
+          chapters: [{
+            title: title.trim(),
+            content: cleanedHtml,
+            unitNumber: 1,
+            type: null,
+          }],
+        }),
       });
-      flush();
 
-      if (sections.length === 0) {
-        setError("File mein headings nahi mili.");
+      const text = await res.text();
+      let d: Record<string, unknown>;
+      try {
+        d = JSON.parse(text);
+      } catch {
+        setError(`Server error (${res.status}): ${text.slice(0, 300)}`);
         return;
       }
 
-      if (replace) {
-        setStatus("Purane chapters delete ho rahe hain...");
-        await fetch(`/api/admin/chapters`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subjectId }),
-        });
+      if (!res.ok) {
+        setError((d.error as string) || "Chapter save nahi ho paya.");
+        return;
       }
 
-      let createdCount = 0;
-      for (let i = 0; i < sections.length; i++) {
-        const section = sections[i];
-        const div = doc.createElement("div");
-        section.nodes.forEach((n) => div.appendChild(n.cloneNode(true)));
-        let chapterHtml = div.innerHTML;
-
-        setStatus(`Chapter ${i + 1}/${sections.length}: "${section.title}" - images upload ho rahi hain...`);
-        chapterHtml = await processImagesInHtml(chapterHtml, (msg) => setStatus(`Chapter ${i + 1}/${sections.length}: "${section.title}" - ${msg}`));
-
-        setStatus(`Chapter ${i + 1}/${sections.length}: "${section.title}" save ho raha hai...`);
-        const res = await fetch("/api/admin/chapters", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subjectId,
-            chapters: [{
-              title: section.title,
-              content: chapterHtml,
-              unitNumber: i + 1,
-              type: null,
-            }],
-          }),
-        });
-
-        if (res.ok) createdCount++;
-      }
-
-      setDone(createdCount);
+      setDone(true);
       setStatus(null);
       router.refresh();
     } catch (err) {
@@ -186,13 +154,24 @@ export default function ChapterBulkImporter({
     <div className="rounded-xl border p-5 bg-amber-50/40 space-y-3">
       <div className="flex items-center gap-2">
         <Layers className="h-5 w-5 text-amber-600" />
-        <h2 className="font-semibold">Bulk Import — .docx file upload karein</h2>
+        <h2 className="font-semibold">Upload .docx Chapter</h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Apni Word (.docx) file select karein. File browser mein mammoth.js se
-        parse hogi, images automatically upload ho jayengi, aur headings se
-        chapters split hoke save ho jayenge.
+        Word file select karein. Browser mein parse hogi, images automatically
+        upload ho jayengi, aur ek chapter mein save hoga.
       </p>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Chapter Title *</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. अध्याय 1- राजस्थान में पशुपालन का आर्थिक महत्व"
+          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+          disabled={creating}
+        />
+      </div>
 
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
@@ -212,9 +191,9 @@ export default function ChapterBulkImporter({
           <Loader2 className="h-3.5 w-3.5 animate-spin" /> {status}
         </p>
       )}
-      {done !== null && (
+      {done && (
         <p className="text-sm text-green-600 flex items-center gap-2">
-          <Check className="h-4 w-4" /> {done} chapters successfully create ho gaye!
+          <Check className="h-4 w-4" /> Chapter successfully save ho gaya!
         </p>
       )}
       {error && (
