@@ -19,6 +19,10 @@ const noto = Noto_Sans({
   display: "swap",
 });
 
+// Render all routes dynamically so the build never depends on a live DB
+// connection (Vercel build environment can't always reach Neon at build time).
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://vetacademia-next.vercel.app"),
   title: {
