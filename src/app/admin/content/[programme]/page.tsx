@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,6 @@ export default async function ProgrammeContentPage({
 }: {
   params: Promise<{ programme: string }>;
 }) {
-  await requireAdmin();
   const { programme: slug } = await params;
 
   const programme = await prisma.programme.findFirst({

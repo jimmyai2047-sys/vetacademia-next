@@ -1,10 +1,8 @@
 import PostManager from "@/components/admin/post-manager";
-import { requireAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPostsPage() {
-  await requireAdmin();
   return (
     <div className="space-y-6">
       <div>

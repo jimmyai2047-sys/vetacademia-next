@@ -4,6 +4,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    const session = await getAdminSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const classes = await prisma.liveClass.findMany({
       orderBy: [{ scheduledAt: "desc" }],
       include: { _count: { select: { messages: true } } },

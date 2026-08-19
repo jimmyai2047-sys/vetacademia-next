@@ -3,7 +3,6 @@
 };
 
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/admin";
 import PlanEditor from "@/components/admin/plan-editor";
 import ReportPriceEditor from "@/components/admin/report-price-editor";
 import PlanCreateForm from "@/components/admin/plan-create-form";
@@ -13,7 +12,6 @@ import PlanCreateForm from "@/components/admin/plan-create-form";
 export const dynamic = "force-dynamic";
 
 export default async function AdminPricingPage() {
-  await requireAdmin();
   const plans = await prisma.plan.findMany({ orderBy: { sortOrder: "asc" } });
 
   const fullCourses = plans.filter(

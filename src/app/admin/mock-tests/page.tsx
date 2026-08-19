@@ -1,10 +1,8 @@
 import MockTestManager from "@/components/admin/mock-test-manager";
-import { requireAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminMockTestsPage() {
-  await requireAdmin();
   return (
     <div className="space-y-6">
       <div>

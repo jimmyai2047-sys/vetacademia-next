@@ -1,11 +1,8 @@
-import { requireAdmin } from "@/lib/admin";
 import LiveClassManager from "@/components/admin/live-class-manager";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLiveClassesPage() {
-  await requireAdmin();
-
   return (
     <div className="space-y-6">
       <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Users, ArrowLeft, Ban, Trash2 } from "lucide-react";
+import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -76,9 +76,15 @@ function roleColor(role: string): string {
 export default function UsersClient({
   users,
   currentUserId,
+  page,
+  totalPages,
+  totalCount,
 }: {
   users: User[];
   currentUserId: string;
+  page: number;
+  totalPages: number;
+  totalCount: number;
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -350,6 +356,42 @@ export default function UsersClient({
               )}
             </TableBody>
           </Table>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t mt-4">
+              <p className="text-sm text-muted-foreground">
+                Page {page} of {totalPages} ({totalCount} users total)
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("page", String(page - 1));
+                    window.location.href = url.toString();
+                  }}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= totalPages}
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("page", String(page + 1));
+                    window.location.href = url.toString();
+                  }}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

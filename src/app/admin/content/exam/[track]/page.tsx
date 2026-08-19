@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { getExamTrack, trackLabel } from "@/lib/exam-tracks";
@@ -23,7 +22,6 @@ export default async function ExamContentPage({
 }: {
   params: Promise<{ track: string }>;
 }) {
-  await requireAdmin();
   const { track } = await params;
   const trackInfo = getExamTrack(track);
   if (!trackInfo) notFound();

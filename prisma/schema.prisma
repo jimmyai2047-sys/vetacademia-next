@@ -553,3 +553,11 @@ model ChatMessage {
   @@index([liveClassId, createdAt])
   @@index([userId])
 }
+
+// ==================== SETTINGS ====================
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
