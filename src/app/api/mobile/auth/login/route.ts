@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { signToken } from "@/lib/mobileAuth";
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
+      token: signToken(user.id),
       user: {
         id: user.id,
         name: user.name,

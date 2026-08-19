@@ -405,6 +405,22 @@ model Flashcard {
   @@index([tag])
 }
 
+model Doubt {
+  id         String   @id @default(cuid())
+  userId     String
+  subject    String?
+  question   String
+  status     String   @default("OPEN") // OPEN | ANSWERED
+  answer     String?
+  answeredBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 // ==================== CONSULTATIONS ====================
 
 model Expert {
