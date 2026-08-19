@@ -33,7 +33,6 @@ export async function POST(req: Request) {
         password: hashed,
         role: (data.role || "STUDENT").toUpperCase(),
         programme: data.programme,
-        emailVerified: true,
       },
     });
 
