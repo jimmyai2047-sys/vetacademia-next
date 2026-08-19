@@ -28,7 +28,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["sharp"],
+  serverExternalPackages: ["sharp", "@prisma/adapter-pg", "pg"],
   experimental: {
     // Disable Turbopack's persistent filesystem cache for builds. The cache
     // uses RocksDB SST files which fail to write under paths containing
