@@ -388,6 +388,23 @@ model FlashcardProgress {
   @@index([subjectId])
 }
 
+model Flashcard {
+  id         String   @id @default(cuid())
+  front      String // term / question shown first
+  back       String // answer / explanation on flip
+  hint       String?
+  subjectId  String?
+  chapterId  String?
+  tag        String? // topic / category
+  difficulty Int?    @default(2) // 1 easy, 2 medium, 3 hard
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([chapterId])
+  @@index([tag])
+}
+
 // ==================== CONSULTATIONS ====================
 
 model Expert {
