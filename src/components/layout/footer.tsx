@@ -23,13 +23,17 @@ const footerLinks = {
     { name: "Contact Us", href: "/contact" },
     { name: "FAQs", href: "/faqs" },
   ],
+  legal: [
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+  ],
 };
 
 export default function Footer() {
   return (
     <footer className="border-t bg-muted/50">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="inline-block">
@@ -98,6 +102,23 @@ export default function Footer() {
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="font-semibold mb-4">Legal</h3>
+            <ul className="space-y-2">
+              {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}

@@ -20,7 +20,11 @@ const noto = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "VetAcademia | Unified Veterinary Education Portal",
+  metadataBase: new URL("https://vetacademia-next.vercel.app"),
+  title: {
+    default: "VetAcademia | Unified Veterinary Education Portal",
+    template: "%s | VetAcademia",
+  },
   description:
     "India's comprehensive veterinary education platform. Access B.V.Sc & A.H., M.V.Sc, Ph.D curricula, mock tests, study materials, and expert consultations for veterinary students and professionals.",
   keywords: [
@@ -33,13 +37,25 @@ export const metadata: Metadata = {
     "VetAcademia",
     "veterinary courses",
     "animal science",
+    "AHDP",
+    "previous year papers",
+    "mock tests",
   ],
+  robots: { index: true, follow: true },
   openGraph: {
     title: "VetAcademia | Unified Veterinary Education Portal",
     description:
       "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
+    url: "https://vetacademia-next.vercel.app",
     type: "website",
     siteName: "VetAcademia",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VetAcademia | Unified Veterinary Education Portal",
+    description:
+      "India's comprehensive veterinary education platform for veterinary students and professionals.",
   },
   icons: {
     icon: [
