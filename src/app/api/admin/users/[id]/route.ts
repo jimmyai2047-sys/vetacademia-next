@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { STUDENT, ANIMAL_OWNER, GUEST, ADMIN, EXPERT_ROLES } from "@/lib/roles";
+import { requireAdminApi } from "@/lib/admin-api";
+import { logAudit } from "@/lib/audit";
 
 const VALID_ROLES = new Set<string>([
   STUDENT,
@@ -15,10 +16,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getAdminSession();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAdminApi(req, { strict: true });
+  if ("error" in auth) return auth.error;
 
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
@@ -27,8 +26,7 @@ export async function PATCH(
   if (typeof role !== "string" || !VALID_ROLES.has(role)) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
-  // Prevent an admin from removing their own admin role.
-  if (id === session.user.id && role !== ADMIN) {
+  if (id === auth.session!.user.id && role !== ADMIN) {
     return NextResponse.json(
       { error: "You cannot remove your own admin role" },
       { status: 403 }
@@ -37,6 +35,12 @@ export async function PATCH(
 
   try {
     const updated = await prisma.user.update({ where: { id }, data: { role } });
+    logAudit({
+      action: "user.role_change",
+      actor: auth.session!.user.id,
+      target: id,
+      meta: { newRole: role },
+    });
     return NextResponse.json({ id: updated.id, role: updated.role });
   } catch {
     return NextResponse.json(
@@ -50,13 +54,11 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getAdminSession();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAdminApi(req, { strict: true });
+  if ("error" in auth) return auth.error;
 
   const { id } = await params;
-  if (id === session.user.id) {
+  if (id === auth.session!.user.id) {
     return NextResponse.json(
       { error: "You cannot delete your own account" },
       { status: 403 }
@@ -82,6 +84,11 @@ export async function DELETE(
 
   try {
     await prisma.user.delete({ where: { id } });
+    logAudit({
+      action: "user.delete",
+      actor: auth.session!.user.id,
+      target: id,
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json(

@@ -148,6 +148,7 @@ export default async function ProgrammePage({
             src={imageUrl}
             alt={subject.name}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -182,7 +183,7 @@ export default async function ProgrammePage({
               href={`/checkout?plan=${encodeURIComponent(buySlug)}`}
               className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Buy {isYearProgramme ? subject.year : ""}
+              Buy{subject.year ? ' ' + subject.year : ''}
             </Link>
           )}
         </CardContent>

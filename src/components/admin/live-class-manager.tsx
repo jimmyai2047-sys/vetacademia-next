@@ -15,6 +15,7 @@ import {
   Clock,
   Radio,
   Eye,
+  Search,
 } from "lucide-react";
 
 type LiveClass = {
@@ -63,6 +64,7 @@ export default function LiveClassManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -82,9 +84,14 @@ export default function LiveClassManager() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/live-classes");
+      if (!res.ok) {
+        setError("Failed to load live classes");
+        return;
+      }
       const data = await res.json();
       setClasses(Array.isArray(data) ? data : []);
     } catch {
+      setError("Network error while loading live classes");
       setClasses([]);
     } finally {
       setLoading(false);
@@ -164,11 +171,18 @@ export default function LiveClassManager() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this live class?")) return;
+    if (!confirm("Delete this live class? This cannot be undone.")) return;
     try {
-      await fetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
-      load();
-    } catch { /* empty */ }
+      const res = await fetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        load();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Failed to delete live class");
+      }
+    } catch {
+      setError("Network error while deleting live class");
+    }
   }
 
   function formatDt(dt: string) {
@@ -234,7 +248,24 @@ export default function LiveClassManager() {
         <p className="text-sm text-muted-foreground">No live classes yet.</p>
       ) : (
         <div className="space-y-2">
-          {classes.map((c) => (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by title, exam, or subject..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          {classes
+            .filter(
+              (c) =>
+                !search ||
+                c.title.toLowerCase().includes(search.toLowerCase()) ||
+                c.exam.toLowerCase().includes(search.toLowerCase()) ||
+                (c.subject && c.subject.toLowerCase().includes(search.toLowerCase()))
+            )
+            .map((c) => (
             <div key={c.id} className="flex items-center gap-3 rounded-lg border p-3 bg-card">
               <Video className="h-5 w-5 shrink-0 text-red-500" />
               <div className="flex-1 min-w-0">
@@ -256,10 +287,10 @@ export default function LiveClassManager() {
                     <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-3.5 w-3.5" /></Button>
                   </a>
                 )}
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => startEdit(c)}>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => startEdit(c)} aria-label="Edit live class">
                   <Pencil className="h-3.5 w-3.5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDelete(c.id)}>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDelete(c.id)} aria-label="Delete live class">
                   <Trash2 className="h-3.5 w-3.5 text-red-500" />
                 </Button>
               </div>

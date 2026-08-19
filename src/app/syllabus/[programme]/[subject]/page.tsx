@@ -4,6 +4,7 @@
 };
 
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -15,13 +16,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowLeft, BookOpen, FileText, Clock, Hash, Timer, FlaskConical, BookMarked } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, FileText, Clock, Hash, Timer, FlaskConical, BookMarked } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
-import ChapterContentViewer from "@/components/chapter-content-viewer";
-import ProtectedHtml from "@/components/protected-html";
-import { isHtmlContent } from "@/lib/content";
-import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
+import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
 import SyllabusSidebar from "@/components/syllabus-sidebar";
@@ -41,7 +39,15 @@ export default async function SubjectPage({
       programme: { select: { name: true, fullName: true } },
       chapters: {
         orderBy: { unitNumber: "asc" },
-        include: { chapterContents: { orderBy: { createdAt: "desc" } } },
+        select: {
+          id: true,
+          title: true,
+          type: true,
+          unitNumber: true,
+          courseCode: true,
+          creditHours: true,
+          chapterContents: { orderBy: { createdAt: "desc" } },
+        },
       },
     },
   });
@@ -98,14 +104,6 @@ export default async function SubjectPage({
   const theoryChapters = subject.chapters.filter((c) => c.type !== "PRACTICAL");
   const practicalChapters = subject.chapters.filter((c) => c.type === "PRACTICAL");
 
-  // Pre-sign + sanitize chapter HTML (handles Blob-hosted images).
-  const htmlMap = new Map<string, string>();
-  await Promise.all(
-    subject.chapters.map(async (ch) => {
-      htmlMap.set(ch.id, await prepareChapterHtml(ch.content));
-    })
-  );
-
   const theoryGrouped = groupByUnit(theoryChapters);
   const practicalGrouped = groupByUnit(practicalChapters);
 
@@ -152,6 +150,19 @@ export default async function SubjectPage({
       {/* Main content */}
       <div className="flex-1 min-w-0">
         <div className="container mx-auto px-4 py-8">
+          {/* Hero banner */}
+          <div className="relative h-48 w-full overflow-hidden rounded-xl mb-6">
+            <Image
+              src={getSubjectImage(subject.name)}
+              alt={subject.name}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          </div>
+
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
             <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
@@ -206,9 +217,6 @@ export default async function SubjectPage({
       <Tabs defaultValue="syllabus" className="space-y-6">
         <TabsList>
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
-          <TabsTrigger value="materials">Study Materials</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="videos">Video Lessons</TabsTrigger>
         </TabsList>
 
         <TabsContent value="syllabus" className="space-y-6">
@@ -238,11 +246,6 @@ export default async function SubjectPage({
                       <CardTitle className="text-sm group-hover:text-primary transition-colors leading-tight mb-2">
                         {course.title}
                       </CardTitle>
-                      {course.content && !course.content.startsWith("Credit Hours:") && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {course.content}
-                        </p>
-                      )}
                       <div className="flex items-center gap-2 mt-2">
                         {course.creditHours && course.creditHours.includes("+") && parseInt(course.creditHours.split("+")[0], 10) > 0 && (
                           <Badge variant="outline" className="text-[10px] gap-1 text-blue-600 border-blue-200">
@@ -293,21 +296,13 @@ export default async function SubjectPage({
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="pb-6 pt-2">
-                              {isHtmlContent(chapter.content) || (signedContents.get(chapter.id)?.length ?? 0) > 0 ? (
-                                <ChapterContentViewer
-                                  htmlContent={htmlMap.get(chapter.id) || ""}
-                                  files={signedContents.get(chapter.id) ?? []}
-                                  chapterTitle={chapter.title}
-                                />
-                              ) : chapter.content ? (
-                                <div className="px-2 text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                                  {chapter.content}
-                                </div>
-                              ) : (
-                                <div className="px-2 text-muted-foreground italic">
-                                  Content coming soon...
-                                </div>
-                              )}
+                              <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
+                              <Link
+                                href={`/reader/${chapter.id}`}
+                                className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                              >
+                                Read full chapter <ArrowRight className="h-3.5 w-3.5" />
+                              </Link>
                             </AccordionContent>
                           </AccordionItem>
                         ))}
@@ -351,21 +346,13 @@ export default async function SubjectPage({
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent className="pb-4">
-                                {isHtmlContent(chapter.content) || (signedContents.get(chapter.id)?.length ?? 0) > 0 ? (
-                                  <ChapterContentViewer
-                                    htmlContent={htmlMap.get(chapter.id) || ""}
-                                    files={signedContents.get(chapter.id) ?? []}
-                                    chapterTitle={chapter.title}
-                                  />
-                                ) : chapter.content ? (
-                                  <div className="pl-10 text-muted-foreground whitespace-pre-wrap">
-                                    {chapter.content}
-                                  </div>
-                                ) : (
-                                  <div className="pl-10 text-muted-foreground italic">
-                                    Content coming soon...
-                                  </div>
-                                )}
+                                <ChapterResources contents={signedContents.get(chapter.id) ?? []} />
+                                <Link
+                                  href={`/reader/${chapter.id}`}
+                                  className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                                >
+                                  Read full chapter <ArrowRight className="h-3.5 w-3.5" />
+                                </Link>
                               </AccordionContent>
                             </AccordionItem>
                           ))}
@@ -404,27 +391,6 @@ export default async function SubjectPage({
               to={purchaseViaCheckout ? "checkout" : "pricing"}
             />
           )}
-        </TabsContent>
-
-        <TabsContent value="materials">
-          <div className="text-center py-12 text-muted-foreground">
-            <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Study materials will be available soon</p>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="notes">
-          <div className="text-center py-12 text-muted-foreground">
-            <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Notes will be available soon</p>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="videos">
-          <div className="text-center py-12 text-muted-foreground">
-            <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Video lessons will be available soon</p>
-          </div>
         </TabsContent>
       </Tabs>
         </div>

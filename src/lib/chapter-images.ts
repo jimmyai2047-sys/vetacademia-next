@@ -26,53 +26,59 @@ export async function processInlineImages(html: string): Promise<string> {
   if (!token) return html; // no Blob token (local dev) → keep base64
 
   const matches = [...html.matchAll(INLINE_IMG_RE)].slice(0, MAX_INLINE_IMAGES);
-  let out = html;
 
-  for (const m of matches) {
-    const dataUrl = m[1];
-    const mime = m[2];
-    const b64 = m[3];
-    try {
-      let buffer = Buffer.from(b64, "base64");
-      let ext = (mime.split("/")[1] || "png").replace("+xml", "");
-      if (ext === "jpeg") ext = "jpg";
-      if (ext === "svg") ext = "svg"; // don't re-encode svg
+  const uploads = await Promise.all(
+    matches.map(async (m) => {
+      const dataUrl = m[1];
+      const mime = m[2];
+      const b64 = m[3];
+      try {
+        let buffer = Buffer.from(b64, "base64");
+        let ext = (mime.split("/")[1] || "png").replace("+xml", "");
+        if (ext === "jpeg") ext = "jpg";
+        if (ext === "svg") ext = "svg"; // don't re-encode svg
 
-      if (ext !== "svg") {
-        try {
-          const sharp = (await import("sharp")).default;
-          const meta = await sharp(buffer).metadata();
-          const isLarge = buffer.length > 50 * 1024 || (meta.width && meta.width > MAX_DIMENSION);
-          if (isLarge) {
-            const resized = await sharp(buffer)
-              .rotate()
-              .resize({ width: MAX_DIMENSION, withoutEnlargement: true })
-              .webp({ quality: WEBP_QUALITY })
-              .toBuffer();
-            buffer = resized;
-            ext = "webp";
-          } else {
-            ext = "webp";
-            buffer = await sharp(buffer).webp({ quality: WEBP_QUALITY }).toBuffer();
+        if (ext !== "svg") {
+          try {
+            const sharp = (await import("sharp")).default;
+            const meta = await sharp(buffer).metadata();
+            const isLarge = buffer.length > 50 * 1024 || (meta.width && meta.width > MAX_DIMENSION);
+            if (isLarge) {
+              const resized = await sharp(buffer)
+                .rotate()
+                .resize({ width: MAX_DIMENSION, withoutEnlargement: true })
+                .webp({ quality: WEBP_QUALITY })
+                .toBuffer();
+              buffer = resized;
+              ext = "webp";
+            } else {
+              ext = "webp";
+              buffer = await sharp(buffer).webp({ quality: WEBP_QUALITY }).toBuffer();
+            }
+          } catch {
+            // sharp unavailable or failed → keep original bytes
           }
-        } catch {
-          // sharp unavailable or failed → keep original bytes
         }
+
+        const path = `chapters/${randomUUID()}.${ext}`;
+        const blob = await put(path, buffer, {
+          access: "private",
+          token,
+          addRandomSuffix: false,
+          multipart: true,
+        });
+        return { dataUrl, url: blob.url };
+      } catch (err) {
+        console.error("processInlineImages: upload failed for one image", err);
+        return null;
       }
+    })
+  );
 
-      const path = `chapters/${randomUUID()}.${ext}`;
-      const blob = await put(path, buffer, {
-        access: "private",
-        token,
-        addRandomSuffix: false,
-        multipart: true,
-      });
-      out = out.split(dataUrl).join(blob.url);
-    } catch (err) {
-      console.error("processInlineImages: upload failed for one image", err);
-    }
+  let out = html;
+  for (const r of uploads) {
+    if (r) out = out.split(r.dataUrl).join(r.url);
   }
-
   return out;
 }
 
@@ -83,16 +89,22 @@ export async function processInlineImages(html: string): Promise<string> {
  */
 export async function prepareChapterHtml(html: string): Promise<string> {
   if (!html) return html;
-  let signed = html;
   const matches = [...html.matchAll(BLOB_IMG_RE)];
-  for (const m of matches) {
-    const url = m[1];
-    try {
-      const s = await getSignedUrl(url);
-      if (s && s !== url) signed = signed.split(url).join(s);
-    } catch {
-      // keep original on failure
-    }
-  }
-  return sanitizeChapterContent(signed);
+  const signed = await Promise.all(
+    matches.map(async (m) => {
+      const url = m[1];
+      try {
+        const s = await getSignedUrl(url);
+        if (s && s !== url) return { url, signed: s };
+      } catch {
+        // keep original on failure
+      }
+      return { url, signed: url };
+    })
+  );
+  let out = html;
+  for (const r of signed) out = out.split(r.url).join(r.signed);
+  // Re-sanitize: chapter-reader injects this via raw dangerouslySetInnerHTML,
+  // so it must be sanitized here (single chapter/course → negligible cost).
+  return sanitizeChapterContent(out);
 }

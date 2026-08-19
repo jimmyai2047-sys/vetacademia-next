@@ -1,61 +1,19 @@
 @echo off
-REM ============================================================
-REM VetAcademia - Backup Script
-REM Creates a timestamped backup of source + .env + (optional) DB
-REM ============================================================
-setlocal EnableDelayedExpansion
+set "SRC=D:\VetAcademia (VA)\vetacademia-next"
+for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value 2^>nul') do set dt=%%I
+if "%dt%"=="" set dt=%date:~10,4%%date:~4,2%%date:~7,2%%time:~0,2%%time:~3,2%
+set "TS=%dt:~0,4%%dt:~4,2%%dt:~6,2%-%dt:~8,2%%dt:~10,2%"
+set "DST=D:\VetAcademia (VA)\vetacademia-next-backup-%TS%"
 
-set "PROJECT_DIR=%~dp0"
-set "BACKUP_ROOT=%PROJECT_DIR%backups"
+echo Backing up:
+echo   From: %SRC%
+echo   To:   %DST%
+echo.
 
-REM --- Timestamp (reliable via PowerShell) ---
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "STAMP=%%i"
-set "DEST=%BACKUP_ROOT%\%STAMP%"
-if not exist "%DEST%" mkdir "%DEST%"
+robocopy "%SRC%" "%DST%" /E /R:1 /W:1 ^
+  /XF backup.bat serverlog.err ^
+  /XD node_modules .next
 
-echo ===================================================
-echo  VetAcademia Backup  -  %STAMP%
-echo ===================================================
-
-REM --- 1. Source code (exclude heavy / regenerable dirs) ---
-echo [1/3] Copying source files ...
-robocopy "%PROJECT_DIR%." "%DEST%\source" /E /XD node_modules .next backups .git /XF *.log *.zip /NFL /NDL /NJH /NJS
-echo       Source copy done.
-
-REM --- 2. Environment / secret config (.env is gitignored) ---
-echo [2/3] Copying environment file ...
-if exist "%PROJECT_DIR%.env" (
-  copy /Y "%PROJECT_DIR%.env" "%DEST%\.env" >nul
-  echo       .env copied.
-) else (
-  echo       .env not found - skipped.
-)
-
-REM --- 3. Database dump (optional, needs pg_dump + DATABASE_URL) ---
-echo [3/3] Database dump ...
-set "DBURL="
-for /f "tokens=1* delims==" %%a in ('findstr /b "DATABASE_URL" "%PROJECT_DIR%.env" 2^>nul') do set "DBURL=%%b"
-if defined DBURL set "DBURL=%DBURL:"=%"
-
-where pg_dump >nul 2>&1
-if errorlevel 1 (
-  echo       pg_dump not installed - skipping DB dump.
-  goto :done_db
-)
-if "%DBURL%"=="" (
-  echo       DATABASE_URL not found - skipping DB dump.
-  goto :done_db
-)
-pg_dump "%DBURL%" -f "%DEST%\database.sql" >nul 2>&1
-if exist "%DEST%\database.sql" (
-  echo       DB dump saved.
-) else (
-  echo       DB dump failed - check DATABASE_URL / network.
-)
-:done_db
-
-echo ===================================================
-echo  Backup complete.
-echo  Location: "%DEST%"
-echo ===================================================
-endlocal
+echo.
+echo Backup complete: %DST%
+pause

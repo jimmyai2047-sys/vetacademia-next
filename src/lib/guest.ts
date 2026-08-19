@@ -4,9 +4,10 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-// Provisions a brand-new anonymous guest account (role GUEST) and returns its
-// credentials so the client can sign in. Each call creates a distinct,
-// browse-only user — we never share one seeded account across visitors.
+// Maximum number of guest users to keep. Older guests beyond this limit
+// are deleted on each new guest creation to prevent unbounded DB growth.
+const MAX_GUESTS = 500;
+
 export async function startGuestSession(): Promise<{
   email: string;
   password: string;
@@ -23,6 +24,23 @@ export async function startGuestSession(): Promise<{
       role: "GUEST",
     },
   });
+
+  // Cleanup: delete oldest guest users if count exceeds limit
+  const guestCount = await prisma.user.count({ where: { role: "GUEST" } });
+  if (guestCount > MAX_GUESTS) {
+    const excess = guestCount - MAX_GUESTS;
+    const oldestGuests = await prisma.user.findMany({
+      where: { role: "GUEST" },
+      orderBy: { createdAt: "asc" },
+      take: excess,
+      select: { id: true },
+    });
+    if (oldestGuests.length > 0) {
+      await prisma.user.deleteMany({
+        where: { id: { in: oldestGuests.map((g) => g.id) } },
+      });
+    }
+  }
 
   return { email, password };
 }

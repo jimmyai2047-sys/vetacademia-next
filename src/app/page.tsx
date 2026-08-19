@@ -1,12 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/layout/brand-logo";
 import VisitorCounter from "@/components/visitor-counter";
 import Chatbot from "@/components/chatbot";
+import ImportantLinkCard from "@/components/important-link-card";
 import {
   Card,
   CardContent,
@@ -27,6 +25,18 @@ import {
   ExternalLink,
 } from "lucide-react";
 
+export const metadata = {
+  title: "VetAcademia — India's Premier Veterinary Education Platform",
+  description:
+    "Access comprehensive curricula, mock tests, study materials, and expert consultations for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D veterinary students.",
+  openGraph: {
+    title: "VetAcademia — India's Premier Veterinary Education Platform",
+    description:
+      "Access comprehensive curricula, mock tests, study materials, and expert consultations for veterinary students.",
+    type: "website",
+  },
+};
+
 const programmes = [
   {
     name: "A.H.D.P.",
@@ -35,7 +45,7 @@ const programmes = [
     icon: BookOpen,
     href: "/syllabus/ahdp",
     image: "/images/ahdp.jpg",
-    color: "bg-green-600",
+    color: "bg-primary",
   },
   {
     name: "B.V.Sc & A.H.",
@@ -184,50 +194,6 @@ const importantLinks = [
   },
 ];
 
-function ImportantLinkCard({
-  name,
-  href,
-  logo,
-  short,
-  color,
-}: {
-  name: string;
-  href: string;
-  logo: string;
-  short: string;
-  color: string;
-}) {
-  const [errored, setErrored] = useState(false);
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      title={`Visit ${name}`}
-      className="flex flex-col items-center gap-2 rounded-xl border bg-background p-4 text-center hover:border-green-600 hover:shadow-md transition-all shrink-0 w-28 md:w-32"
-    >
-      {logo && !errored ? (
-        <img
-          src={logo}
-          alt={`${name} logo`}
-          width={56}
-          height={56}
-          className="h-14 w-14 object-contain"
-          onError={() => setErrored(true)}
-        />
-      ) : (
-        <div
-          className="h-14 w-14 rounded-full flex items-center justify-center text-white font-bold text-sm"
-          style={{ backgroundColor: color }}
-        >
-          {short}
-        </div>
-      )}
-      <span className="text-sm font-medium text-foreground">{name}</span>
-    </a>
-  );
-}
-
 export default function HomePage() {
   return (
     <div className="flex flex-col">
@@ -248,7 +214,7 @@ export default function HomePage() {
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
               India&apos;s Premier{" "}
-              <span className="text-green-400">Veterinary Education</span> Platform
+              <span className="text-primary">Veterinary Education</span> Platform
             </h1>
             <p className="text-lg md:text-xl text-gray-200 mb-8">
               Access comprehensive curricula, mock tests, study materials, and expert
@@ -256,7 +222,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/syllabus/ahdp">
-                <Button size="lg" className="gap-2 bg-green-600 hover:bg-green-700">
+                <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90">
                   Explore Programmes
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -272,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="border-y bg-green-600 text-white">
+      <section className="border-y bg-primary text-white">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
@@ -280,7 +246,7 @@ export default function HomePage() {
                 <div className="text-3xl md:text-4xl font-bold">
                   {stat.value}
                 </div>
-                <div className="text-sm text-green-100">{stat.label}</div>
+                   <div className="text-sm text-primary-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -288,21 +254,21 @@ export default function HomePage() {
       </section>
 
       {/* Free Demo Banner */}
-      <section className="bg-emerald-50 border-y border-emerald-200">
+      <section className="bg-primary/5 border-y border-primary/20">
         <div className="container mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="text-emerald-900 font-semibold text-lg">
+            <p className="text-primary font-semibold text-lg">
               Try before you enroll — free sample study material, mock tests,
               adaptive tests, previous year papers &amp; flashcards.
             </p>
-            <p className="text-emerald-700 text-sm">
+            <p className="text-primary/80 text-sm">
               Explore demos across AHDP, B.V.Sc &amp; A.H., M.V.Sc, Ph.D and LSA
               / VO / ICAR exams.
             </p>
           </div>
           <Link href="/demo">
-            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700 shrink-0">
-              Explore Free Demos
+              <Button className="gap-2 bg-primary hover:bg-primary/90 shrink-0">
+                Explore Free Demos
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -402,7 +368,7 @@ export default function HomePage() {
           <div className="mx-auto">
             <div className="rounded-2xl border bg-card p-6 md:p-8 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
-                <ExternalLink className="h-5 w-5 text-green-600" />
+                <ExternalLink className="h-5 w-5 text-primary" />
                 <h2 className="text-xl md:text-2xl font-bold">Important Links</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-6">
@@ -453,13 +419,13 @@ export default function HomePage() {
                   "Affordable pricing for students",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
               <Link href="/signup" className="mt-8 inline-block">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700">Get Started Today</Button>
+                <Button size="lg" className="bg-primary hover:bg-primary/90">Get Started Today</Button>
               </Link>
             </div>
             <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
@@ -469,7 +435,7 @@ export default function HomePage() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-green-900/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <GraduationCap className="h-12 w-12 mb-3" />
                 <p className="text-lg font-semibold">Empowering veterinary students since 2020</p>
@@ -487,12 +453,12 @@ export default function HomePage() {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-green-700/90" />
+        <div className="absolute inset-0 bg-primary/90" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
             Ready to Start Your Journey?
           </h2>
-          <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-primary-foreground mb-8 max-w-2xl mx-auto">
             Join thousands of veterinary students who are already excelling with
             VetAcademia
           </p>
@@ -500,7 +466,7 @@ export default function HomePage() {
             <Link href="/signup">
               <Button
                 size="lg"
-                className="gap-2 bg-white text-green-700 hover:bg-gray-100"
+                className="gap-2 bg-white text-primary hover:bg-gray-100"
               >
                 Create Free Account
                 <ArrowRight className="h-4 w-4" />

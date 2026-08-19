@@ -42,6 +42,7 @@ export default function AdminExpertsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -114,9 +115,11 @@ export default function AdminExpertsPage() {
       if (res.ok) {
         setForm((f) => ({ ...f, photoUrl: data.url }));
         setPreviewUrl(data.downloadUrl);
-      } else alert(data.error || "Upload failed");
+      } else {
+        setError(data.error || "Upload failed");
+      }
     } catch {
-      alert("Upload failed");
+      setError("Upload failed");
     } finally {
       setUploading(false);
     }
@@ -125,6 +128,7 @@ export default function AdminExpertsPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setError(null);
     try {
       const payload = {
         name: form.name,
@@ -151,23 +155,32 @@ export default function AdminExpertsPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || "Failed");
+        setError(data.error || "Failed");
         return;
       }
       setShowForm(false);
       setEditing(null);
       fetchExperts();
+    } catch {
+      setError("Network error");
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(e: Expert) {
-    if (!confirm(`Delete expert "${e.name}"? This also removes their login.`))
+    if (!confirm(`Delete expert "${e.name}"? This also removes their login. This cannot be undone.`))
       return;
-    const res = await fetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
-    if (res.ok) fetchExperts();
-    else alert("Delete failed");
+    try {
+      const res = await fetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
+      if (res.ok) fetchExperts();
+      else {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Delete failed");
+      }
+    } catch {
+      setError("Network error while deleting expert");
+    }
   }
 
   return (

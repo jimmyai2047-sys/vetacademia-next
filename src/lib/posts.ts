@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
-import { sanitizeChapterContent } from "@/lib/content";
 
 export type PublicPost = {
   id: string;
@@ -29,7 +28,7 @@ export async function getPublishedPosts(
     posts.map(async (p) => ({
       id: p.id,
       title: p.title,
-      content: p.content ? sanitizeChapterContent(p.content) : null,
+      content: p.content,
       fileName: p.fileName,
       fileType: p.fileType,
       downloadUrl: await getSignedUrl(p.fileUrl),

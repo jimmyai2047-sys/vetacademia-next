@@ -22,7 +22,7 @@ import { getSignedUrl } from "@/lib/blob";
 
 
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function ExpertsPage() {
   const experts = await prisma.expert.findMany({

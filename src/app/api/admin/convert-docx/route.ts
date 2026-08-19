@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import mammoth from "mammoth";
 
 export const runtime = "nodejs";
@@ -28,19 +29,18 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Embed images as base64 data URIs so they travel inside the HTML.
-    const convertImage = mammoth.images.imgElement((image: any) =>
-      image.read("base64").then((data: string) => ({
-        src: `data:${image.contentType};base64,${data}`,
-      }))
-    );
+    // Embed images as base64 first; processInlineImages then resizes (max 1200px)
+    // + re-encodes to WebP and uploads them to Vercel Blob (private).
+    const convertImage = mammoth.images.imgElement(async (image: any) => {
+      const data: string = await image.read("base64");
+      return { src: `data:${image.contentType};base64,${data}` };
+    });
 
-    const result = await mammoth.convertToHtml(
-      { buffer },
-      { convertImage }
-    );
+    const result = await mammoth.convertToHtml({ buffer }, { convertImage });
 
-    const html = sanitizeChapterContent(result.value || "");
+    let html = result.value || "";
+    html = await processInlineImages(html);
+    html = sanitizeChapterContent(html);
 
     return NextResponse.json({ html, messages: result.messages || [] });
   } catch (error) {

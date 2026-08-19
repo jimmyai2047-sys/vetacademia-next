@@ -22,7 +22,7 @@ export async function PUT(
       return NextResponse.json({ error: "Expert not found" }, { status: 404 });
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const name = (body.name || "").trim();
     const email = (body.email || "").trim().toLowerCase();
     const specialization = (body.specialization || "").trim();

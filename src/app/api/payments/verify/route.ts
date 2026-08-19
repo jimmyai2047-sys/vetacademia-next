@@ -14,7 +14,7 @@ const keySecret = process.env.RAZORPAY_KEY_SECRET;
 export async function POST(req: Request) {
   try {
     const rl = rateLimit(`pay-verify:${clientIp(req)}`, 20, 60_000);
-    if (!rl.success) {
+    if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429, headers: { "Retry-After": "60" } }

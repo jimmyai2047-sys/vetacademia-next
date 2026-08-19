@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, BookOpen, X } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
+import { postProcessContent } from "@/lib/dom-utils";
 
 interface ChapterReaderProps {
   title: string;
@@ -77,7 +79,8 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
   const totalPages = pages.length;
 
   useEffect(() => {
-    const blocks = splitIntoBlocks(html);
+    const clean = sanitizeHtml(html);
+    const blocks = splitIntoBlocks(clean);
     const p = buildPages(blocks, Math.round(3000 * fontScale));
     setPages(p);
     setPage(0);
@@ -86,34 +89,7 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
   // Post-process: wrap images+captions in <figure>, tables in scrollable div
   useEffect(() => {
     if (!contentRef.current) return;
-
-    // Wrap images + captions
-    contentRef.current.querySelectorAll("p > img, img").forEach((img) => {
-      if (img.closest("figure")) return;
-      const imgP = img.parentElement?.tagName === "P" ? img.parentElement : img;
-      const nextP = imgP?.nextElementSibling;
-      if (!nextP || nextP.tagName !== "P") return;
-      const text = nextP.textContent?.trim() || "";
-      const isCaption = /चित्र|figure|fig\.|diagram|map|chart/i.test(text) && nextP.querySelectorAll("img").length === 0;
-      if (!isCaption) return;
-      const figure = document.createElement("figure");
-      figure.appendChild(imgP.cloneNode(true));
-      const fc = document.createElement("figcaption");
-      fc.innerHTML = nextP.innerHTML;
-      figure.appendChild(fc);
-      imgP.parentNode?.insertBefore(figure, imgP);
-      imgP.remove();
-      nextP.remove();
-    });
-
-    // Wrap tables
-    contentRef.current.querySelectorAll("table").forEach((table) => {
-      if (table.parentElement?.classList.contains("table-wrap")) return;
-      const wrap = document.createElement("div");
-      wrap.className = "table-wrap";
-      table.parentNode?.insertBefore(wrap, table);
-      wrap.appendChild(table);
-    });
+    postProcessContent(contentRef.current);
   }, [page, fontScale]);
 
   const goNext = useCallback(() => {

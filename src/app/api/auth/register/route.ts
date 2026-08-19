@@ -15,7 +15,7 @@ const registerSchema = z
     name: z.string().min(2, "Name must be at least 2 characters"),
     surname: z.string().optional(),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     role: z
       .string()
       .transform((v) => v.toUpperCase())
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     }
 
     const rl = rateLimit(`register:${clientIp(req)}`, 10, 60_000);
-    if (!rl.success) {
+    if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many attempts. Please try again later." },
         { status: 429, headers: { "Retry-After": "60" } }

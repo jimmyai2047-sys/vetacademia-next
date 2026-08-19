@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import {
   FileText,
   X,
   ArrowRight,
+  Search,
 } from "lucide-react";
 
 type MockTest = {
@@ -65,16 +66,21 @@ export default function MockTestManager({
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/mock-tests");
+      if (!res.ok) {
+        setError("Failed to load tests");
+        return;
+      }
       const data = await res.json();
       setTests(data);
     } catch {
-      // ignore
+      setError("Network error while loading tests");
     } finally {
       setLoading(false);
     }
@@ -193,15 +199,18 @@ export default function MockTestManager({
   }
 
   async function handleDelete(t: MockTest) {
-    if (!confirm("Delete this test and its questions?")) return;
+    if (!confirm("Delete this test and its questions? This cannot be undone.")) return;
     try {
       const res = await fetch(`/api/admin/mock-tests/${t.id}`, { method: "DELETE" });
       if (res.ok) {
         setTests((prev) => prev.filter((x) => x.id !== t.id));
         router.refresh();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Failed to delete test");
       }
     } catch {
-      // ignore
+      setError("Network error while deleting test");
     }
   }
 
@@ -380,16 +389,37 @@ export default function MockTestManager({
           const visibleTests = isPY
             ? tests.filter((t) => (t.kind || "MOCK") === "PREVIOUS_YEAR")
             : tests;
-          if (visibleTests.length === 0) {
+          const filteredTests = search
+            ? visibleTests.filter(
+                (t) =>
+                  t.title.toLowerCase().includes(search.toLowerCase()) ||
+                  (t.track && trackLabel(t.track).toLowerCase().includes(search.toLowerCase())) ||
+                  (t.description && t.description.toLowerCase().includes(search.toLowerCase()))
+              )
+            : visibleTests;
+          if (filteredTests.length === 0) {
             return (
               <p className="text-sm text-muted-foreground">
-                {isPY ? "No previous year papers yet." : "No tests yet."}
+                {search
+                  ? "No tests match your search."
+                  : isPY
+                  ? "No previous year papers yet."
+                  : "No tests yet."}
               </p>
             );
           }
           return (
         <div className="space-y-2">
-          {visibleTests.map((t) => (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by title, track, or description..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          {filteredTests.map((t) => (
             <div
               key={t.id}
               className="flex items-center justify-between rounded-lg border p-3"
@@ -441,10 +471,10 @@ export default function MockTestManager({
                 >
                   Questions <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => openEdit(t)}>
+                <Button variant="ghost" size="icon" onClick={() => openEdit(t)} aria-label="Edit test">
                   <Pencil className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(t)}>
+                <Button variant="ghost" size="icon" onClick={() => handleDelete(t)} aria-label="Delete test">
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
               </div>

@@ -25,28 +25,21 @@ import {
 
 
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function AnalyticsPage() {
   const [
-    totalUsers,
-    totalStudents,
-    totalExperts,
-    totalAdmins,
-    totalAnimalOwners,
-    totalGuests,
+    roleGroups,
     totalSubjects,
     totalMockTests,
     totalAttempts,
     programmeStats,
     subjectStats,
   ] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { role: "STUDENT" } }),
-    prisma.user.count({ where: { role: { in: [...EXPERT_ROLES] } } }),
-    prisma.user.count({ where: { role: "ADMIN" } }),
-    prisma.user.count({ where: { role: "ANIMAL_OWNER" } }),
-    prisma.user.count({ where: { role: "GUEST" } }),
+    prisma.user.groupBy({
+      by: ["role"],
+      _count: { _all: true },
+    }),
     prisma.subject.count(),
     prisma.mockTest.count(),
     prisma.mockTestAttempt.count(),
@@ -65,6 +58,18 @@ export default async function AnalyticsPage() {
     }),
   ]);
 
+  const roleCount: Record<string, number> = {};
+  for (const g of roleGroups) roleCount[String(g.role)] = g._count._all;
+  const totalUsers = Object.values(roleCount).reduce((a, b) => a + b, 0);
+  const totalStudents = roleCount["STUDENT"] || 0;
+  const totalExperts = [...EXPERT_ROLES].reduce(
+    (a, r) => a + (roleCount[String(r)] || 0),
+    0
+  );
+  const totalAdmins = roleCount["ADMIN"] || 0;
+  const totalAnimalOwners = roleCount["ANIMAL_OWNER"] || 0;
+  const totalGuests = roleCount["GUEST"] || 0;
+
   const scoreAgg = await prisma.mockTestAttempt.aggregate({
     _sum: { score: true, totalMarks: true },
   });
@@ -74,21 +79,28 @@ export default async function AnalyticsPage() {
       ? Math.round((scoreAgg._sum.score || 0) / scoreAgg._sum.totalMarks * 100)
       : 0;
 
-  const programmeAttempts = await prisma.mockTest.findMany({
-    select: {
-      subject: {
-        select: { programmeId: true },
-      },
-    },
-  });
+  const [mockTestBySubject, subjectProgramme] = await Promise.all([
+    prisma.mockTest.groupBy({
+      by: ["subjectId"],
+      _count: { _all: true },
+    }),
+    prisma.subject.findMany({
+      select: { id: true, programmeId: true },
+    }),
+  ]);
+
+  const subjToProg: Record<string, string> = {};
+  for (const s of subjectProgramme) {
+    if (s.programmeId) subjToProg[s.id] = s.programmeId;
+  }
 
   const attemptsByProgramme: Record<string, number> = {};
-  programmeAttempts.forEach((t) => {
-    if (t.subject?.programmeId) {
-      attemptsByProgramme[t.subject.programmeId] =
-        (attemptsByProgramme[t.subject.programmeId] || 0) + 1;
+  for (const g of mockTestBySubject) {
+    const prog = g.subjectId ? subjToProg[g.subjectId] : null;
+    if (prog) {
+      attemptsByProgramme[prog] = (attemptsByProgramme[prog] || 0) + g._count._all;
     }
-  });
+  }
 
   const programmeDistribution = programmeStats.map((prog) => ({
     name: prog.name,

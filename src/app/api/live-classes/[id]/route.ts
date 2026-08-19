@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAccess } from "@/lib/access";
 
 export async function GET(
   _req: Request,
@@ -28,6 +29,17 @@ export async function GET(
     });
     if (!liveClass) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const access = await getAccess();
+    const allowed =
+      liveClass.isDemo ||
+      (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
+      access.examKeys.has(liveClass.exam) ||
+      access.examPlanOwned;
+    if (!allowed) {
+      const { recordingUrl, youtubeUrl, ...rest } = liveClass;
+      return NextResponse.json({ ...rest, recordingUrl: null, youtubeUrl: null });
     }
     return NextResponse.json(liveClass);
   } catch (error) {

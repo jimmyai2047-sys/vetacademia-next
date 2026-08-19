@@ -108,19 +108,12 @@ export default function ChapterBulkImporter({
 
       setStatus("Chapter save ho raha hai...");
 
-      if (replace) {
-        await fetch(`/api/admin/chapters/import-docx`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subjectId, replace: true }),
-        }).catch(() => {});
-      }
-
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subjectId,
+          replace,
           chapters: [{
             title: title.trim(),
             content: cleanedHtml,

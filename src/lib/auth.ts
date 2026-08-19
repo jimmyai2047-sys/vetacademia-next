@@ -3,7 +3,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, requestIp } from "@/lib/rate-limit";
+import { rateLimit } from "@/lib/rate-limit";
 
 // Fail fast if the session secret is missing. Without it NextAuth cannot
 // sign/verify session tokens, and silently falling back would be insecure.
@@ -48,8 +48,8 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const rl = rateLimit(`login:${requestIp(req)}`, 10, 60_000);
-        if (!rl.success) {
+        const rl = rateLimit(`login:${(req.headers as any)?.["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown"}`, 10, 60_000);
+        if (!rl.allowed) {
           return null;
         }
 

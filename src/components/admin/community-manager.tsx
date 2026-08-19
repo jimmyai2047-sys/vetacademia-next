@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
+import { Search } from "lucide-react";
 
 type LinkRow = {
   id: string;
@@ -40,6 +41,7 @@ export default function CommunityManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   const refOptions =
     form.category === "PROGRAMME"
@@ -50,9 +52,14 @@ export default function CommunityManager() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/admin/community");
-    if (res.ok) setLinks(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin/community");
+      if (res.ok) setLinks(await res.json());
+    } catch {
+      // keep empty
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -106,9 +113,14 @@ export default function CommunityManager() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this community link?")) return;
-    const res = await fetch(`/api/admin/community/${id}`, { method: "DELETE" });
-    if (res.ok) load();
+    if (!confirm("Delete this community link? This cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/admin/community/${id}`, { method: "DELETE" });
+      if (res.ok) load();
+      else setError("Failed to delete link");
+    } catch {
+      setError("Network error while deleting link");
+    }
   }
 
   return (
@@ -238,21 +250,39 @@ export default function CommunityManager() {
         ) : links.length === 0 ? (
           <p className="text-muted-foreground">No links yet.</p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="text-left p-3">Platform</th>
-                  <th className="text-left p-3">Category</th>
-                  <th className="text-left p-3">Ref</th>
-                  <th className="text-left p-3">Title</th>
-                  <th className="text-left p-3">URL</th>
-                  <th className="text-left p-3">Active</th>
-                  <th className="text-right p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {links.map((l) => (
+          <>
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by title, platform, or category..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="overflow-x-auto rounded-xl border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th className="text-left p-3">Platform</th>
+                    <th className="text-left p-3">Category</th>
+                    <th className="text-left p-3">Ref</th>
+                    <th className="text-left p-3">Title</th>
+                    <th className="text-left p-3">URL</th>
+                    <th className="text-left p-3">Active</th>
+                    <th className="text-right p-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {links
+                    .filter(
+                      (l) =>
+                        !search ||
+                        l.title.toLowerCase().includes(search.toLowerCase()) ||
+                        l.platform.toLowerCase().includes(search.toLowerCase()) ||
+                        l.category.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .map((l) => (
                   <tr key={l.id} className="border-t">
                     <td className="p-3">{l.platform}</td>
                     <td className="p-3">{l.category}</td>
@@ -288,6 +318,7 @@ export default function CommunityManager() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
     </div>

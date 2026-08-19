@@ -415,3 +415,10 @@
     transparent
   );
 }
+
+/* Pause marquee for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .va-marquee {
+    animation: none;
+  }
+}

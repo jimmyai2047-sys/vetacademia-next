@@ -81,7 +81,12 @@ const vetSections = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const router = useRouter();
+
+  function setMenu(name: string, open: boolean) {
+    setOpenMenus((m) => ({ ...m, [name]: open }));
+  }
   const { data: session, status } = useSession();
 
   const isAuthed = status === "authenticated" && !!session?.user;
@@ -139,12 +144,20 @@ export default function Navbar() {
           <Link href="/">
             <Button variant="ghost">Home</Button>
           </Link>
-          <div className="group relative">
-            <Button variant="ghost" className="gap-2">
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("syllabus", true)}
+            onMouseLeave={() => setMenu("syllabus", false)}
+            onFocus={() => setMenu("syllabus", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("syllabus", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["syllabus"]}>
               <GraduationCap className="h-4 w-4" />
               Syllabus
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {programmes.map((p) => (
                 <Link
                   key={p.name}
@@ -158,12 +171,20 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="group relative">
-            <Button variant="ghost" className="gap-2">
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("exams", true)}
+            onMouseLeave={() => setMenu("exams", false)}
+            onFocus={() => setMenu("exams", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("exams", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["exams"]}>
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {examCategories.map((c) => (
                 <Link
                   key={c.name}
@@ -188,12 +209,20 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="group relative">
-            <Button variant="ghost" className="gap-2">
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("prep", true)}
+            onMouseLeave={() => setMenu("prep", false)}
+            onFocus={() => setMenu("prep", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prep", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prep"]}>
               <BookOpen className="h-4 w-4" />
               My Prep
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {prepCategories.map((c) => (
                 <Link
                   key={c.name}
@@ -210,12 +239,20 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="group relative">
-            <Button variant="ghost" className="gap-2">
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("farmer", true)}
+            onMouseLeave={() => setMenu("farmer", false)}
+            onFocus={() => setMenu("farmer", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("farmer", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["farmer"]}>
               <Tractor className="h-4 w-4" />
               Animal Owner
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-60 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-60 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {farmerSections.map((s) => (
                 <Link
                   key={s.name}
@@ -229,12 +266,20 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="group relative">
-            <Button variant="ghost" className="gap-2">
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("vets", true)}
+            onMouseLeave={() => setMenu("vets", false)}
+            onFocus={() => setMenu("vets", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("vets", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["vets"]}>
               <HeartPulse className="h-4 w-4" />
               Vets
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {vetSections.map((s) => (
                 <Link
                   key={s.name}
@@ -268,6 +313,7 @@ export default function Navbar() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search subjects..."
+            aria-label="Search subjects"
             className="pl-9 pr-3 h-9 w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </form>
@@ -342,6 +388,7 @@ export default function Navbar() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search subjects..."
+                  aria-label="Search subjects"
                   className="w-full pl-9 pr-3 h-9 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </form>

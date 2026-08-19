@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const rl = rateLimit(`login:${clientIp(req)}`, 10, 60_000);
-    if (!rl.success) {
+    if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many attempts. Please try again later." },
         { status: 429, headers: { "Retry-After": "60" } }

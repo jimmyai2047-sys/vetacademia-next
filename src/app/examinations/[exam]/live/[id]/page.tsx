@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, Radio } from "lucide-react";
 import LiveClassPlayer from "@/components/live-class-player";
+import { getAccess } from "@/lib/access";
+import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +37,33 @@ export default async function LiveClassPage({
   });
 
   if (!liveClass || liveClass.exam !== exam) notFound();
+
+  const access = await getAccess();
+  const hasAccess =
+    liveClass.isDemo ||
+    (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
+    access.examKeys.has(liveClass.exam) ||
+    access.examPlanOwned;
+
+  if (!hasAccess) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="mb-6">
+          <Link href={`/examinations/${exam}`}>
+            <Button variant="ghost" size="sm" className="gap-1">
+              <ArrowLeft className="h-4 w-4" /> Back to {exam.toUpperCase()}
+            </Button>
+          </Link>
+        </div>
+        <EnrollCta
+          planSlug={liveClass.planSlug ?? "pricing"}
+          title="Unlock this live class"
+          message="Purchase the plan to watch this live class recording."
+          to={liveClass.planSlug ? "checkout" : "pricing"}
+        />
+      </div>
+    );
+  }
 
   const formatDt = liveClass.scheduledAt.toLocaleString("en-IN", {
     dateStyle: "full",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { processInlineImages } from "@/lib/chapter-images";
+import { sanitizeChapterContent } from "@/lib/content";
 
 export async function PATCH(
   req: Request,
@@ -30,7 +31,7 @@ export async function PATCH(
       data.title = body.title.trim();
     }
     if (typeof body.content === "string") {
-      data.content = await processInlineImages(body.content);
+      data.content = sanitizeChapterContent(await processInlineImages(body.content));
     }
     if (typeof body.unitNumber === "number" && body.unitNumber > 0) {
       data.unitNumber = body.unitNumber;

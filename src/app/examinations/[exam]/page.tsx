@@ -192,25 +192,34 @@ export default async function ExamPage({
   const groups = getExamGroups(exam);
   const disciplines = getExamDisciplines(exam);
 
-  // For programme-based groups (PSC tracks), fetch the actual subjects.
-  const allProgrammeSubjects = await prisma.subject.findMany({
-    include: { programme: true },
-    orderBy: { name: "asc" },
+  // For programme-based groups (PSC tracks), fetch only the subjects that
+  // belong to that group's programme. Programme has no slug column, so build a
+  // reverse slug→names map and filter server-side by programme name.
+  const programmes = await prisma.programme.findMany({
+    select: { name: true },
   });
-  const groupSubjects: Record<string, { slug: string; name: string }[]> = {};
-  for (const g of groups) {
-    if (g.programmeSlug) {
-      const seen = new Set<string>();
-      groupSubjects[g.slug] = allProgrammeSubjects
-        .filter(
-          (s) =>
-            s.programme &&
-            programmeNameToSlug(s.programme.name) === g.programmeSlug
-        )
-        .map((s) => ({ slug: slugify(s.name), name: s.name }))
-        .filter((s) => (seen.has(s.slug) ? false : (seen.add(s.slug), true)));
-    }
+  const slugToNames: Record<string, string[]> = {};
+  for (const p of programmes) {
+    const slug = programmeNameToSlug(p.name);
+    (slugToNames[slug] ||= []).push(p.name);
   }
+
+  const groupSubjects: Record<string, { slug: string; name: string }[]> = {};
+  await Promise.all(
+    groups
+      .filter((g) => g.programmeSlug)
+      .map(async (g) => {
+        const names = slugToNames[g.programmeSlug as string] || [];
+        const subs = await prisma.subject.findMany({
+          where: { programme: { name: { in: names } } },
+          orderBy: { name: "asc" },
+        });
+        const seen = new Set<string>();
+        groupSubjects[g.slug] = subs
+          .map((s) => ({ slug: slugify(s.name), name: s.name }))
+          .filter((s) => (seen.has(s.slug) ? false : (seen.add(s.slug), true)));
+      })
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">

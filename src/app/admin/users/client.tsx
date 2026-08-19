@@ -27,6 +27,10 @@ import {
 } from "@/components/ui/table";
 import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
+import { useToast } from "@/components/admin/toast-provider";
+import { adminFetch } from "@/lib/admin-fetch";
+import { roleColor } from "@/lib/role-color";
 
 import {
   EXPERT_ROLES,
@@ -34,7 +38,6 @@ import {
   GUEST,
   ADMIN,
   STUDENT,
-  isExpertRole,
 } from "@/lib/roles";
 
 const ALL_ROLES = [
@@ -56,23 +59,6 @@ type User = {
   createdAt: Date;
 };
 
-function roleColor(role: string): string {
-  if (isExpertRole(role))
-    return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
-  switch (role) {
-    case ADMIN:
-      return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
-    case STUDENT:
-      return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
-    case ANIMAL_OWNER:
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
-    case GUEST:
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
-    default:
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
-  }
-}
-
 export default function UsersClient({
   users,
   currentUserId,
@@ -87,8 +73,23 @@ export default function UsersClient({
   totalCount: number;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmDesc, setConfirmDesc] = useState("");
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  function showConfirm(title: string, desc: string, action: () => void) {
+    setConfirmTitle(title);
+    setConfirmDesc(desc);
+    setConfirmAction(() => action);
+    setConfirmOpen(true);
+  }
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -115,39 +116,87 @@ export default function UsersClient({
   const animalOwnerCount = roleCounts[ANIMAL_OWNER] || 0;
   const guestCount = roleCounts[GUEST] || 0;
 
-  async function changeRole(id: string, role: string) {
-    const res = await fetch(`/api/admin/users/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role }),
-    });
-    if (res.ok) {
-      router.refresh();
-    } else {
-      const d = await res.json().catch(() => ({}));
-      alert(d.error || "Failed to update role");
-    }
+  async function changeRole(id: string, role: string, userName: string) {
+    showConfirm(
+      "Change User Role?",
+      `Are you sure you want to change ${userName}'s role to ${role}?`,
+      async () => {
+        setConfirmLoading(true);
+        try {
+          const res = await adminFetch(`/api/admin/users/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ role }),
+          });
+          if (res.ok) {
+            toast("Role updated successfully", "success");
+            router.refresh();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            toast(d.error || "Failed to update role", "error");
+          }
+        } catch {
+          toast("Network error", "error");
+        } finally {
+          setConfirmLoading(false);
+          setConfirmOpen(false);
+        }
+      }
+    );
   }
 
-  async function toggleBan(id: string) {
-    const res = await fetch(`/api/admin/users/${id}/ban`, { method: "POST" });
-    if (res.ok) {
-      router.refresh();
-    } else {
-      const d = await res.json().catch(() => ({}));
-      alert(d.error || "Failed to update ban status");
-    }
+  async function toggleBan(id: string, userName: string, isBanned: boolean) {
+    showConfirm(
+      isBanned ? "Unban User?" : "Ban User?",
+      `Are you sure you want to ${isBanned ? "unban" : "ban"} ${userName}?`,
+      async () => {
+        setConfirmLoading(true);
+        try {
+          const res = await adminFetch(`/api/admin/users/${id}/ban`, {
+            method: "POST",
+          });
+          if (res.ok) {
+            toast(isBanned ? "User unbanned" : "User banned", "success");
+            router.refresh();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            toast(d.error || "Failed to update ban status", "error");
+          }
+        } catch {
+          toast("Network error", "error");
+        } finally {
+          setConfirmLoading(false);
+          setConfirmOpen(false);
+        }
+      }
+    );
   }
 
-  async function removeUser(id: string) {
-    if (!confirm("Delete this user? This cannot be undone.")) return;
-    const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      router.refresh();
-    } else {
-      const d = await res.json().catch(() => ({}));
-      alert(d.error || "Failed to delete user");
-    }
+  async function removeUser(id: string, userName: string) {
+    showConfirm(
+      "Delete User?",
+      `Are you sure you want to delete ${userName}? This cannot be undone.`,
+      async () => {
+        setConfirmLoading(true);
+        try {
+          const res = await adminFetch(`/api/admin/users/${id}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            toast("User deleted", "success");
+            router.refresh();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            toast(d.error || "Failed to delete user", "error");
+          }
+        } catch {
+          toast("Network error", "error");
+        } finally {
+          setConfirmLoading(false);
+          setConfirmOpen(false);
+        }
+      }
+    );
   }
 
   function handleExport() {
@@ -176,14 +225,24 @@ export default function UsersClient({
     a.download = "users.csv";
     a.click();
     URL.revokeObjectURL(url);
+    toast("Users exported successfully", "success");
   }
 
   return (
     <div className="space-y-6">
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmTitle}
+        description={confirmDesc}
+        onConfirm={confirmAction}
+        loading={confirmLoading}
+      />
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/admin">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Back to dashboard">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
@@ -294,7 +353,7 @@ export default function UsersClient({
                       <Select
                         value={user.role}
                         onValueChange={(v) => {
-                          if (v) changeRole(user.id, v);
+                          if (v) changeRole(user.id, v, user.name);
                         }}
                       >
                         <SelectTrigger className="w-[160px] h-8">
@@ -333,9 +392,9 @@ export default function UsersClient({
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          title={user.banned ? "Unban" : "Ban"}
+                          aria-label={user.banned ? "Unban user" : "Ban user"}
                           disabled={user.id === currentUserId}
-                          onClick={() => toggleBan(user.id)}
+                          onClick={() => toggleBan(user.id, user.name, !!user.banned)}
                         >
                           <Ban className="h-4 w-4" />
                         </Button>
@@ -343,9 +402,9 @@ export default function UsersClient({
                           variant="outline"
                           size="icon"
                           className="h-8 w-8 text-red-600"
-                          title="Delete"
+                          aria-label="Delete user"
                           disabled={user.id === currentUserId}
-                          onClick={() => removeUser(user.id)}
+                          onClick={() => removeUser(user.id, user.name)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

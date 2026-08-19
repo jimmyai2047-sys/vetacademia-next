@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getAdminSession } from "@/lib/admin";
 import { getSignedUrl } from "@/lib/blob";
 import bcrypt from "bcryptjs";
+import { requireAdminApi } from "@/lib/admin-api";
 
 export async function GET() {
   try {
-    const session = await getAdminSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const experts = await prisma.expert.findMany({
       include: { user: { select: { id: true, name: true, email: true } } },
       orderBy: { createdAt: "desc" },
@@ -46,12 +41,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  try {
-    const session = await getAdminSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const auth = await requireAdminApi(req, { strict: true });
+  if ("error" in auth) return auth.error;
 
+  try {
     const body = await req.json();
     const name = (body.name || "").trim();
     const email = (body.email || "").trim().toLowerCase();
@@ -61,6 +54,13 @@ export async function POST(req: Request) {
     if (!name || !email || !specialization) {
       return NextResponse.json(
         { error: "Name, email and specialization are required" },
+        { status: 400 }
+      );
+    }
+
+    if (name.length > 100 || specialization.length > 200) {
+      return NextResponse.json(
+        { error: "Input too long" },
         { status: 400 }
       );
     }
@@ -105,7 +105,6 @@ export async function POST(req: Request) {
       {
         id: expert.id,
         userId: user.id,
-        // Return the generated password once so the admin can share it.
         temporaryPassword: generated ? password : undefined,
       },
       { status: 201 }

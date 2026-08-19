@@ -21,7 +21,7 @@ export default async function ChapterReaderRoute({
     where: { id: chapterId },
     include: {
       subject: {
-        select: { name: true, programme: { select: { name: true } } },
+        select: { name: true, year: true, programme: { select: { name: true } } },
       },
       chapterContents: true,
     },
@@ -33,8 +33,8 @@ export default async function ChapterReaderRoute({
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
   const programmeOwned = access.programmeSlugs.has(programmeSlug);
   const yearOwned =
-    (programmeSlug === "bvsc" || programmeSlug === "ahdp") && chapter.subject.name
-      ? access.ownedYearScopes.has(`${programmeSlug}:${chapter.subject.name}`)
+    (programmeSlug === "bvsc" || programmeSlug === "ahdp") && chapter.subject.year
+      ? access.ownedYearScopes.has(`${programmeSlug}:${chapter.subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(chapter.subjectId);
   const hasAccess = programmeOwned || yearOwned || subjectOwned;

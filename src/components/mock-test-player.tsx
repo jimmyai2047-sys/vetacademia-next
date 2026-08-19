@@ -13,11 +13,13 @@ type Q = {
   id: string;
   text: string;
   options: string[];
-  correctAnswer: number;
+  correctAnswer?: number;
   marks: number;
-  explanation: string | null;
+  explanation?: string | null;
   difficulty?: number | null;
 };
+
+type ReviewEntry = { correctAnswer: number; explanation: string | null };
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -49,6 +51,15 @@ export default function MockTestPlayer({
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
+  // correctAnswer/explanation are only fetched from the server at review time
+  // (the initial payload omits them). review[qid] holds the server-provided
+  // values, falling back to any value already present (e.g. adaptive tests).
+  const [review, setReview] = useState<Record<string, ReviewEntry>>({});
+  const correctAnswerOf = (q: Q): number | undefined =>
+    review[q.id]?.correctAnswer ?? q.correctAnswer;
+  const explanationOf = (q: Q): string | null | undefined =>
+    review[q.id]?.explanation ?? q.explanation;
+
   const totalSeconds = duration * 60;
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
 
@@ -73,11 +84,13 @@ export default function MockTestPlayer({
 
   const attempted = Object.keys(answers).length;
   const correct = submitted
-    ? questions.filter((q) => answers[q.id] === q.correctAnswer).length
+    ? questions.filter((q) => answers[q.id] === correctAnswerOf(q)).length
     : 0;
   const wrong = submitted
     ? questions.filter(
-        (q) => answers[q.id] !== undefined && answers[q.id] !== q.correctAnswer
+        (q) =>
+          answers[q.id] !== undefined &&
+          answers[q.id] !== correctAnswerOf(q)
       ).length
     : 0;
 
@@ -87,11 +100,6 @@ export default function MockTestPlayer({
   }
 
   async function submit() {
-    let s = 0;
-    questions.forEach((q) => {
-      if (answers[q.id] === q.correctAnswer) s += q.marks;
-    });
-    setScore(s);
     setSubmitted(true);
 
     try {
@@ -99,13 +107,26 @@ export default function MockTestPlayer({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          score: s,
           totalMarks,
           answers,
         }),
       });
       if (res.ok) {
         setSaved(true);
+        const data = await res.json().catch(() => ({}));
+        if (typeof data?.attempt?.score === "number") {
+          setScore(data.attempt.score);
+        }
+        if (Array.isArray(data?.review)) {
+          const map: Record<string, ReviewEntry> = {};
+          for (const r of data.review) {
+            map[r.id] = {
+              correctAnswer: r.correctAnswer,
+              explanation: r.explanation,
+            };
+          }
+          setReview(map);
+        }
       } else {
         setSaveError(true);
       }
@@ -163,7 +184,7 @@ export default function MockTestPlayer({
     if (!qid) return;
     const q = questions.find((x) => x.id === qid);
     if (!q) return;
-    const isCorrect = answers[qid] === q.correctAnswer;
+    const isCorrect = answers[qid] === correctAnswerOf(q);
     const nd = nextDifficulty(currentDifficulty, isCorrect);
 
     let nextQid: string | null = null;
@@ -263,11 +284,11 @@ export default function MockTestPlayer({
           ) : (
             resultQuestions.map((q, i) => {
               const chosen = answers[q.id];
-              const isCorrect = submitted && chosen === q.correctAnswer;
+              const isCorrect = submitted && chosen === correctAnswerOf(q);
               const isWrong =
                 submitted &&
                 chosen !== undefined &&
-                chosen !== q.correctAnswer;
+                chosen !== correctAnswerOf(q);
               return (
                 <Card key={q.id}>
                   <CardHeader>
@@ -280,9 +301,9 @@ export default function MockTestPlayer({
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {q.options.map((opt, oi) => {
-                      const showCorrect = submitted && oi === q.correctAnswer;
+                      const showCorrect = submitted && oi === correctAnswerOf(q);
                       const showWrong =
-                        submitted && chosen === oi && oi !== q.correctAnswer;
+                        submitted && chosen === oi && oi !== correctAnswerOf(q);
                       return (
                         <label
                           key={oi}
@@ -313,9 +334,9 @@ export default function MockTestPlayer({
                         </label>
                       );
                     })}
-                    {submitted && q.explanation && (
+                    {submitted && explanationOf(q) && (
                       <p className="text-xs text-muted-foreground mt-2">
-                        <strong>Explanation:</strong> {q.explanation}
+                        <strong>Explanation:</strong> {explanationOf(q)}
                       </p>
                     )}
                   </CardContent>

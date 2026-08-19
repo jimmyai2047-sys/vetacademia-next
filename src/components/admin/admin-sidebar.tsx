@@ -20,6 +20,7 @@ import {
   Radio,
   FileCheck,
   NotebookPen,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -38,6 +39,7 @@ const sidebarItems = [
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: NotebookPen },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { name: "Activity Log", href: "/admin/activity-log", icon: Activity },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

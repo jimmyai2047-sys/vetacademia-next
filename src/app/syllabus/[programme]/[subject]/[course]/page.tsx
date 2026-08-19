@@ -4,6 +4,7 @@
 };
 
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,7 @@ import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
+import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
 
@@ -53,6 +55,7 @@ export default async function CoursePage({
   const hasAccess = programmeOwned || yearOwned || subjectOwned;
 
   let purchasePlanSlug: string = progSlug;
+  let purchaseViaCheckout = false;
   if (!hasAccess) {
     if (progSlug === "bvsc" || progSlug === "ahdp") {
       if (course.subject.year) {
@@ -60,14 +63,20 @@ export default async function CoursePage({
           where: { programmeSlug: progSlug, year: course.subject.year },
           select: { slug: true },
         });
-        if (yearPlan) purchasePlanSlug = yearPlan.slug;
+        if (yearPlan) {
+          purchasePlanSlug = yearPlan.slug;
+          purchaseViaCheckout = true;
+        }
       }
     } else if (progSlug === "mvsc" || progSlug === "phd") {
       const subjPlan = await prisma.plan.findFirst({
         where: { subjectId: course.subject.id },
         select: { slug: true },
       });
-      if (subjPlan) purchasePlanSlug = subjPlan.slug;
+      if (subjPlan) {
+        purchasePlanSlug = subjPlan.slug;
+        purchaseViaCheckout = true;
+      }
     }
   }
 
@@ -106,10 +115,23 @@ export default async function CoursePage({
         </Link>
         <span>/</span>
         <span className="text-foreground">{course.courseCode}</span>
-      </div>
+        </div>
 
-      {/* Header */}
-      <div className="mb-8">
+        {/* Hero banner */}
+        <div className="relative h-40 w-full overflow-hidden rounded-xl mb-6">
+          <Image
+            src={getSubjectImage(course.subject.name)}
+            alt={course.subject.name}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        </div>
+
+        {/* Header */}
+        <div className="mb-8">
         <Link
           href={`/syllabus/${progSlug}/${subjectId}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
@@ -172,7 +194,15 @@ export default async function CoursePage({
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
+              {course.content && !course.content.startsWith("Credit Hours:") ? (
+                isHtmlContent(course.content) ? (
+                  <ProtectedHtml html={courseHtml} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{course.content}</p>
+                )
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
+              )}
               <ChapterResources contents={signedContents} />
             </CardContent>
           </Card>
@@ -183,6 +213,7 @@ export default async function CoursePage({
           planSlug={purchasePlanSlug}
           title="Enroll to access this course"
           message="Enroll in this programme to unlock the full course content and resources."
+          to={purchaseViaCheckout ? "checkout" : "pricing"}
         />
       )}
     </div>

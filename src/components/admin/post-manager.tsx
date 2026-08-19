@@ -16,6 +16,7 @@ import {
   Loader2,
   FileText,
   X,
+  Search,
 } from "lucide-react";
 
 type Post = {
@@ -70,16 +71,21 @@ export default function PostManager() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function loadPosts() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/posts");
+      if (!res.ok) {
+        setError("Failed to load posts");
+        return;
+      }
       const data = await res.json();
       setPosts(data);
     } catch {
-      // ignore
+      setError("Network error while loading posts");
     } finally {
       setLoading(false);
     }
@@ -194,19 +200,30 @@ export default function PostManager() {
   }
 
   async function handleDelete(p: Post) {
-    if (!confirm("Delete this post?")) return;
+    if (!confirm("Delete this post? This cannot be undone.")) return;
     try {
       const res = await fetch(`/api/admin/posts/${p.id}`, { method: "DELETE" });
       if (res.ok) {
         setPosts((prev) => prev.filter((x) => x.id !== p.id));
         router.refresh();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Failed to delete post");
       }
     } catch {
-      // ignore
+      setError("Network error while deleting post");
     }
   }
 
-  const filtered = posts.filter((p) => p.category === activeCategory);
+  const filtered = posts.filter((p) => {
+    const matchesCategory = p.category === activeCategory;
+    if (!search) return matchesCategory;
+    return (
+      matchesCategory &&
+      (p.title.toLowerCase().includes(search.toLowerCase()) ||
+        (p.content && p.content.toLowerCase().includes(search.toLowerCase())))
+    );
+  });
 
   return (
     <div className="space-y-4">
@@ -355,9 +372,20 @@ export default function PostManager() {
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No posts yet.</p>
+        <p className="text-sm text-muted-foreground">
+          {search ? "No posts match your search." : "No posts yet."}
+        </p>
       ) : (
         <div className="space-y-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search posts by title or content..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
           {filtered.map((p) => (
             <div
               key={p.id}
@@ -394,13 +422,14 @@ export default function PostManager() {
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0">
-                <Button variant="ghost" size="icon" onClick={() => openEdit(p)}>
+                <Button variant="ghost" size="icon" onClick={() => openEdit(p)} aria-label="Edit post">
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDelete(p)}
+                  aria-label="Delete post"
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>

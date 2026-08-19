@@ -60,6 +60,8 @@ export default async function PreviousYearPaperPage({
     hasAccess = true;
   }
 
+  // Strip correctAnswer/explanation from the initial client payload; the player
+  // fetches them only at review time via the attempt API.
   const questions = test.questions.map((q) => {
     let opts: string[] = [];
     try {
@@ -71,9 +73,7 @@ export default async function PreviousYearPaperPage({
       id: q.id,
       text: q.text,
       options: opts,
-      correctAnswer: q.correctAnswer,
       marks: q.marks,
-      explanation: q.explanation,
     };
   });
 

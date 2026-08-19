@@ -65,7 +65,16 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({ success: true, attempt }, { status: 201 });
+    // Return per-question correct answers + explanations so the client player
+    // only receives them at review time (after submission), not in the initial
+    // payload. The authoritative score is always the server-recomputed one.
+    const review = test.questions.map((q) => ({
+      id: q.id,
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation,
+    }));
+
+    return NextResponse.json({ success: true, attempt, review }, { status: 201 });
   } catch (error) {
     console.error("Mock test attempt save error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });

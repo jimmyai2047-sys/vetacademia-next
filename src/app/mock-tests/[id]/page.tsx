@@ -67,6 +67,9 @@ export default async function MockTestAttemptPage({
     hasAccess = true;
   }
 
+  // Strip correctAnswer/explanation from the initial client payload; the player
+  // fetches them only at review time via the attempt API. Adaptive (CAT) tests
+  // need correctAnswer mid-test to adapt difficulty, so keep it for those only.
   const questions = test.questions.map((q) => {
     let opts: string[] = [];
     try {
@@ -74,15 +77,17 @@ export default async function MockTestAttemptPage({
     } catch {
       opts = [];
     }
-    return {
+    const base = {
       id: q.id,
       text: q.text,
       options: opts,
-      correctAnswer: q.correctAnswer,
       marks: q.marks,
-      explanation: q.explanation,
       difficulty: q.difficulty,
     };
+    if (test.isAdaptive) {
+      return { ...base, correctAnswer: q.correctAnswer };
+    }
+    return base;
   });
 
   if (!hasAccess) {

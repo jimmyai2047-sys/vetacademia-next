@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Upload, Loader2 } from "lucide-react";
-import { extractDocumentToHtml } from "@/lib/extract-document";
 
 const ACCEPT = ".docx,.xlsx,.xls,.pdf,.txt,.md,.csv,.html,.htm";
 
@@ -23,7 +22,17 @@ export default function FileExtractField({
     setBusy(true);
     setError(null);
     try {
-      const html = await extractDocumentToHtml(file);
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/convert-document", {
+        method: "POST",
+        body: fd,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Conversion failed");
+      }
+      const { html } = await res.json();
       onExtracted(html);
     } catch {
       setError("Could not read this file. Try copy-pasting the text instead.");
