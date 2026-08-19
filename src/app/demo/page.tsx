@@ -29,7 +29,7 @@ import {
   Star,
 } from "lucide-react";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const PROGRAMMES = [
   { slug: "ahdp", label: "A.H.D.P", sub: "Animal Husbandry Diploma" },

@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | Flashcards",
   description: "Revision flashcards to reinforce key veterinary concepts.",
 };
@@ -8,7 +8,7 @@ import FlashcardDeck from "@/components/flashcard-deck";
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 
 

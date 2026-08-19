@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | For Veterinarians",
   description: "Resources, consultation tools, and community for practicing veterinarians.",
 };
@@ -9,7 +9,7 @@ import VetReference from "@/components/vet-reference";
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function VetsPage() {
   const vetPosts = await getPublishedPosts("VETS");

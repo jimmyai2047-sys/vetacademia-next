@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | Analytics",
 };
 
@@ -25,7 +25,7 @@ import {
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function AnalyticsPage() {
   const [

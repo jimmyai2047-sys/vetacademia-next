@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | Mock Tests",
   description: "Practice mock tests with performance analytics on VetAcademia.",
 };
@@ -19,7 +19,7 @@ import { Brain, Clock, FileText, Download } from "lucide-react";
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function MockTestsPage() {
   const tests = await prisma.mockTest.findMany({

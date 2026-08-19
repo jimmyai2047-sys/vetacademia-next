@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | Previous Year Papers",
   description: "Previous year question papers for veterinary and animal-sciences examinations.",
 };
@@ -11,7 +11,7 @@ import { getPublishedPosts } from "@/lib/posts";
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 
 export default async function PapersPage() {

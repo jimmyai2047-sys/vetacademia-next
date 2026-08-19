@@ -1,4 +1,4 @@
-﻿export const metadata = {
+export const metadata = {
   title: "VetAcademia | Advisory Services",
   description: "Expert veterinary advisory and consultation services for livestock and practice.",
 };
@@ -9,7 +9,7 @@ import { Megaphone } from "lucide-react";
 
 
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function AdvisoryPage() {
   const posts = await getPublishedPosts("ADVISORY");
