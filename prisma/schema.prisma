@@ -15,6 +15,8 @@ model User {
   password      String
   role          String    @default("STUDENT")
   banned        Boolean   @default(false)
+  emailVerified      Boolean  @default(false)
+  passwordResetNonce String?
   phone         String?
   institution   String?
   programme     String?
