@@ -5,6 +5,7 @@ export const metadata = {
 
 import { prisma } from "@/lib/prisma";
 import FlashcardDeck from "@/components/flashcard-deck";
+import BookmarkButton from "@/components/bookmark-button";
 
 
 
@@ -39,7 +40,15 @@ export default async function FlashcardsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Flashcards</h1>
+      <div className="flex items-center justify-between gap-4 mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold">Flashcards</h1>
+        <BookmarkButton
+          type="flashcard"
+          refId="flashcards"
+          title="Flashcards"
+          url="/flashcards"
+        />
+      </div>
       <p className="text-muted-foreground mb-8">
         Quick-revision flashcards built from real practice questions. Reveal the
         answer, then move through the deck at your own pace.

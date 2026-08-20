@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brain, Clock, FileText, Download } from "lucide-react";
+import BookmarkButton from "@/components/bookmark-button";
 
 
 
@@ -52,7 +53,16 @@ export default async function MockTestsPage() {
           {testsWithLinks.map((test) => (
             <Card key={test.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">{test.title}</CardTitle>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-lg">{test.title}</CardTitle>
+                  <BookmarkButton
+                    type="mocktest"
+                    refId={test.id}
+                    title={test.title}
+                    url={`/mock-tests/${test.id}`}
+                    variant="icon"
+                  />
+                </div>
                 <CardDescription>{test.description || "Mock test"}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">

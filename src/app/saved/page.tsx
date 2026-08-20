@@ -23,6 +23,8 @@ const TYPE_LABEL: Record<string, string> = {
   material: "Study Material",
   question: "Question",
   paper: "Paper",
+  mocktest: "Mock Test",
+  flashcard: "Flashcards",
 };
 
 export default function SavedPage() {

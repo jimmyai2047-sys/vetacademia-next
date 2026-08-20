@@ -10,7 +10,7 @@ function flash(msg: string) {
 }
 
 type Props = {
-  type: "chapter" | "material" | "question" | "paper";
+  type: "chapter" | "material" | "question" | "paper" | "mocktest" | "flashcard";
   refId: string;
   title: string;
   url: string;
