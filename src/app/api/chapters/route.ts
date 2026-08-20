@@ -22,6 +22,8 @@ export async function GET(req: Request) {
         unitNumber: true,
         courseCode: true,
         creditHours: true,
+        content: true,
+        subjectId: true,
       },
       orderBy: { unitNumber: "asc" },
     });
