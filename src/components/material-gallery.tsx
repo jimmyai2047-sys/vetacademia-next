@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Download, Search, FileText, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import BookmarkButton from "@/components/bookmark-button";
 
 export type Material = {
   id: string;
@@ -107,16 +108,25 @@ export default function MaterialGallery({
           {visible.map((m) => (
             <Card key={m.id} className="hover:shadow-lg transition-shadow flex flex-col">
               <CardHeader>
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-lg">{m.title}</CardTitle>
-                  <Badge
-                    className={
-                      categoryMeta[m.category]?.className ||
-                      "bg-muted text-muted-foreground"
-                    }
-                  >
-                    {categoryMeta[m.category]?.label || m.category}
-                  </Badge>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Badge
+                      className={
+                        categoryMeta[m.category]?.className ||
+                        "bg-muted text-muted-foreground"
+                      }
+                    >
+                      {categoryMeta[m.category]?.label || m.category}
+                    </Badge>
+                    <BookmarkButton
+                      type="material"
+                      refId={m.id}
+                      title={m.title}
+                      url={`/study-materials/${m.id}`}
+                      variant="icon"
+                    />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="flex flex-col flex-1">

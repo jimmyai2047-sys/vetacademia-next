@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, ArrowLeft, NotebookPen } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getPublishedPosts } from "@/lib/posts";
+import BookmarkButton from "@/components/bookmark-button";
 
 
 
@@ -47,12 +48,14 @@ export default async function PapersPage() {
       ) : (
         <div className="grid sm:grid-cols-2 gap-4">
           {papers.map((p) => (
-            <Link key={p.id} href={`/papers/${p.id}`}>
+            <div key={p.id} className="relative">
               <Card className="hover:border-primary transition-colors">
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 pr-10">
                   <CardTitle className="text-base flex items-start gap-2">
                     <NotebookPen className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    {p.title}
+                    <Link href={`/papers/${p.id}`} className="hover:underline">
+                      {p.title}
+                    </Link>
                     {p.year && (
                       <span className="text-xs text-muted-foreground font-normal">
                         ({p.year})
@@ -64,12 +67,24 @@ export default async function PapersPage() {
                   <span className="text-xs text-muted-foreground">
                     {p._count?.questions ?? 0} questions &middot; {p.duration} min
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
+                  <Link
+                    href={`/papers/${p.id}`}
+                    className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                  >
                     Solve
-                  </span>
+                  </Link>
                 </CardContent>
               </Card>
-            </Link>
+              <div className="absolute right-3 top-3">
+                <BookmarkButton
+                  type="paper"
+                  refId={p.id}
+                  title={p.title}
+                  url={`/papers/${p.id}`}
+                  variant="icon"
+                />
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -86,20 +101,29 @@ export default async function PapersPage() {
                     {post.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex items-center justify-between">
+                <CardContent className="flex items-center justify-between gap-2">
                   <span className="text-xs text-muted-foreground uppercase">
                     {post.fileType || "Document"}
                   </span>
-                  {post.downloadUrl && (
-                    <a
-                      href={post.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-                    >
-                      <Download className="h-3.5 w-3.5" /> Download
-                    </a>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {post.downloadUrl && (
+                      <a
+                        href={post.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Download className="h-3.5 w-3.5" /> Download
+                      </a>
+                    )}
+                    <BookmarkButton
+                      type="material"
+                      refId={post.id}
+                      title={post.title}
+                      url={post.downloadUrl || "/papers"}
+                      variant="icon"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             ))}
