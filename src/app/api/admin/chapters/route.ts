@@ -51,6 +51,8 @@ export async function POST(req: Request) {
           content: sanitizeChapterContent(optimized),
           unitNumber: typeof c.unitNumber === "number" ? c.unitNumber : i + 1,
           type: c.type === "PRACTICAL" ? "PRACTICAL" : c.type === "THEORY" ? "THEORY" : null,
+          author: typeof c.author === "string" ? c.author.trim() || null : null,
+          reviewer: typeof c.reviewer === "string" ? c.reviewer.trim() || null : null,
         },
       });
       created.push(createdChapter.id);

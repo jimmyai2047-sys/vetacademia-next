@@ -19,6 +19,8 @@ export default function AddChapterButton({ subjectId }: { subjectId: string }) {
   const [adding, setAdding] = useState(false);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [reviewer, setReviewer] = useState("");
 
   async function handleAdd() {
     if (!title.trim()) return;
@@ -30,7 +32,16 @@ export default function AddChapterButton({ subjectId }: { subjectId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subjectId,
-          chapters: [{ title: title.trim(), content: "", unitNumber: 1, type: null }],
+          chapters: [
+            {
+              title: title.trim(),
+              content: "",
+              unitNumber: 1,
+              type: null,
+              author: author.trim() || null,
+              reviewer: reviewer.trim() || null,
+            },
+          ],
         }),
       });
       if (res.ok) {
@@ -71,6 +82,24 @@ export default function AddChapterButton({ subjectId }: { subjectId: string }) {
               }}
               autoFocus
             />
+            <div className="space-y-2">
+              <Label htmlFor="chapter-author">Author / Contributor (optional)</Label>
+              <Input
+                id="chapter-author"
+                placeholder="e.g. Dr. A. Sharma"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chapter-reviewer">Reviewed by (optional)</Label>
+              <Input
+                id="chapter-reviewer"
+                placeholder="e.g. Prof. R. Verma"
+                value={reviewer}
+                onChange={(e) => setReviewer(e.target.value)}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>

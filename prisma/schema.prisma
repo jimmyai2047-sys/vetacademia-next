@@ -39,6 +39,8 @@ model User {
   studyMaterials    StudyMaterial[]
   flashcardProgress FlashcardProgress[]
   chatMessages      ChatMessage[]
+  bookmarks         Bookmark[]
+  doubts            Doubt[]
 
   @@index([role])
 }
@@ -117,7 +119,64 @@ model Chapter {
   chapterContents ChapterContent[]
   studyMaterials StudyMaterial[]
 
+  author   String? // content author / contributor (display only)
+  reviewer String? // subject-matter reviewer who verified the content
+
   @@index([subjectId])
+}
+
+// ==================== BOOKMARKS (saved items) ====================
+// Lets students save chapters, study materials, questions and papers for
+// quick revision. One entry per (user, type, refId) to avoid duplicates.
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // "chapter" | "material" | "question" | "paper"
+  refId     String // id of the bookmarked item
+  title     String // denormalized label for display
+  url       String // deep link back to the item
+  note      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@unique([userId, type, refId])
+}
+
+// ==================== OTP CHALLENGES ====================
+// Restored to match the existing table so the auth/OTP code compiles and the
+// data is preserved (it was previously removed from the schema).
+
+model OtpChallenge {
+  id        String   @id @default(cuid())
+  contact   String
+  purpose   String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([contact, purpose])
+}
+
+// ==================== NOTIFICATIONS ====================
+// Restored to match the existing table so the notifications API compiles and
+// the data is preserved.
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  title     String
+  body      String
+  type      String   @default("GENERAL")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ==================== EXAM PREPARATION STUDY MATERIALS ====================
@@ -419,6 +478,39 @@ model Doubt {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ==================== ADMISSION ENQUIRIES ====================
+// Lead/enrolment form submissions captured from the public /admission page.
+// Mirrors the offline admission form (name, parent details, category, TSP,
+// qualification) while adding VetAcademia-specific context (programme, year).
+
+model Enquiry {
+  id              String   @id @default(cuid())
+  fullName        String
+  fatherName      String?
+  motherName      String?
+  dob             String?
+  gender          String?
+  email           String
+  studentMobile   String?
+  parentMobile    String?
+  address         String?
+  programme       String?
+  yearOrSemester  String?
+  qualification   String?
+  percentage      String?
+  passingYear     String?
+  category        String?
+  tsp             String?
+  message         String?
+  status          String   @default("NEW")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
 }
 
 // ==================== CONSULTATIONS ====================

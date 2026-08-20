@@ -39,6 +39,12 @@ export async function PATCH(
     if (body.type === "THEORY" || body.type === "PRACTICAL") {
       data.type = body.type;
     }
+    if (typeof body.author === "string") {
+      data.author = body.author.trim() || null;
+    }
+    if (typeof body.reviewer === "string") {
+      data.reviewer = body.reviewer.trim() || null;
+    }
 
     if (Object.keys(data).length === 0) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });

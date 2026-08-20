@@ -68,6 +68,9 @@ export default async function ChapterReaderRoute({
       programmeName={chapter.subject.programme.name}
       programmeSlug={programmeSlug}
       subjectId={chapter.subjectId}
+      chapterId={chapter.id}
+      author={chapter.author}
+      reviewer={chapter.reviewer}
       html={signedHtml}
       resources={resources}
     />
