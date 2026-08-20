@@ -56,11 +56,11 @@ function PptViewer({ url, title }: { url: string; title: string }) {
           </a>
         </div>
       </div>
-      <div className="w-full rounded-lg overflow-hidden border bg-muted" style={{ minHeight: "500px" }}>
+      <div className="w-full rounded-lg overflow-hidden border bg-muted" style={{ minHeight: "min(500px, 60vh)" }}>
         <iframe
           src={officeViewer}
           className="w-full border-0"
-          style={{ height: "600px" }}
+          style={{ height: "min(600px, 70vh)" }}
           title={title}
           allowFullScreen
         />
@@ -127,7 +127,7 @@ function PdfViewer({ url, title }: { url: string; title: string }) {
           </a>
         </div>
       </div>
-      <div className="w-full rounded-lg overflow-hidden border" style={{ height: "600px" }}>
+      <div className="w-full rounded-lg overflow-hidden border" style={{ height: "min(600px, 80vh)" }}>
         <iframe src={url} className="w-full h-full border-0" title={title} />
       </div>
     </div>

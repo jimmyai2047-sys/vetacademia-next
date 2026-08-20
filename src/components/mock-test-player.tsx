@@ -229,9 +229,9 @@ export default function MockTestPlayer({
         <ArrowLeft className="h-4 w-4" /> Back to Mock Tests
       </Link>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-3xl font-bold">{title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
           <p className="text-muted-foreground">
             {duration} min &middot; {questions.length} questions &middot; {totalMarks} marks
             {adaptive && (
@@ -242,7 +242,7 @@ export default function MockTestPlayer({
           </p>
         </div>
         {submitted && (
-          <Button variant="outline" onClick={reset}>
+          <Button variant="outline" onClick={reset} className="shrink-0">
             <RotateCcw className="h-4 w-4 mr-1" /> Retake
           </Button>
         )}
@@ -364,7 +364,7 @@ export default function MockTestPlayer({
           )}
 
           {!submitted && adaptive && (
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button
                 size="lg"
                 onClick={advanceAdaptive}

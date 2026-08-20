@@ -221,14 +221,14 @@ export default function HomePage() {
               consultations for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/syllabus/ahdp">
-                <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90">
+              <Link href="/syllabus/ahdp" className="w-full sm:w-auto">
+                <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 w-full">
                   Explore Programmes
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/signup">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+              <Link href="/signup" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black w-full">
                   Start Free Trial
                 </Button>
               </Link>
@@ -266,8 +266,8 @@ export default function HomePage() {
               / VO / ICAR exams.
             </p>
           </div>
-          <Link href="/demo">
-              <Button className="gap-2 bg-primary hover:bg-primary/90 shrink-0">
+          <Link href="/demo" className="w-full sm:w-auto">
+              <Button className="gap-2 bg-primary hover:bg-primary/90 shrink-0 w-full sm:w-auto">
                 Explore Free Demos
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -424,8 +424,8 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link href="/signup" className="mt-8 inline-block">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">Get Started Today</Button>
+              <Link href="/signup" className="mt-8 block w-full sm:w-auto">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 w-full sm:w-auto">Get Started Today</Button>
               </Link>
             </div>
             <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
@@ -463,10 +463,10 @@ export default function HomePage() {
             VetAcademia
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/signup">
+            <Link href="/signup" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="gap-2 bg-white text-primary hover:bg-gray-100"
+                className="gap-2 bg-white text-primary hover:bg-gray-100 w-full"
               >
                 Create Free Account
                 <ArrowRight className="h-4 w-4" />
