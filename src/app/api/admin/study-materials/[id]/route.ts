@@ -21,6 +21,7 @@ export async function PUT(
       url,
       fileName,
       fileType,
+      coverImageUrl,
       subjectId,
       chapterId,
       isDemo,
@@ -32,6 +33,7 @@ export async function PUT(
       url?: string | null;
       fileName?: string | null;
       fileType?: string | null;
+      coverImageUrl?: string | null;
       subjectId?: string | null;
       chapterId?: string | null;
       isDemo?: boolean;
@@ -73,6 +75,8 @@ export async function PUT(
         url: url !== undefined ? url : existing.url,
         fileName: fileName !== undefined ? fileName : existing.fileName,
         fileType: fileType !== undefined ? fileType : existing.fileType,
+        coverImageUrl:
+          coverImageUrl !== undefined ? coverImageUrl : existing.coverImageUrl,
         subjectId: resolvedSubjectId,
         chapterId: chapterId !== undefined ? chapterId : existing.chapterId,
         isDemo: isDemo !== undefined ? (isDemo ?? false) : existing.isDemo,

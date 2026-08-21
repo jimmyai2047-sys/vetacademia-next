@@ -48,6 +48,7 @@ type Material = {
   url?: string | null;
   fileName?: string | null;
   fileType?: string | null;
+  coverImageUrl?: string | null;
 };
 
 const TYPES = ["NOTE", "PDF", "DOC", "XLS", "PPT", "VIDEO", "LINK", "IMAGE"];
@@ -86,6 +87,9 @@ export default function StudyMaterialManager({
   } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [chapterId, setChapterId] = useState<string | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverRef = useRef<HTMLInputElement>(null);
   const [subjectId, setSubjectId] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [isPublic, setIsPublic] = useState(true);
@@ -162,6 +166,7 @@ export default function StudyMaterialManager({
     setFile(null);
     setChapterId(chId);
     setSubjectId(subjId);
+    setCoverImageUrl("");
     setIsDemo(false);
     setIsPublic(true);
     setError(null);
@@ -181,6 +186,7 @@ export default function StudyMaterialManager({
         ? { url: m.url, fileName: m.fileName || "", fileType: m.fileType || "" }
         : null
     );
+    setCoverImageUrl(m.coverImageUrl || "");
     setChapterId(m.chapterId);
     setSubjectId(m.subjectId);
     setIsDemo(m.isDemo);
@@ -221,6 +227,32 @@ export default function StudyMaterialManager({
     }
   }
 
+  async function handleCover(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setUploadingCover(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", f);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Cover upload failed");
+        return;
+      }
+      setCoverImageUrl(data.url);
+    } catch {
+      setError("Cover upload failed");
+    } finally {
+      setUploadingCover(false);
+      if (coverRef.current) coverRef.current.value = "";
+    }
+  }
+
   async function handleDocxImport(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -252,6 +284,7 @@ export default function StudyMaterialManager({
         url: url || null,
         fileName: fileName || null,
         fileType: fileType || null,
+        coverImageUrl: coverImageUrl || null,
         subjectId: subjectId || null,
         chapterId: chapterId || null,
         isDemo,
@@ -427,6 +460,52 @@ export default function StudyMaterialManager({
               />
             </div>
           ) : null}
+
+          {/* Cover image (thumbnail shown in the chapter list) */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium block">
+              Cover Image (thumbnail)
+            </label>
+            <div className="flex items-center gap-3">
+              {coverImageUrl ? (
+                <div className="relative">
+                  <CoverThumb url={coverImageUrl} alt="cover" />
+                  <button
+                    type="button"
+                    onClick={() => setCoverImageUrl("")}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    ref={coverRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleCover}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => coverRef.current?.click()}
+                    disabled={uploadingCover}
+                  >
+                    {uploadingCover ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="h-3.5 w-3.5" />
+                    )}
+                    Upload Cover
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <input
@@ -652,6 +731,7 @@ export default function StudyMaterialManager({
                               key={m.id}
                               className="flex items-center gap-3 px-4 py-2.5 text-sm"
                             >
+                              <CoverThumb url={m.coverImageUrl} alt={m.title} />
                               <span className="font-medium truncate">
                                 {m.title}
                               </span>
@@ -708,6 +788,25 @@ export default function StudyMaterialManager({
   );
 }
 
+function CoverThumb({ url, alt }: { url?: string | null; alt: string }) {
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    if (url && typeof window !== "undefined") {
+      setSrc(
+        `${window.location.origin}/api/blob?url=${encodeURIComponent(url)}`
+      );
+    }
+  }, [url]);
+  if (!url) return null;
+  return (
+    <img
+      src={src || undefined}
+      alt={alt}
+      className="h-12 w-12 rounded-md object-cover border shrink-0"
+    />
+  );
+}
+
 function SubjectLevelMaterials({
   materials,
   onEdit,
@@ -729,6 +828,7 @@ function SubjectLevelMaterials({
             key={m.id}
             className="flex items-center gap-3 px-4 py-2.5 text-sm"
           >
+            <CoverThumb url={m.coverImageUrl} alt={m.title} />
             <span className="font-medium truncate">{m.title}</span>
             <Badge variant="outline">{m.type}</Badge>
             {m.isDemo && (

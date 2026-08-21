@@ -411,6 +411,7 @@ model StudyMaterial {
   url         String?
   fileName    String?
   fileType    String?
+  coverImageUrl String?
   content     String?
   subjectId   String?
   chapterId   String?

@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       url,
       fileName,
       fileType,
+      coverImageUrl,
       subjectId,
       chapterId,
       isDemo,
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
       url?: string | null;
       fileName?: string | null;
       fileType?: string | null;
+      coverImageUrl?: string | null;
       subjectId?: string | null;
       chapterId?: string | null;
       isDemo?: boolean;
@@ -73,6 +75,7 @@ export async function POST(req: Request) {
         url: url || null,
         fileName: fileName || null,
         fileType: fileType || null,
+        coverImageUrl: coverImageUrl || null,
         subjectId: resolvedSubjectId,
         chapterId: chapterId || null,
         userId: null,
