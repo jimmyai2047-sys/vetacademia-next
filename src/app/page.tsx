@@ -206,17 +206,17 @@ export default function HomePage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/80" />
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex justify-center mb-6">
               <BrandLogo tone="light" src="/favicon-192x192.png" imgClassName="h-[98px] w-[98px] object-contain contrast-150 brightness-110" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white [text-shadow:0_2px_12px_rgb(0_0_0_/_0.6)]">
               India&apos;s Premier{" "}
               <span className="text-primary">Veterinary Education</span> Platform
             </h1>
-            <p className="text-lg md:text-xl text-gray-200 mb-8">
+            <p className="text-lg md:text-xl text-gray-100 mb-8 [text-shadow:0_1px_8px_rgb(0_0_0_/_0.7)]">
               Access comprehensive curricula, mock tests, study materials, and expert
               consultations for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.
             </p>
