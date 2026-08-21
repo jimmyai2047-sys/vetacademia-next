@@ -13,10 +13,11 @@ const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 async function putWithFallback(
   path: string,
   file: File,
-  token?: string
+  token?: string,
+  access: "private" | "public" = "private"
 ) {
   const base = {
-    access: "private" as const,
+    access,
     token,
     addRandomSuffix: false,
     multipart: true,
@@ -90,7 +91,15 @@ export async function POST(req: Request) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `chapter-content/${chapterId}/${Date.now()}-${safeName}`;
 
-    const blob = await putWithFallback(path, file, process.env.BLOB_READ_WRITE_TOKEN);
+    // PPT (and other Office docs) are rendered by external viewers
+    // (Office/Google) that fetch the URL server-side, so they must be public.
+    const access = fileType === "PPT" ? "public" : "private";
+    const blob = await putWithFallback(
+      path,
+      file,
+      process.env.BLOB_READ_WRITE_TOKEN,
+      access
+    );
 
     const content = await prisma.chapterContent.create({
       data: {

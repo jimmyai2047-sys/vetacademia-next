@@ -54,12 +54,40 @@ export default async function ChapterReaderRoute({
   }
 
   const signedHtml = await prepareChapterHtml(chapter.content);
-  const resources = await Promise.all(
+  const chapterResources = await Promise.all(
     chapter.chapterContents.map(async (c: any) => ({
       ...c,
       url: await getSignedUrl(c.url),
     }))
   );
+
+  // Study Materials bound to this chapter (uploaded via the Study Materials
+  // admin) are surfaced here too, so a PPT/PDF added there also appears on the
+  // chapter page alongside ChapterContent files.
+  const studyMats = await prisma.studyMaterial.findMany({
+    where: { chapterId: chapter.id },
+    select: {
+      id: true,
+      title: true,
+      url: true,
+      fileType: true,
+      fileName: true,
+    },
+  });
+  const studyResources = await Promise.all(
+    studyMats
+      .filter((m: any) => m.url)
+      .map(async (m: any) => ({
+        id: m.id,
+        title: m.title,
+        url: await getSignedUrl(m.url),
+        fileType: m.fileType,
+        fileName: m.fileName || m.title,
+        size: null,
+      }))
+  );
+
+  const resources = [...chapterResources, ...studyResources];
 
   return (
     <ReaderPage
