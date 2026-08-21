@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileText, Presentation, Video, BookOpen, Download, Maximize2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ProtectedHtml from "@/components/protected-html";
@@ -27,7 +27,18 @@ function formatSize(bytes: number | null) {
 }
 
 function PptViewer({ url, title }: { url: string; title: string }) {
-  const encodedUrl = encodeURIComponent(url);
+  const [proxied, setProxied] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setProxied(
+        `${window.location.origin}/api/blob?url=${encodeURIComponent(url)}`
+      );
+    }
+  }, [url]);
+
+  // External viewers (Office/Google) fetch the URL server-side, so they need a
+  // publicly reachable URL. The proxy streams our private blob.
+  const encodedUrl = encodeURIComponent(proxied || url);
   const googleViewer = `https://docs.google.com/gview?url=${encodedUrl}&embedded=true`;
   const officeViewer = `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
 
@@ -57,13 +68,19 @@ function PptViewer({ url, title }: { url: string; title: string }) {
         </div>
       </div>
       <div className="w-full rounded-lg overflow-hidden border bg-muted" style={{ minHeight: "min(500px, 60vh)" }}>
-        <iframe
-          src={officeViewer}
-          className="w-full border-0"
-          style={{ height: "min(600px, 70vh)" }}
-          title={title}
-          allowFullScreen
-        />
+        {proxied ? (
+          <iframe
+            src={officeViewer}
+            className="w-full border-0"
+            style={{ height: "min(600px, 70vh)" }}
+            title={title}
+            allowFullScreen
+          />
+        ) : (
+          <div className="p-6 text-sm text-muted-foreground">
+            Loading viewer…
+          </div>
+        )}
       </div>
     </div>
   );

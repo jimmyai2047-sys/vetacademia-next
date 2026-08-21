@@ -78,15 +78,7 @@ export async function POST(req: Request) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `uploads/${Date.now()}-${safeName}`;
 
-    // PPT (and other Office docs) are rendered by external viewers
-    // (Office/Google) that fetch the URL server-side, so they must be public.
-    const access = fileType === "PPT" ? "public" : "private";
-    const blob = await putWithFallback(
-      path,
-      file,
-      process.env.BLOB_READ_WRITE_TOKEN,
-      access
-    );
+    const blob = await putWithFallback(path, file, process.env.BLOB_READ_WRITE_TOKEN);
 
     logAudit({
       action: "upload",
