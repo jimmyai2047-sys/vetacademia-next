@@ -14,6 +14,8 @@ export async function GET(req: Request) {
     if (difficulty) {
       where.title = { contains: difficulty, mode: "insensitive" };
     }
+    const kind = searchParams.get("kind");
+    if (kind) where.kind = kind;
 
     const mockTests = await prisma.mockTest.findMany({
       where,
