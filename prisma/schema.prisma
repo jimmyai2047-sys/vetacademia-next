@@ -525,8 +525,8 @@ model Expert {
   photoUrl        String?
   hourlyRate      Int
   isAvailable     Boolean   @default(true)
-  rating          Float     @default(0)
-  totalReviews    Int       @default(0)
+  rating          Float     @default(4.8)
+  totalReviews    Int       @default(1000)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
