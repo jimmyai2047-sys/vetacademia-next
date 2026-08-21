@@ -31,8 +31,25 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Upstream error", { status: 502 });
     }
     const buf = Buffer.from(await upstream.arrayBuffer());
-    const contentType =
-      upstream.headers.get("content-type") || "application/octet-stream";
+    // Vercel Blob often returns application/octet-stream for Office files,
+    // which makes external viewers (Office Online) reject them with
+    // "This content is blocked". Force the correct MIME by extension.
+    const ext = (parsed.pathname.split(".").pop() || "").toLowerCase();
+    const MIME: Record<string, string> = {
+      pdf: "application/pdf",
+      ppt: "application/vnd.ms-powerpoint",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      xls: "application/vnd.ms-excel",
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      gif: "image/gif",
+      webp: "image/webp",
+    };
+    const contentType = MIME[ext] || upstream.headers.get("content-type") || "application/octet-stream";
     const filename = decodeURIComponent(
       parsed.pathname.split("/").pop() || "file"
     );

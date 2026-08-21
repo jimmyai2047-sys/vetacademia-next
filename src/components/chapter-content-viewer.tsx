@@ -37,10 +37,12 @@ function PptViewer({ url, title }: { url: string; title: string }) {
   }, [url]);
 
   // External viewers (Office/Google) fetch the URL server-side, so they need a
-  // publicly reachable URL. The proxy streams our private blob.
+  // publicly reachable URL. The proxy streams our private blob. We use Google's
+  // viewer as primary — it is far more tolerant of file types/sizes than
+  // Office Online (which shows "This content is blocked" for octet-stream or
+  // files over ~10 MB).
   const encodedUrl = encodeURIComponent(proxied || url);
   const googleViewer = `https://docs.google.com/gview?url=${encodedUrl}&embedded=true`;
-  const officeViewer = `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
 
   return (
     <div className="w-full">
@@ -51,7 +53,7 @@ function PptViewer({ url, title }: { url: string; title: string }) {
         </h4>
         <div className="flex gap-2">
           <a
-            href={officeViewer}
+            href={googleViewer}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
@@ -70,7 +72,7 @@ function PptViewer({ url, title }: { url: string; title: string }) {
       <div className="w-full rounded-lg overflow-hidden border bg-muted" style={{ minHeight: "min(500px, 60vh)" }}>
         {proxied ? (
           <iframe
-            src={officeViewer}
+            src={googleViewer}
             className="w-full border-0"
             style={{ height: "min(600px, 70vh)" }}
             title={title}
