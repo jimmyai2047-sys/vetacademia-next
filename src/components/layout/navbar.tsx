@@ -310,6 +310,9 @@ export default function Navbar() {
           <Link href="/about">
             <Button variant="ghost">About</Button>
           </Link>
+          <Link href="/testimonials">
+            <Button variant="ghost">Testimonials</Button>
+          </Link>
           <Link href="/admission">
             <Button>Admission</Button>
           </Link>
@@ -550,6 +553,14 @@ export default function Navbar() {
                 >
                   <Info className="h-4 w-4 text-primary" />
                   About
+                </Link>
+                <Link
+                  href="/testimonials"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Users className="h-4 w-4 text-primary" />
+                  Testimonials
                 </Link>
                 <Link
                   href="/admission"

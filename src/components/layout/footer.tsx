@@ -20,6 +20,7 @@ const footerLinks = {
   ],
   support: [
     { name: "Expert Consultation", href: "/experts" },
+    { name: "Success Stories", href: "/testimonials" },
     { name: "About Us", href: "/about" },
     { name: "Admission Form", href: "/admission" },
     { name: "Help Center", href: "/help" },

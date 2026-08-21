@@ -537,6 +537,22 @@ model Expert {
   @@index([isAvailable])
 }
 
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  exam        String
+  programme   String?
+  quote       String
+  rating      Float    @default(5.0)
+  intakeYear  Int?
+  isApproved  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isApproved])
+  @@index([rating])
+}
+
 model Consultation {
   id          String    @id @default(cuid())
   studentId   String

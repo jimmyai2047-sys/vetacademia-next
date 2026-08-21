@@ -5,6 +5,8 @@ import { BrandLogo } from "@/components/layout/brand-logo";
 import VisitorCounter from "@/components/visitor-counter";
 import Chatbot from "@/components/chatbot";
 import ImportantLinkCard from "@/components/important-link-card";
+import { Badge } from "@/components/ui/badge";
+import { prisma } from "@/lib/prisma";
 import {
   Card,
   CardContent,
@@ -17,6 +19,7 @@ import {
   GraduationCap,
   FlaskConical,
   Stethoscope,
+  Star,
   Brain,
   Users,
   FileText,
@@ -36,6 +39,8 @@ export const metadata = {
     type: "website",
   },
 };
+
+export const dynamic = "force-dynamic";
 
 const programmes = [
   {
@@ -112,6 +117,17 @@ const stats = [
   { label: "Subjects", value: "100+" },
   { label: "Students", value: "10K+" },
   { label: "Experts", value: "50+" },
+];
+
+const avatarColors = [
+  "bg-primary",
+  "bg-blue-600",
+  "bg-purple-600",
+  "bg-orange-600",
+  "bg-green-600",
+  "bg-rose-600",
+  "bg-teal-600",
+  "bg-indigo-600",
 ];
 
 const importantLinks = [
@@ -194,7 +210,15 @@ const importantLinks = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featured = await prisma.testimonial
+    .findMany({
+      where: { isApproved: true },
+      orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
+      take: 3,
+    })
+    .catch(() => []);
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -443,6 +467,82 @@ export default function HomePage() {
                 <p className="text-lg font-semibold">Empowering veterinary students since 2020</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Student Success Stories */}
+      <section className="py-16 md:py-24 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Badge className="mb-3" variant="secondary">
+              Success Stories
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Loved by Veterinary Students
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Real results from students who prepared with VetAcademia.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {featured.map((t, i) => (
+              <Card
+                key={t.id}
+                className="h-full flex flex-col hover:shadow-lg transition-shadow"
+              >
+                <CardContent className="pt-6 flex-1 flex flex-col">
+                  <div className="flex items-center gap-1 mb-3">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`h-4 w-4 ${
+                          s <= Math.round(t.rating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-muted-foreground/30"
+                        }`}
+                      />
+                    ))}
+                    <span className="text-sm font-medium ml-1">
+                      {t.rating.toFixed(1)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <div className="mt-4 flex items-center gap-3">
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-full text-white font-bold ${
+                        avatarColors[i % avatarColors.length]
+                      }`}
+                    >
+                      {t.name
+                        .split(" ")
+                        .map((w) => w[0])
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold truncate">
+                        {t.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {t.exam}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link href="/testimonials" className="w-full sm:w-auto inline-block">
+              <Button variant="outline" className="gap-2">
+                Read All Success Stories
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
