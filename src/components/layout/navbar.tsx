@@ -36,16 +36,17 @@ import {
   Award,
   FileQuestion,
   Beaker,
-  Syringe,
-  Bug,
   Newspaper,
   Phone,
-  Radio,
-  Siren,
   BookOpenCheck,
   FileText,
   Info,
   ChevronDown,
+  Radio,
+  Star,
+  Play,
+  IndianRupee,
+  LifeBuoy,
 } from "lucide-react";
 
 const programmes = [
@@ -69,19 +70,6 @@ const prepCategories = [
   { name: "ARS / NET", href: "/prepare?tab=ARS", icon: Beaker, desc: "ARS & NET" },
   { name: "ICAR Entrance", href: "/prepare?tab=ICAR_ENTRANCE", icon: BookMarked, desc: "JRF / SRF" },
   { name: "ICAR-NET", href: "/prepare?tab=NET", icon: Microscope, desc: "ICAR-NET" },
-];
-
-const farmerSections = [
-  { name: "Farm Guides & Reports", href: "/farmers#guides-reports", icon: BookOpen },
-  { name: "Vaccination Schedule", href: "/farmers#vaccination", icon: Syringe },
-  { name: "Deworming Schedule", href: "/farmers#deworming", icon: Bug },
-  { name: "Resources & Updates", href: "/farmers#resources", icon: Newspaper },
-  { name: "Veterinary Helpline", href: "/farmers#helpline", icon: Phone },
-];
-
-const vetSections = [
-  { name: "Reference Guide", href: "/vets#reference", icon: Siren, desc: "Vital Signs & Blood Profiles" },
-  { name: "Articles & Resources", href: "/vets#articles", icon: Newspaper, desc: "Expert Content" },
 ];
 
 export default function Navbar() {
@@ -150,22 +138,24 @@ export default function Navbar() {
         <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto" />
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-1">
           <Link href="/">
             <Button variant="ghost">Home</Button>
           </Link>
+
+          {/* Programmes */}
           <div
             className="group relative"
-            onMouseEnter={() => setMenu("syllabus", true)}
-            onMouseLeave={() => setMenu("syllabus", false)}
-            onFocus={() => setMenu("syllabus", true)}
+            onMouseEnter={() => setMenu("programmes", true)}
+            onMouseLeave={() => setMenu("programmes", false)}
+            onFocus={() => setMenu("programmes", true)}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("syllabus", false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("programmes", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["syllabus"]}>
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
               <GraduationCap className="h-4 w-4" />
-              Syllabus
+              Programmes
             </Button>
             <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               {programmes.map((p) => (
@@ -178,9 +168,18 @@ export default function Navbar() {
                   {p.name}
                 </Link>
               ))}
+              <div className="my-1 h-px bg-border" />
+              <Link
+                href="/syllabus"
+                className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <BookOpenCheck className="h-4 w-4" />
+                View All Syllabus
+              </Link>
             </div>
           </div>
 
+          {/* Exams */}
           <div
             className="group relative"
             onMouseEnter={() => setMenu("exams", true)}
@@ -219,20 +218,24 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Prepare */}
           <div
             className="group relative"
-            onMouseEnter={() => setMenu("prep", true)}
-            onMouseLeave={() => setMenu("prep", false)}
-            onFocus={() => setMenu("prep", true)}
+            onMouseEnter={() => setMenu("prepare", true)}
+            onMouseLeave={() => setMenu("prepare", false)}
+            onFocus={() => setMenu("prepare", true)}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prep", false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prepare", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prep"]}>
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]}>
               <BookOpen className="h-4 w-4" />
-              My Prep
+              Prepare
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+            <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Exam Tracks
+              </div>
               {prepCategories.map((c) => (
                 <Link
                   key={c.name}
@@ -246,95 +249,119 @@ export default function Navbar() {
                   </div>
                 </Link>
               ))}
+              <div className="my-1 h-px bg-border" />
+              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Study Tools
+              </div>
+              <Link href="/mock-tests" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <FileText className="h-4 w-4" /> Mock Tests
+              </Link>
+              <Link href="/flashcards" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <BookMarked className="h-4 w-4" /> Flashcards
+              </Link>
+              <Link href="/papers" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <FileCheck className="h-4 w-4" /> Previous Year Papers
+              </Link>
+              <Link href="/study-materials" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <BookOpenCheck className="h-4 w-4" /> Study Materials
+              </Link>
+              <Link href="/live-classes" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Radio className="h-4 w-4" /> Live Classes
+              </Link>
+              <Link href="/demo" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Play className="h-4 w-4" /> Free Demo
+              </Link>
             </div>
           </div>
 
+          {/* Resources */}
           <div
             className="group relative"
-            onMouseEnter={() => setMenu("farmer", true)}
-            onMouseLeave={() => setMenu("farmer", false)}
-            onFocus={() => setMenu("farmer", true)}
+            onMouseEnter={() => setMenu("resources", true)}
+            onMouseLeave={() => setMenu("resources", false)}
+            onFocus={() => setMenu("resources", true)}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("farmer", false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("resources", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["farmer"]}>
-              <Tractor className="h-4 w-4" />
-              Animal Owner
-            </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-60 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              {farmerSections.map((s) => (
-                <Link
-                  key={s.name}
-                  href={s.href}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <s.icon className="h-4 w-4 shrink-0" />
-                  {s.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div
-            className="group relative"
-            onMouseEnter={() => setMenu("vets", true)}
-            onMouseLeave={() => setMenu("vets", false)}
-            onFocus={() => setMenu("vets", true)}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("vets", false);
-            }}
-          >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["vets"]}>
-              <HeartPulse className="h-4 w-4" />
-              Vets
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["resources"]}>
+              <Users className="h-4 w-4" />
+              Resources
             </Button>
             <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              {vetSections.map((s) => (
-                <Link
-                  key={s.name}
-                  href={s.href}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <s.icon className="h-4 w-4 shrink-0" />
-                  <div>
-                    <div>{s.name}</div>
-                    {s.desc && <div className="text-xs text-muted-foreground">{s.desc}</div>}
-                  </div>
-                </Link>
-              ))}
+              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Community
+              </div>
+              <Link href="/experts" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Users className="h-4 w-4" /> Experts
+              </Link>
+              <Link href="/farmers" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Tractor className="h-4 w-4" /> Animal Owner
+              </Link>
+              <Link href="/vets" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <HeartPulse className="h-4 w-4" /> Vets
+              </Link>
+              <Link href="/community" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Users className="h-4 w-4" /> Community
+              </Link>
+              <div className="my-1 h-px bg-border" />
+              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Content
+              </div>
+              <Link href="/blog" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Newspaper className="h-4 w-4" /> Blog
+              </Link>
+              <Link href="/books" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <BookOpen className="h-4 w-4" /> Books
+              </Link>
+              <Link href="/testimonials" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Star className="h-4 w-4" /> Success Stories
+              </Link>
             </div>
           </div>
-          <Link href="/experts">
-            <Button variant="ghost">Experts</Button>
-          </Link>
-          <Link href="/about">
-            <Button variant="ghost">About</Button>
-          </Link>
-          <Link href="/testimonials">
-            <Button variant="ghost">Testimonials</Button>
-          </Link>
-          <Link href="/live-classes">
-            <Button variant="ghost">Live Classes</Button>
-          </Link>
-          <Link href="/blog">
-            <Button variant="ghost">Blog</Button>
-          </Link>
-          <Link href="/books">
-            <Button variant="ghost">Books</Button>
-          </Link>
+
+          {/* About */}
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("about", true)}
+            onMouseLeave={() => setMenu("about", false)}
+            onFocus={() => setMenu("about", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("about", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["about"]}>
+              <Info className="h-4 w-4" />
+              About
+            </Button>
+            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <Link href="/about" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Info className="h-4 w-4" /> About Us
+              </Link>
+              <Link href="/pricing" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <IndianRupee className="h-4 w-4" /> Pricing
+              </Link>
+              <Link href="/contact" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Phone className="h-4 w-4" /> Contact Us
+              </Link>
+              <Link href="/faqs" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <FileQuestion className="h-4 w-4" /> FAQs
+              </Link>
+              <Link href="/help" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+                <LifeBuoy className="h-4 w-4" /> Help Center
+              </Link>
+            </div>
+          </div>
+
           <Link href="/admission">
             <Button>Admission</Button>
-          </Link>
-          <Link href="/pricing">
-            <Button variant="ghost">Pricing</Button>
           </Link>
         </nav>
 
         {/* Global Search */}
         <form
           onSubmit={handleSearch}
-          className="hidden lg:flex items-center relative"
+          className="hidden xl:flex items-center relative"
         >
           <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
           <input
@@ -347,7 +374,7 @@ export default function Navbar() {
         </form>
 
         {/* Auth Buttons / User Menu */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           {isAuthed ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent outline-none">
@@ -401,7 +428,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger className="md:hidden">
+          <SheetTrigger className="lg:hidden">
             <Button variant="ghost" size="icon">
               <Menu className="h-5 w-5" />
             </Button>
@@ -430,7 +457,7 @@ export default function Navbar() {
                   className="w-full pl-9 pr-3 h-9 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </form>
-              
+
               <div className="space-y-1">
                 <Link
                   href="/"
@@ -467,18 +494,21 @@ export default function Navbar() {
                         {p.name}
                       </Link>
                     ))}
+                    <Link
+                      href="/syllabus"
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <BookOpenCheck className="h-4 w-4 text-primary" />
+                      View All Syllabus
+                    </Link>
                   </div>
                 )}
-              </div>
 
-              <div className="space-y-1 border-t pt-3">
-                <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Explore
-                </div>
                 <button
                   type="button"
                   onClick={() => toggleSection("exams")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent"
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
                 >
                   <span className="flex items-center gap-2">
                     <FileCheck className="h-4 w-4 text-primary" />
@@ -524,78 +554,128 @@ export default function Navbar() {
                     </Link>
                   </div>
                 )}
-                <Link
-                  href="/prepare"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
+
+                <button
+                  type="button"
+                  onClick={() => toggleSection("prepare")}
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
                 >
-                  <BookOpen className="h-4 w-4 text-primary" />
-                  My Prep
-                </Link>
-                <Link
-                  href="/farmers"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
+                  <span className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    Prepare
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.prepare ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {expanded.prepare && (
+                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    {prepCategories.map((c) => (
+                      <Link
+                        key={c.name}
+                        href={c.href}
+                        className="flex items-start gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        <span>
+                          <span className="block">{c.name}</span>
+                          <span className="block text-xs text-muted-foreground">
+                            {c.desc}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                    <Link href="/mock-tests" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <FileText className="h-4 w-4 text-primary" /> Mock Tests
+                    </Link>
+                    <Link href="/flashcards" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <BookMarked className="h-4 w-4 text-primary" /> Flashcards
+                    </Link>
+                    <Link href="/papers" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <FileCheck className="h-4 w-4 text-primary" /> Previous Year Papers
+                    </Link>
+                    <Link href="/live-classes" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Radio className="h-4 w-4 text-primary" /> Live Classes
+                    </Link>
+                    <Link href="/demo" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Play className="h-4 w-4 text-primary" /> Free Demo
+                    </Link>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => toggleSection("resources")}
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
                 >
-                  <Tractor className="h-4 w-4 text-primary" />
-                  Animal Owner
-                </Link>
-                <Link
-                  href="/vets"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
+                  <span className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    Resources
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.resources ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {expanded.resources && (
+                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    <Link href="/experts" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Users className="h-4 w-4 text-primary" /> Experts
+                    </Link>
+                    <Link href="/farmers" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Tractor className="h-4 w-4 text-primary" /> Animal Owner
+                    </Link>
+                    <Link href="/vets" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <HeartPulse className="h-4 w-4 text-primary" /> Vets
+                    </Link>
+                    <Link href="/community" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Users className="h-4 w-4 text-primary" /> Community
+                    </Link>
+                    <Link href="/blog" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Newspaper className="h-4 w-4 text-primary" /> Blog
+                    </Link>
+                    <Link href="/books" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <BookOpen className="h-4 w-4 text-primary" /> Books
+                    </Link>
+                    <Link href="/testimonials" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Star className="h-4 w-4 text-primary" /> Success Stories
+                    </Link>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => toggleSection("about")}
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
                 >
-                  <HeartPulse className="h-4 w-4 text-primary" />
-                  Vets
-                </Link>
-                <Link
-                  href="/experts"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Users className="h-4 w-4 text-primary" />
-                  Experts
-                </Link>
-                <Link
-                  href="/about"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Info className="h-4 w-4 text-primary" />
-                  About
-                </Link>
-                <Link
-                  href="/testimonials"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Users className="h-4 w-4 text-primary" />
-                  Testimonials
-                </Link>
-                <Link
-                  href="/live-classes"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Radio className="h-4 w-4 text-primary" />
-                  Live Classes
-                </Link>
-                <Link
-                  href="/blog"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Newspaper className="h-4 w-4 text-primary" />
-                  Blog
-                </Link>
-                <Link
-                  href="/books"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <BookOpen className="h-4 w-4 text-primary" />
-                  Books
-                </Link>
+                  <span className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-primary" />
+                    About
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.about ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {expanded.about && (
+                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    <Link href="/about" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Info className="h-4 w-4 text-primary" /> About Us
+                    </Link>
+                    <Link href="/pricing" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <IndianRupee className="h-4 w-4 text-primary" /> Pricing
+                    </Link>
+                    <Link href="/contact" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <Phone className="h-4 w-4 text-primary" /> Contact Us
+                    </Link>
+                    <Link href="/faqs" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <FileQuestion className="h-4 w-4 text-primary" /> FAQs
+                    </Link>
+                    <Link href="/help" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
+                      <LifeBuoy className="h-4 w-4 text-primary" /> Help Center
+                    </Link>
+                  </div>
+                )}
+
                 <Link
                   href="/admission"
                   className="flex items-center gap-2 px-3 py-2.5 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90"
