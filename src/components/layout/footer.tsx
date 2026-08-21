@@ -19,6 +19,7 @@ const footerLinks = {
     { name: "Community", href: "/community" },
     { name: "Blog", href: "/blog" },
     { name: "Live Classes", href: "/live-classes" },
+    { name: "Books", href: "/books" },
   ],
   support: [
     { name: "Expert Consultation", href: "/experts" },

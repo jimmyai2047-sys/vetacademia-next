@@ -571,6 +571,25 @@ model BlogPost {
   @@index([publishedAt])
 }
 
+model Book {
+  id            String   @id @default(cuid())
+  title         String
+  author        String?
+  publisher     String?
+  edition       String?
+  subject       String
+  level         String   @default("General") // AHDP | BVSc | MVSc | PhD | General
+  description   String?
+  coverImageUrl String?
+  isRecommended Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([level])
+  @@index([subject])
+}
+
 model Consultation {
   id          String    @id @default(cuid())
   studentId   String

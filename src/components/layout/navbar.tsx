@@ -320,6 +320,9 @@ export default function Navbar() {
           <Link href="/blog">
             <Button variant="ghost">Blog</Button>
           </Link>
+          <Link href="/books">
+            <Button variant="ghost">Books</Button>
+          </Link>
           <Link href="/admission">
             <Button>Admission</Button>
           </Link>
@@ -584,6 +587,14 @@ export default function Navbar() {
                 >
                   <Newspaper className="h-4 w-4 text-primary" />
                   Blog
+                </Link>
+                <Link
+                  href="/books"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  Books
                 </Link>
                 <Link
                   href="/admission"
