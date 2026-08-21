@@ -40,6 +40,7 @@ import {
   Bug,
   Newspaper,
   Phone,
+  Radio,
   Siren,
   BookOpenCheck,
   FileText,
@@ -313,6 +314,12 @@ export default function Navbar() {
           <Link href="/testimonials">
             <Button variant="ghost">Testimonials</Button>
           </Link>
+          <Link href="/live-classes">
+            <Button variant="ghost">Live Classes</Button>
+          </Link>
+          <Link href="/blog">
+            <Button variant="ghost">Blog</Button>
+          </Link>
           <Link href="/admission">
             <Button>Admission</Button>
           </Link>
@@ -561,6 +568,22 @@ export default function Navbar() {
                 >
                   <Users className="h-4 w-4 text-primary" />
                   Testimonials
+                </Link>
+                <Link
+                  href="/live-classes"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Radio className="h-4 w-4 text-primary" />
+                  Live Classes
+                </Link>
+                <Link
+                  href="/blog"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Newspaper className="h-4 w-4 text-primary" />
+                  Blog
                 </Link>
                 <Link
                   href="/admission"

@@ -26,6 +26,7 @@ import {
   ArrowRight,
   CheckCircle,
   ExternalLink,
+  Newspaper,
 } from "lucide-react";
 
 export const metadata = {
@@ -130,6 +131,15 @@ const avatarColors = [
   "bg-indigo-600",
 ];
 
+const blogGradients = [
+  "from-primary to-primary/70",
+  "from-blue-600 to-blue-400",
+  "from-purple-600 to-purple-400",
+  "from-orange-600 to-orange-400",
+  "from-teal-600 to-teal-400",
+  "from-rose-600 to-rose-400",
+];
+
 const importantLinks = [
   {
     name: "RUVAS",
@@ -216,6 +226,22 @@ export default async function HomePage() {
       where: { isApproved: true },
       orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
       take: 3,
+    })
+    .catch(() => []);
+
+  const posts = await prisma.blogPost
+    .findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        author: true,
+        tags: true,
+        publishedAt: true,
+      },
     })
     .catch(() => []);
 
@@ -543,6 +569,70 @@ export default async function HomePage() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* From the Blog */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <Badge className="mb-3" variant="secondary">
+                Blog
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                From the VetAcademia Blog
+              </h2>
+              <p className="text-muted-foreground">
+                Exam tips, admission guides and preparation strategies.
+              </p>
+            </div>
+            <Link href="/blog" className="shrink-0">
+              <Button variant="outline" className="gap-2">
+                View All Articles
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {posts.map((p, i) => {
+              const tags = (p.tags || "")
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+              return (
+                <Link key={p.id} href={`/blog/${p.slug}`} className="group">
+                  <Card className="h-full hover:shadow-lg transition-shadow border-0 overflow-hidden">
+                    <div
+                      className={`relative h-36 bg-gradient-to-br ${
+                        blogGradients[i % blogGradients.length]
+                      }`}
+                    >
+                      <div className="flex h-full items-center justify-center">
+                        <Newspaper className="h-8 w-8 text-white/80" />
+                      </div>
+                      {tags[0] && (
+                        <Badge className="absolute top-3 left-3 bg-white/90 text-primary hover:bg-white">
+                          {tags[0]}
+                        </Badge>
+                      )}
+                    </div>
+                    <CardContent className="p-5">
+                      <h3 className="font-bold text-base mb-2 group-hover:text-primary line-clamp-2">
+                        {p.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {p.author} &middot;{" "}
+                        {p.publishedAt.toLocaleDateString("en-IN", {
+                          dateStyle: "medium",
+                        })}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

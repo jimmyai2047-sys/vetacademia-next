@@ -17,6 +17,8 @@ const footerLinks = {
     { name: "Saved Items", href: "/saved" },
     { name: "Free Demo & Preview", href: "/demo" },
     { name: "Community", href: "/community" },
+    { name: "Blog", href: "/blog" },
+    { name: "Live Classes", href: "/live-classes" },
   ],
   support: [
     { name: "Expert Consultation", href: "/experts" },

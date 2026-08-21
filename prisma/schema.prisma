@@ -553,6 +553,24 @@ model Testimonial {
   @@index([rating])
 }
 
+model BlogPost {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  excerpt       String?
+  content       String
+  coverImageUrl String?
+  author        String   @default("VetAcademia Team")
+  tags          String?
+  isPublished   Boolean  @default(true)
+  publishedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([publishedAt])
+}
+
 model Consultation {
   id          String    @id @default(cuid())
   studentId   String
