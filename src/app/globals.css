@@ -149,6 +149,7 @@
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
   }
   /* Phone-friendly: stop media from overflowing the screen */
   img,
@@ -387,6 +388,15 @@
 }
 .chapter-content tr:hover {
   background: rgba(0,0,0,0.06);
+}
+
+/* On small phones, let wide tables scroll instead of getting clipped */
+@media (max-width: 640px) {
+  .chapter-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* Horizontal rule */

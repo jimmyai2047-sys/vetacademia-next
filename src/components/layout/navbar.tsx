@@ -298,6 +298,12 @@ export default function Navbar() {
           <Link href="/experts">
             <Button variant="ghost">Experts</Button>
           </Link>
+          <Link href="/about">
+            <Button variant="ghost">About</Button>
+          </Link>
+          <Link href="/admission">
+            <Button>Admission</Button>
+          </Link>
           <Link href="/pricing">
             <Button variant="ghost">Pricing</Button>
           </Link>
@@ -378,7 +384,7 @@ export default function Navbar() {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-72">
+          <SheetContent side="right" className="w-72 overflow-y-auto">
             <div className="flex flex-col gap-4 mt-8">
               <div className="font-bold text-lg">VetAcademia</div>
 
@@ -454,6 +460,20 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   Experts
+                </Link>
+                <Link
+                  href="/about"
+                  className="block px-3 py-2 rounded-md hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  About
+                </Link>
+                <Link
+                  href="/admission"
+                  className="block px-3 py-2 rounded-md bg-primary text-primary-foreground font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admission
                 </Link>
               </div>
 
