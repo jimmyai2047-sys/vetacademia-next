@@ -228,7 +228,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/signup" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black w-full">
+                <Button size="lg" variant="outline" className="!bg-transparent border-white text-white hover:!bg-white hover:!text-black w-full">
                   Start Free Trial
                 </Button>
               </Link>
