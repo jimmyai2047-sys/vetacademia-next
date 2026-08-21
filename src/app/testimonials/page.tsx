@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, ArrowRight, Users, GraduationCap, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -52,8 +53,16 @@ export default async function TestimonialsPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary/80 text-white">
-        <div className="container mx-auto px-4 py-16 md:py-24 text-center">
+      <section className="relative overflow-hidden text-white">
+        <Image
+          src="/images/mvsc.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
+        <div className="container mx-auto px-4 py-16 md:py-24 text-center relative z-10">
           <Badge className="mb-4 bg-white/20 text-white hover:bg-white/30">
             Student Success Stories
           </Badge>

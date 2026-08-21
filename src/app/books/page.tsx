@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BookOpen, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,8 +80,16 @@ export default async function BooksPage({
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-amber-600 to-orange-500 text-white">
-        <div className="container mx-auto px-4 py-16 md:py-20 text-center">
+      <section className="relative overflow-hidden text-white">
+        <Image
+          src="/images/features-study.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 to-orange-500/70" />
+        <div className="container mx-auto px-4 py-16 md:py-20 text-center relative z-10">
           <div className="flex justify-center mb-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
               <Library className="h-7 w-7" />
