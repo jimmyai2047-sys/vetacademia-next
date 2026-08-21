@@ -25,6 +25,8 @@ import {
   FileCheck,
   Tractor,
   HeartPulse,
+  Home,
+  Users,
   LogOut,
   LayoutDashboard,
   Search,
@@ -40,6 +42,8 @@ import {
   Phone,
   Siren,
   BookOpenCheck,
+  FileText,
+  Info,
 } from "lucide-react";
 
 const programmes = [
@@ -386,7 +390,17 @@ export default function Navbar() {
           </SheetTrigger>
           <SheetContent side="right" className="w-72 overflow-y-auto">
             <div className="flex flex-col gap-4 mt-8">
-              <div className="font-bold text-lg">VetAcademia</div>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/favicon-192x192.png"
+                    alt="VetAcademia"
+                    className="h-7 w-7 object-contain"
+                  />
+                </div>
+                <span className="font-bold text-lg">VetAcademia</span>
+              </div>
 
               <form onSubmit={handleSearch} className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -399,80 +413,92 @@ export default function Navbar() {
                 />
               </form>
               
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Link
                   href="/"
-                  className="block px-3 py-2 rounded-md hover:bg-accent font-medium"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent font-medium"
                   onClick={() => setIsOpen(false)}
                 >
+                  <Home className="h-4 w-4 text-primary" />
                   Home
                 </Link>
-                <div className="text-sm font-medium text-muted-foreground">Programmes</div>
-                {programmes.map((p) => (
-                  <Link
-                    key={p.name}
-                    href={p.href}
-                    className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <p.icon className="h-4 w-4" />
-                    {p.name}
-                  </Link>
-                ))}
+
+                <div className="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Programmes
+                </div>
+                <div className="ml-3 space-y-1 border-l border-border pl-3">
+                  {programmes.map((p) => (
+                    <Link
+                      key={p.name}
+                      href={p.href}
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <p.icon className="h-4 w-4 text-primary" />
+                      {p.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1 border-t pt-3">
+                <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Explore
+                </div>
                 <Link
                   href="/examinations"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  <FileCheck className="h-4 w-4" />
+                  <FileCheck className="h-4 w-4 text-primary" />
                   Exams
                 </Link>
                 <Link
                   href="/prepare"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  <BookOpen className="h-4 w-4" />
+                  <BookOpen className="h-4 w-4 text-primary" />
                   My Prep
                 </Link>
                 <Link
                   href="/farmers"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  <Tractor className="h-4 w-4" />
+                  <Tractor className="h-4 w-4 text-primary" />
                   Animal Owner
                 </Link>
                 <Link
                   href="/vets"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  <HeartPulse className="h-4 w-4" />
+                  <HeartPulse className="h-4 w-4 text-primary" />
                   Vets
                 </Link>
                 <Link
                   href="/experts"
-                  className="block px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
+                  <Users className="h-4 w-4 text-primary" />
                   Experts
                 </Link>
                 <Link
                   href="/about"
-                  className="block px-3 py-2 rounded-md hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
+                  <Info className="h-4 w-4 text-primary" />
                   About
                 </Link>
                 <Link
                   href="/admission"
-                  className="block px-3 py-2 rounded-md bg-primary text-primary-foreground font-medium"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90"
                   onClick={() => setIsOpen(false)}
                 >
+                  <FileText className="h-4 w-4" />
                   Admission
                 </Link>
               </div>
