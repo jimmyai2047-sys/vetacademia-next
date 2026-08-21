@@ -25,9 +25,13 @@ export async function GET(req: Request) {
         select: { id: true, title: true },
       }),
       prisma.expert.findMany({
-        where: { name: like },
+        where: { user: { name: like } },
         take: 10,
-        select: { id: true, name: true, specialization: true },
+        select: {
+          id: true,
+          specialization: true,
+          user: { select: { name: true } },
+        },
       }),
     ]);
 
@@ -49,7 +53,7 @@ export async function GET(req: Request) {
       ...experts.map((e: any) => ({
         type: "expert",
         id: e.id,
-        title: e.name,
+        title: e.user?.name ?? "",
         sub: e.specialization ?? "",
         url: `/experts/${e.id}`,
       })),
