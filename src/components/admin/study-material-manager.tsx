@@ -210,6 +210,9 @@ export default function StudyMaterialManager({
       setUrl(data.url);
       setFileName(data.fileName);
       setFileType(data.fileType);
+      if (!title.trim()) {
+        setTitle(data.fileName.replace(/\.[^.]+$/, ""));
+      }
     } catch {
       setError("Upload failed");
     } finally {
