@@ -21,6 +21,7 @@ import {
   FileCheck,
   NotebookPen,
   Activity,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -40,6 +41,7 @@ const sidebarItems = [
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Activity Log", href: "/admin/activity-log", icon: Activity },
+  { name: "Admission Enquiries", href: "/admin/admissions", icon: ClipboardList },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

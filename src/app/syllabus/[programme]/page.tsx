@@ -110,6 +110,25 @@ export default async function ProgrammePage({
   const isYearProgramme = slug === "bvsc" || slug === "ahdp";
   const isSubjectProgramme = slug === "mvsc" || slug === "phd";
 
+  // Build a readable "Syllabus at a Glance" grouping (year/semester based for
+  // BVSc/AHDP, department based for MVSc/PhD) — mirrors a course-structure tree.
+  const allSubjects = [
+    ...programme.departments.flatMap((d) => d.subjects),
+    ...programme.subjects,
+  ];
+  const groupKey = (s: { year: string | null; semester: string | null }) =>
+    s.year || s.semester || "General";
+  const glanceGroups = new Map<string, typeof allSubjects>();
+  for (const s of allSubjects) {
+    const key = groupKey(s);
+    if (!glanceGroups.has(key)) glanceGroups.set(key, []);
+    glanceGroups.get(key)!.push(s);
+  }
+  const totalCourses = allSubjects.reduce(
+    (sum, s) => sum + s._count.chapters,
+    0
+  );
+
   const renderSubjectCard = (subject: {
     id: string;
     name: string;
@@ -192,25 +211,110 @@ export default async function ProgrammePage({
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <Link
-          href="/syllabus"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          All Programmes
-        </Link>
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary/10">
-            <Icon className={`h-7 w-7 ${colorClass}`} />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">{programme.name}</h1>
-            <p className="text-muted-foreground">{programme.fullName}</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <Link
+            href="/syllabus"
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            All Programmes
+          </Link>
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary/10">
+              <Icon className={`h-7 w-7 ${colorClass}`} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">{programme.name}</h1>
+              <p className="text-muted-foreground">{programme.fullName}</p>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Syllabus at a Glance */}
+        <div className="mb-10 grid md:grid-cols-[1fr_280px] gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-lg font-semibold mb-1">Syllabus at a Glance</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {allSubjects.length} subjects · {totalCourses} courses mapped unit-wise
+                across {glanceGroups.size} {isYearProgramme ? "year" : "group"}
+                {glanceGroups.size === 1 ? "" : "s"}.
+              </p>
+              <div className="space-y-4">
+                {Array.from(glanceGroups.entries()).map(([group, subs]) => (
+                  <div key={group} className="rounded-xl border overflow-hidden">
+                    <div className="bg-primary/5 px-4 py-2.5 border-b">
+                      <span className="font-semibold text-sm">{group}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        {subs.length} subject{subs.length === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                    <ul className="divide-y">
+                      {subs.map((s) => (
+                        <li
+                          key={s.id}
+                          className="flex items-center justify-between px-4 py-2 text-sm"
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            {s.code && (
+                              <span className="font-mono text-xs text-muted-foreground shrink-0">
+                                {s.code}
+                              </span>
+                            )}
+                            <span className="truncate">{s.name}</span>
+                          </span>
+                          <Link
+                            href={`/syllabus/${slug}/${s.id}`}
+                            className="text-xs text-primary hover:underline shrink-0 ml-3"
+                          >
+                            View →
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-4">
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="p-5 space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-primary" /> How to Use
+                </h3>
+                <ol className="text-sm text-muted-foreground space-y-1.5 list-decimal list-inside">
+                  <li>Pick your {isYearProgramme ? "year" : "subject group"} above.</li>
+                  <li>Open a subject to see units &amp; chapters.</li>
+                  <li>Read theory, download notes &amp; attempt mock tests.</li>
+                </ol>
+                <Link
+                  href="/admission"
+                  className="inline-flex items-center justify-center w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Enroll to Unlock
+                </Link>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-2">Need Help?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Not sure which programme fits you? Our team will guide you.
+                </p>
+                <Link
+                  href="/contact"
+                  className="mt-3 inline-flex items-center text-sm text-primary font-medium hover:underline"
+                >
+                  Contact admissions →
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
 
       {isDepartmentBased && programme.departments.length > 0 ? (
         <div className="space-y-10">
