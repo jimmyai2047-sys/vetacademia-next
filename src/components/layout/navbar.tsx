@@ -44,6 +44,7 @@ import {
   BookOpenCheck,
   FileText,
   Info,
+  ChevronDown,
 } from "lucide-react";
 
 const programmes = [
@@ -84,6 +85,10 @@ const vetSections = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  function toggleSection(name: string) {
+    setExpanded((e) => ({ ...e, [name]: !e[name] }));
+  }
   const [search, setSearch] = useState("");
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const router = useRouter();
@@ -391,7 +396,7 @@ export default function Navbar() {
           <SheetContent side="right" className="w-72 overflow-y-auto">
             <div className="flex flex-col gap-4 mt-8">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-border">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/favicon-192x192.png"
@@ -423,36 +428,89 @@ export default function Navbar() {
                   Home
                 </Link>
 
-                <div className="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Programmes
-                </div>
-                <div className="ml-3 space-y-1 border-l border-border pl-3">
-                  {programmes.map((p) => (
-                    <Link
-                      key={p.name}
-                      href={p.href}
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <p.icon className="h-4 w-4 text-primary" />
-                      {p.name}
-                    </Link>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleSection("programmes")}
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                >
+                  <span className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4 text-primary" />
+                    Programmes
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.programmes ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {expanded.programmes && (
+                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    {programmes.map((p) => (
+                      <Link
+                        key={p.name}
+                        href={p.href}
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <p.icon className="h-4 w-4 text-primary" />
+                        {p.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1 border-t pt-3">
                 <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Explore
                 </div>
-                <Link
-                  href="/examinations"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
+                <button
+                  type="button"
+                  onClick={() => toggleSection("exams")}
+                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent"
                 >
-                  <FileCheck className="h-4 w-4 text-primary" />
-                  Exams
-                </Link>
+                  <span className="flex items-center gap-2">
+                    <FileCheck className="h-4 w-4 text-primary" />
+                    Exams
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.exams ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {expanded.exams && (
+                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    <Link
+                      href="/examinations"
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent font-medium"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FileCheck className="h-4 w-4 text-primary" />
+                      All Examinations
+                    </Link>
+                    {examCategories.map((c) => (
+                      <Link
+                        key={c.name}
+                        href={c.href}
+                        className="flex items-start gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        <span>
+                          <span className="block">{c.name}</span>
+                          <span className="block text-xs text-muted-foreground">
+                            {c.desc}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                    <Link
+                      href="/study-materials"
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <BookOpenCheck className="h-4 w-4 text-primary" />
+                      Study Materials
+                    </Link>
+                  </div>
+                )}
                 <Link
                   href="/prepare"
                   className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent"
