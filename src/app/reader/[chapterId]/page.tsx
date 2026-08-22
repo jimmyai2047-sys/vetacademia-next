@@ -24,6 +24,7 @@ export default async function ChapterReaderRoute({
         select: { name: true, year: true, programme: { select: { name: true } } },
       },
       chapterContents: true,
+      sections: { orderBy: { order: "asc" } },
     },
   });
 
@@ -53,7 +54,19 @@ export default async function ChapterReaderRoute({
     );
   }
 
-  const signedHtml = await prepareChapterHtml(chapter.content);
+  const hasSections = chapter.sections.length > 0;
+  const signedHtml = hasSections
+    ? ""
+    : await prepareChapterHtml(chapter.content);
+
+  const preparedSections = await Promise.all(
+    chapter.sections.map(async (s) => ({
+      id: s.id,
+      title: s.title,
+      html: await prepareChapterHtml(s.content),
+    }))
+  );
+
   const chapterResources = await Promise.all(
     chapter.chapterContents.map(async (c: any) => ({
       ...c,
@@ -100,6 +113,7 @@ export default async function ChapterReaderRoute({
       author={chapter.author}
       reviewer={chapter.reviewer}
       html={signedHtml}
+      sections={preparedSections}
       resources={resources}
     />
   );

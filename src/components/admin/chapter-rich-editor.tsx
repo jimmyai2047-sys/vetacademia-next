@@ -89,9 +89,13 @@ const StyleAttribute = Extension.create({
 export default function ChapterRichEditor({
   chapterId,
   initialContent,
+  onSave,
+  saveLabel,
 }: {
   chapterId: string;
   initialContent: string;
+  onSave?: (html: string) => Promise<void>;
+  saveLabel?: string;
 }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -254,15 +258,19 @@ export default function ChapterRichEditor({
         setSaving(false);
         return;
       }
-      const res = await fetch(`/api/admin/chapter/${chapterId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: html }),
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        setError(d.error || "Save failed");
-        return;
+      if (onSave) {
+        await onSave(html);
+      } else {
+        const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: html }),
+        });
+        if (!res.ok) {
+          const d = await res.json();
+          setError(d.error || "Save failed");
+          return;
+        }
       }
       setSaved(true);
     } catch {
@@ -440,7 +448,7 @@ export default function ChapterRichEditor({
           {saving ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            "Save Content"
+            (saveLabel || "Save Content")
           )}
         </Button>
         {saved && (

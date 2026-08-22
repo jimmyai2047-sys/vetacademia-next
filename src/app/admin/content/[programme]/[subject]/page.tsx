@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
+import ChapterSectionManager from "@/components/admin/chapter-section-manager";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 import ChapterTitleEditor from "@/components/admin/chapter-title-editor";
 import AddChapterButton from "@/components/admin/add-chapter-button";
@@ -32,7 +33,10 @@ export default async function SubjectContentPage({
       programme: { select: { name: true, fullName: true } },
       chapters: {
         orderBy: { unitNumber: "asc" },
-        include: { chapterContents: { orderBy: { createdAt: "desc" } } },
+        include: {
+          chapterContents: { orderBy: { createdAt: "desc" } },
+          sections: { orderBy: { order: "asc" } },
+        },
       },
     },
   });
@@ -106,6 +110,10 @@ export default async function SubjectContentPage({
                 chapterTitle={course.title}
                   initialContents={signedMap.get(course.id) ?? []}
               />
+              <ChapterSectionManager
+                chapterId={course.id}
+                initialSections={course.sections}
+              />
             </div>
           ))}
         </div>
@@ -133,6 +141,10 @@ export default async function SubjectContentPage({
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={signedMap.get(ch.id) ?? []}
                 />
+                <ChapterSectionManager
+                  chapterId={ch.id}
+                  initialSections={ch.sections}
+                />
                 </div>
               </>))}
             </div>
@@ -158,6 +170,10 @@ export default async function SubjectContentPage({
                   chapterId={ch.id}
                   chapterTitle={`${ch.unitNumber ? `Unit ${ch.unitNumber}: ` : ""}${ch.title}`}
                   initialContents={signedMap.get(ch.id) ?? []}
+                />
+                <ChapterSectionManager
+                  chapterId={ch.id}
+                  initialSections={ch.sections}
                 />
                 </div>
               </>))}
