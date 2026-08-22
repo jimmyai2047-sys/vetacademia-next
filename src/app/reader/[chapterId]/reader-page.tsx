@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
 import ChapterContentViewer from "@/components/chapter-content-viewer";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, List, ListChecks } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, List, ListChecks } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
 import ChapterPractice from "@/components/chapter-practice";
 
@@ -126,48 +126,43 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
               </nav>
 
               {/* Section content */}
-              <div className="space-y-10 mt-4 lg:mt-0">
+              <div className="mt-4 lg:mt-0">
                 {sections.map((s, i) => (
-                  <section key={s.id} id={`sec-${s.id}`} className="scroll-mt-24">
-                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-700 text-white text-sm shrink-0">
-                        {i + 1}
-                      </span>
-                      {s.title}
-                    </h2>
-                    <div
-                      className="chapter-content"
-                      dangerouslySetInnerHTML={{ __html: s.html }}
-                    />
+                  <div key={s.id}>
+                    <section id={`sec-${s.id}`} className="scroll-mt-24">
+                      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-700 text-white text-sm shrink-0">
+                          {i + 1}
+                        </span>
+                        {s.title}
+                      </h2>
+                      <div
+                        className="chapter-content"
+                        dangerouslySetInnerHTML={{ __html: s.html }}
+                      />
+                    </section>
 
-                    {/* Lecture navigation */}
-                    <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                      {i > 0 && (
-                        <a
-                          href={`#sec-${sections[i - 1].id}`}
-                          className="flex-1 flex items-center gap-3 rounded-xl border border-border bg-background p-4 hover:bg-accent transition-colors group"
-                        >
-                          <ChevronUp className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground">Previous</p>
-                            <p className="text-sm font-semibold truncate">{sections[i - 1].title}</p>
-                          </div>
-                        </a>
-                      )}
-                      {i < sections.length - 1 && (
-                        <a
-                          href={`#sec-${sections[i + 1].id}`}
-                          className="flex-1 flex items-center gap-3 rounded-xl border border-border bg-background p-4 hover:bg-accent transition-colors group text-right sm:justify-end"
-                        >
-                          <div className="min-w-0 text-right">
-                            <p className="text-xs text-muted-foreground">Next</p>
-                            <p className="text-sm font-semibold truncate">{sections[i + 1].title}</p>
-                          </div>
-                          <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
-                        </a>
-                      )}
-                    </div>
-                  </section>
+                    {/* Lecture divider — prominent next/prev navigation */}
+                    {i < sections.length - 1 ? (
+                      <a
+                        href={`#sec-${sections[i + 1].id}`}
+                        className="my-10 block rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 text-white p-6 text-center hover:from-amber-700 hover:to-amber-800 transition-all active:scale-[0.98] shadow-lg"
+                      >
+                        <p className="text-amber-100 text-sm mb-1">Lecture {i + 1} Complete</p>
+                        <p className="text-xs text-amber-200/80 mb-3">Agle lecture par jayein</p>
+                        <div className="flex items-center justify-center gap-2">
+                          <ChevronDown className="h-5 w-5" />
+                          <span className="font-bold text-lg">{sections[i + 1].title}</span>
+                          <ChevronDown className="h-5 w-5" />
+                        </div>
+                      </a>
+                    ) : (
+                      <div className="my-10 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 text-white p-6 text-center shadow-lg">
+                        <p className="text-amber-100 text-sm mb-1">All Lectures Complete!</p>
+                        <p className="text-xs text-amber-200/80">Chapter khatam hua</p>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
