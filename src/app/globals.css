@@ -383,6 +383,12 @@
   font-weight: 700;
   white-space: nowrap;
 }
+.chapter-content th p,
+.chapter-content th strong,
+.chapter-content th a,
+.chapter-content th span {
+  color: inherit;
+}
 .chapter-content tr:nth-child(even) {
   background: rgba(0,0,0,0.03);
 }
