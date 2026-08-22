@@ -36,7 +36,7 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
   return (
     <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a]">
       {/* Pre-reader screen */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-3xl lg:max-w-6xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <Link
             href={`/syllabus/${programmeSlug}/${subjectId}`}
