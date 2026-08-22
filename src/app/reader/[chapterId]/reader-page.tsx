@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
 import ChapterContentViewer from "@/components/chapter-content-viewer";
-import { ArrowLeft, BookOpen, List } from "lucide-react";
+import { ArrowLeft, BookOpen, List, ListChecks } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
+import ChapterPractice from "@/components/chapter-practice";
 
 interface Section {
   id: string;
@@ -29,6 +30,7 @@ interface Props {
 
 export default function ReaderPage({ title, subjectName, programmeName, programmeSlug, subjectId, chapterId, author, reviewer, html, sections, resources }: Props) {
   const [readerOpen, setReaderOpen] = useState(false);
+  const [practiceOpen, setPracticeOpen] = useState(false);
   const hasSections = sections.length > 0;
 
   return (
@@ -75,6 +77,14 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
               Read Chapter
             </button>
           )}
+
+          <button
+            onClick={() => setPracticeOpen(true)}
+            className="px-8 py-3.5 rounded-xl bg-white border-2 border-amber-700 text-amber-800 font-bold text-lg hover:bg-amber-50 transition-all active:scale-95 shadow-lg"
+          >
+            <ListChecks className="h-5 w-5 inline mr-2" />
+            Practice MCQs
+          </button>
         </div>
 
         {hasSections ? (
@@ -160,6 +170,15 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
       {/* Kindle Reader (legacy content only) */}
       {readerOpen && (
         <ChapterReader title={title} html={html} onClose={() => setReaderOpen(false)} />
+      )}
+
+      {/* Chapter MCQ Practice */}
+      {practiceOpen && (
+        <ChapterPractice
+          chapterId={chapterId}
+          chapterTitle={title}
+          onClose={() => setPracticeOpen(false)}
+        />
       )}
     </div>
   );

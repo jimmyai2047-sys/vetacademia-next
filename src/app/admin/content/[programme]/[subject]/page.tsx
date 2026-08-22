@@ -14,6 +14,7 @@ import {
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
 import ChapterSectionManager from "@/components/admin/chapter-section-manager";
+import ChapterMcqManager from "@/components/admin/chapter-mcq-manager";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 import ChapterTitleEditor from "@/components/admin/chapter-title-editor";
 import AddChapterButton from "@/components/admin/add-chapter-button";
@@ -36,6 +37,7 @@ export default async function SubjectContentPage({
         include: {
           chapterContents: { orderBy: { createdAt: "desc" } },
           sections: { orderBy: { order: "asc" } },
+          mcqs: { orderBy: { order: "asc" } },
         },
       },
     },
@@ -114,6 +116,10 @@ export default async function SubjectContentPage({
                 chapterId={course.id}
                 initialSections={course.sections}
               />
+              <ChapterMcqManager
+                chapterId={course.id}
+                initialMcqs={course.mcqs}
+              />
             </div>
           ))}
         </div>
@@ -145,6 +151,10 @@ export default async function SubjectContentPage({
                   chapterId={ch.id}
                   initialSections={ch.sections}
                 />
+                <ChapterMcqManager
+                  chapterId={ch.id}
+                  initialMcqs={ch.mcqs}
+                />
                 </div>
               </>))}
             </div>
@@ -174,6 +184,10 @@ export default async function SubjectContentPage({
                 <ChapterSectionManager
                   chapterId={ch.id}
                   initialSections={ch.sections}
+                />
+                <ChapterMcqManager
+                  chapterId={ch.id}
+                  initialMcqs={ch.mcqs}
                 />
                 </div>
               </>))}

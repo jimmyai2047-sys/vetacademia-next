@@ -52,6 +52,38 @@ async function processImagesInHtml(html: string, onProgress: (msg: string) => vo
   return out;
 }
 
+function splitHtmlIntoTopicSections(html: string): { title: string; content: string }[] {
+  const doc = new DOMParser().parseFromString(
+    `<div id="__root">${html}</div>`,
+    "text/html"
+  );
+  const root = doc.getElementById("__root");
+  if (!root) return [{ title: "Section 1", content: html }];
+  const children = Array.from(root.children);
+  const sections: { title: string; content: string }[] = [];
+  let current: { title: string; content: string } | null = null;
+  let idx = 0;
+  for (const el of children) {
+    const tag = el.tagName.toLowerCase();
+    if (tag === "h1" || tag === "h2" || tag === "h3") {
+      if (current) sections.push(current);
+      idx += 1;
+      current = {
+        title: (el.textContent || "").trim() || `Section ${idx}`,
+        content: "",
+      };
+    } else {
+      if (!current) {
+        idx += 1;
+        current = { title: `Section ${idx}`, content: "" };
+      }
+      current.content += el.outerHTML;
+    }
+  }
+  if (current) sections.push(current);
+  return sections.length ? sections : [{ title: "Section 1", content: html }];
+}
+
 export default function ChapterBulkImporter({
   subjectId,
 }: {
@@ -107,6 +139,7 @@ export default function ChapterBulkImporter({
       const cleanedHtml = await processImagesInHtml(html, (msg) => setStatus(msg));
 
       setStatus("Chapter save ho raha hai...");
+      const sections = splitHtmlIntoTopicSections(cleanedHtml);
 
       const res = await fetch("/api/admin/chapters", {
         method: "POST",
@@ -116,7 +149,7 @@ export default function ChapterBulkImporter({
           replace,
           chapters: [{
             title: title.trim(),
-            content: cleanedHtml,
+            content: "",
             unitNumber: 1,
             type: null,
           }],
@@ -135,6 +168,31 @@ export default function ChapterBulkImporter({
       if (!res.ok) {
         setError((d.error as string) || "Chapter save nahi ho paya.");
         return;
+      }
+
+      const createdIds = (d.createdIds as string[] | undefined) ?? [];
+      const chapterId = createdIds[0];
+      if (!chapterId) {
+        setError("Chapter ban gaya par id nahi mili.");
+        return;
+      }
+
+      setStatus(`Sections save ho rahi hain (${sections.length})...`);
+      for (let i = 0; i < sections.length; i++) {
+        const s = sections[i];
+        const sr = await fetch("/api/admin/chapter-sections", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chapterId,
+            title: s.title,
+            content: s.content,
+            order: i,
+          }),
+        });
+        if (!sr.ok) {
+          console.error("Section create failed", await sr.text());
+        }
       }
 
       setDone(true);

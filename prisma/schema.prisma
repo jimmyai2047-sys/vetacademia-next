@@ -125,12 +125,12 @@ model Chapter {
   reviewer String? // subject-matter reviewer who verified the content
 
   sections ChapterSection[]
+  mcqs     ChapterMcq[]
 
   @@index([subjectId])
 }
 
 // ==================== CHAPTER SECTIONS ====================
-// Lets a single chapter be broken into smaller, readable sections (topics).
 // Each section has its own rich-text content and an order for sequencing.
 // These replace the legacy single `Chapter.content` blob.
 
@@ -142,6 +142,28 @@ model ChapterSection {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+}
+
+// ==================== CHAPTER MCQS ====================
+// Chapter-wise multiple-choice questions for self-practice. Stored separately
+// from MockTest questions so they can be authored and practised per chapter.
+
+model ChapterMcq {
+  id          String   @id @default(cuid())
+  chapterId   String
+  question    String
+  options     String // JSON array of option strings
+  correctIndex Int
+  marks       Int      @default(1)
+  explanation String?
+  difficulty  Int?     @default(2) // 1 easy, 2 medium, 3 hard
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 

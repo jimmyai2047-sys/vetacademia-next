@@ -58,7 +58,10 @@ export async function POST(req: Request) {
       created.push(createdChapter.id);
     }
 
-    return NextResponse.json({ created: created.length }, { status: 201 });
+    return NextResponse.json(
+      { created: created.length, createdIds: created },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Chapter bulk create error:", error);
     return NextResponse.json({ error: "Failed to create chapters" }, { status: 500 });
