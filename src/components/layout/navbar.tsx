@@ -72,6 +72,45 @@ const prepCategories = [
   { name: "ICAR-NET", href: "/prepare?tab=NET", icon: Microscope, desc: "ICAR-NET" },
 ];
 
+function MobileNavSection({
+  title,
+  icon: Icon,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
+      >
+        <span className="flex items-center gap-3">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Icon className="h-4 w-4" />
+          </span>
+          {title}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div className="ml-4 mt-1 space-y-1 border-l-2 border-primary/15 pl-3">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -428,14 +467,18 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger className="lg:hidden">
-            <Button variant="ghost" size="icon">
+          <SheetTrigger className="lg:hidden" aria-label="Open menu">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-xl bg-muted/60 hover:bg-muted"
+            >
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-72 overflow-y-auto">
-            <div className="flex flex-col gap-4 mt-8">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 px-1 pt-1">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-border">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -444,7 +487,12 @@ export default function Navbar() {
                     className="h-7 w-7 object-contain"
                   />
                 </div>
-                <span className="font-bold text-lg">VetAcademia</span>
+                <div>
+                  <p className="font-bold text-base leading-tight">VetAcademia</p>
+                  <p className="text-xs text-muted-foreground">
+                    Veterinary Education Hub
+                  </p>
+                </div>
               </div>
 
               <form onSubmit={handleSearch} className="relative">
@@ -454,231 +502,183 @@ export default function Navbar() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search subjects..."
                   aria-label="Search subjects"
-                  className="w-full pl-9 pr-3 h-9 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-9 pr-3 h-10 rounded-xl border border-input bg-muted/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </form>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Link
                   href="/"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
                   onClick={() => setIsOpen(false)}
                 >
-                  <Home className="h-4 w-4 text-primary" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Home className="h-4 w-4" />
+                  </span>
                   Home
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={() => toggleSection("programmes")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                <MobileNavSection
+                  title="Programmes"
+                  icon={GraduationCap}
+                  open={!!expanded.programmes}
+                  onToggle={() => toggleSection("programmes")}
                 >
-                  <span className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4 text-primary" />
-                    Programmes
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.programmes ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {expanded.programmes && (
-                  <div className="ml-3 space-y-1 border-l border-border pl-3">
-                    {programmes.map((p) => (
-                      <Link
-                        key={p.name}
-                        href={p.href}
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <p.icon className="h-4 w-4 text-primary" />
-                        {p.name}
-                      </Link>
-                    ))}
+                  {programmes.map((p) => (
                     <Link
-                      href="/syllabus"
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      key={p.name}
+                      href={p.href}
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                       onClick={() => setIsOpen(false)}
                     >
-                      <BookOpenCheck className="h-4 w-4 text-primary" />
-                      View All Syllabus
+                      <p.icon className="h-4 w-4 text-primary" />
+                      {p.name}
                     </Link>
-                  </div>
-                )}
+                  ))}
+                  <Link
+                    href="/syllabus"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <BookOpenCheck className="h-4 w-4 text-primary" />
+                    View All Syllabus
+                  </Link>
+                </MobileNavSection>
 
-                <button
-                  type="button"
-                  onClick={() => toggleSection("exams")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                <MobileNavSection
+                  title="Exams"
+                  icon={FileCheck}
+                  open={!!expanded.exams}
+                  onToggle={() => toggleSection("exams")}
                 >
-                  <span className="flex items-center gap-2">
+                  <Link
+                    href="/examinations"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    onClick={() => setIsOpen(false)}
+                  >
                     <FileCheck className="h-4 w-4 text-primary" />
-                    Exams
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.exams ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {expanded.exams && (
-                  <div className="ml-3 space-y-1 border-l border-border pl-3">
+                    All Examinations
+                  </Link>
+                  {examCategories.map((c) => (
                     <Link
-                      href="/examinations"
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent font-medium"
+                      key={c.name}
+                      href={c.href}
+                      className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
                       onClick={() => setIsOpen(false)}
                     >
-                      <FileCheck className="h-4 w-4 text-primary" />
-                      All Examinations
-                    </Link>
-                    {examCategories.map((c) => (
-                      <Link
-                        key={c.name}
-                        href={c.href}
-                        className="flex items-start gap-2 px-3 py-2 rounded-md hover:bg-accent"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        <span>
-                          <span className="block">{c.name}</span>
-                          <span className="block text-xs text-muted-foreground">
-                            {c.desc}
-                          </span>
+                      <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span>
+                        <span className="block">{c.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {c.desc}
                         </span>
-                      </Link>
-                    ))}
+                      </span>
+                    </Link>
+                  ))}
+                  <Link
+                    href="/study-materials"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <BookOpenCheck className="h-4 w-4 text-primary" />
+                    Study Materials
+                  </Link>
+                </MobileNavSection>
+
+                <MobileNavSection
+                  title="Prepare"
+                  icon={BookOpen}
+                  open={!!expanded.prepare}
+                  onToggle={() => toggleSection("prepare")}
+                >
+                  {prepCategories.map((c) => (
                     <Link
-                      href="/study-materials"
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      key={c.name}
+                      href={c.href}
+                      className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
                       onClick={() => setIsOpen(false)}
                     >
-                      <BookOpenCheck className="h-4 w-4 text-primary" />
-                      Study Materials
-                    </Link>
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => toggleSection("prepare")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
-                >
-                  <span className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    Prepare
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.prepare ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {expanded.prepare && (
-                  <div className="ml-3 space-y-1 border-l border-border pl-3">
-                    {prepCategories.map((c) => (
-                      <Link
-                        key={c.name}
-                        href={c.href}
-                        className="flex items-start gap-2 px-3 py-2 rounded-md hover:bg-accent"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        <span>
-                          <span className="block">{c.name}</span>
-                          <span className="block text-xs text-muted-foreground">
-                            {c.desc}
-                          </span>
+                      <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span>
+                        <span className="block">{c.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {c.desc}
                         </span>
-                      </Link>
-                    ))}
-                    <Link href="/mock-tests" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <FileText className="h-4 w-4 text-primary" /> Mock Tests
+                      </span>
                     </Link>
-                    <Link href="/flashcards" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <BookMarked className="h-4 w-4 text-primary" /> Flashcards
-                    </Link>
-                    <Link href="/papers" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <FileCheck className="h-4 w-4 text-primary" /> Previous Year Papers
-                    </Link>
-                    <Link href="/live-classes" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Radio className="h-4 w-4 text-primary" /> Live Classes
-                    </Link>
-                    <Link href="/demo" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Play className="h-4 w-4 text-primary" /> Free Demo
-                    </Link>
-                  </div>
-                )}
+                  ))}
+                  <Link href="/mock-tests" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileText className="h-4 w-4 text-primary" /> Mock Tests
+                  </Link>
+                  <Link href="/flashcards" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <BookMarked className="h-4 w-4 text-primary" /> Flashcards
+                  </Link>
+                  <Link href="/papers" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileCheck className="h-4 w-4 text-primary" /> Previous Year Papers
+                  </Link>
+                  <Link href="/live-classes" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Radio className="h-4 w-4 text-primary" /> Live Classes
+                  </Link>
+                  <Link href="/demo" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Play className="h-4 w-4 text-primary" /> Free Demo
+                  </Link>
+                </MobileNavSection>
 
-                <button
-                  type="button"
-                  onClick={() => toggleSection("resources")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                <MobileNavSection
+                  title="Resources"
+                  icon={Users}
+                  open={!!expanded.resources}
+                  onToggle={() => toggleSection("resources")}
                 >
-                  <span className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-primary" />
-                    Resources
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.resources ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {expanded.resources && (
-                  <div className="ml-3 space-y-1 border-l border-border pl-3">
-                    <Link href="/experts" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Users className="h-4 w-4 text-primary" /> Experts
-                    </Link>
-                    <Link href="/farmers" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Tractor className="h-4 w-4 text-primary" /> Animal Owner
-                    </Link>
-                    <Link href="/vets" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <HeartPulse className="h-4 w-4 text-primary" /> Vets
-                    </Link>
-                    <Link href="/community" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Users className="h-4 w-4 text-primary" /> Community
-                    </Link>
-                    <Link href="/blog" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Newspaper className="h-4 w-4 text-primary" /> Blog
-                    </Link>
-                    <Link href="/books" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <BookOpen className="h-4 w-4 text-primary" /> Books
-                    </Link>
-                    <Link href="/testimonials" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Star className="h-4 w-4 text-primary" /> Success Stories
-                    </Link>
-                  </div>
-                )}
+                  <Link href="/experts" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Users className="h-4 w-4 text-primary" /> Experts
+                  </Link>
+                  <Link href="/farmers" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Tractor className="h-4 w-4 text-primary" /> Animal Owner
+                  </Link>
+                  <Link href="/vets" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <HeartPulse className="h-4 w-4 text-primary" /> Vets
+                  </Link>
+                  <Link href="/community" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Users className="h-4 w-4 text-primary" /> Community
+                  </Link>
+                  <Link href="/blog" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Newspaper className="h-4 w-4 text-primary" /> Blog
+                  </Link>
+                  <Link href="/books" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <BookOpen className="h-4 w-4 text-primary" /> Books
+                  </Link>
+                  <Link href="/testimonials" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Star className="h-4 w-4 text-primary" /> Success Stories
+                  </Link>
+                </MobileNavSection>
 
-                <button
-                  type="button"
-                  onClick={() => toggleSection("about")}
-                  className="flex w-full items-center justify-between px-3 py-2.5 rounded-md hover:bg-accent font-medium"
+                <MobileNavSection
+                  title="About"
+                  icon={Info}
+                  open={!!expanded.about}
+                  onToggle={() => toggleSection("about")}
                 >
-                  <span className="flex items-center gap-2">
-                    <Info className="h-4 w-4 text-primary" />
-                    About
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${expanded.about ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {expanded.about && (
-                  <div className="ml-3 space-y-1 border-l border-border pl-3">
-                    <Link href="/about" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Info className="h-4 w-4 text-primary" /> About Us
-                    </Link>
-                    <Link href="/pricing" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <IndianRupee className="h-4 w-4 text-primary" /> Pricing
-                    </Link>
-                    <Link href="/contact" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <Phone className="h-4 w-4 text-primary" /> Contact Us
-                    </Link>
-                    <Link href="/faqs" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <FileQuestion className="h-4 w-4 text-primary" /> FAQs
-                    </Link>
-                    <Link href="/help" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent" onClick={() => setIsOpen(false)}>
-                      <LifeBuoy className="h-4 w-4 text-primary" /> Help Center
-                    </Link>
-                  </div>
-                )}
+                  <Link href="/about" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Info className="h-4 w-4 text-primary" /> About Us
+                  </Link>
+                  <Link href="/pricing" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <IndianRupee className="h-4 w-4 text-primary" /> Pricing
+                  </Link>
+                  <Link href="/contact" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Phone className="h-4 w-4 text-primary" /> Contact Us
+                  </Link>
+                  <Link href="/faqs" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileQuestion className="h-4 w-4 text-primary" /> FAQs
+                  </Link>
+                  <Link href="/help" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <LifeBuoy className="h-4 w-4 text-primary" /> Help Center
+                  </Link>
+                </MobileNavSection>
 
                 <Link
                   href="/admission"
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                   onClick={() => setIsOpen(false)}
                 >
                   <FileText className="h-4 w-4" />
@@ -686,27 +686,29 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="border-t pt-4 space-y-2">
+              <div className="border-t bg-muted/40 p-4 space-y-2">
                 {isAuthed ? (
                   <>
                     <Link
                       href={isAdmin ? "/admin" : "/dashboard"}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent"
+                      className="flex items-center gap-3 rounded-xl bg-background px-3 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-accent"
                     >
-                      <LayoutDashboard className="h-4 w-4" />
-                        {isAdmin ? "Admin Panel" : "Dashboard"}
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <LayoutDashboard className="h-4 w-4" />
+                      </span>
+                      {isAdmin ? "Admin Panel" : "Dashboard"}
+                    </Link>
+                    {roleLinks.map((rl) => (
+                      <Link
+                        key={rl.href}
+                        href={rl.href}
+                        onClick={() => setIsOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        {rl.label}
                       </Link>
-                      {roleLinks.map((rl) => (
-                        <Link
-                          key={rl.href}
-                          href={rl.href}
-                          onClick={() => setIsOpen(false)}
-                          className="px-3 py-2 rounded-md hover:bg-accent"
-                        >
-                          {rl.label}
-                        </Link>
-                      ))}
+                    ))}
                     <Button
                       variant="outline"
                       className="w-full"
