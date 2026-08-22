@@ -4,24 +4,31 @@ import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getAccess } from "@/lib/access";
 import { getSignedUrl } from "@/lib/blob";
 import { programmeNameToSlug } from "@/lib/programme";
-import ReaderPage from "./reader-page";
+import ReaderPage from "../reader-page";
 
 export const metadata = {
-  title: "VetAcademia | Chapter Reader",
+  title: "VetAcademia | Lecture",
 };
 
-export default async function ChapterReaderRoute({
+export default async function LectureRoute({
   params,
 }: {
-  params: Promise<{ chapterId: string }>;
+  params: Promise<{ chapterId: string; index: string }>;
 }) {
-  const { chapterId } = await params;
+  const { chapterId, index: indexStr } = await params;
+  const index = parseInt(indexStr, 10);
+
+  if (isNaN(index) || index < 0) notFound();
 
   const chapter = await prisma.chapter.findUnique({
     where: { id: chapterId },
     include: {
       subject: {
-        select: { name: true, year: true, programme: { select: { name: true } } },
+        select: {
+          name: true,
+          year: true,
+          programme: { select: { name: true } },
+        },
       },
       chapterContents: true,
       sections: { orderBy: { order: "asc" } },
@@ -29,6 +36,8 @@ export default async function ChapterReaderRoute({
   });
 
   if (!chapter) notFound();
+  if (chapter.sections.length === 0) notFound();
+  if (index >= chapter.sections.length) notFound();
 
   const access = await getAccess();
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
@@ -45,8 +54,13 @@ export default async function ChapterReaderRoute({
       <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec]">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold mb-4">Content Locked</h1>
-          <p className="text-muted-foreground mb-6">Is chapter ko dekhne ke liye enrollment zaroori hai.</p>
-          <a href={`/syllabus/${programmeSlug}/${chapter.subjectId}`} className="underline text-primary font-medium">
+          <p className="text-muted-foreground mb-6">
+            Is chapter ko dekhne ke liye enrollment zaroori hai.
+          </p>
+          <a
+            href={`/syllabus/${programmeSlug}/${chapter.subjectId}`}
+            className="underline text-primary font-medium"
+          >
             ← Syllabus pe wapas jaayein
           </a>
         </div>
@@ -54,10 +68,7 @@ export default async function ChapterReaderRoute({
     );
   }
 
-  const hasSections = chapter.sections.length > 0;
-  const signedHtml = hasSections
-    ? ""
-    : await prepareChapterHtml(chapter.content);
+  const signedHtml = await prepareChapterHtml(chapter.content);
 
   const preparedSections = await Promise.all(
     chapter.sections.map(async (s) => ({
@@ -74,9 +85,6 @@ export default async function ChapterReaderRoute({
     }))
   );
 
-  // Study Materials bound to this chapter (uploaded via the Study Materials
-  // admin) are surfaced here too, so a PPT/PDF added there also appears on the
-  // chapter page alongside ChapterContent files.
   const studyMats = await prisma.studyMaterial.findMany({
     where: { chapterId: chapter.id },
     select: {
@@ -115,7 +123,7 @@ export default async function ChapterReaderRoute({
       html={signedHtml}
       sections={preparedSections}
       resources={resources}
-      activeSectionIndex={null}
+      activeSectionIndex={index}
     />
   );
 }
