@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
 import ChapterContentViewer from "@/components/chapter-content-viewer";
-import { ArrowLeft, BookOpen, List, ListChecks } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, List, ListChecks } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
 import ChapterPractice from "@/components/chapter-practice";
 
@@ -139,6 +139,34 @@ export default function ReaderPage({ title, subjectName, programmeName, programm
                       className="chapter-content"
                       dangerouslySetInnerHTML={{ __html: s.html }}
                     />
+
+                    {/* Lecture navigation */}
+                    <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                      {i > 0 && (
+                        <a
+                          href={`#sec-${sections[i - 1].id}`}
+                          className="flex-1 flex items-center gap-3 rounded-xl border border-border bg-background p-4 hover:bg-accent transition-colors group"
+                        >
+                          <ChevronUp className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-xs text-muted-foreground">Previous</p>
+                            <p className="text-sm font-semibold truncate">{sections[i - 1].title}</p>
+                          </div>
+                        </a>
+                      )}
+                      {i < sections.length - 1 && (
+                        <a
+                          href={`#sec-${sections[i + 1].id}`}
+                          className="flex-1 flex items-center gap-3 rounded-xl border border-border bg-background p-4 hover:bg-accent transition-colors group text-right sm:justify-end"
+                        >
+                          <div className="min-w-0 text-right">
+                            <p className="text-xs text-muted-foreground">Next</p>
+                            <p className="text-sm font-semibold truncate">{sections[i + 1].title}</p>
+                          </div>
+                          <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
+                        </a>
+                      )}
+                    </div>
                   </section>
                 ))}
               </div>
