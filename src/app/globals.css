@@ -387,7 +387,7 @@
 .chapter-content th strong,
 .chapter-content th a,
 .chapter-content th span {
-  color: inherit;
+  color: var(--primary-foreground) !important;
 }
 .chapter-content tr:nth-child(even) {
   background: rgba(0,0,0,0.03);
