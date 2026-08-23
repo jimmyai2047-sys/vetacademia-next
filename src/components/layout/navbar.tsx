@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -120,10 +120,25 @@ export default function Navbar() {
   const [search, setSearch] = useState("");
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const router = useRouter();
+  const pathname = usePathname();
 
   function setMenu(name: string, open: boolean) {
-    setOpenMenus((m) => ({ ...m, [name]: open }));
+    if (open) {
+      // When opening one menu, close all others first
+      setOpenMenus({ [name]: true });
+    } else {
+      setOpenMenus((m) => ({ ...m, [name]: false }));
+    }
   }
+
+  function closeAllMenus() {
+    setOpenMenus({});
+  }
+
+  // Close all dropdowns on route change
+  useEffect(() => {
+    closeAllMenus();
+  }, [pathname]);
   const { data: session, status } = useSession();
 
   const isAuthed = status === "authenticated" && !!session?.user;
