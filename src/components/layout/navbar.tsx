@@ -423,7 +423,7 @@ export default function Navbar() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search subjects..."
             aria-label="Search subjects"
-            className="pl-9 pr-3 h-9 w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="pl-9 pr-3 h-9 w-64 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </form>
 
