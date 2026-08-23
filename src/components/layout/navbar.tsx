@@ -192,7 +192,7 @@ export default function Navbar() {
         <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto" />
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-5">
+        <nav className="hidden lg:flex items-center gap-7">
           <Link href="/">
             <Button variant="ghost">Home</Button>
           </Link>
