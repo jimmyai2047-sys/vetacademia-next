@@ -4,9 +4,8 @@
 };
 
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getEligibleCommunityLinks, PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community";
+import { prisma } from "@/lib/prisma";
+import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
 
@@ -18,28 +17,13 @@ function refLabel(category: string, ref: string) {
   return list.find((r) => r.value === ref)?.label || ref;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function CommunityPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return (
-      <div className="container mx-auto px-4 py-16 max-w-xl text-center">
-        <h1 className="text-3xl font-bold mb-3">Community</h1>
-        <p className="text-muted-foreground mb-6">
-          Please log in to view your WhatsApp groups and Telegram channels.
-        </p>
-        <Link
-          href="/login"
-          className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          Log In
-        </Link>
-      </div>
-    );
-  }
-
-  const userId = session.user.id ?? "";
-
-  const links = await getEligibleCommunityLinks(userId);
+  const links = await prisma.communityLink.findMany({
+    where: { active: true },
+    orderBy: [{ category: "asc" }, { ref: "asc" }],
+  });
 
   const byCategory = links.reduce<Record<string, typeof links>>((acc, l) => {
     (acc[l.category] ||= []).push(l);
@@ -56,23 +40,16 @@ export default async function CommunityPage() {
       </Link>
       <h1 className="text-3xl md:text-4xl font-bold mb-2">Community</h1>
       <p className="text-muted-foreground mb-8">
-        Join your batch&apos;s WhatsApp groups and Telegram channels to connect
+        Join Telegram groups for your programme, exams, and role to connect
         with fellow students and stay updated.
       </p>
 
       {links.length === 0 ? (
         <div className="rounded-xl border bg-muted/40 p-10 text-center">
           <p className="font-medium mb-2">No communities available yet</p>
-          <p className="text-sm text-muted-foreground mb-4">
-            You&apos;ll see groups here once you enrol in a programme or exam
-            track.
+          <p className="text-sm text-muted-foreground">
+            Check back soon for Telegram groups.
           </p>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Browse Plans
-          </Link>
         </div>
       ) : (
         <div className="space-y-8">
