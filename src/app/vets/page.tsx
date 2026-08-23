@@ -21,7 +21,7 @@ export default async function VetsPage() {
         <h2 className="text-2xl font-bold mb-4">Articles &amp; Resources</h2>
         {vetPosts.length === 0 ? (
           <p className="text-muted-foreground">
-            No articles published yet. Add them from the admin panel.
+            No articles published yet. Check back soon for new resources.
           </p>
         ) : (
           <PostList posts={vetPosts} />

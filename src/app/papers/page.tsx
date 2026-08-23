@@ -98,7 +98,16 @@ export default async function PapersPage() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-start gap-2">
                     <FileText className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                    {post.title}
+                    {post.downloadUrl ? (
+                      <Link
+                        href={`/papers/view/${post.id}`}
+                        className="hover:underline"
+                      >
+                        {post.title}
+                      </Link>
+                    ) : (
+                      post.title
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex items-center justify-between gap-2">
@@ -107,14 +116,23 @@ export default async function PapersPage() {
                   </span>
                   <div className="flex items-center gap-2">
                     {post.downloadUrl && (
-                      <a
-                        href={post.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-                      >
-                        <Download className="h-3.5 w-3.5" /> Download
-                      </a>
+                      <>
+                        <Link
+                          href={`/papers/view/${post.id}`}
+                          className="inline-flex items-center gap-1 rounded-md border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                        >
+                          <FileText className="h-3.5 w-3.5" /> Open
+                        </Link>
+                        <a
+                          href={post.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                        >
+                          <Download className="h-3.5 w-3.5" /> Download
+                        </a>
+                      </>
                     )}
                     <BookmarkButton
                       type="material"

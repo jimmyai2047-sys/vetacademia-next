@@ -270,23 +270,15 @@ export default async function ExamPage({
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            {examUnlocked ? (
-              prevYearPosts.length > 0 ? (
-                <PostList posts={prevYearPosts} />
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No previous year papers yet.
-                </p>
-              )
-            ) : (
-              <EnrollCta
-                planSlug={planSlugForExam(exam) || "veterinary-officer"}
-                title="Enroll to access previous year papers"
-                message="Enroll in the exam preparation plan to unlock previous year papers and solutions."
-              />
-            )}
-          </CardContent>
+              <CardContent>
+                {prevYearPosts.length > 0 ? (
+                  <PostList posts={prevYearPosts} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No previous year papers yet.
+                  </p>
+                )}
+              </CardContent>
         </Card>
 
         {/* Study Material */}

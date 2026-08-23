@@ -18,7 +18,7 @@ export function setMaintenanceMode(value: boolean) {
   maintenanceCheckedAt = Date.now();
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const authLimit = AUTH_LIMITS[pathname];

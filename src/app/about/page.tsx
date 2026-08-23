@@ -5,6 +5,7 @@ export const metadata = {
 };
 
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Target,
@@ -91,8 +92,14 @@ export default function AboutPage() {
       {/* Director */}
       <div className="grid md:grid-cols-[260px_1fr] gap-8 items-start mb-12">
         <div className="space-y-4">
-          <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/80 to-primary/50 flex items-center justify-center overflow-hidden">
-            <GraduationCap className="h-20 w-20 text-white/70" />
+          <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
+            <Image
+              src="/images/ashok-baindha.jpg"
+              alt="Dr. Ashok Baindha — Founder & Director, VetAcademia"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
           <div className="text-center">
             <h3 className="text-lg font-bold">Dr. Ashok Baindha</h3>

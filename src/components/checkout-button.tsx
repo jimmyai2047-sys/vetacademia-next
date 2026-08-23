@@ -92,12 +92,11 @@ export default function CheckoutButton({
         ) : null}
         {loading
           ? "Processing..."
-          : `Pay Rs.${amount.toLocaleString("en-IN")} (Test)`}
+          : `Pay Rs.${amount.toLocaleString("en-IN")}`}
       </Button>
       {error && <p className="text-xs text-red-500">{error}</p>}
       <p className="text-xs text-muted-foreground text-center">
-        Test mode: no real charge is made. Razorpay will be enabled once
-        activated.
+        Secure payment powered by Razorpay. Your payment information is encrypted.
       </p>
     </div>
   );

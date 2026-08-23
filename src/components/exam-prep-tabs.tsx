@@ -252,19 +252,38 @@ export default function ExamPrepTabs({
           {cat.papers.map((p) => (
             <Card key={p.id}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">{p.title}</CardTitle>
+                <CardTitle className="text-base">
+                  {p.downloadUrl ? (
+                    <Link
+                      href={`/papers/view/${p.id}`}
+                      className="hover:underline"
+                    >
+                      {p.title}
+                    </Link>
+                  ) : (
+                    p.title
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {p.downloadUrl ? (
-                  <a
-                    href={p.downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-1" /> Download
-                    </Button>
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/papers/view/${p.id}`}
+                      className="inline-flex items-center gap-1 rounded-md border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                    >
+                      <FileText className="h-3.5 w-3.5" /> Open
+                    </Link>
+                    <a
+                      href={p.downloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Download className="h-3.5 w-3.5" /> Download
+                    </a>
+                  </div>
                 ) : (
                   <span className="text-xs text-muted-foreground">
                     No file attached

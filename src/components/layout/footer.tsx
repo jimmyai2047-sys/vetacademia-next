@@ -23,6 +23,7 @@ const footerLinks = {
   ],
   support: [
     { name: "Expert Consultation", href: "/experts" },
+    { name: "Vet Reference Guide", href: "/vets" },
     { name: "Success Stories", href: "/testimonials" },
     { name: "About Us", href: "/about" },
     { name: "Admission Form", href: "/admission" },

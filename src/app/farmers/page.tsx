@@ -105,14 +105,14 @@ export default async function FarmersPage({
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Stat icon={Wheat} color="text-blue-600" bg="bg-blue-50" value={`${guides.length}+`} label="Farm Guides" />
-        <Stat icon={Syringe} color="text-emerald-600" bg="bg-emerald-50" value={`${vaccination.length}+`} label="Vaccines" />
-        <Stat icon={FileBarChart} color="text-orange-600" bg="bg-orange-50" value={`${deworming.length}+`} label="Deworming" />
-        <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={`${reports.length}+`} label="Project Reports" />
+        <Stat icon={Wheat} color="text-blue-600" bg="bg-blue-50" value={String(guides.length)} label="Farm Guides" />
+        <Stat icon={Syringe} color="text-emerald-600" bg="bg-emerald-50" value={String(vaccination.length)} label="Vaccines" />
+        <Stat icon={FileBarChart} color="text-orange-600" bg="bg-orange-50" value={String(deworming.length)} label="Deworming" />
+        <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={String(reports.length)} label="Project Reports" />
       </div>
 
       {/* Sticky in-page section nav */}
-      <nav className="sticky top-2 z-10 -mx-1 mb-8 rounded-xl border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-14 z-10 -mx-1 mb-8 rounded-xl border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {SECTIONS.map((s) => (
             <a
@@ -133,6 +133,8 @@ export default async function FarmersPage({
           guides={guides as unknown as Parameters<typeof FarmersExplorer>[0]["guides"]}
           reports={reports as unknown as Parameters<typeof FarmersExplorer>[0]["reports"]}
           purchasedIds={purchasedIds}
+          vaccination={vaccination as unknown as Parameters<typeof FarmersExplorer>[0]["vaccination"]}
+          deworming={deworming as unknown as Parameters<typeof FarmersExplorer>[0]["deworming"]}
         />
       </div>
 

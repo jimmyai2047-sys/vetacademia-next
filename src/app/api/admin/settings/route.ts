@@ -5,7 +5,7 @@ import {
   validateSettingKey,
   validateSettingValue,
 } from "@/lib/admin-api";
-import { setMaintenanceMode } from "@/middleware";
+import { setMaintenanceMode } from "@/proxy";
 
 const DEFAULTS: Record<string, string> = {
   siteName: "VetAcademia",

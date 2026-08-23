@@ -3,9 +3,15 @@ import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import bcrypt from "bcryptjs";
 import { requireAdminApi } from "@/lib/admin-api";
+import { getAdminSession } from "@/lib/admin";
 
 export async function GET() {
   try {
+    const session = await getAdminSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const experts = await prisma.expert.findMany({
       include: { user: { select: { id: true, name: true, email: true } } },
       orderBy: { createdAt: "desc" },

@@ -93,10 +93,11 @@ export default async function ExpertsPage() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   {expert.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={expert.photoUrl}
                       alt={expert.name}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 rounded-full object-cover border"
                     />
                   ) : (
@@ -116,15 +117,21 @@ export default async function ExpertsPage() {
                       {expert.specialization}
                     </CardDescription>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">
-                          {expert.rating.toFixed(1)}
-                        </span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        ({expert.reviews} reviews)
-                      </span>
+                      {expert.reviews > 0 ? (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-medium">
+                              {expert.rating.toFixed(1)}
+                            </span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            ({expert.reviews} reviews)
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No reviews yet</span>
+                      )}
                     </div>
                   </div>
                   {expert.isAvailable ? (

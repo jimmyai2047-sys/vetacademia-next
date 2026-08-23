@@ -13,6 +13,25 @@ import { getFarmTypeImage } from "@/lib/page-images";
 import { Search, X } from "lucide-react";
 import type { FarmItem } from "@/components/admin/farmers-admin-client";
 
+type VaccinationItem = {
+  id: string;
+  disease: string;
+  animals: string;
+  firstDose: string;
+  booster: string;
+  annual: string;
+  vaccine: string;
+};
+
+type DewormingItem = {
+  id: string;
+  animal: string;
+  firstDose: string;
+  frequency: string;
+  bestTime: string;
+  products: string;
+};
+
 const number = (v: unknown) => (typeof v === "number" ? v : Number(v) || 0);
 
 function matches(item: FarmItem, q: string): boolean {
@@ -32,14 +51,36 @@ function matches(item: FarmItem, q: string): boolean {
   return haystack.includes(q);
 }
 
+function matchesVaccination(v: VaccinationItem, q: string): boolean {
+  if (!q) return true;
+  return [v.disease, v.animals, v.vaccine, v.firstDose, v.booster, v.annual]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .includes(q);
+}
+
+function matchesDeworming(d: DewormingItem, q: string): boolean {
+  if (!q) return true;
+  return [d.animal, d.firstDose, d.frequency, d.bestTime, d.products]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .includes(q);
+}
+
 export default function FarmersExplorer({
   guides,
   reports,
   purchasedIds,
+  vaccination,
+  deworming,
 }: {
   guides: FarmItem[];
   reports: FarmItem[];
   purchasedIds: string[];
+  vaccination: VaccinationItem[];
+  deworming: DewormingItem[];
 }) {
   const [filter, setFilter] = useState<string>("ALL");
   const [query, setQuery] = useState<string>("");
@@ -61,8 +102,18 @@ export default function FarmersExplorer({
     (r) =>
       (filter === "ALL" || r.farmType === filter) && matches(r, q)
   );
+  const filteredVaccination = q
+    ? vaccination.filter((v) => matchesVaccination(v, q))
+    : vaccination;
+  const filteredDeworming = q
+    ? deworming.filter((d) => matchesDeworming(d, q))
+    : deworming;
 
-  const hasResults = filteredGuides.length > 0 || filteredReports.length > 0;
+  const hasResults =
+    filteredGuides.length > 0 ||
+    filteredReports.length > 0 ||
+    filteredVaccination.length > 0 ||
+    filteredDeworming.length > 0;
 
   function toggle(id: string) {
     setExpanded((s) => {
@@ -75,13 +126,13 @@ export default function FarmersExplorer({
   return (
     <div>
       {/* Sticky search + farm-type filter */}
-      <div className="sticky top-2 z-20 -mx-1 mb-6 rounded-xl border border-border/60 bg-background/80 px-3 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="sticky top-2 z-30 -mx-1 mb-6 rounded-xl border border-border/60 bg-background/80 px-3 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="relative mb-3">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search guides, reports, vaccines, schedules…"
+            placeholder="Search guides, reports, vaccines, schedules..."
             className="h-10 pl-9 pr-9"
             aria-label="Search animal owner content"
           />
@@ -152,7 +203,7 @@ export default function FarmersExplorer({
                   <div className="relative h-40 w-full overflow-hidden">
                     <Image
                       src={getFarmTypeImage(String(g.category))}
-                      alt={String(g.category)}
+                      alt={String(g.title || g.category)}
                       fill
                       sizes="(max-width: 768px) 100vw, 400px"
                       className="object-cover"
@@ -174,14 +225,20 @@ export default function FarmersExplorer({
                     {open && g.content ? (
                       <ProtectedHtml html={String(g.content)} />
                     ) : null}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => toggle(g.id)}
-                    >
-                      {open ? "Show less" : g.content ? "Read guide" : "No detail"}
-                    </Button>
+                    <div className="mt-2 flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggle(g.id)}
+                      >
+                        {open ? "Show less" : g.content ? "Read guide" : "No detail"}
+                      </Button>
+                      <Link href={`/farmers/${g.id}`} className="ml-auto">
+                        <Button variant="outline" size="sm">
+                          Open full page
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -213,7 +270,7 @@ export default function FarmersExplorer({
                   <div className="relative h-40 w-full overflow-hidden">
                     <Image
                       src={getFarmTypeImage(String(r.farmType))}
-                      alt={String(r.farmType || "Project Report")}
+                      alt={String(r.title || r.farmType || "Project Report")}
                       fill
                       sizes="(max-width: 768px) 100vw, 400px"
                       className="object-cover"
@@ -267,6 +324,90 @@ export default function FarmersExplorer({
               );
             })}
           </div>
+        </>
+      )}
+
+      {/* Vaccination Schedule (searchable) */}
+      {q && filteredVaccination.length > 0 && (
+        <>
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h2 className="text-2xl font-bold">Vaccination Schedule</h2>
+            <span className="text-sm text-muted-foreground">
+              {filteredVaccination.length} match{filteredVaccination.length !== 1 ? "es" : ""}
+            </span>
+          </div>
+          <Card className="mb-10">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="text-left p-4 font-medium">Disease</th>
+                      <th className="text-left p-4 font-medium">Animals</th>
+                      <th className="text-left p-4 font-medium">1st Dose</th>
+                      <th className="text-left p-4 font-medium">Booster</th>
+                      <th className="text-left p-4 font-medium">Annual</th>
+                      <th className="text-left p-4 font-medium">Vaccine</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredVaccination.map((v) => (
+                      <tr key={v.id} className="border-b last:border-0 hover:bg-accent/50">
+                        <td className="p-4 font-medium">{v.disease}</td>
+                        <td className="p-4 text-muted-foreground">{v.animals}</td>
+                        <td className="p-4 text-muted-foreground">{v.firstDose}</td>
+                        <td className="p-4 text-muted-foreground">{v.booster}</td>
+                        <td className="p-4 text-muted-foreground">{v.annual}</td>
+                        <td className="p-4">
+                          <Badge variant="secondary">{v.vaccine}</Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {/* Deworming Schedule (searchable) */}
+      {q && filteredDeworming.length > 0 && (
+        <>
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h2 className="text-2xl font-bold">Deworming Schedule</h2>
+            <span className="text-sm text-muted-foreground">
+              {filteredDeworming.length} match{filteredDeworming.length !== 1 ? "es" : ""}
+            </span>
+          </div>
+          <Card className="mb-10">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="text-left p-4 font-medium">Animal</th>
+                      <th className="text-left p-4 font-medium">1st Dose</th>
+                      <th className="text-left p-4 font-medium">Frequency</th>
+                      <th className="text-left p-4 font-medium">Best Time</th>
+                      <th className="text-left p-4 font-medium">Products</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredDeworming.map((d) => (
+                      <tr key={d.id} className="border-b last:border-0 hover:bg-accent/50">
+                        <td className="p-4 font-medium">{d.animal}</td>
+                        <td className="p-4 text-muted-foreground">{d.firstDose}</td>
+                        <td className="p-4 text-muted-foreground">{d.frequency}</td>
+                        <td className="p-4 text-muted-foreground">{d.bestTime}</td>
+                        <td className="p-4 text-muted-foreground">{d.products}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>
