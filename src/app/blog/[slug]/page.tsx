@@ -97,9 +97,10 @@ export default async function BlogPostPage({
           </span>
         </div>
 
-        <div className="prose prose-sm md:prose-base max-w-none whitespace-pre-line text-foreground/90 leading-relaxed">
-          {post.content}
-        </div>
+        <div
+          className="prose prose-sm md:prose-base max-w-none text-foreground/90 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
         <div className="mt-12 pt-6 border-t">
           <p className="font-semibold mb-2">Found this helpful?</p>
