@@ -5,10 +5,10 @@
 // expect lowercase slugs, so centralize both directions here.
 
 export const SLUG_TO_PROGRAMME_NAME: Record<string, string> = {
-  ahdp: "AHDP",
-  bvsc: "BVSC",
-  mvsc: "MVSC",
-  phd: "PHD",
+  ahdp: "A.H.D.P.",
+  bvsc: "B.V.Sc & A.H.",
+  mvsc: "M.V.Sc",
+  phd: "Ph.D.",
 };
 
 const PROGRAMME_NAME_TO_SLUG: Record<string, string> = {
