@@ -194,7 +194,7 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-7">
           <Link href="/">
-            <Button variant="ghost">Home</Button>
+            <Button variant="ghost" className="gap-1.5"><Home className="h-4 w-4" />Home</Button>
           </Link>
 
           {/* Programmes */}
