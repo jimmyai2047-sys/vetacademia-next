@@ -98,7 +98,8 @@ export default async function ExpertsPage() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   {expert.photoUrl ? (
-                    <Image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                       src={expert.photoUrl}
                       alt={expert.name}
                       width={64}
