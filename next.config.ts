@@ -36,10 +36,24 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForBuild: false,
   },
   images: {
+    // Allow Vercel Blob (expert photos, blog covers, study-material images)
+    // to be served through the Next.js image optimizer.
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.private.blob.vercel-storage.com",
       },
     ],
   },
