@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { programmeNameToSlug } from "@/lib/programme";
 import PracticePage from "@/components/practice-page";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +51,7 @@ export default async function PracticeRoute({
       chapterId={chapterId}
       chapterTitle={chapter.title}
       subjectName={chapter.subject.name}
-      programmeSlug={chapter.subject.programme.slug}
+      programmeSlug={programmeNameToSlug(chapter.subject.programme.name)}
       subjectId={chapter.subject.id}
       mcqs={mcqs}
     />
