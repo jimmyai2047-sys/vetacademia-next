@@ -247,9 +247,18 @@ export default function PracticePage({
                     );
                   })}
                 </div>
-                {submitted && m.explanation && (
-                  <div className="ml-10 mt-3 rounded-lg bg-muted p-3 text-sm">
-                    <span className="font-semibold">Explanation:</span> {m.explanation}
+                {submitted && (
+                  <div className="ml-10 mt-3 rounded-lg bg-muted p-3 text-sm space-y-1">
+                    <p>
+                      <span className="font-semibold text-green-700 dark:text-green-400">
+                        ✓ Correct Answer: {String.fromCharCode(65 + m.correctIndex)}. {m.options[m.correctIndex]}
+                      </span>
+                    </p>
+                    {m.explanation ? (
+                      <p className="text-muted-foreground">
+                        <span className="font-semibold">Explanation:</span> {m.explanation}
+                      </p>
+                    ) : null}
                   </div>
                 )}
               </div>
