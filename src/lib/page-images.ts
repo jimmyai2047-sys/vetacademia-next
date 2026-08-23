@@ -1,33 +1,29 @@
-// Suitable imagery for the non-syllabus "plates" (exams, exam-prep categories,
-// farm guides, vet reference, pricing plans, expert/consultation heroes).
-//
-// These reuse the same Unsplash photo IDs already verified on the syllabus
-// subject cards (src/lib/subject-images.ts) so the images are guaranteed to
-// load. Add new keys here as more content sections are introduced.
+// Unique HQ images for non-syllabus plates (exams, exam-prep, farm types, heroes).
+// Each image is distinct — no reuse across categories.
 
 const examImages: Record<string, string> = {
-  psc: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  "icar-entrance": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=1200&q=80",
-  net: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
-  ars: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80",
-  other: "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=1200&q=80",
+  psc: "https://images.unsplash.com/photo-1569858241634-5aee6e47091a?w=1200&q=80",
+  "icar-entrance": "https://images.unsplash.com/photo-1648792940059-3b782a7b8b20?w=1200&q=80",
+  net: "https://images.unsplash.com/photo-1517697382483-dfc60dfb913f?w=1200&q=80",
+  ars: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80",
+  other: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=1200&q=80",
 };
 
 const examPrepImages: Record<string, string> = {
-  VO: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
-  LSA: "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=1200&q=80",
-  ARS: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80",
-  ICAR_ENTRANCE: "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=1200&q=80",
-  NET: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80",
+  VO: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1200&q=80",
+  LSA: "https://images.unsplash.com/photo-1657536011755-b6cbe9c4c522?w=1200&q=80",
+  ARS: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
+  ICAR_ENTRANCE: "https://images.unsplash.com/photo-1648792940059-3b782a7b8b20?w=1200&q=80",
+  NET: "https://images.unsplash.com/photo-1517697382483-dfc60dfb913f?w=1200&q=80",
 };
 
 const farmTypeImages: Record<string, string> = {
-  SCIENTIFIC: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80",
-  DAIRY: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
+  SCIENTIFIC: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=1200&q=80",
+  DAIRY: "https://images.unsplash.com/photo-1573731281021-d1cc573b3310?w=1200&q=80",
   GOAT: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200&q=80",
-  SHEEP: "https://images.unsplash.com/photo-1454179083322-198bb4daae41?w=1200&q=80",
-  POULTRY: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1200&q=80",
-  PIG: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80",
+  SHEEP: "https://images.unsplash.com/photo-1598618717478-81c4a532ea50?w=1200&q=80",
+  POULTRY: "https://images.unsplash.com/photo-1676984030996-b71929f90924?w=1200&q=80",
+  PIG: "https://images.unsplash.com/photo-1569858241634-5aee6e47091a?w=1200&q=80",
 };
 
 const vetHeroImage =
