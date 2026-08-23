@@ -17,35 +17,41 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getSignedUrl } from "@/lib/blob";
 
 
 
 export const dynamic = "force-dynamic";
 
-export default async function ExpertsPage() {
-  const experts = await prisma.expert.findMany({
-    include: {
-      user: { select: { name: true } },
-      _count: { select: { consultations: true } },
-    },
-    orderBy: { createdAt: "asc" },
-  }).catch((err) => {
-    console.error("Experts page DB error:", err);
-    return [];
-  });
+function proxyUrl(blobUrl: string): string {
+  return `/api/blob?url=${encodeURIComponent(blobUrl)}`;
+}
 
-  const cards = await Promise.all(
-    experts.map(async (e: typeof experts[number]) => {
-      let photo: string | null = null;
-      if (e.photoUrl) {
-        try {
-          photo = await getSignedUrl(e.photoUrl);
-        } catch {
-          photo = e.photoUrl;
-        }
-      }
+const getExperts = unstable_cache(
+  async () => {
+    try {
+      return await prisma.expert.findMany({
+        include: {
+          user: { select: { name: true } },
+          _count: { select: { consultations: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      });
+    } catch (err) {
+      console.error("Experts page DB error:", err);
+      return [];
+    }
+  },
+  ["experts-list"],
+  { revalidate: 120 }
+);
+
+export default async function ExpertsPage() {
+  const experts = await getExperts();
+
+  const cards = experts.map((e: typeof experts[number]) => {
+      const photo = e.photoUrl ? proxyUrl(e.photoUrl) : null;
       return {
         id: e.id,
         name: e.user.name,
@@ -58,8 +64,7 @@ export default async function ExpertsPage() {
         reviews: e.totalReviews,
         sessions: e._count.consultations,
       };
-    })
-  );
+    });
 
   return (
     <div className="container mx-auto px-4 py-8">
