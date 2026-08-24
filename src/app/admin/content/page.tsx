@@ -58,7 +58,7 @@ export default async function ContentPage() {
         department: { select: { name: true } },
         _count: { select: { chapters: true, mockTests: true } },
       },
-      orderBy: { name: "asc" },
+      orderBy: { code: "asc" },
     }),
     prisma.department.findMany({
       include: {
@@ -76,10 +76,7 @@ export default async function ContentPage() {
     PHD: 3,
   };
   subjects.sort((a, b) => {
-    const pa = programmeOrder[a.programme.name] ?? 99;
-    const pb = programmeOrder[b.programme.name] ?? 99;
-    if (pa !== pb) return pa - pb;
-    return a.name.localeCompare(b.name);
+    return (a.code || a.name).localeCompare(b.code || b.name);
   });
 
   const iconMap: Record<string, typeof BookOpen> = {
