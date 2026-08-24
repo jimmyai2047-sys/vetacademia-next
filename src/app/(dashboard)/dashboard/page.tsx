@@ -228,8 +228,8 @@ export default async function DashboardPage() {
                   ]
                 : isAnimalOwner
                 ? [
-                    { href: "/farmers", label: "Advisory & Helpline", desc: "Livestock advisory resources", icon: HeartPulse, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
-                    { href: "/experts", label: "Book Consultation", desc: "Talk to a veterinary expert", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+                    { href: "/advisory", label: "Advisory & Helpline", desc: "Livestock advisory resources", icon: HeartPulse, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
+                    { href: "/consultations/book", label: "Book Consultation", desc: "Talk to a veterinary expert", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
                     { href: "/vets", label: "Vets Resources", desc: "Tools for practicing vets", icon: Tractor, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
                     { href: "/community", label: "Community", desc: "Animal owner groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
                   ]
@@ -310,10 +310,10 @@ export default async function DashboardPage() {
               <CardContent className="space-y-3">
                 {isAnimalOwner ? (
                   <>
-                    <Link href="/farmers">
+                    <Link href="/advisory">
                       <Button className="w-full">Open Advisory & Helpline</Button>
                     </Link>
-                    <Link href="/experts">
+                    <Link href="/consultations/book">
                       <Button variant="outline" className="w-full">Book a Consultation</Button>
                     </Link>
                   </>

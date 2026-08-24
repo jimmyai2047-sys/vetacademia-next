@@ -160,7 +160,7 @@ export default function Navbar() {
       ]
     : isAnimalOwner
     ? [
-        { href: "/farmers", label: "Advisory" },
+        { href: "/advisory", label: "Advisory" },
         { href: "/experts", label: "Book Consultation" },
         { href: "/community", label: "Community" },
       ]
@@ -349,7 +349,7 @@ export default function Navbar() {
               <Link href="/experts" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
                 <Users className="h-4 w-4" /> Experts
               </Link>
-              <Link href="/farmers" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Link href="/advisory" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
                 <Tractor className="h-4 w-4" /> Animal Owner
               </Link>
               <Link href="/vets" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
@@ -648,7 +648,7 @@ export default function Navbar() {
                   <Link href="/experts" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Users className="h-4 w-4 text-primary" /> Experts
                   </Link>
-                  <Link href="/farmers" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                  <Link href="/advisory" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Tractor className="h-4 w-4 text-primary" /> Animal Owner
                   </Link>
                   <Link href="/vets" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
