@@ -294,6 +294,7 @@ export default function UsersClient({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
+                aria-label="Search users by name or email"
               />
             </div>
             <Select value={roleFilter} onValueChange={(v) => setRoleFilter(v ?? "ALL")}>

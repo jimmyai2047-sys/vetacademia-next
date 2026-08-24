@@ -6,8 +6,7 @@ export const metadata = {
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import VetReference from "@/components/vet-reference";
-
-
+import VetsPageNav from "@/components/vets-page-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +14,7 @@ export default async function VetsPage() {
   const vetPosts = await getPublishedPosts("VETS");
   return (
     <div>
+      <VetsPageNav />
       <VetReference />
 
       <div id="articles" className="container mx-auto px-4 py-8">
@@ -29,4 +29,4 @@ export default async function VetsPage() {
       </div>
     </div>
   );
-}
+}

@@ -59,6 +59,7 @@ export default async function SearchPage({
           defaultValue={term}
           name="q"
           placeholder="Search subjects..."
+          aria-label="Search subjects"
           className="w-full pl-9 pr-3 h-10 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </form>

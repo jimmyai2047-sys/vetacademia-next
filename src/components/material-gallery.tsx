@@ -79,6 +79,7 @@ export default function MaterialGallery({
             className="pl-10"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search study materials"
           />
         </div>
         <div className="flex gap-2 flex-wrap">

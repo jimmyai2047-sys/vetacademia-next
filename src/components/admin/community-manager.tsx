@@ -258,6 +258,7 @@ export default function CommunityManager() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
+                aria-label="Search community posts"
               />
             </div>
             <div className="overflow-x-auto rounded-xl border">

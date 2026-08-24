@@ -384,6 +384,7 @@ export default function PostManager() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
+              aria-label="Search posts"
             />
           </div>
           {filtered.map((p) => (
