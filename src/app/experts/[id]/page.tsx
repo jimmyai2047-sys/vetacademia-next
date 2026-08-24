@@ -10,7 +10,7 @@ import { getSignedUrl } from "@/lib/blob";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Star, Clock, IndianRupee, BookOpen } from "lucide-react";
+import { ArrowLeft, Star, Clock, IndianRupee, BookOpen, ChevronRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +54,15 @@ export default async function ExpertDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+        <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <Link href="/experts" className="hover:text-foreground transition-colors">Experts</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <span className="text-foreground font-medium truncate max-w-[200px]">{expert.user.name}</span>
+      </nav>
+
       <Link href="/experts" className="inline-flex mb-6">
         <Button variant="ghost" size="sm" className="gap-1.5">
           <ArrowLeft className="h-4 w-4" />
@@ -141,7 +150,12 @@ export default async function ExpertDetailPage({
           </div>
 
           {expert.isAvailable ? (
-            <Link href="/contact" className="block">
+            <Link
+              href={`/consultations/book?expert=${expert.id}&name=${encodeURIComponent(
+                expert.user.name
+              )}`}
+              className="block"
+            >
               <Button className="w-full" size="lg">
                 Book Consultation
               </Button>

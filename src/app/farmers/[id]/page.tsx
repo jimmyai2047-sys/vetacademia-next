@@ -10,7 +10,7 @@ import { getFarmTypeImage } from "@/lib/page-images";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +30,15 @@ export default async function FarmGuidePage({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+        <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <Link href="/farmers" className="hover:text-foreground transition-colors">Animal Owner</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <span className="text-foreground font-medium truncate max-w-[200px]">{String(guide.title)}</span>
+      </nav>
+
       <Link href="/farmers" className="inline-flex mb-6">
         <Button variant="ghost" size="sm" className="gap-1.5">
           <ArrowLeft className="h-4 w-4" />

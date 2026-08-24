@@ -212,7 +212,9 @@ export default function FarmersExplorer({
                   </div>
                   <CardHeader>
                     <div className="flex items-start justify-between gap-3">
-                      <CardTitle className="text-lg">{String(g.title)}</CardTitle>
+                      <Link href={`/farmers/${g.id}`} className="hover:underline">
+                        <CardTitle className="text-lg">{String(g.title)}</CardTitle>
+                      </Link>
                       <Badge variant="outline" className="shrink-0">
                         {String(g.category)}
                       </Badge>
@@ -225,20 +227,14 @@ export default function FarmersExplorer({
                     {open && g.content ? (
                       <ProtectedHtml html={String(g.content)} />
                     ) : null}
-                    <div className="mt-2 flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggle(g.id)}
-                      >
-                        {open ? "Show less" : g.content ? "Read guide" : "No detail"}
-                      </Button>
-                      <Link href={`/farmers/${g.id}`} className="ml-auto">
-                        <Button variant="outline" size="sm">
-                          Open full page
-                        </Button>
-                      </Link>
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => toggle(g.id)}
+                    >
+                      {open ? "Show less" : g.content ? "Read guide" : "No detail"}
+                    </Button>
                   </CardContent>
                 </Card>
               );
