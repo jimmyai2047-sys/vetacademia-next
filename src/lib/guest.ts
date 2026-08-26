@@ -12,7 +12,7 @@ export async function startGuestSession(): Promise<{
   email: string;
   password: string;
 }> {
-  const email = `guest_${randomUUID()}@vetacademia.com`;
+  const email = `guest_${randomUUID()}@vetacademia.in`;
   const password = `${randomUUID()}!`;
   const hashed = await bcrypt.hash(password, 12);
 

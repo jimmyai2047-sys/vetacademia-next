@@ -109,8 +109,8 @@ export default function TermsPage() {
       <Section title="12. Contact">
         <p>
           Questions about these Terms? Email{" "}
-          <a href="mailto:contact@vetacademia.com" className="text-primary hover:underline">
-            contact@vetacademia.com
+          <a href="mailto:contact@vetacademia.in" className="text-primary hover:underline">
+            contact@vetacademia.in
           </a>
           .
         </p>

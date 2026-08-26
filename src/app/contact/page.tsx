@@ -52,10 +52,10 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold">Email</p>
                   <a
-                    href="mailto:contact@vetacademia.com"
+                    href="mailto:contact@vetacademia.in"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
                   >
-                    contact@vetacademia.com
+                    contact@vetacademia.in
                   </a>
                   <div className="mt-2 h-0.5 w-8 rounded-full bg-primary/10 group-hover:w-12 group-hover:bg-primary transition-all" />
                 </div>

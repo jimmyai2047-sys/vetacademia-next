@@ -9,9 +9,9 @@ import { setMaintenanceMode } from "@/proxy";
 
 const DEFAULTS: Record<string, string> = {
   siteName: "VetAcademia",
-  siteUrl: "https://vetacademia.com",
+  siteUrl: "https://vetacademia.in",
   siteDescription: "India's comprehensive veterinary education platform",
-  contactEmail: "contact@vetacademia.com",
+  contactEmail: "contact@vetacademia.in",
   contactPhone: "+91 89499 29291",
   currency: "INR",
   taxRate: "18",

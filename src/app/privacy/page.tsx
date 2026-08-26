@@ -102,8 +102,8 @@ export default function PrivacyPage() {
       <Section title="10. Contact">
         <p>
           Questions about this policy? Email us at{" "}
-          <a href="mailto:contact@vetacademia.com" className="text-primary hover:underline">
-            contact@vetacademia.com
+          <a href="mailto:contact@vetacademia.in" className="text-primary hover:underline">
+            contact@vetacademia.in
           </a>
           .
         </p>

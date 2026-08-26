@@ -75,7 +75,7 @@ export default function Footer() {
             </div>
             <div className="space-y-2.5 pt-2">
               {[
-                { icon: Mail, text: "contact@vetacademia.com" },
+                { icon: Mail, text: "contact@vetacademia.in" },
                 { icon: Phone, text: "+91-89499 29291" },
                 { icon: MapPin, text: "Rajasthan • India" },
               ].map(({ icon: Icon, text }) => (
