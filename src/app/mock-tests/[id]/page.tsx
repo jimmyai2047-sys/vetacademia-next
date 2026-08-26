@@ -5,7 +5,7 @@
 
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import MockTestPlayer from "@/components/mock-test-player";
+import MockTestPlayer from "@/components/mock-test-player-lazy";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import { planSlugForExam } from "@/lib/plans";

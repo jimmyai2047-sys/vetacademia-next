@@ -6,9 +6,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight } from "lucide-react";
+import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight, Sparkles } from "lucide-react";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const dynamic = "force-dynamic";
 import { getProgrammeImage } from "@/lib/subject-images";
@@ -38,31 +40,38 @@ const descriptionMap: Record<string, string> = {
 };
 
 export default async function SyllabusPage() {
-  const programmes = await prisma.programme.findMany({
-    select: {
-      id: true,
-      name: true,
-      fullName: true,
-      yearType: true,
-      icon: true,
-      _count: {
+  const programmes = await unstable_cache(
+    () =>
+      prisma.programme.findMany({
         select: {
-          subjects: true,
-          departments: true,
+          id: true,
+          name: true,
+          fullName: true,
+          yearType: true,
+          icon: true,
+          _count: {
+            select: {
+              subjects: true,
+              departments: true,
+            },
+          },
         },
-      },
-    },
-    orderBy: { createdAt: "asc" },
-  });
+        orderBy: { createdAt: "asc" },
+      }),
+    ["syllabus-programmes"],
+    { revalidate: 120 }
+  )();
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Syllabus</h1>
-        <p className="text-muted-foreground max-w-2xl">
-          Explore the complete curriculum for all veterinary programmes. Select a programme to view its subjects and detailed syllabus.
-        </p>
-      </div>
+      <DecorativePageHeader
+        badge="VCI MSVE-2016 • ICAR Approved"
+        title="Syllabus"
+        titleHighlight="Explorer"
+        description="Explore the complete curriculum for all veterinary programmes — A.H.D.P., B.V.Sc & A.H., M.V.Sc, Ph.D ke subjects aur detailed syllabus ek jagah."
+        variant="primary"
+      />
+      <div className="va-divider-dots my-8 max-w-[200px] mx-auto"><span /></div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {programmes.map((programme) => {
@@ -74,29 +83,34 @@ export default async function SyllabusPage() {
 
           return (
             <Link key={programme.id} href={`/syllabus/${slug}`}>
-              <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border-0">
-                <div className="relative h-48 overflow-hidden">
+              <Card className="va-card-hover h-full overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-xl group cursor-pointer">
+                <div className="relative h-52 overflow-hidden">
                   <Image
                     src={imageUrl}
                     alt={programme.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-[1.06] transition-transform duration-700"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor}`} />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Icon className="h-16 w-16 text-white/60" />
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg group-hover:bg-white group-hover:text-primary transition-all">
+                      <Icon className="h-10 w-10 text-white group-hover:text-primary transition-colors" />
+                    </div>
                   </div>
                   <div className="absolute top-4 left-4">
-                    <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                    <Badge className="rounded-full bg-white/90 backdrop-blur-md text-primary border-0 shadow-md gap-1">
+                      <Sparkles className="h-3 w-3" />
                       {programme.yearType === "semester" ? "Semester System" : programme.yearType === "year" ? "Year System" : "Department Based"}
                     </Badge>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h2 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-1 transition-transform">
+                    <h2 className="text-2xl font-bold text-white mb-1 group-hover:translate-x-1 transition-transform drop-shadow-lg">
                       {programme.name}
                     </h2>
-                    <p className="text-white/80 text-sm">{programme.fullName}</p>
+                    <p className="text-white/90 text-sm font-medium">{programme.fullName}</p>
                   </div>
                 </div>
                 <CardContent className="p-4">

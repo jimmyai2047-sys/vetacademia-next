@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
@@ -28,20 +29,25 @@ export default async function CoursePage({
 }) {
   const { programme: progSlug, subject: subjectId, course: courseId } = await params;
 
-  const course = await prisma.chapter.findFirst({
-    where: { id: courseId },
-    include: {
-      subject: {
-        select: {
-          id: true,
-          name: true,
-          year: true,
-          programme: { select: { name: true } },
+  const course = await unstable_cache(
+    () =>
+      prisma.chapter.findFirst({
+        where: { id: courseId },
+        include: {
+          subject: {
+            select: {
+              id: true,
+              name: true,
+              year: true,
+              programme: { select: { name: true } },
+            },
+          },
+          chapterContents: { orderBy: { createdAt: "desc" } },
         },
-      },
-      chapterContents: { orderBy: { createdAt: "desc" } },
-    },
-  });
+      }),
+    ["syllabus-course", courseId],
+    { revalidate: 120 }
+  )();
 
   if (!course) notFound();
 

@@ -28,6 +28,7 @@ import {
   ArrowRight,
   Star,
 } from "lucide-react";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -74,35 +75,35 @@ export default async function DemoPage() {
     mockTests.filter((t) => progSlug(t) === slug && filter(t));
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      {/* Hero */}
-      <div className="text-center mb-12">
-        <Badge className="mb-4 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-          <Star className="h-3.5 w-3.5 mr-1" /> Free Preview
-        </Badge>
-        <h1 className="text-4xl md:text-5xl font-bold mb-3">
-          Try VetAcademia free — before you enroll
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Sample study material, mock tests, adaptive tests, previous year papers
-          and flashcards across every programme and exam. See the quality, then
-          unlock the full library.
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Button render={<Link href="/pricing" />} size="lg">
-            View Plans &amp; Enroll
-          </Button>
-          <Button render={<Link href="/flashcards" />} variant="outline" size="lg">
-            Browse Flashcards
-          </Button>
-        </div>
-      </div>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <DecorativePageHeader
+        badge="Free Preview"
+        title="Try VetAcademia free"
+        titleHighlight="— before you enroll"
+        description="Sample study material, mock tests, adaptive tests, previous year papers and flashcards across every programme and exam. See the quality, then unlock the full library."
+        variant="primary"
+        actions={
+          <>
+            <Link href="/pricing">
+              <Button size="lg" className="rounded-xl gap-2 shadow-md">
+                View Plans & Enroll <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/flashcards">
+              <Button variant="outline" size="lg" className="rounded-xl bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white hover:text-primary gap-2">
+                <Layers className="h-4 w-4" /> Browse Flashcards
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       {/* By Programme */}
-      <section className="mb-16">
-        <div className="flex items-center gap-2 mb-6">
-          <GraduationCap className="h-6 w-6 text-primary" />
+      <section className="mt-10 mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center"><GraduationCap className="h-5 w-5 text-primary" /></span>
           <h2 className="text-2xl font-bold">By Programme</h2>
+          <span className="h-px flex-1 bg-gradient-to-r from-primary/10 to-transparent ml-2 hidden sm:block" />
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           {PROGRAMMES.map((p) => {
@@ -114,14 +115,19 @@ export default async function DemoPage() {
               (q) => progSlug(q.mockTest as any) === p.slug
             ).length;
             return (
-              <Card key={p.slug} className="flex flex-col">
+              <Card key={p.slug} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl bg-white">
+                <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                 <CardHeader>
-                  <CardTitle className="text-xl">{p.label}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Badge className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1"><Sparkles className="h-3 w-3" /> {p.slug.toUpperCase()}</Badge>
+                  </div>
+                  <CardTitle className="text-xl mt-2 group-hover:text-primary transition-colors">{p.label}</CardTitle>
                   <CardDescription>{p.sub}</CardDescription>
+                  <div className="h-0.5 w-10 rounded-full bg-primary/20 group-hover:w-16 group-hover:bg-primary transition-all mt-2" />
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1">
                   {notes.map((n) => (
-                    <div key={n.id} className="rounded-lg border p-3">
+                    <div key={n.id} className="rounded-xl border border-primary/5 bg-muted/20 p-3 va-card-hover">
                       <div className="flex items-center gap-2 mb-1">
                         <BookOpen className="h-4 w-4 text-primary" />
                         <span className="font-medium text-sm">Study Material</span>
@@ -155,14 +161,14 @@ export default async function DemoPage() {
                   />
 
                   {flashCount > 0 && (
-                    <div className="flex items-center justify-between rounded-lg border p-3">
+                    <div className="flex items-center justify-between rounded-xl border border-primary/5 bg-muted/20 p-3">
                       <div className="flex items-center gap-2">
                         <Layers className="h-4 w-4 text-primary" />
                         <span className="text-sm font-medium">
                           {flashCount} Flashcards
                         </span>
                       </div>
-                      <Button render={<Link href="/flashcards" />} variant="ghost" size="sm">
+                      <Button render={<Link href="/flashcards" />} variant="ghost" size="sm" className="rounded-xl">
                         Practice <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
@@ -181,11 +187,14 @@ export default async function DemoPage() {
         </div>
       </section>
 
+      <div className="va-divider-dots my-8"><span /></div>
+
       {/* By Examination */}
       <section>
-        <div className="flex items-center gap-2 mb-6">
-          <Star className="h-6 w-6 text-primary" />
+        <div className="flex items-center gap-3 mb-6">
+          <span className="h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center"><Star className="h-5 w-5 text-amber-600" /></span>
           <h2 className="text-2xl font-bold">By Examination</h2>
+          <span className="h-px flex-1 bg-gradient-to-r from-amber-500/10 to-transparent ml-2 hidden sm:block" />
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {EXAMS.map((e) => {
@@ -193,14 +202,17 @@ export default async function DemoPage() {
             const mock = mockTests.filter((t) => t.track === e.track && t.kind === "MOCK" && !t.isAdaptive);
             const pyq = mockTests.filter((t) => t.track === e.track && t.kind === "PREVIOUS_YEAR");
             return (
-              <Card key={e.slug} className="flex flex-col">
+              <Card key={e.slug} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl bg-white">
+                <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                 <CardHeader>
-                  <CardTitle className="text-xl">{e.label}</CardTitle>
+                  <Badge variant="secondary" className="rounded-full w-fit gap-1"><Star className="h-3 w-3 text-[#d4a843]" /> Exam</Badge>
+                  <CardTitle className="text-xl mt-2 group-hover:text-primary transition-colors">{e.label}</CardTitle>
                   <CardDescription>{e.sub}</CardDescription>
+                  <div className="h-0.5 w-10 rounded-full bg-primary/20 group-hover:w-16 group-hover:bg-primary transition-all mt-2" />
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1">
                   {mats.map((m) => (
-                    <div key={m.id} className="rounded-lg border p-3">
+                    <div key={m.id} className="rounded-xl border border-primary/5 bg-muted/20 p-3">
                       <div className="flex items-center gap-2 mb-1">
                         <BookOpen className="h-4 w-4 text-primary" />
                         <span className="font-medium text-sm">
@@ -272,16 +284,16 @@ function PreviewLink({
       {items.map((t) => (
         <div
           key={t.id}
-          className="flex items-center justify-between rounded-lg border p-3"
+          className="va-card-hover flex items-center justify-between rounded-xl border border-primary/5 bg-white p-3 shadow-sm hover:border-primary/10"
         >
           <div className="flex items-center gap-2">
-            <span className="text-primary">{icon}</span>
+            <span className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">{icon}</span>
             <span className="text-sm font-medium">{label}</span>
             <span className="text-xs text-muted-foreground">
               · {t._count?.questions ?? 0} Qs
             </span>
           </div>
-          <Button render={<Link href={`/${hrefBase}/${t.id}`} />} variant="ghost" size="sm">
+          <Button render={<Link href={`/${hrefBase}/${t.id}`} />} variant="ghost" size="sm" className="rounded-xl gap-1">
             Open <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const LIVE_WINDOW_MS = 5 * 60 * 1000;
 
@@ -17,8 +18,19 @@ export async function GET() {
   }
 }
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    const origin = req.headers.get("origin");
+    const host = req.headers.get("host");
+    if (origin && host && new URL(origin).host !== host) {
+      return NextResponse.json({ total: 0, live: 0 });
+    }
+
+    const rl = rateLimit(`visitors:${clientIp(req)}`, 20, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ total: 0, live: 0 });
+    }
+
     const cookieStore = await cookies();
     let visitorId = cookieStore.get("va_vid")?.value;
     if (!visitorId) {

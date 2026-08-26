@@ -22,3 +22,17 @@ export async function getCsrfToken(): Promise<string> {
   if (!token) throw new Error("Unable to obtain CSRF token");
   return token;
 }
+
+// Thin wrapper around fetch that attaches the double-submit CSRF token and the
+// X-Requested-With header expected by the API guards. Use this for any
+// state-changing (POST/PUT/PATCH/DELETE) request made from the browser.
+export async function csrfFetch(
+  url: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const token = await getCsrfToken();
+  const headers = new Headers(options.headers);
+  headers.set("x-csrf-token", token);
+  headers.set("x-requested-with", "XMLHttpRequest");
+  return fetch(url, { ...options, headers });
+}

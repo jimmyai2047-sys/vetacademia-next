@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 function flash(msg: string) {
   // Lightweight confirmation without an external toast dependency.
@@ -48,11 +49,13 @@ export default function BookmarkButton({
         const d = await (await fetch("/api/bookmarks")).json();
         const list: { id: string; type: string; refId: string }[] = d.bookmarks ?? [];
         const match = list.find((b) => b.type === type && b.refId === refId);
-        if (match) await fetch(`/api/bookmarks/${match.id}`, { method: "DELETE" });
+        if (match) {
+          await csrfFetch(`/api/bookmarks/${match.id}`, { method: "DELETE" });
+        }
         setSaved(false);
         flash("Removed from saved items");
       } else {
-        const res = await fetch("/api/bookmarks", {
+        const res = await csrfFetch("/api/bookmarks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ type, refId, title, url }),

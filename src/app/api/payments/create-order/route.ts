@@ -30,33 +30,61 @@ export async function POST(req: Request) {
       );
     }
 
-    const { planSlug } = await req.json();
-    if (!planSlug) {
-      return NextResponse.json({ error: "planSlug required" }, { status: 400 });
+    const { planSlug, projectReportId } = await req.json();
+    if (!planSlug && !projectReportId) {
+      return NextResponse.json(
+        { error: "planSlug or projectReportId required" },
+        { status: 400 }
+      );
     }
 
-    const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
-    if (!plan) {
-      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
-    }
+    let amount: number;
+    let payment: Awaited<ReturnType<typeof prisma.payment.create>>;
 
-    // Reuse an existing pending payment for this user+plan if one exists.
-    let payment = await prisma.payment.findFirst({
-      where: { userId: session.user.id, planSlug, status: "PENDING" },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!payment) {
-      payment = await prisma.payment.create({
-        data: {
-          userId: session.user.id,
-          amount: plan.price,
-          currency: "INR",
-          status: "PENDING",
-          planSlug,
-          method: "RAZORPAY",
-        },
+    if (projectReportId) {
+      const report = await prisma.projectReport.findUnique({
+        where: { id: projectReportId },
       });
+      if (!report) {
+        return NextResponse.json({ error: "Report not found" }, { status: 404 });
+      }
+      amount = report.price;
+      payment =
+        (await prisma.payment.findFirst({
+          where: { userId: session.user.id, projectReportId, status: "PENDING" },
+          orderBy: { createdAt: "desc" },
+        })) ??
+        (await prisma.payment.create({
+          data: {
+            userId: session.user.id,
+            amount,
+            currency: "INR",
+            status: "PENDING",
+            projectReportId,
+            method: "RAZORPAY",
+          },
+        }));
+    } else {
+      const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
+      if (!plan) {
+        return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+      }
+      amount = plan.price;
+      payment =
+        (await prisma.payment.findFirst({
+          where: { userId: session.user.id, planSlug, status: "PENDING" },
+          orderBy: { createdAt: "desc" },
+        })) ??
+        (await prisma.payment.create({
+          data: {
+            userId: session.user.id,
+            amount,
+            currency: "INR",
+            status: "PENDING",
+            planSlug,
+            method: "RAZORPAY",
+          },
+        }));
     }
 
     const razorpay = new Razorpay({ key_id: keyId!, key_secret: keySecret! });
@@ -64,7 +92,11 @@ export async function POST(req: Request) {
       amount: payment.amount * 100,
       currency: payment.currency,
       receipt: payment.id,
-      notes: { planSlug, paymentId: payment.id },
+      notes: {
+        paymentId: payment.id,
+        ...(planSlug ? { planSlug } : {}),
+        ...(projectReportId ? { projectReportId } : {}),
+      },
     });
 
     await prisma.payment.update({

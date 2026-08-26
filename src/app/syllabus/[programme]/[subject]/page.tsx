@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,24 +34,29 @@ export default async function SubjectPage({
 }) {
   const { programme: progSlug, subject: subjectId } = await params;
 
-  const subject = await prisma.subject.findFirst({
-    where: { id: subjectId },
-    include: {
-      programme: { select: { name: true, fullName: true } },
-      chapters: {
-        orderBy: { unitNumber: "asc" },
-        select: {
-          id: true,
-          title: true,
-          type: true,
-          unitNumber: true,
-          courseCode: true,
-          creditHours: true,
-          chapterContents: { orderBy: { createdAt: "desc" } },
+  const subject = await unstable_cache(
+    () =>
+      prisma.subject.findFirst({
+        where: { id: subjectId },
+        include: {
+          programme: { select: { name: true, fullName: true } },
+          chapters: {
+            orderBy: { unitNumber: "asc" },
+            select: {
+              id: true,
+              title: true,
+              type: true,
+              unitNumber: true,
+              courseCode: true,
+              creditHours: true,
+              chapterContents: { orderBy: { createdAt: "desc" } },
+            },
+          },
         },
-      },
-    },
-  });
+      }),
+    ["syllabus-subject", subjectId],
+    { revalidate: 120 }
+  )();
 
   if (!subject) notFound();
 

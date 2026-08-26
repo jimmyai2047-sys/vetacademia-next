@@ -70,13 +70,13 @@ export default function MaterialGallery({
 
   return (
     <div>
-      {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+      {/* Search and Filters - glass decorative */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8 p-3 rounded-[1.25rem] border border-primary/5 bg-white/60 backdrop-blur shadow-sm">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search materials..."
-            className="pl-10"
+            className="pl-10 rounded-full bg-white border-primary/10"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Search study materials"
@@ -89,6 +89,7 @@ export default function MaterialGallery({
               variant={filter === f.key ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter(f.key)}
+              className="rounded-full"
             >
               {f.label}
             </Button>
@@ -107,15 +108,17 @@ export default function MaterialGallery({
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((m) => (
-            <Card key={m.id} className="hover:shadow-lg transition-shadow flex flex-col">
-              <CardHeader>
+            <Card key={m.id} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 bg-white shadow-sm hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-primary/5 blur-2xl group-hover:bg-primary/10 transition-colors" />
+              <CardHeader className="relative">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg">{m.title}</CardTitle>
+                  <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">{m.title}</CardTitle>
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge
                       className={
-                        categoryMeta[m.category]?.className ||
-                        "bg-muted text-muted-foreground"
+                        (categoryMeta[m.category]?.className ||
+                        "bg-muted text-muted-foreground") + " rounded-full border-0 shadow-sm"
                       }
                     >
                       {categoryMeta[m.category]?.label || m.category}
@@ -130,16 +133,16 @@ export default function MaterialGallery({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="flex flex-col flex-1">
+              <CardContent className="flex flex-col flex-1 relative">
                 {m.excerpt && (
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm leading-relaxed text-muted-foreground mb-4 line-clamp-3">
                     {m.excerpt}
                   </p>
                 )}
-                <div className="mt-auto flex items-center gap-4">
+                <div className="mt-auto flex items-center gap-3 flex-wrap">
                   <Link
                     href={`/study-materials/${m.id}`}
-                    className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
                   >
                     Read More <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
@@ -148,11 +151,11 @@ export default function MaterialGallery({
                       href={m.downloadUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                      className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
                     >
-                      <FileText className="h-4 w-4" />
+                      <FileText className="h-3.5 w-3.5" />
                       Download
-                      <Download className="h-3.5 w-3.5" />
+                      <Download className="h-3 w-3" />
                     </a>
                   )}
                 </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getAccess } from "@/lib/access";
 
 export async function GET(
   req: Request,
@@ -9,6 +10,23 @@ export async function GET(
 ) {
   try {
     const { id } = await ctx.params;
+    const access = await getAccess();
+    const liveClass = await prisma.liveClass.findUnique({
+      where: { id },
+      select: { isDemo: true, planSlug: true, exam: true },
+    });
+    if (!liveClass) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    const hasAccess =
+      liveClass.isDemo ||
+      (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
+      access.examKeys.has(liveClass.exam) ||
+      access.examPlanOwned;
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Access denied" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const after = searchParams.get("after"); // ISO timestamp for polling
 
@@ -54,9 +72,21 @@ export async function POST(
       return NextResponse.json({ error: "Message 1-500 characters" }, { status: 400 });
     }
 
-    const liveClass = await prisma.liveClass.findUnique({ where: { id }, select: { status: true } });
+    const access = await getAccess();
+    const liveClass = await prisma.liveClass.findUnique({
+      where: { id },
+      select: { status: true, isDemo: true, planSlug: true, exam: true },
+    });
     if (!liveClass || liveClass.status === "CANCELLED") {
       return NextResponse.json({ error: "Live class not available" }, { status: 400 });
+    }
+    const hasAccess =
+      liveClass.isDemo ||
+      (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
+      access.examKeys.has(liveClass.exam) ||
+      access.examPlanOwned;
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Access denied" }, { status: 401 });
     }
 
     const userId = (session.user as { id: string }).id;

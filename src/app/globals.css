@@ -459,6 +459,99 @@
   }
 }
 
+/* ── Highly Decorative Utilities ─────────────────────────────────────── */
+@keyframes va-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes va-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes va-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes va-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.va-float { animation: va-float 6s ease-in-out infinite; }
+.va-float-delayed { animation: va-float 6s ease-in-out 2s infinite; }
+.va-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: va-shimmer 3s infinite;
+}
+.va-gradient-animate {
+  background-size: 200% 200%;
+  animation: va-gradient-shift 8s ease infinite;
+}
+/* Glass morphism */
+.va-glass {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.va-glass-dark {
+  background: rgba(0,95,72,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+/* Ornamental divider */
+.va-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.3;
+}
+.va-divider-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.va-divider-dots::before,
+.va-divider-dots::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary)/30, var(--primary)/30, transparent);
+}
+.va-divider-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+/* Decorative card hover */
+.va-card-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.va-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0,95,72,0.15), 0 8px 20px -8px rgba(0,95,72,0.1);
+}
+/* Gradient text */
+.va-gradient-text {
+  background: linear-gradient(135deg, var(--primary), oklch(0.55 0.12 200));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+/* Pattern overlay */
+.va-pattern-dots {
+  background-image: radial-gradient(circle, var(--primary) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.04;
+}
+.va-pattern-grid {
+  background-image: linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px);
+  background-size: 24px 24px;
+}
+
 /* ── Chapter content: extra readability polish ─────────────────────────── */
 .chapter-content strong,
 .chapter-content b {

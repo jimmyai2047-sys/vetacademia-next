@@ -60,7 +60,44 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  return NextResponse.next();
+  const nonce = Array.from(crypto.getRandomValues(new Uint8Array(18)))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  const isDev = process.env.NODE_ENV === "development";
+
+  // script-src is locked to 'self' + the per-request nonce; 'unsafe-inline'
+  // is removed so injected scripts are rejected. Razorpay's checkout script is
+  // loaded via a direct <script src>, so its host is allow-listed explicitly
+  // (strict-dynamic would otherwise block it). style-src keeps 'unsafe-inline'
+  // because React renders many inline style="" attributes that would otherwise
+  // be blocked.
+  const cspHeader = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' https://checkout.razorpay.com${
+      isDev ? " 'unsafe-eval'" : ""
+    }`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://*.blob.vercel-storage.com",
+    "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://youtube.com https://*.blob.vercel-storage.com https://docs.google.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", cspHeader);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+  response.headers.set("Content-Security-Policy", cspHeader);
+
+  return response;
 }
 
 export const config = {

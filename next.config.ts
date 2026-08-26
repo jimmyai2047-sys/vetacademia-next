@@ -1,22 +1,9 @@
 import type { NextConfig } from "next";
 
-const ContentSecurityPolicy = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https:",
-  "font-src 'self' data:",
-  "connect-src 'self' https://*.blob.vercel-storage.com",
-  "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://youtube.com",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "upgrade-insecure-requests",
-].join("; ");
-
+// NOTE: The Content-Security-Policy is now generated per-request in `src/proxy.ts`
+// with a fresh nonce on `script-src`. It is intentionally NOT set here to avoid
+// clobbering the nonce'd header. The remaining headers are static.
 const securityHeaders = [
-  { key: "Content-Security-Policy", value: ContentSecurityPolicy },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -55,6 +42,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.private.blob.vercel-storage.com",
       },
+    ],
+    // The /api/blob proxy serves remote blob images through a local path with a
+    // `?url=...` query string, so it must be allowed as a local pattern.
+    // Static assets under /images and /logos also need to be allowed locally.
+    localPatterns: [
+      { pathname: "/images/**" },
+      { pathname: "/logos/**" },
+      { pathname: "/api/blob**" },
     ],
   },
   async headers() {

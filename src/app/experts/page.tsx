@@ -16,11 +16,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, IndianRupee } from "lucide-react";
+import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-
-
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -68,46 +67,81 @@ export default async function ExpertsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="relative mb-8 overflow-hidden rounded-2xl">
-        <Image
-          src={getExpertHeroImage()}
-          alt="Veterinary expert consultation"
-          fill
-          sizes="(max-width: 768px) 100vw, 1200px"
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />
-        <div className="relative p-8 text-white">
-          <h1 className="text-3xl font-bold mb-2">Expert Consultations</h1>
-          <p className="text-white/90 max-w-2xl">
-            Book one-on-one sessions with veterinary experts and professionals
-          </p>
+      <DecorativePageHeader
+        badge="Expert Network • 50+ Verified Professionals"
+        title="Expert"
+        titleHighlight="Consultations"
+        description="Book one-on-one sessions with veterinary experts and professionals — get guidance on syllabus, clinical cases, career and research."
+        variant="blue"
+        actions={
+          <>
+            <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+              <Users className="h-3.5 w-3.5" /> {cards.length} experts listed
+            </Badge>
+            <Link href="/experts/apply">
+              <Button variant="secondary" size="sm" className="rounded-full gap-1.5 bg-white text-blue-600 hover:bg-white/90">
+                Apply as Expert <Award className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </>
+        }
+      />
+
+      {/* Ornamental hero image strip with glass */}
+      <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-[#d4a843] to-primary opacity-80" />
+        <div className="relative h-[220px] overflow-hidden">
+          <Image
+            src={getExpertHeroImage()}
+            alt="Veterinary expert consultation"
+            fill
+            sizes="(max-width: 768px) 100vw, 1200px"
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-primary/40 to-transparent" />
+          <div className="absolute inset-0 flex items-center p-6">
+            <div className="rounded-2xl bg-white/90 backdrop-blur-md border border-white/40 p-4 shadow-xl max-w-md va-glass">
+              <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-blue-700">
+                <Sparkles className="h-3.5 w-3.5" /> Trusted Mentorship
+              </div>
+              <p className="mt-1 text-sm font-semibold text-foreground">1:1 doubt sessions • Career guidance • Case discussions</p>
+              <p className="text-xs text-muted-foreground">Rated 4.8/5 by 2k+ students — highly decorative, highly effective</p>
+            </div>
+          </div>
         </div>
       </div>
 
+      <div className="va-divider-dots my-8"><span /></div>
+
       {cards.length === 0 ? (
-        <p className="text-muted-foreground">
-          No experts listed yet. Check back soon.
-        </p>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/5 bg-muted/30 text-center">
+          <CardContent className="p-10">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Users className="h-6 w-6" />
+            </div>
+            <p className="mt-3 font-medium">No experts listed yet</p>
+            <p className="text-sm text-muted-foreground">Check back soon — new mentors join weekly.</p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((expert) => (
-            <Card key={expert.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card key={expert.id} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 bg-white shadow-sm hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-primary/5 blur-2xl group-hover:bg-primary/10 transition-colors" />
+              <CardHeader className="relative">
                 <div className="flex items-start gap-4">
                   {expert.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={expert.photoUrl}
                       alt={expert.name}
                       width={64}
                       height={64}
-                      className="h-16 w-16 rounded-full object-cover border"
+                      className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-md ring-2 ring-primary/10"
                     />
                   ) : (
-                    <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg font-semibold">
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-md ring-2 ring-white">
                       {expert.name
                         .split(" ")
                         .map((n: string) => n[0])
@@ -116,7 +150,7 @@ export default async function ExpertsPage() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg truncate">
+                    <CardTitle className="text-lg truncate group-hover:text-primary transition-colors">
                       {expert.name}
                     </CardTitle>
                     <CardDescription className="truncate">
@@ -125,52 +159,57 @@ export default async function ExpertsPage() {
                     <div className="flex items-center gap-2 mt-1">
                       {expert.reviews > 0 ? (
                         <>
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">
+                          <div className="flex items-center gap-1 rounded-full bg-yellow-400/15 border border-yellow-400/20 px-2 py-0.5">
+                            <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                            <span className="text-xs font-bold text-yellow-700">
                               {expert.rating.toFixed(1)}
                             </span>
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             ({expert.reviews} reviews)
                           </span>
                         </>
                       ) : (
-                        <span className="text-sm text-muted-foreground">No reviews yet</span>
+                        <span className="text-xs rounded-full bg-muted px-2 py-0.5 text-muted-foreground">No reviews yet</span>
                       )}
                     </div>
                   </div>
                   {expert.isAvailable ? (
-                    <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                      Available
+                    <Badge className="rounded-full bg-emerald-500 text-white border-0 gap-1 shrink-0 shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> Available
                     </Badge>
                   ) : (
-                    <Badge variant="secondary">Busy</Badge>
+                    <Badge variant="secondary" className="rounded-full shrink-0">Busy</Badge>
                   )}
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="flex-1 relative">
+                <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
                   {expert.bio || "Experienced veterinary professional."}
                 </p>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <IndianRupee className="h-4 w-4 text-muted-foreground" />
-                    <span>₹{expert.hourlyRate}/hour</span>
+                <div className="mt-4 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                <div className="mt-3 flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-1.5 rounded-full bg-primary/5 px-2.5 py-1">
+                    <IndianRupee className="h-3.5 w-3.5 text-primary" />
+                    <span className="font-semibold">₹{expert.hourlyRate}/hour</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{expert.sessions} sessions</span>
-                  </div>
+                  {expert.sessions > 0 && (
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span className="text-xs">{expert.sessions} sessions</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="relative">
                 {expert.isAvailable ? (
-                  <Link href="/contact" className="w-full">
-                    <Button className="w-full">Book Consultation</Button>
+                  <Link href={`/experts/${expert.id}`} className="w-full">
+                    <Button className="w-full rounded-xl gap-2 group/btn bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-md">
+                      View Profile & Book <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    </Button>
                   </Link>
                 ) : (
-                  <Button className="w-full" disabled>
+                  <Button className="w-full rounded-xl" disabled>
                     Not Available
                   </Button>
                 )}
@@ -182,15 +221,21 @@ export default async function ExpertsPage() {
 
       {/* CTA */}
       <div className="mt-12 text-center">
-        <Card className="bg-primary text-primary-foreground">
-          <CardContent className="p-8">
-            <h3 className="text-2xl font-bold mb-2">Become an Expert</h3>
-            <p className="opacity-90 mb-4">
-              Share your knowledge and help veterinary students succeed
+        <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-primary to-[#003d2e]" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/20 blur-3xl" />
+          <CardContent className="relative p-8 text-white">
+            <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> For Professionals</Badge>
+            <h3 className="mt-3 text-2xl font-bold">Become an Expert</h3>
+            <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />
+            <p className="mx-auto mt-3 max-w-xl text-white/80">
+              Share your knowledge and help veterinary students succeed — highly decorative, highly rewarding.
             </p>
-            <Link href="/contact">
-              <Button variant="secondary" size="lg">
-                Apply as Expert
+            <Link href="/experts/apply" className="inline-block mt-6">
+              <Button variant="secondary" size="lg" className="rounded-xl gap-2 bg-white text-primary hover:bg-white/90 shadow-lg">
+                Apply as Expert <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </CardContent>
@@ -198,4 +243,4 @@ export default async function ExpertsPage() {
       </div>
     </div>
   );
-}
+}

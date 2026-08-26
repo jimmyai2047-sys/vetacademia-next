@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -54,10 +55,13 @@ export default async function BlogPostPage({
     <div className="flex flex-col">
       {post.coverImageUrl && (
         <div className="relative h-56 md:h-72 w-full">
-          <img
+          <Image
             src={post.coverImageUrl}
             alt={post.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover"
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
         </div>

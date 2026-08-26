@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Radio, Calendar, Clock, ArrowRight, Play } from "lucide-react";
+import { Radio, Calendar, Clock, ArrowRight, Play, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const metadata = {
   title: "VetAcademia | Live Classes & Recorded Sessions",
@@ -25,13 +26,13 @@ const EXAM_LABELS: Record<string, string> = {
 function statusBadge(status: string) {
   switch (status) {
     case "LIVE":
-      return <Badge className="bg-red-500 text-white animate-pulse">LIVE NOW</Badge>;
+      return <Badge className="bg-red-500 text-white animate-pulse rounded-full">LIVE NOW</Badge>;
     case "SCHEDULED":
-      return <Badge className="bg-blue-100 text-blue-700">Upcoming</Badge>;
+      return <Badge className="bg-blue-100 text-blue-700 rounded-full">Upcoming</Badge>;
     case "ENDED":
-      return <Badge className="bg-green-100 text-green-700">Recorded</Badge>;
+      return <Badge className="bg-green-100 text-green-700 rounded-full">Recorded</Badge>;
     default:
-      return <Badge variant="secondary">{status}</Badge>;
+      return <Badge variant="secondary" className="rounded-full">{status}</Badge>;
   }
 }
 
@@ -75,22 +76,23 @@ export default async function LiveClassesPage() {
   function ClassRow({ c }: { c: (typeof classes)[number] }) {
     return (
       <Link href={`/examinations/${c.exam}/live/${c.id}`}>
-        <div className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent transition-colors">
+        <div className="va-card-hover group flex items-center justify-between p-4 rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg hover:border-primary/10 transition-all">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-[1.25rem]" />
           <div className="flex items-center gap-3 min-w-0">
             <div
               className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                 c.status === "LIVE"
-                  ? "bg-red-500 animate-pulse"
+                  ? "bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"
                   : c.status === "SCHEDULED"
                   ? "bg-blue-500"
                   : "bg-green-500"
               }`}
             />
             <div className="min-w-0">
-              <div className="font-medium text-sm truncate flex items-center gap-2">
+              <div className="font-medium text-sm truncate flex items-center gap-2 group-hover:text-primary transition-colors">
                 {c.title}
                 {c.isDemo && (
-                  <Badge variant="outline" className="text-[10px] py-0">
+                  <Badge variant="outline" className="text-[10px] py-0 rounded-full border-amber-200 bg-amber-50 text-amber-700">
                     Free Demo
                   </Badge>
                 )}
@@ -108,7 +110,7 @@ export default async function LiveClassesPage() {
               </div>
             </div>
           </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
         </div>
       </Link>
     );
@@ -122,56 +124,70 @@ export default async function LiveClassesPage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative overflow-hidden text-white">
-        <Image
-          src="/images/hero-vet.jpg"
-          alt=""
-          fill
-          className="object-cover"
-          priority
+      {/* Decorative Hero */}
+      <div className="container mx-auto px-4 pt-8">
+        <DecorativePageHeader
+          badge="Live & Recorded"
+          title="Live Classes"
+          titleHighlight="& Recorded Sessions"
+          description="Attend free demo live classes and recorded sessions for BVSc, ICAR, Veterinary Officer, ARS and more — anytime, anywhere. Highly decorative, live & on-demand."
+          variant="primary"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-red-600/90 to-rose-500/70" />
-        <div className="container mx-auto px-4 py-16 md:py-20 text-center relative z-10">
-          <div className="flex justify-center mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-              <Radio className="h-7 w-7" />
+        {/* Hero visual strip */}
+        <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-sm h-36 md:h-40">
+          <Image
+            src="/images/hero-vet.jpg"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent" />
+          <div className="absolute inset-0 flex items-center gap-4 px-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md border border-white/20 text-white">
+              <Radio className="h-6 w-6" />
+            </div>
+            <div className="text-white">
+              <p className="font-bold">Daily Live • Expert Faculty</p>
+              <p className="text-xs text-white/80 flex items-center gap-1"><Sparkles className="h-3 w-3 text-[#d4a843]" /> Free demos available</p>
             </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            Live Classes &amp; Recorded Sessions
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            Attend free demo live classes and recorded sessions for BVSc, ICAR,
-            Veterinary Officer, ARS and more — anytime, anywhere.
-          </p>
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
         </div>
-      </section>
+      </div>
 
       {/* Lists */}
-      <section className="py-12 md:py-16">
+      <section className="py-10 md:py-12">
         <div className="container mx-auto px-4 max-w-4xl space-y-10">
           {classes.length === 0 ? (
-            <p className="text-center text-muted-foreground">
-              No live classes scheduled yet. Please check back soon!
-            </p>
+            <div className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-8 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
+                <Radio className="h-6 w-6 text-primary" />
+              </div>
+              <p className="text-muted-foreground">
+                No live classes scheduled yet. Please check back soon!
+              </p>
+              <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+            </div>
           ) : (
             sections.map((sec) =>
               sec.items.length === 0 ? null : (
-                <div key={sec.title}>
+                <div key={sec.title} className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white p-5 md:p-6 shadow-sm">
+                  <div className="h-1 -mx-5 -mt-5 md:-mx-6 md:-mt-6 mb-5 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-40 rounded-t-[1.5rem]" />
                   <div className="flex items-center gap-2 mb-4">
                     {sec.icon === "live" && (
                       <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
                     )}
                     {sec.icon === "up" && (
-                      <Calendar className="h-5 w-5 text-blue-600" />
+                      <span className="h-8 w-8 rounded-xl bg-blue-500/10 flex items-center justify-center"><Calendar className="h-4 w-4 text-blue-600" /></span>
                     )}
                     {sec.icon === "rec" && (
-                      <Play className="h-5 w-5 text-green-600" />
+                      <span className="h-8 w-8 rounded-xl bg-green-500/10 flex items-center justify-center"><Play className="h-4 w-4 text-green-600" /></span>
                     )}
                     <h2 className="text-xl md:text-2xl font-bold">
                       {sec.title}
                     </h2>
+                    <Badge variant="secondary" className="ml-2 rounded-full text-xs">{sec.items.length}</Badge>
                   </div>
                   <div className="space-y-3">
                     {sec.items.map((c) => (
@@ -183,16 +199,22 @@ export default async function LiveClassesPage() {
             )
           )}
 
-          <Card className="bg-muted/50">
+          <div className="va-divider-dots"><span /></div>
+
+          <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 bg-muted/50 shadow-sm">
+            <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-40" />
             <CardContent className="p-6 text-center">
-              <Clock className="h-8 w-8 mx-auto mb-3 text-primary" />
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
               <p className="font-semibold mb-1">Daily live classes coming soon</p>
-              <p className="text-sm text-muted-foreground mb-4">
+              <div className="mx-auto h-0.5 w-8 rounded-full bg-primary/20 mb-3" />
+              <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">
                 We are expanding our daily live class schedule across all exam
                 tracks. Follow the blog and check back for updates.
               </p>
               <Link href="/blog">
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="gap-2 rounded-xl border-primary/15 hover:bg-primary hover:text-white">
                   Read the Blog
                   <ArrowRight className="h-4 w-4" />
                 </Button>

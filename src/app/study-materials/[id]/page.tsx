@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { getSignedUrl } from "@/lib/blob";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -49,7 +50,11 @@ export default async function StudyMaterialDetailPage({
 
   const { id } = await params;
 
-  const post = await prisma.post.findUnique({ where: { id } });
+  const post = await unstable_cache(
+    () => prisma.post.findUnique({ where: { id } }),
+    ["study-material", id],
+    { revalidate: 120 }
+  )();
   if (!post || !post.published) notFound();
 
   const downloadUrl = post.fileUrl ? await getSignedUrl(post.fileUrl) : null;
@@ -72,7 +77,7 @@ export default async function StudyMaterialDetailPage({
             {cat && <Badge className={cat.className}>{cat.label}</Badge>}
           </div>
           <p className="text-sm text-muted-foreground">
-            Published {post.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+            Published {new Date(post.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
           </p>
         </CardHeader>
         <CardContent className="space-y-4">

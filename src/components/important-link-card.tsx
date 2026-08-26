@@ -30,6 +30,8 @@ export default function ImportantLinkCard({
           alt={`${name} logo`}
           width={56}
           height={56}
+          loading="lazy"
+          decoding="async"
           className="h-14 w-14 object-contain"
           onError={() => setErrored(true)}
         />

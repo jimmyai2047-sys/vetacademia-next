@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
-import { BookOpen, Library } from "lucide-react";
+import { BookOpen, Library, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const metadata = {
   title: "VetAcademia | Recommended Books by Level (AHDP to PhD)",
@@ -79,127 +79,144 @@ export default async function BooksPage({
 
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative overflow-hidden text-white">
-        <Image
-          src="/images/features-study.jpg"
-          alt=""
-          fill
-          className="object-cover"
-          priority
+      {/* Decorative Header */}
+      <div className="container mx-auto px-4 pt-8">
+        <DecorativePageHeader
+          badge="AHDP • BVSc • MVSc • PhD • Curated Library"
+          title="Recommended Books"
+          titleHighlight="by Level"
+          description="The right book for the right stage — from A.H.D.P. and B.V.Sc to M.V.Sc and Ph.D. Level-appropriate recommendations for every veterinary subject."
+          variant="amber"
+          actions={
+            <>
+              <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+                <Library className="h-3.5 w-3.5" /> {sorted.length} books
+              </Badge>
+              <Badge className="rounded-full bg-white text-amber-700 border-0 px-3 py-1.5 gap-1.5">
+                <GraduationCap className="h-3.5 w-3.5" /> Level-wise
+              </Badge>
+            </>
+          }
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 to-orange-500/70" />
-        <div className="container mx-auto px-4 py-16 md:py-20 text-center relative z-10">
-          <div className="flex justify-center mb-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-              <Library className="h-7 w-7" />
+      </div>
+
+      <div className="container mx-auto px-4">
+        <div className="va-divider-dots my-6"><span /></div>
+      </div>
+
+      <section className="relative overflow-hidden py-8 md:py-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-amber-50/20 to-white pointer-events-none" />
+        <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
+        <div className="container relative mx-auto px-4">
+          {/* Level filter - decorative pill bar */}
+          <div className="mx-auto max-w-4xl">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
+              <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Filter by Level</span>
+              <span className="h-px w-8 bg-gradient-to-r from-primary/20 to-transparent" />
             </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            Recommended Books by Level
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            The right book for the right stage — from A.H.D.P. and B.V.Sc to
-            M.V.Sc and Ph.D. Level-appropriate recommendations for every
-            veterinary subject.
-          </p>
-        </div>
-      </section>
-
-      <section className="py-10 md:py-14">
-        <div className="container mx-auto px-4">
-          {/* Level filter */}
-          <div className="flex flex-wrap gap-2 justify-center mb-6">
-            {LEVELS.map((l) => {
-              const active = (sp.level || "All") === l.value;
-              return (
-                <Link
-                  key={l.value}
-                  href={
-                    l.value === "All"
-                      ? `/books${activeSubject ? `?subject=${encodeURIComponent(activeSubject)}` : ""}`
-                      : `/books?level=${l.value}${activeSubject ? `&subject=${encodeURIComponent(activeSubject)}` : ""}`
-                  }
-                >
-                  <Button
-                    variant={active ? "default" : "outline"}
-                    size="sm"
-                    className="rounded-full"
-                  >
-                    {l.label}
-                  </Button>
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Subject filter */}
-          {subjects.length > 0 && (
-            <div className="flex flex-wrap gap-2 justify-center mb-10">
-              <Link href={`/books${activeLevel ? `?level=${encodeURIComponent(activeLevel)}` : ""}`}>
-                <Badge
-                  variant={activeSubject ? "secondary" : "default"}
-                  className="cursor-pointer"
-                >
-                  All Subjects
-                </Badge>
-              </Link>
-              {subjects.map((s) => {
-                const active = activeSubject === s;
+            <div className="flex flex-wrap gap-2 justify-center mb-6">
+              {LEVELS.map((l) => {
+                const active = (sp.level || "All") === l.value;
                 return (
                   <Link
-                    key={s}
-                    href={`/books?subject=${encodeURIComponent(s)}${activeLevel ? `&level=${encodeURIComponent(activeLevel)}` : ""}`}
+                    key={l.value}
+                    href={
+                      l.value === "All"
+                        ? `/books${activeSubject ? `?subject=${encodeURIComponent(activeSubject)}` : ""}`
+                        : `/books?level=${l.value}${activeSubject ? `&subject=${encodeURIComponent(activeSubject)}` : ""}`
+                    }
                   >
-                    <Badge
-                      variant={active ? "default" : "secondary"}
-                      className="cursor-pointer"
+                    <Button
+                      variant={active ? "default" : "outline"}
+                      size="sm"
+                      className={`rounded-full transition-all ${active ? "shadow-md bg-gradient-to-r from-amber-600 to-orange-600 border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
                     >
-                      {s}
-                    </Badge>
+                      {l.label}
+                    </Button>
                   </Link>
                 );
               })}
             </div>
-          )}
+
+            {/* Subject filter */}
+            {subjects.length > 0 && (
+              <div className="flex flex-col items-center">
+                <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground mb-2">Filter by Subject</span>
+                <div className="flex flex-wrap gap-2 justify-center mb-8">
+                  <Link href={`/books${activeLevel ? `?level=${encodeURIComponent(activeLevel)}` : ""}`}>
+                    <Badge
+                      variant={activeSubject ? "secondary" : "default"}
+                      className={`cursor-pointer rounded-full px-3 py-1.5 transition-all ${!activeSubject ? "bg-primary shadow-md" : "bg-white border border-primary/10 text-foreground hover:bg-primary/5"}`}
+                    >
+                      All Subjects
+                    </Badge>
+                  </Link>
+                  {subjects.map((s) => {
+                    const active = activeSubject === s;
+                    return (
+                      <Link
+                        key={s}
+                        href={`/books?subject=${encodeURIComponent(s)}${activeLevel ? `&level=${encodeURIComponent(activeLevel)}` : ""}`}
+                      >
+                        <Badge
+                          variant={active ? "default" : "secondary"}
+                          className={`cursor-pointer rounded-full px-3 py-1.5 transition-all ${active ? "bg-primary shadow-md" : "bg-white border border-primary/10 text-foreground hover:bg-primary/5"}`}
+                        >
+                          {s}
+                        </Badge>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="va-divider-dots my-6 max-w-[200px] mx-auto"><span /></div>
 
           {/* Books grid */}
           {sorted.length === 0 ? (
-            <div className="text-center py-16">
-              <BookOpen className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-              <p className="text-muted-foreground mb-2">
-                Recommendations are being added.
-              </p>
-              <p className="text-sm text-muted-foreground/80 max-w-md mx-auto">
-                We are compiling level-wise book lists for each subject. Send us
-                your list (subject, level, title, author) and we&apos;ll publish
-                it here.
-              </p>
-            </div>
+            <Card className="va-card-hover mx-auto max-w-xl rounded-[1.5rem] border-primary/5 bg-muted/30 text-center">
+              <CardContent className="p-10">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
+                  <BookOpen className="h-6 w-6" />
+                </div>
+                <p className="mt-3 font-semibold">Recommendations are being added</p>
+                <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">
+                  We are compiling level-wise book lists for each subject. Send us your list (subject, level, title, author) and we&apos;ll publish it here.
+                </p>
+                <div className="mt-4 flex justify-center"><Badge className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Curated soon</Badge></div>
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {sorted.map((b, i) => (
                 <Card
                   key={b.id}
-                  className="h-full overflow-hidden hover:shadow-lg transition-shadow border-0"
+                  className="va-card-hover group relative h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl hover:border-primary/10"
                 >
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-orange-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                   <div
                     className={`relative h-36 bg-gradient-to-br ${
                       bookGradients[i % bookGradients.length]
                     }`}
                   >
                     <div className="flex h-full items-center justify-center">
-                      <BookOpen className="h-10 w-10 text-white/80" />
+                      <BookOpen className="h-10 w-10 text-white/80 group-hover:scale-110 transition-transform" />
                     </div>
-                    <Badge className="absolute top-3 left-3 bg-white/90 text-primary hover:bg-white">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-60" />
+                    <Badge className="absolute top-3 left-3 rounded-full bg-white/95 backdrop-blur text-primary hover:bg-white border-0 shadow-md">
                       {levelLabel(b.level)}
                     </Badge>
                   </div>
-                  <CardContent className="p-5">
-                    <div className="text-xs font-medium text-muted-foreground mb-1">
-                      {b.subject}
+                  <CardContent className="p-5 relative">
+                    <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                      <span className="text-xs font-semibold tracking-widest uppercase text-primary">{b.subject}</span>
                     </div>
-                    <h3 className="font-bold text-lg mb-1 leading-snug">
+                    <h3 className="font-bold text-[17px] mb-1 leading-snug group-hover:text-primary transition-colors">
                       {b.title}
                     </h3>
                     {b.author && (
@@ -210,7 +227,7 @@ export default async function BooksPage({
                       </p>
                     )}
                     {b.description && (
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed border-t border-primary/5 pt-2">
                         {b.description}
                       </p>
                     )}

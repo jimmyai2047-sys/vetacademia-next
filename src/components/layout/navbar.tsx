@@ -47,6 +47,10 @@ import {
   Play,
   IndianRupee,
   LifeBuoy,
+  Sparkles,
+  Crown,
+  Gem,
+  ArrowRight,
 } from "lucide-react";
 
 const programmes = [
@@ -186,10 +190,22 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto" />
+    <header className="sticky top-0 z-50 w-full">
+      {/* Ornamental top gradient */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary va-gradient-animate" />
+      <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(0,95,72,0.07)]">
+        <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
+        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-4">
+          {/* Logo - decorative */}
+          <div className="relative flex items-center gap-3">
+            <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-primary/10 to-blue-500/10 blur-xl opacity-60" />
+            <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto relative" />
+            <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+            <div className="hidden sm:block">
+              <p className="text-[11px] font-semibold tracking-[0.18em] text-primary uppercase leading-none">VetAcademia</p>
+              <p className="text-[10px] tracking-widest text-muted-foreground uppercase">Excellence • Since 2020</p>
+            </div>
+          </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-7">
@@ -211,25 +227,57 @@ export default function Navbar() {
               <GraduationCap className="h-4 w-4" />
               Programmes
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              {programmes.map((p) => (
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+              <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
+              <div className="relative bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/30 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                    <Crown className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-primary">Academic Programmes <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">VCI Approved • 4 Programmes</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1">
+                {programmes.map((p) => (
+                  <Link
+                    key={p.name}
+                    href={p.href}
+                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 hover:shadow-sm transition-all"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/10 text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent group-hover/item:shadow-md transition-all">
+                      <p.icon className="h-4 w-4" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
+                        {p.name}
+                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {p.name === "A.H.D.P." ? "Diploma Programme" : p.name === "B.V.Sc & A.H." ? "Undergraduate Degree" : p.name === "M.V.Sc" ? "Postgraduate Specialization" : "Doctoral Research"}
+                      </div>
+                    </div>
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                  </Link>
+                ))}
+              </div>
+              <div className="relative p-2.5 pt-0">
+                <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent my-2" />
                 <Link
-                  key={p.name}
-                  href={p.href}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                  href="/syllabus"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-[#005f48] to-[#003d2e] text-white px-4 py-2.5 text-sm font-bold shadow-lg hover:shadow-xl hover:from-primary/90 transition-all group/btn"
                 >
-                  <p.icon className="h-4 w-4" />
-                  {p.name}
+                  <BookOpenCheck className="h-4 w-4" />
+                  View All Syllabus
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                 </Link>
-              ))}
-              <div className="my-1 h-px bg-border" />
-              <Link
-                href="/syllabus"
-                className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                <BookOpenCheck className="h-4 w-4" />
-                View All Syllabus
-              </Link>
+                <p className="text-center text-[11px] text-muted-foreground mt-2 flex items-center justify-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" /> 100+ Subjects • Live Access
+                </p>
+              </div>
             </div>
           </div>
 
@@ -247,28 +295,52 @@ export default function Navbar() {
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              {examCategories.map((c) => (
-                <Link
-                  key={c.name}
-                  href={c.href}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <c.icon className="h-4 w-4 shrink-0" />
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[400px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
+              <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md">
+                    <Award className="h-4 w-4" />
+                  </span>
                   <div>
-                    <div>{c.name}</div>
-                    <div className="text-xs text-muted-foreground">{c.desc}</div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-blue-700">Competitive Exams <Gem className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">PSC • ICAR • NET • ARS • 410+ Papers</p>
                   </div>
-                </Link>
-              ))}
-              <div className="my-1 h-px bg-border" />
-              <Link
-                href="/study-materials"
-                className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                <BookOpenCheck className="h-4 w-4" />
-                Study Materials
-              </Link>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1 max-h-[360px] overflow-y-auto">
+                {examCategories.map((c) => (
+                  <Link
+                    key={c.name}
+                    href={c.href}
+                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-emerald-50/30 hover:shadow-sm transition-all"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent transition-all">
+                      <c.icon className="h-4 w-4" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
+                        {c.name}
+                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
+                      </div>
+                      <div className="text-xs text-muted-foreground">{c.desc}</div>
+                    </div>
+                    <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <div className="relative p-2.5 bg-gradient-to-r from-primary/[0.04] via-blue-50/20 to-transparent border-t border-primary/5">
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/study-materials" className="flex items-center justify-center gap-1.5 rounded-xl bg-white border border-primary/10 px-3 py-2.5 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
+                    <BookOpenCheck className="h-3.5 w-3.5 text-primary" /> Study Materials
+                  </Link>
+                  <Link href="/papers" className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                    <FileCheck className="h-3.5 w-3.5" /> PYQ Papers
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -286,45 +358,65 @@ export default function Navbar() {
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Exam Tracks
-              </div>
-              {prepCategories.map((c) => (
-                <Link
-                  key={c.name}
-                  href={c.href}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <c.icon className="h-4 w-4 shrink-0" />
-                  <div>
-                    <div>{c.name}</div>
-                    <div className="text-xs text-muted-foreground">{c.desc}</div>
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[460px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-600 via-[#d4a843] to-blue-600" />
+              <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50/20 p-4 border-b border-primary/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 text-white shadow-md">
+                      <Beaker className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-emerald-700">Prepare • Exam Tracks <Crown className="h-3 w-3 text-[#d4a843]" /></p>
+                      <p className="text-xs text-muted-foreground">VO • LSA • ARS/NET • ICAR — choose your track</p>
+                    </div>
                   </div>
-                </Link>
-              ))}
-              <div className="my-1 h-px bg-border" />
-              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Study Tools
+                  <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500 text-white px-2.5 py-1 text-[10px] font-bold shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> 4 Tracks
+                  </span>
+                </div>
               </div>
-              <Link href="/mock-tests" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <FileText className="h-4 w-4" /> Mock Tests
-              </Link>
-              <Link href="/flashcards" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <BookMarked className="h-4 w-4" /> Flashcards
-              </Link>
-              <Link href="/papers" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <FileCheck className="h-4 w-4" /> Previous Year Papers
-              </Link>
-              <Link href="/study-materials" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <BookOpenCheck className="h-4 w-4" /> Study Materials
-              </Link>
-              <Link href="/live-classes" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Radio className="h-4 w-4" /> Live Classes
-              </Link>
-              <Link href="/demo" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Play className="h-4 w-4" /> Free Demo
-              </Link>
+              <div className="relative p-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {prepCategories.map((c) => (
+                    <Link
+                      key={c.name}
+                      href={c.href}
+                      className="group/item flex items-center gap-2.5 rounded-xl border border-primary/5 bg-gradient-to-br from-white to-muted/20 p-3 hover:border-primary/15 hover:from-primary/[0.06] hover:to-blue-50/30 hover:shadow-sm transition-all"
+                    >
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white transition-all">
+                        <c.icon className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-bold leading-tight group-hover/item:text-primary transition-colors">{c.name}</div>
+                        <div className="text-[11px] text-muted-foreground">{c.desc}</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                  <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-muted-foreground/60">Study Tools</span>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {[
+                    { href: "/mock-tests", label: "Mock Tests", icon: FileText, color: "from-blue-500 to-indigo-500" },
+                    { href: "/flashcards", label: "Flashcards", icon: BookMarked, color: "from-emerald-500 to-teal-500" },
+                    { href: "/papers", label: "PYQ Papers", icon: FileCheck, color: "from-amber-500 to-orange-500" },
+                    { href: "/study-materials", label: "Materials", icon: BookOpenCheck, color: "from-purple-500 to-violet-500" },
+                    { href: "/live-classes", label: "Live Classes", icon: Radio, color: "from-rose-500 to-pink-500" },
+                    { href: "/demo", label: "Free Demo", icon: Play, color: "from-primary to-[#005f48]" },
+                  ].map((t) => (
+                    <Link key={t.href} href={t.href} className="group/tool flex flex-col items-center gap-1.5 rounded-xl border border-primary/5 bg-white p-3 hover:border-primary/15 hover:shadow-sm hover:bg-gradient-to-br hover:from-primary/[0.04] hover:to-transparent transition-all text-center">
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${t.color} text-white shadow-sm group-hover/tool:scale-105 transition-transform`}>
+                        <t.icon className="h-4 w-4" />
+                      </span>
+                      <span className="text-[11px] font-bold leading-tight">{t.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -342,35 +434,65 @@ export default function Navbar() {
               <Users className="h-4 w-4" />
               Resources
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Community
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[420px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-purple-600 via-[#d4a843] to-pink-600" />
+              <div className="relative bg-gradient-to-br from-purple-50 via-white to-pink-50/20 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-md">
+                    <Gem className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-purple-700">Resources • Community & Content <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">Experts • Vets • Farmers • Blog • Books</p>
+                  </div>
+                </div>
               </div>
-              <Link href="/experts" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Users className="h-4 w-4" /> Experts
-              </Link>
-              <Link href="/advisory" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Tractor className="h-4 w-4" /> Animal Owner
-              </Link>
-              <Link href="/vets" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <HeartPulse className="h-4 w-4" /> Vets
-              </Link>
-              <Link href="/community" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Users className="h-4 w-4" /> Community
-              </Link>
-              <div className="my-1 h-px bg-border" />
-              <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Content
+              <div className="relative p-3 grid grid-cols-2 gap-3">
+                <div>
+                  <p className="px-1 pb-2 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70 flex items-center gap-1.5"><span className="h-1 w-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600" /> Community</p>
+                  <div className="space-y-1">
+                    {[
+                      { href: "/experts", label: "Experts", icon: Users, desc: "1:1 Consult" },
+                      { href: "/advisory", label: "Animal Owner", icon: Tractor, desc: "Farmer Help" },
+                      { href: "/vets", label: "Vets", icon: HeartPulse, desc: "Find Vets" },
+                      { href: "/community", label: "Community", icon: Users, desc: "Join Now" },
+                    ].map((l) => (
+                      <Link key={l.href} href={l.href} className="group/item flex items-center gap-2.5 rounded-xl px-2.5 py-2 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/20 hover:shadow-sm transition-all">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/10 text-purple-600 group-hover/item:bg-gradient-to-br group-hover/item:from-purple-600 group-hover/item:to-pink-600 group-hover/item:text-white transition-all">
+                          <l.icon className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <div className="text-xs font-bold group-hover/item:text-purple-700 transition-colors">{l.label}</div>
+                          <div className="text-[11px] text-muted-foreground">{l.desc}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="px-1 pb-2 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70 flex items-center gap-1.5"><span className="h-1 w-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600" /> Content</p>
+                  <div className="space-y-1">
+                    {[
+                      { href: "/blog", label: "Blog", icon: Newspaper, desc: "Tips & Guides" },
+                      { href: "/books", label: "Books", icon: BookOpen, desc: "Recommended" },
+                      { href: "/testimonials", label: "Success Stories", icon: Star, desc: "4.8★ Reviews" },
+                    ].map((l) => (
+                      <Link key={l.href} href={l.href} className="group/item flex items-center gap-2.5 rounded-xl px-2.5 py-2 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-cyan-50/20 hover:shadow-sm transition-all">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/10 text-blue-600 group-hover/item:bg-gradient-to-br group-hover/item:from-blue-600 group-hover/item:to-cyan-600 group-hover/item:text-white transition-all">
+                          <l.icon className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <div className="text-xs font-bold group-hover/item:text-blue-700 transition-colors">{l.label}</div>
+                          <div className="text-[11px] text-muted-foreground">{l.desc}</div>
+                        </div>
+                      </Link>
+                    ))}
+                    <Link href="/demo" className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white py-2 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                      <Play className="h-3.5 w-3.5" /> Free Demo
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <Link href="/blog" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Newspaper className="h-4 w-4" /> Blog
-              </Link>
-              <Link href="/books" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <BookOpen className="h-4 w-4" /> Books
-              </Link>
-              <Link href="/testimonials" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Star className="h-4 w-4" /> Success Stories
-              </Link>
             </div>
           </div>
 
@@ -388,22 +510,50 @@ export default function Navbar() {
               <Info className="h-4 w-4" />
               About
             </Button>
-            <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md opacity-0 invisible translate-y-1 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              <Link href="/about" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Info className="h-4 w-4" /> About Us
-              </Link>
-              <Link href="/pricing" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <IndianRupee className="h-4 w-4" /> Pricing
-              </Link>
-              <Link href="/contact" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Phone className="h-4 w-4" /> Contact Us
-              </Link>
-              <Link href="/faqs" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <FileQuestion className="h-4 w-4" /> FAQs
-              </Link>
-              <Link href="/help" className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                <LifeBuoy className="h-4 w-4" /> Help Center
-              </Link>
+            <div className="absolute right-0 top-full z-50 mt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-blue-600" />
+              <div className="relative bg-gradient-to-br from-primary/[0.06] via-white to-amber-50/20 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                    <Info className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-primary">About VetAcademia <Crown className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">Learn • Pricing • Support</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1">
+                <Link href="/about" className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-amber-50/20 hover:shadow-sm transition-all">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/15 text-blue-600 group-hover/item:bg-blue-600 group-hover/item:text-white transition-all"><Info className="h-4 w-4" /></span>
+                  <div className="flex-1"><div className="text-sm font-semibold group-hover/item:text-primary transition-colors">About Us</div><div className="text-xs text-muted-foreground">Our story & mission</div></div>
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                </Link>
+                <Link href="/pricing" className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-amber-50/50 hover:to-orange-50/30 hover:shadow-sm transition-all">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/15 text-amber-600 group-hover/item:bg-gradient-to-br group-hover/item:from-amber-500 group-hover/item:to-orange-500 group-hover/item:text-white transition-all"><IndianRupee className="h-4 w-4" /></span>
+                  <div className="flex-1"><div className="text-sm font-semibold group-hover/item:text-amber-700 transition-colors">Pricing</div><div className="text-xs text-muted-foreground">Affordable plans</div></div>
+                  <span className="rounded-full bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5">Save 20%</span>
+                </Link>
+                <Link href="/contact" className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-emerald-50/30 hover:to-teal-50/20 hover:shadow-sm transition-all">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/15 text-emerald-600 group-hover/item:bg-emerald-600 group-hover/item:text-white transition-all"><Phone className="h-4 w-4" /></span>
+                  <div className="flex-1"><div className="text-sm font-semibold group-hover/item:text-emerald-700 transition-colors">Contact Us</div><div className="text-xs text-muted-foreground">We reply in 2h</div></div>
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                </Link>
+                <Link href="/faqs" className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-purple-50/30 hover:to-violet-50/20 hover:shadow-sm transition-all">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/15 text-purple-600 group-hover/item:bg-purple-600 group-hover/item:text-white transition-all"><FileQuestion className="h-4 w-4" /></span>
+                  <div className="flex-1"><div className="text-sm font-semibold">FAQs</div><div className="text-xs text-muted-foreground">Quick answers</div></div>
+                </Link>
+                <Link href="/help" className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-teal-50/30 hover:to-cyan-50/20 hover:shadow-sm transition-all">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-500/10 border border-teal-500/15 text-teal-600 group-hover/item:bg-teal-600 group-hover/item:text-white transition-all"><LifeBuoy className="h-4 w-4" /></span>
+                  <div className="flex-1"><div className="text-sm font-semibold group-hover/item:text-teal-700 transition-colors">Help Center</div><div className="text-xs text-muted-foreground">Guides & support</div></div>
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                </Link>
+              </div>
+              <div className="p-2.5 bg-gradient-to-r from-primary/[0.03] to-amber-50/20 border-t border-primary/5">
+                <Link href="/contact" className="flex items-center justify-center gap-2 rounded-xl bg-white border border-primary/10 px-3 py-2 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
+                  <Phone className="h-3.5 w-3.5 text-primary" /> Need help? Contact us
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -482,14 +632,11 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger className="lg:hidden" aria-label="Open menu">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-xl bg-muted/60 hover:bg-muted"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+          <SheetTrigger
+            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 hover:bg-muted"
+            aria-label="Open menu"
+          >
+            <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="right" className="w-72 overflow-y-auto">
             <div className="flex flex-col gap-3">
@@ -751,8 +898,10 @@ export default function Navbar() {
               </div>
             </div>
           </SheetContent>
-        </Sheet>
+          </Sheet>
+        </div>
       </div>
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
     </header>
   );
 }

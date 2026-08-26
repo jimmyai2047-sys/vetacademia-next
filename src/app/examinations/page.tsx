@@ -22,9 +22,10 @@ import {
   MoreHorizontal,
   ChevronRight,
   BookOpen,
+  Sparkles,
+  GraduationCap,
 } from "lucide-react";
-
-
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 const examinations = [
   {
@@ -102,64 +103,92 @@ const examinations = [
 export default function ExaminationsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Exams</h1>
-        <p className="text-muted-foreground">
-          Comprehensive preparation for all major veterinary competitive examinations
-        </p>
-      </div>
+      <DecorativePageHeader
+        badge="Examinations"
+        title="Exams"
+        titleHighlight="Hub"
+        description="Comprehensive preparation for all major veterinary competitive examinations — ICAR, PSC, NET, ARS and beyond. Decorative, structured, exam-ready."
+        variant="primary"
+      />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">5</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 hover:opacity-100 transition-opacity" />
+          <CardContent className="p-5 text-center">
+            <div className="mx-auto h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+              <GraduationCap className="h-5 w-5 text-primary" />
+            </div>
+            <div className="text-2xl font-extrabold">5</div>
             <div className="text-xs text-muted-foreground">Exam Categories</div>
+            <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-primary/20" />
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">410+</div>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 hover:opacity-100 transition-opacity" />
+          <CardContent className="p-5 text-center">
+            <div className="mx-auto h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center mb-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />
+            </div>
+            <div className="text-2xl font-extrabold">410+</div>
             <div className="text-xs text-muted-foreground">Previous Year Papers</div>
+            <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-blue-500/20" />
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">160+</div>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 hover:opacity-100 transition-opacity" />
+          <CardContent className="p-5 text-center">
+            <div className="mx-auto h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-2">
+              <Award className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div className="text-2xl font-extrabold">160+</div>
             <div className="text-xs text-muted-foreground">Mock Tests</div>
+            <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-emerald-500/20" />
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold">10K+</div>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 hover:opacity-100 transition-opacity" />
+          <CardContent className="p-5 text-center">
+            <div className="mx-auto h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center mb-2">
+              <Sparkles className="h-5 w-5 text-amber-600" />
+            </div>
+            <div className="text-2xl font-extrabold">10K+</div>
             <div className="text-xs text-muted-foreground">Questions Bank</div>
+            <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-amber-500/20" />
           </CardContent>
         </Card>
       </div>
+
+      <div className="va-divider-dots my-8"><span /></div>
 
       {/* Examination Categories */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {examinations.map((exam) => (
-            <Link key={exam.id} href={`/examinations/${exam.id}`}>
-              <Card className="hover:shadow-lg transition-all duration-300 h-full cursor-pointer group overflow-hidden">
-                <div className="relative h-40 w-full overflow-hidden">
-                  <Image
-                    src={getExamImage(exam.id)}
-                    alt={exam.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <exam.icon className="h-12 w-12 text-white/70" />
-                  </div>
+          <Link key={exam.id} href={`/examinations/${exam.id}`}>
+            <Card className="va-card-hover group relative h-full cursor-pointer overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl hover:border-primary/10">
+              <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+              <div className="relative h-40 w-full overflow-hidden">
+                <Image
+                  src={getExamImage(exam.id)}
+                  alt={exam.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <exam.icon className="h-12 w-12 text-white/70" />
                 </div>
-                <CardHeader>
+                <div className="absolute right-3 top-3">
+                  <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white text-[10px] gap-1">
+                    <Sparkles className="h-3 w-3 text-[#d4a843]" /> {exam.badge}
+                  </Badge>
+                </div>
+              </div>
+              <CardHeader>
                 <div className="flex items-start gap-4">
                   <div
-                    className={`w-14 h-14 rounded-xl ${exam.lightColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}
+                    className={`w-14 h-14 rounded-xl ${exam.lightColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform border border-transparent group-hover:border-primary/10`}
                   >
                     <exam.icon className={`h-7 w-7 ${exam.textColor}`} />
                   </div>
@@ -170,7 +199,7 @@ export default function ExaminationsPage() {
                       </CardTitle>
                       <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs rounded-full">
                       {exam.badge}
                     </Badge>
                   </div>
@@ -199,11 +228,17 @@ export default function ExaminationsPage() {
         ))}
       </div>
 
+      <div className="va-divider-dots my-8"><span /></div>
+
       {/* Study Materials */}
-      <div className="mt-12">
-        <h2 className="text-xl font-semibold mb-4">Study Materials</h2>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <span className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center"><BookOpen className="h-4 w-4 text-primary" /></span>
+          Study Materials
+        </h2>
         <Link href="/study-materials">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group border-primary/20 bg-primary/5">
+          <Card className="va-card-hover group cursor-pointer overflow-hidden rounded-[1.5rem] border-primary/10 bg-primary/5 shadow-sm hover:shadow-xl">
+            <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardContent className="flex items-center gap-4 p-6">
               <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                 <BookOpen className="h-7 w-7 text-primary" />
@@ -223,15 +258,23 @@ export default function ExaminationsPage() {
       </div>
 
       {/* CTA */}
-      <div className="mt-12 text-center">
-        <Card className="bg-primary text-primary-foreground">
-          <CardContent className="p-8">
-            <h3 className="text-2xl font-bold mb-2">Need guidance for your exam?</h3>
-            <p className="opacity-90 mb-4">
+      <div className="mt-10">
+        <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-[#d4a843]/15 blur-3xl" />
+          <CardContent className="relative p-8 text-center text-white">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-3 py-1 text-xs font-semibold">
+              <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Expert Guidance
+            </div>
+            <h3 className="text-2xl font-bold mt-4 mb-2">Need guidance for your exam?</h3>
+            <div className="mx-auto h-1 w-12 rounded-full bg-gradient-to-r from-white to-[#d4a843] mb-3" />
+            <p className="opacity-90 mb-6 max-w-2xl mx-auto">
               Connect with experts who have cracked these examinations and get personalized study plans
             </p>
             <Link href="/experts">
-              <button className="bg-white text-primary px-6 py-2 rounded-md font-semibold hover:bg-white/90 transition-colors">
+              <button className="bg-white text-primary px-6 py-2.5 rounded-xl font-semibold hover:bg-white/90 transition-colors shadow-md">
                 Talk to Experts
               </button>
             </Link>
@@ -240,4 +283,4 @@ export default function ExaminationsPage() {
       </div>
     </div>
   );
-}
+}

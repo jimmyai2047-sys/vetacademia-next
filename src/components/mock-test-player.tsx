@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { csrfFetch } from "@/lib/csrf-client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -103,7 +104,7 @@ export default function MockTestPlayer({
     setSubmitted(true);
 
     try {
-      const res = await fetch(`/api/mock-tests/${testId}/attempt`, {
+      const res = await csrfFetch(`/api/mock-tests/${testId}/attempt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

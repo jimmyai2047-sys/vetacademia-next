@@ -11,8 +11,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-
-
+import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { GraduationCap, Sparkles } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -59,15 +59,34 @@ export default async function PreparePage({
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
-      <div className="container mx-auto px-4 py-20 max-w-md text-center">
-        <h1 className="text-2xl font-bold mb-2">Log in to access exam preparation</h1>
-        <p className="text-muted-foreground mb-6">
-          Structured tracks, previous year papers, and mock tests are available to
-          enrolled members.
-        </p>
-        <Link href="/login" className={buttonVariants()}>
-          Log In
-        </Link>
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <DecorativePageHeader
+          badge="Exam Preparation"
+          title="Exam"
+          titleHighlight="Preparation"
+          description="Structured tracks, previous year papers, and mock tests — login to unlock your personalized exam preparation hub."
+          variant="primary"
+        />
+        <div className="mt-8 va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-8 md:p-10 text-center">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">
+            <GraduationCap className="h-7 w-7" />
+          </div>
+          <h2 className="mt-4 text-2xl font-bold">Log in to access exam preparation</h2>
+          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+            Structured tracks, previous year papers, and mock tests are available to enrolled members. Highly decorative, highly focused preparation.
+          </p>
+          <Link href="/login" className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
+            <Sparkles className="h-4 w-4" /> Log In
+          </Link>
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
+            Secure • Personalized • Decorative
+            <span className="h-px w-8 bg-gradient-to-r from-primary/20 to-transparent" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -141,5 +160,11 @@ export default async function PreparePage({
     })
   );
 
-  return <ExamPrepTabs categories={categories} initialTab={tab || undefined} />;
-}
+  return (
+    <ExamPrepTabs
+      key={tab || "all"}
+      categories={categories}
+      initialTab={tab || undefined}
+    />
+  );
+}

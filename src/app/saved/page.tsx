@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bookmark, Trash2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 function flash(msg: string) {
   // eslint-disable-next-line no-alert
@@ -55,7 +56,7 @@ export default function SavedPage() {
 
   async function remove(id: string) {
     try {
-      await fetch(`/api/bookmarks/${id}`, { method: "DELETE" });
+          await csrfFetch(`/api/bookmarks/${id}`, { method: "DELETE" });
       setItems((prev) => prev.filter((b) => b.id !== id));
       flash("Removed");
     } catch {

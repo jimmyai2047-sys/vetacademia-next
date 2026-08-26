@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import MockTestPlayer from "@/components/mock-test-player";
+import MockTestPlayer from "@/components/mock-test-player-lazy";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import { planSlugForExam } from "@/lib/plans";
@@ -23,7 +23,7 @@ export default async function PreviousYearPaperPage({
   const subject = test.subjectId
     ? await prisma.subject.findUnique({
         where: { id: test.subjectId },
-        select: { id: true, year: true, programme: { select: { name: true } } },
+            include: { programme: { select: { name: true } } },
       })
     : null;
   const progSlug = subject

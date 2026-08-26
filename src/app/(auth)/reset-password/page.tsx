@@ -63,6 +63,18 @@ function ResetForm() {
     }
   }
 
+  if (done) {
+    return (
+      <p className="text-sm text-center text-green-600">
+        Your password has been updated.{" "}
+        <Link href="/login" className="underline">
+          Continue to sign in
+        </Link>
+        .
+      </p>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-1.5">

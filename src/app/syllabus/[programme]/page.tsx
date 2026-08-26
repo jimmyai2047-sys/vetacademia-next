@@ -7,9 +7,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft } from "lucide-react";
+import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, Sparkles, Users, BookMarked } from "lucide-react";
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import { slugToProgrammeName } from "@/lib/programme";
@@ -39,19 +40,38 @@ export default async function ProgrammePage({
 }) {
   const { programme: slug } = await params;
 
-  const programme = await prisma.programme.findFirst({
-    where: {
-      name: {
-        equals: slugToProgrammeName(slug),
-        mode: "insensitive",
-      },
-    },
-    include: {
-      departments: {
-        select: {
-          id: true,
-          name: true,
+  const programme = await unstable_cache(
+    () =>
+      prisma.programme.findFirst({
+        where: {
+          name: {
+            equals: slugToProgrammeName(slug),
+            mode: "insensitive",
+          },
+        },
+        include: {
+          departments: {
+            select: {
+              id: true,
+              name: true,
+              subjects: {
+                select: {
+                  id: true,
+                  name: true,
+                  year: true,
+                  semester: true,
+                  paper: true,
+                  code: true,
+                  _count: { select: { chapters: true } },
+                },
+                orderBy: [{ year: "asc" }, { name: "asc" }],
+              },
+              _count: { select: { subjects: true } },
+            },
+            orderBy: { name: "asc" },
+          },
           subjects: {
+            where: { departmentId: null },
             select: {
               id: true,
               name: true,
@@ -61,27 +81,13 @@ export default async function ProgrammePage({
               code: true,
               _count: { select: { chapters: true } },
             },
-            orderBy: [{ year: "asc" }, { name: "asc" }],
+            orderBy: [{ year: "asc" }, { semester: "asc" }, { paper: "asc" }],
           },
-          _count: { select: { subjects: true } },
         },
-        orderBy: { name: "asc" },
-      },
-      subjects: {
-        where: { departmentId: null },
-        select: {
-          id: true,
-          name: true,
-          year: true,
-          semester: true,
-          paper: true,
-          code: true,
-          _count: { select: { chapters: true } },
-        },
-        orderBy: [{ year: "asc" }, { semester: "asc" }, { paper: "asc" }],
-      },
-    },
-  });
+      }),
+    ["syllabus-programme", slug],
+    { revalidate: 120 }
+  )();
 
   if (!programme) notFound();
 
@@ -93,13 +99,18 @@ export default async function ProgrammePage({
 
   // Granular purchase plans for this programme (year plans for BVSc/AHDP,
   // subject plans for MVSc/PhD).
-  const granularPlans = await prisma.plan.findMany({
-    where: {
-      programmeSlug: slug,
-      OR: [{ year: { not: null } }, { subjectId: { not: null } }],
-    },
-    select: { slug: true, year: true, subjectId: true },
-  });
+  const granularPlans = await unstable_cache(
+    () =>
+      prisma.plan.findMany({
+        where: {
+          programmeSlug: slug,
+          OR: [{ year: { not: null } }, { subjectId: { not: null } }],
+        },
+        select: { slug: true, year: true, subjectId: true },
+      }),
+    ["syllabus-granular-plans", slug],
+    { revalidate: 120 }
+  )();
   const yearPlanByYear = new Map<string, string>();
   const subjectPlanBySubject = new Map<string, string>();
   for (const p of granularPlans) {
@@ -161,18 +172,22 @@ export default async function ProgrammePage({
       }
     }
     return (
-      <Card key={subject.id} className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 group border-0 flex flex-col">
+      <Card key={subject.id} className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-xl group flex flex-col">
         <Link href={`/syllabus/${slug}/${subject.id}`} className="block relative h-48 overflow-hidden">
           <Image
             src={imageUrl}
             alt={subject.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover group-hover:scale-[1.06] transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <BookOpen className="h-12 w-12 text-white/50" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
           </div>
           <div className="absolute top-3 left-3">
             {subject.code && (
@@ -212,21 +227,36 @@ export default async function ProgrammePage({
 
   return (
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link
-            href="/syllabus"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            All Programmes
-          </Link>
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary/10">
-              <Icon className={`h-7 w-7 ${colorClass}`} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">{programme.name}</h1>
-              <p className="text-muted-foreground">{programme.fullName}</p>
+        <Link href="/syllabus" className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-6">
+          <ArrowLeft className="h-4 w-4" /> All Programmes
+        </Link>
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+          <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="relative px-6 py-8 md:px-8 md:py-10 text-white">
+            <div className="flex flex-col md:flex-row md:items-center gap-5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
+                <Icon className="h-8 w-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> {programme.yearType === "semester" ? "Semester System" : programme.yearType === "year" ? "Year System" : "Department Based"}
+                </Badge>
+                <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">{programme.name}</h1>
+                <p className="mt-1 text-white/80 max-w-2xl">{programme.fullName}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 text-xs font-medium">
+                    <BookMarked className="h-3.5 w-3.5" /> {allSubjects.length} Subjects
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 text-xs font-medium">
+                    <Users className="h-3.5 w-3.5" /> {totalCourses} Courses
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#d4a843] px-3 py-1 text-xs font-bold text-[#003d2e]">
+                    VCI MSVE-2016
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

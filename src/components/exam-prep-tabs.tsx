@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getExamPrepImage } from "@/lib/page-images";
@@ -90,12 +90,17 @@ function MaterialCard({ m }: { m: Material }) {
             />
           </div>
         ) : m.downloadUrl && m.type === "IMAGE" ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={m.downloadUrl}
-            alt={m.title}
-            className="w-full max-h-48 object-contain rounded-md border bg-muted/30"
-          />
+          <div className="relative w-full h-48 rounded-md overflow-hidden border bg-muted/30">
+            <Image
+              src={m.downloadUrl}
+              alt={m.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-contain"
+              unoptimized
+              loading="lazy"
+            />
+          </div>
         ) : null}
 
         {m.body ? (
@@ -166,12 +171,17 @@ export default function ExamPrepTabs({
   categories: PreparedCategory[];
   initialTab?: string;
 }) {
+  const router = useRouter();
   const initialIndex = initialTab
     ? categories.findIndex((c) => c.key === initialTab)
     : 0;
-  const [active, setActive] = useState(initialIndex >= 0 ? initialIndex : 0);
+  const active = initialIndex >= 0 ? initialIndex : 0;
   const safeActive = categories.length > 0 ? Math.min(active, categories.length - 1) : 0;
   const cat = categories[safeActive];
+
+  const selectTab = (key: string) => {
+    router.push(`/prepare?tab=${key}`, { scroll: false });
+  };
 
   if (categories.length === 0) {
     return (
@@ -216,12 +226,12 @@ export default function ExamPrepTabs({
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        {categories.map((c, i) => (
+        {categories.map((c) => (
           <button
             key={c.key}
-            onClick={() => setActive(i)}
+            onClick={() => selectTab(c.key)}
             className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
-              i === safeActive
+              c.key === cat.key
                 ? "bg-primary text-primary-foreground border-primary"
                 : "border-input hover:bg-muted"
             }`}

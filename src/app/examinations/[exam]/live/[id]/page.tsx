@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, Radio } from "lucide-react";
-import LiveClassPlayer from "@/components/live-class-player";
+import LiveClassPlayer from "@/components/live-class-player-lazy";
 import { getAccess } from "@/lib/access";
 import EnrollCta from "@/components/enroll-cta";
 

@@ -25,9 +25,12 @@ import {
   Phone,
   Stethoscope,
   FileBarChart,
+  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import FarmersExplorer from "@/components/farmers-explorer";
 import { BookOpen, Pill, Newspaper, PhoneCall } from "lucide-react";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 const SECTIONS = [
   { id: "guides-reports", label: "Guides & Reports", icon: BookOpen },
@@ -84,41 +87,50 @@ export default async function FarmersPage({
   return (
     <div className="container mx-auto px-4 py-8">
       {unlocked && (
-        <div className="mb-6 rounded-xl border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-center text-emerald-700 dark:text-emerald-300">
-          Payment successful! The full project report is now unlocked on your
-          account.
+        <div className="va-card-hover mb-6 rounded-[1.25rem] border border-emerald-500/20 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 p-4 text-center shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600 text-white px-3 py-1 text-xs font-bold">
+            <CheckCircle className="h-3.5 w-3.5" /> Payment successful
+          </div>
+          <p className="mt-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">The full project report is now unlocked on your account.</p>
         </div>
       )}
 
-      {/* Hero Section */}
-      <div className="mb-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-8 text-white">
-        <div className="flex items-center gap-3 mb-2">
-          <Users className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">Animal Owner Corner</h1>
-        </div>
-        <p className="text-white/90 max-w-2xl">
-          Scientific farming guides, vaccination &amp; deworming schedules, and
-          detailed project reports for dairy, goat, sheep, poultry and pig
-          farming.
-        </p>
-      </div>
+      <DecorativePageHeader
+        badge="For Farmers & Animal Owners • Scientific • Practical"
+        title="Animal Owner"
+        titleHighlight="Corner"
+        description="Scientific farming guides, vaccination & deworming schedules, and detailed project reports for dairy, goat, sheep, poultry and pig farming — decorative, actionable, field-ready."
+        variant="emerald"
+        actions={
+          <>
+            <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+              <Wheat className="h-3.5 w-3.5" /> {guides.length} guides • {reports.length} reports
+            </Badge>
+            <Link href="#helpline">
+              <Button variant="secondary" size="sm" className="rounded-full bg-white text-emerald-700 hover:bg-white/90 gap-1.5">
+                <Phone className="h-3.5 w-3.5" /> Helpline
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
         <Stat icon={Wheat} color="text-blue-600" bg="bg-blue-50" value={String(guides.length)} label="Farm Guides" />
         <Stat icon={Syringe} color="text-emerald-600" bg="bg-emerald-50" value={String(vaccination.length)} label="Vaccines" />
         <Stat icon={FileBarChart} color="text-orange-600" bg="bg-orange-50" value={String(deworming.length)} label="Deworming" />
         <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={String(reports.length)} label="Project Reports" />
       </div>
 
-      {/* Sticky in-page section nav */}
-      <nav className="sticky top-14 z-10 -mx-1 mb-8 rounded-xl border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Sticky in-page section nav - glass */}
+      <nav className="sticky top-14 z-10 -mx-1 mt-8 mb-8 rounded-[1.25rem] border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
         <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {SECTIONS.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary hover:text-white"
             >
               <s.icon className="h-4 w-4" />
               {s.label}
@@ -129,6 +141,10 @@ export default async function FarmersPage({
 
       {/* Farm guides + project reports (farm-type filtered) */}
       <div id="guides-reports" className="scroll-mt-20">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border-emerald-200 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Curated</Badge>
+          <span className="text-xs text-muted-foreground">Filter by farm type • Instant preview</span>
+        </div>
         <FarmersExplorer
           guides={guides as unknown as Parameters<typeof FarmersExplorer>[0]["guides"]}
           reports={reports as unknown as Parameters<typeof FarmersExplorer>[0]["reports"]}
@@ -138,9 +154,12 @@ export default async function FarmersPage({
         />
       </div>
 
+      <div className="va-divider-dots my-8"><span /></div>
+
       {/* Vaccination Schedule — dedicated section */}
       <Section id="vaccination" title="Vaccination Schedule" desc="Complete vaccination calendar for livestock">
-        <Card>
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm bg-white">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600 opacity-60" />
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -170,7 +189,7 @@ export default async function FarmersPage({
                         <td className="p-4 text-muted-foreground">{v.booster}</td>
                         <td className="p-4 text-muted-foreground">{v.annual}</td>
                         <td className="p-4">
-                          <Badge variant="secondary">{v.vaccine}</Badge>
+                          <Badge variant="secondary" className="rounded-full">{v.vaccine}</Badge>
                         </td>
                       </tr>
                     ))
@@ -184,7 +203,8 @@ export default async function FarmersPage({
 
       {/* Deworming Schedule — dedicated section */}
       <Section id="deworming" title="Deworming Schedule" desc="Deworming calendar by animal">
-        <Card>
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm bg-white">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-[#d4a843] to-amber-500 opacity-60" />
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -222,6 +242,8 @@ export default async function FarmersPage({
         </Card>
       </Section>
 
+      <div className="va-divider-dots my-8"><span /></div>
+
       {/* Admin-managed Updates & Resources */}
       {farmerPosts.length > 0 && (
         <Section id="resources" title="Updates & Resources" desc="Latest posts from the VetAcademia team">
@@ -230,22 +252,28 @@ export default async function FarmersPage({
       )}
 
       {/* Helpline Banner */}
-      <Card id="helpline" className="bg-gradient-to-r from-green-600 to-emerald-600 text-white mt-8 scroll-mt-20">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-bold mb-2">Need Immediate Help?</h3>
-          <p className="opacity-90 mb-4">
+      <Card id="helpline" className="relative overflow-hidden rounded-[1.75rem] border-0 text-white mt-8 scroll-mt-20 shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/20 blur-3xl" />
+        <CardContent className="relative p-8 text-center">
+          <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> 24/7 Support</Badge>
+          <h3 className="mt-3 text-2xl font-bold">Need Immediate Help?</h3>
+          <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />
+          <p className="mx-auto mt-3 max-w-xl text-white/85">
             Call our toll-free veterinary helpline or book an online consultation
-            with experts
+            with experts — decorative, fast, farmer-friendly.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link href="/contact">
-              <Button variant="secondary" size="lg">
-                <Phone className="h-4 w-4 mr-2" /> Call Helpline
+              <Button variant="secondary" size="lg" className="rounded-xl bg-white text-emerald-700 hover:bg-white/90 gap-2 shadow-lg">
+                <Phone className="h-4 w-4" /> Call Helpline
               </Button>
             </Link>
-            <Link href="/experts">
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
-                <Stethoscope className="h-4 w-4 mr-2" /> Book Consultation
+            <Link href="/consultations/book">
+              <Button variant="outline" size="lg" className="rounded-xl border-white/30 bg-white/10 backdrop-blur text-white hover:bg-white hover:text-emerald-700 gap-2">
+                <Stethoscope className="h-4 w-4" /> Book Consultation
               </Button>
             </Link>
           </div>
@@ -269,15 +297,16 @@ function Stat({
   label: string;
 }) {
   return (
-    <Card>
+    <Card className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm bg-white">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg ${bg} flex items-center justify-center`}>
+          <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center shadow-sm ring-1 ring-black/5`}>
             <Icon className={`h-5 w-5 ${color}`} />
           </div>
           <div>
-            <div className="text-2xl font-bold">{value}</div>
-            <div className="text-xs text-muted-foreground">{label}</div>
+            <div className="text-2xl font-bold tracking-tight">{value}</div>
+            <div className="text-xs font-medium text-muted-foreground">{label}</div>
           </div>
         </div>
       </CardContent>
@@ -298,8 +327,12 @@ function Section({
 }) {
   return (
     <div id={id} className="mb-10 scroll-mt-20">
-      <h2 className="text-2xl font-bold mb-1">{title}</h2>
-      <p className="text-sm text-muted-foreground mb-4">{desc}</p>
+      <div className="flex items-center gap-2 mb-1">
+        <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/10 gap-1"><Sparkles className="h-3 w-3" /> {title}</Badge>
+      </div>
+      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+      <div className="mt-2 h-1 w-12 rounded-full bg-gradient-to-r from-emerald-600 to-[#d4a843]" />
+      <p className="text-sm text-muted-foreground mt-2 mb-4">{desc}</p>
       {children}
     </div>
   );

@@ -45,7 +45,10 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      const redirect =
+        new URLSearchParams(window.location.search).get("redirect") ||
+        "/dashboard";
+      router.push(redirect);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");

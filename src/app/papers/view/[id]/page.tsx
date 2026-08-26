@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { ArrowLeft, Download, FileText } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
 
@@ -12,7 +13,11 @@ export default async function PostViewerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const post = await prisma.post.findUnique({ where: { id } });
+  const post = await unstable_cache(
+    () => prisma.post.findUnique({ where: { id } }),
+    ["paper-view-post", id],
+    { revalidate: 120 }
+  )();
   if (!post) notFound();
 
   // Proxy private blobs through /api/blob so they render inline (Content-

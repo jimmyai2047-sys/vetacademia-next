@@ -1,8 +1,9 @@
 import { put } from "@vercel/blob";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSignedUrl } from "@/lib/blob";
+import { validateCsrf } from "@/lib/csrf";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -22,8 +23,14 @@ function hasImageMagic(buf: ArrayBuffer): boolean {
   );
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

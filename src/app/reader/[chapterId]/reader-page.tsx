@@ -3,7 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
-import ChapterContentViewer from "@/components/chapter-content-viewer";
+import dynamic from "next/dynamic";
+
+const ChapterContentViewer = dynamic(
+  () => import("@/components/chapter-content-viewer").then((m) => m.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-sm text-muted-foreground">Loading content…</div>
+    ),
+  }
+);
 import {
   ArrowLeft,
   BookOpen,
