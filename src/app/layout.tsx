@@ -24,7 +24,7 @@ const noto = Noto_Sans({
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vetacademia-next.vercel.app"),
+  metadataBase: new URL("https://vetacademia.in"),
   title: {
     default: "VetAcademia | Unified Veterinary Education Portal",
     template: "%s | VetAcademia",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     title: "VetAcademia | Unified Veterinary Education Portal",
     description:
       "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
-    url: "https://vetacademia-next.vercel.app",
+    url: "https://vetacademia.in",
     type: "website",
     siteName: "VetAcademia",
     locale: "en_IN",
