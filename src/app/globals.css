@@ -536,10 +536,12 @@
 }
 /* Gradient text */
 .va-gradient-text {
-  background: linear-gradient(135deg, var(--primary), oklch(0.55 0.12 200));
+  background-image: linear-gradient(135deg, var(--primary) 0%, #0e7490 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline;
 }
 /* Pattern overlay */
 .va-pattern-dots {
