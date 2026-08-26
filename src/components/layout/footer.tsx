@@ -183,7 +183,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <p className="flex items-center gap-2 text-white/60">
-              <span>&copy; {new Date().getFullYear()} VetAcademia.</span>
+              <span>&copy; 2018 VetAcademia.</span>
               <span className="hidden sm:inline">Crafted with</span>
               <Heart className="h-3.5 w-3.5 fill-red-400 text-red-400 animate-pulse" />
               <span className="hidden sm:inline">for veterinary students.</span>
