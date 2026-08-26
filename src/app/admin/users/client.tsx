@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight, Crown, Sparkles } from "lucide-react";
 import Link from "next/link";
 import ConfirmDialog from "@/components/admin/confirm-dialog";
 import { useToast } from "@/components/admin/toast-provider";
@@ -239,21 +239,34 @@ export default function UsersClient({
         loading={confirmLoading}
       />
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/admin">
-            <Button variant="ghost" size="icon" aria-label="Back to dashboard">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold">Users</h1>
-            <p className="text-muted-foreground">Manage platform users</p>
+      {/* Royal Header */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link href="/admin">
+              <Button variant="ghost" size="icon" aria-label="Back to dashboard" className="rounded-xl bg-white/15 backdrop-blur border border-white/20 text-white hover:bg-white/25 hover:text-white">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur border border-white/20 shadow-sm">
+              <Users className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase">
+                <Crown className="h-3 w-3 text-[#d4a843]" /> Royal Control
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+              <p className="text-white/70 text-sm flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage platform users • {totalCount} total
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />
+          <Button onClick={handleExport} size="sm" className="rounded-xl bg-white text-primary hover:bg-white/90 shadow-md gap-2 font-semibold">
+            <Download className="h-4 w-4" />
             Export
           </Button>
         </div>
@@ -268,14 +281,16 @@ export default function UsersClient({
           { label: "Guests", count: guestCount, icon: Users, color: "text-gray-600", bg: "bg-gray-100 dark:bg-gray-800" },
           { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
         ].map((item) => (
-          <Card key={item.label}>
+          <Card key={item.label} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-md">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">{item.label}</p>
-                  <p className="text-2xl font-bold">{item.count}</p>
+                  <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground/70">{item.label}</p>
+                  <p className="text-2xl font-extrabold tracking-tight mt-1">{item.count}</p>
+                  <div className="mt-2 h-1 w-6 rounded-full bg-primary/20 group-hover:w-10 group-hover:bg-primary transition-all" />
                 </div>
-                <div className={`w-10 h-10 rounded-lg ${item.bg} flex items-center justify-center`}>
+                <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center border shadow-sm group-hover:scale-105 transition-transform`}>
                   <item.icon className={`h-5 w-5 ${item.color}`} />
                 </div>
               </div>
@@ -284,7 +299,8 @@ export default function UsersClient({
         ))}
       </div>
 
-      <Card>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 shadow-sm bg-white">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
         <CardHeader>
           <div className="flex items-center gap-4 flex-wrap">
             <div className="relative flex-1 min-w-[200px]">
@@ -293,12 +309,12 @@ export default function UsersClient({
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
+                className="pl-10 rounded-xl"
                 aria-label="Search users by name or email"
               />
             </div>
             <Select value={roleFilter} onValueChange={(v) => setRoleFilter(v ?? "ALL")}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] rounded-xl">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -314,108 +330,110 @@ export default function UsersClient({
                 ))}
               </SelectContent>
             </Select>
-            <Badge variant="secondary">{filteredUsers.length} users</Badge>
+            <Badge variant="secondary" className="rounded-full px-3">{filteredUsers.length} users</Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Programme</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    No users found
-                  </TableCell>
+          <div className="rounded-xl border border-primary/5 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Programme</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
-                          {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        {user.name}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.role}
-                        onValueChange={(v) => {
-                          if (v) changeRole(user.id, v, user.name);
-                        }}
-                      >
-                        <SelectTrigger className="w-[160px] h-8">
-                          <SelectValue>
-                            <Badge className={roleColor(user.role)}>{user.role}</Badge>
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ALL_ROLES.map((r) => (
-                            <SelectItem key={r} value={r}>
-                              {r}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>{user.programme || "-"}</TableCell>
-                    <TableCell>{user.year || "-"}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(user.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </TableCell>
-                    <TableCell>
-                      {user.banned ? (
-                        <Badge variant="destructive">Banned</Badge>
-                      ) : (
-                        <Badge variant="secondary">Active</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          aria-label={user.banned ? "Unban user" : "Ban user"}
-                          disabled={user.id === currentUserId}
-                          onClick={() => toggleBan(user.id, user.name, !!user.banned)}
-                        >
-                          <Ban className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 text-red-600"
-                          aria-label="Delete user"
-                          disabled={user.id === currentUserId}
-                          onClick={() => removeUser(user.id, user.name)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                      No users found
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user.id} className="hover:bg-primary/[0.04]">
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-[#005f48] flex items-center justify-center text-xs font-bold text-white shadow-sm">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          {user.name}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={user.role}
+                          onValueChange={(v) => {
+                            if (v) changeRole(user.id, v, user.name);
+                          }}
+                        >
+                          <SelectTrigger className="w-[160px] h-8 rounded-xl">
+                            <SelectValue>
+                              <Badge className={roleColor(user.role)}>{user.role}</Badge>
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ALL_ROLES.map((r) => (
+                              <SelectItem key={r} value={r}>
+                                {r}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>{user.programme || "-"}</TableCell>
+                      <TableCell>{user.year || "-"}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(user.createdAt).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        {user.banned ? (
+                          <Badge variant="destructive" className="rounded-full">Banned</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Active</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-xl"
+                            aria-label={user.banned ? "Unban user" : "Ban user"}
+                            disabled={user.id === currentUserId}
+                            onClick={() => toggleBan(user.id, user.name, !!user.banned)}
+                          >
+                            <Ban className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700"
+                            aria-label="Delete user"
+                            disabled={user.id === currentUserId}
+                            onClick={() => removeUser(user.id, user.name)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-4 border-t mt-4">
@@ -426,6 +444,7 @@ export default function UsersClient({
                 <Button
                   variant="outline"
                   size="sm"
+                  className="rounded-xl"
                   disabled={page <= 1}
                   onClick={() => {
                     const url = new URL(window.location.href);
@@ -439,6 +458,7 @@ export default function UsersClient({
                 <Button
                   variant="outline"
                   size="sm"
+                  className="rounded-xl"
                   disabled={page >= totalPages}
                   onClick={() => {
                     const url = new URL(window.location.href);

@@ -22,7 +22,7 @@ const API: Record<string, string> = {
 };
 
 const inputCls =
-  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const labelCls = "text-sm font-medium mb-1 block";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -98,7 +98,8 @@ function Editor({
   }
 
   return (
-    <Card className="mb-6 border-primary/40">
+    <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm mb-6">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
       <CardHeader>
         <CardTitle className="text-base">
           {item ? "Edit" : "Add New"} {kind === "guides" ? "Farm Guide" : kind === "vaccination" ? "Vaccination Entry" : kind === "deworming" ? "Deworming Entry" : "Project Report"}
@@ -211,10 +212,10 @@ function Editor({
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={submit} disabled={busy}>
+          <Button onClick={submit} disabled={busy} className="rounded-xl bg-gradient-to-br from-primary to-[#005f48] hover:from-primary/90 hover:to-[#005f48]/90 text-white shadow-sm">
             {busy ? "Saving..." : "Save"}
           </Button>
-          <Button variant="ghost" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="rounded-xl">
             Cancel
           </Button>
         </div>
@@ -304,7 +305,7 @@ export default function FarmersAdminClient({
       <div>
         <div className="flex justify-end mb-3">
           {!showAdd && (
-            <Button variant="outline" onClick={() => setAdding(kind)}>
+            <Button variant="outline" onClick={() => setAdding(kind)} className="rounded-xl border-primary/10 hover:bg-primary hover:text-white hover:border-primary">
               + Add {kind === "guides" ? "Guide" : kind === "vaccination" ? "Vaccination" : kind === "deworming" ? "Deworming" : "Report"}
             </Button>
           )}
@@ -326,7 +327,8 @@ export default function FarmersAdminClient({
           />
         )}
 
-        <Card>
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -349,13 +351,13 @@ export default function FarmersAdminClient({
                     </tr>
                   ) : (
                     list.map((item) => (
-                      <tr key={item.id} className="border-b last:border-0 hover:bg-accent/50">
+                      <tr key={item.id} className="border-b last:border-0 hover:bg-primary/[0.04]">
                         {renderRow(item)}
                         <td className="p-3 text-right whitespace-nowrap">
-                          <Button variant="ghost" size="sm" onClick={() => setEdit({ kind, id: item.id })}>
+                          <Button variant="ghost" size="sm" onClick={() => setEdit({ kind, id: item.id })} className="rounded-xl hover:bg-primary/10 hover:text-primary">
                             Edit
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-red-500" onClick={() => apiDelete(kind, item.id)}>
+                          <Button variant="ghost" size="sm" className="rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600" onClick={() => apiDelete(kind, item.id)}>
                             Delete
                           </Button>
                         </td>
@@ -373,11 +375,11 @@ export default function FarmersAdminClient({
 
   return (
     <Tabs defaultValue="guides">
-      <TabsList>
-        <TabsTrigger value="guides">Farm Guides ({data.guides.length})</TabsTrigger>
-        <TabsTrigger value="vaccination">Vaccination ({data.vaccination.length})</TabsTrigger>
-        <TabsTrigger value="deworming">Deworming ({data.deworming.length})</TabsTrigger>
-        <TabsTrigger value="reports">Project Reports ({data.reports.length})</TabsTrigger>
+      <TabsList className="rounded-xl bg-muted/50 p-1 border border-primary/5">
+        <TabsTrigger value="guides" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Farm Guides ({data.guides.length})</TabsTrigger>
+        <TabsTrigger value="vaccination" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Vaccination ({data.vaccination.length})</TabsTrigger>
+        <TabsTrigger value="deworming" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Deworming ({data.deworming.length})</TabsTrigger>
+        <TabsTrigger value="reports" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Project Reports ({data.reports.length})</TabsTrigger>
       </TabsList>
 
       <TabsContent value="guides" className="mt-4">
@@ -387,10 +389,10 @@ export default function FarmersAdminClient({
           renderRow={(i) => (
             <>
               <td className="p-3">
-                <Badge variant="outline">{i.category}</Badge>
+                <Badge variant="outline" className="rounded-full">{i.category}</Badge>
               </td>
               <td className="p-3 font-medium">{i.title}</td>
-              <td className="p-3">{i.published ? "Yes" : "No"}</td>
+              <td className="p-3">{i.published ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">Yes</Badge> : <Badge variant="secondary" className="rounded-full">No</Badge>}</td>
               <td className="p-3 text-muted-foreground">{String(i.order)}</td>
             </>
           )}
@@ -434,11 +436,11 @@ export default function FarmersAdminClient({
           renderRow={(i) => (
             <>
               <td className="p-3">
-                <Badge variant="outline">{i.farmType}</Badge>
+                <Badge variant="outline" className="rounded-full">{i.farmType}</Badge>
               </td>
               <td className="p-3 font-medium">{i.title}</td>
-              <td className="p-3">Rs.{Number(i.price)}</td>
-              <td className="p-3">{i.published ? "Yes" : "No"}</td>
+              <td className="p-3"><span className="font-semibold text-primary">Rs.{Number(i.price)}</span></td>
+              <td className="p-3">{i.published ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">Yes</Badge> : <Badge variant="secondary" className="rounded-full">No</Badge>}</td>
             </>
           )}
         />

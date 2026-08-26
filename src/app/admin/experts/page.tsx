@@ -19,7 +19,12 @@ import {
   X,
   Star,
   IndianRupee,
+  Crown,
+  Sparkles,
+  Users,
+  ArrowLeft,
 } from "lucide-react";
+import Link from "next/link";
 
 type Expert = {
   id: string;
@@ -184,25 +189,53 @@ export default function AdminExpertsPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Experts</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage expert consultant profiles shown on the public site
-          </p>
+    <div className="space-y-6">
+      {/* Royal Header */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link href="/admin">
+              <Button variant="ghost" size="icon" aria-label="Back to dashboard" className="rounded-xl bg-white/15 backdrop-blur border border-white/20 text-white hover:bg-white/25 hover:text-white">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur border border-white/20 shadow-sm">
+              <Users className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase">
+                <Crown className="h-3 w-3 text-[#d4a843]" /> Royal Experts
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight">Experts</h1>
+              <p className="text-white/70 text-sm flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage expert consultant profiles • {experts.length} profiles
+              </p>
+            </div>
+          </div>
+          {!showForm && (
+            <Button onClick={openCreate} className="rounded-xl bg-white text-primary hover:bg-white/90 shadow-md gap-2 font-semibold">
+              <Plus className="h-4 w-4" /> Add Expert
+            </Button>
+          )}
         </div>
-        {!showForm && (
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" /> Add Expert
-          </Button>
-        )}
       </div>
 
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+      )}
+
       {showForm && (
-        <Card className="mb-8">
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 shadow-sm bg-white">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardHeader>
-            <CardTitle>{editing ? "Edit Expert" : "Add Expert"}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white"><Sparkles className="h-4 w-4" /></span>
+              {editing ? "Edit Expert" : "Add Expert"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -213,6 +246,7 @@ export default function AdminExpertsPage() {
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required
+                    className="rounded-xl mt-1"
                   />
                 </div>
                 <div>
@@ -222,6 +256,7 @@ export default function AdminExpertsPage() {
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required
+                    className="rounded-xl mt-1"
                   />
                 </div>
                 <div>
@@ -233,6 +268,7 @@ export default function AdminExpertsPage() {
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     placeholder={editing ? "••••••••" : "expert123"}
+                    className="rounded-xl mt-1"
                   />
                 </div>
                 <div>
@@ -243,6 +279,7 @@ export default function AdminExpertsPage() {
                       setForm({ ...form, specialization: e.target.value })
                     }
                     required
+                    className="rounded-xl mt-1"
                   />
                 </div>
                 <div>
@@ -251,6 +288,7 @@ export default function AdminExpertsPage() {
                     type="number"
                     value={form.hourlyRate}
                     onChange={(e) => setForm({ ...form, hourlyRate: e.target.value })}
+                    className="rounded-xl mt-1"
                   />
                 </div>
                 <div className="flex items-end">
@@ -261,6 +299,7 @@ export default function AdminExpertsPage() {
                       onChange={(e) =>
                         setForm({ ...form, isAvailable: e.target.checked })
                       }
+                      className="rounded"
                     />
                     Available for consultation
                   </label>
@@ -270,7 +309,7 @@ export default function AdminExpertsPage() {
               <div>
                 <label className="text-sm font-medium">Bio</label>
                 <textarea
-                  className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full mt-1 min-h-[80px] rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
@@ -284,10 +323,10 @@ export default function AdminExpertsPage() {
                     <img
                       src={previewUrl}
                       alt="preview"
-                      className="h-20 w-20 rounded-full object-cover border"
+                      className="h-20 w-20 rounded-xl object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
+                    <div className="h-20 w-20 rounded-xl bg-muted flex items-center justify-center border border-dashed border-primary/10">
                       <ImageIcon className="h-8 w-8 text-muted-foreground" />
                     </div>
                   )}
@@ -303,6 +342,7 @@ export default function AdminExpertsPage() {
                       type="button"
                       variant="outline"
                       size="sm"
+                      className="rounded-xl"
                       onClick={() => fileRef.current?.click()}
                       disabled={uploading}
                     >
@@ -317,6 +357,7 @@ export default function AdminExpertsPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
+                        className="rounded-xl"
                         onClick={() => {
                       setForm({ ...form, photoUrl: null });
                       setPreviewUrl(null);
@@ -330,13 +371,14 @@ export default function AdminExpertsPage() {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <Button type="submit" disabled={saving}>
+                <Button type="submit" disabled={saving} className="rounded-xl bg-gradient-to-br from-primary to-[#005f48] hover:from-primary/90 hover:to-[#005f48]/90 text-white shadow-sm gap-2">
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                   {editing ? "Save Changes" : "Create Expert"}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
+                  className="rounded-xl"
                   onClick={() => {
                     setShowForm(false);
                     setEditing(null);
@@ -351,15 +393,19 @@ export default function AdminExpertsPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center gap-2 text-muted-foreground">
+        <div className="flex items-center gap-2 text-muted-foreground rounded-xl border border-dashed border-primary/10 bg-muted/20 px-4 py-6 justify-center">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading...
         </div>
       ) : experts.length === 0 ? (
-        <p className="text-muted-foreground">No experts yet.</p>
+        <div className="text-center py-12 rounded-[1.25rem] border border-dashed border-primary/10 bg-muted/20">
+          <Users className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
+          <p className="text-muted-foreground">No experts yet.</p>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {experts.map((e) => (
-            <Card key={e.id}>
+            <Card key={e.id} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-md">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   {e.photoUrl ? (
@@ -367,10 +413,10 @@ export default function AdminExpertsPage() {
                     <img
                       src={e.photoUrl}
                       alt={e.name}
-                      className="h-14 w-14 rounded-full object-cover border"
+                      className="h-14 w-14 rounded-xl object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="h-14 w-14 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
+                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white flex items-center justify-center font-semibold shadow-sm">
                       {e.name
                         .split(" ")
                         .map((n) => n[0])
@@ -379,7 +425,7 @@ export default function AdminExpertsPage() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{e.name}</div>
+                    <div className="font-semibold truncate group-hover:text-primary transition-colors">{e.name}</div>
                     <div className="text-sm text-muted-foreground truncate">
                       {e.specialization}
                     </div>
@@ -395,28 +441,28 @@ export default function AdminExpertsPage() {
                     </div>
                   </div>
                   {e.isAvailable ? (
-                    <Badge className="bg-green-100 text-green-700 text-xs">
+                    <Badge className="bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs rounded-full">
                       Available
                     </Badge>
                   ) : (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs rounded-full">
                       Busy
                     </Badge>
                   )}
                 </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-4">
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 gap-1"
+                    className="flex-1 rounded-xl gap-1"
                     onClick={() => openEdit(e)}
                   >
                     <Pencil className="h-3 w-3" /> Edit
                   </Button>
                   <Button
                     size="sm"
-                    variant="destructive"
-                    className="gap-1"
+                    variant="outline"
+                    className="rounded-xl gap-1 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
                     onClick={() => handleDelete(e)}
                   >
                     <Trash2 className="h-3 w-3" />

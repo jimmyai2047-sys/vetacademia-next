@@ -23,6 +23,9 @@ import {
   ArrowRight,
   Activity,
   GraduationCap,
+  Sparkles,
+  Crown,
+  Shield,
 } from "lucide-react";
 
 
@@ -79,24 +82,48 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your platform</p>
+      {/* Royal Header */}
+      <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-7 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-4 text-white">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-3 py-1 text-xs font-bold tracking-widest uppercase">
+              <Crown className="h-3.5 w-3.5 text-[#d4a843]" /> Royal Admin Dashboard
+            </div>
+            <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Admin Dashboard</h1>
+            <p className="mt-1 text-white/70 flex items-center gap-2">
+              <Shield className="h-4 w-4 text-[#d4a843]" /> Secure • Overview of your platform • Live
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 text-center">
+              <p className="text-xs text-white/60 uppercase tracking-widest">Total Users</p>
+              <p className="text-xl font-bold">{totalUsers.toLocaleString()}</p>
+            </div>
+            <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg">
+              <Sparkles className="h-6 w-6" />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Royal */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat) => (
-          <Card key={stat.title}>
-            <CardContent className="p-4">
+          <Card key={stat.title} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-lg">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground/70">{stat.title}</p>
+                  <p className="mt-1 text-2xl font-extrabold tracking-tight">{stat.value}</p>
+                  <div className="mt-2 h-1 w-8 rounded-full bg-primary/20 group-hover:w-12 group-hover:bg-primary transition-all" />
                 </div>
-                <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl border shadow-sm ${stat.bg} group-hover:scale-105 transition-transform`}>
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
               </div>
@@ -106,46 +133,54 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Users */}
-        <Card>
-          <CardHeader>
+        {/* Recent Users - Royal */}
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-primary to-emerald-500" />
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Recent Users</CardTitle>
-                <CardDescription>Latest registrations</CardDescription>
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md">
+                  <Users className="h-4 w-4" />
+                </span>
+                <div>
+                  <CardTitle className="text-base">Recent Users</CardTitle>
+                  <CardDescription className="text-xs">Latest registrations • Live</CardDescription>
+                </div>
               </div>
               <Link href="/admin/users">
-                <Button variant="ghost" size="sm">
-                  View All <ArrowRight className="h-4 w-4 ml-1" />
+                <Button variant="outline" size="sm" className="rounded-full border-primary/10 hover:bg-primary hover:text-white hover:border-primary gap-1">
+                  View All <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentUsers.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No users yet</p>
+                <div className="text-center py-10 rounded-xl border border-dashed border-primary/10 bg-muted/20">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground">No users yet</p>
+                </div>
               ) : (
                 recentUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50"
+                    className="group flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-blue-50/30 hover:shadow-sm transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                      <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white font-bold text-sm shadow-sm">
                         {user.name.charAt(0).toUpperCase()}
+                        <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm">{user.name}</p>
+                        <p className="font-semibold text-sm group-hover:text-primary transition-colors">{user.name}</p>
                         <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge className={roleColor(user.role)}>
-                        {user.role}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {timeAgo(user.createdAt)}
+                      <Badge className={`${roleColor(user.role)} shadow-sm`}>{user.role}</Badge>
+                      <p className="text-[11px] text-muted-foreground mt-1 flex items-center justify-end gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-500" /> {timeAgo(user.createdAt)}
                       </p>
                     </div>
                   </div>
@@ -155,47 +190,54 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
+        {/* Recent Activity - Royal */}
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-primary to-amber-500" />
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest mock test attempts</CardDescription>
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-md">
+                  <Activity className="h-4 w-4" />
+                </span>
+                <div>
+                  <CardTitle className="text-base">Recent Activity</CardTitle>
+                  <CardDescription className="text-xs">Latest mock test attempts</CardDescription>
+                </div>
               </div>
               <Link href="/admin/analytics">
-                <Button variant="ghost" size="sm">
-                  Analytics <ArrowRight className="h-4 w-4 ml-1" />
+                <Button variant="outline" size="sm" className="rounded-full border-primary/10 hover:bg-primary hover:text-white hover:border-primary gap-1">
+                  Analytics <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentAttempts.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No activity yet</p>
+                <div className="text-center py-10 rounded-xl border border-dashed border-primary/10 bg-muted/20">
+                  <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground">No activity yet</p>
+                </div>
               ) : (
                 recentAttempts.map((attempt) => (
                   <div
                     key={attempt.id}
-                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50"
+                    className="group flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-purple-50/40 hover:to-blue-50/20 hover:shadow-sm transition-all"
                   >
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Activity className="h-4 w-4 text-primary" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/10 text-primary group-hover:from-primary group-hover:to-[#005f48] group-hover:text-white transition-all">
+                      <Activity className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{attempt.mockTest.title}</p>
-                      <p className="text-xs text-muted-foreground">{attempt.user.name}</p>
+                      <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{attempt.mockTest.title}</p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary" /> {attempt.user.name}
+                      </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <Badge variant={attempt.score >= attempt.totalMarks * 0.7 ? "default" : "destructive"}>
-                        {attempt.totalMarks
-                          ? Math.round((attempt.score / attempt.totalMarks) * 100)
-                          : 0}%
+                      <Badge className={attempt.score >= attempt.totalMarks * 0.7 ? "bg-emerald-500 hover:bg-emerald-600 shadow-sm" : "bg-amber-500 hover:bg-amber-600 shadow-sm"}>
+                        {attempt.totalMarks ? Math.round((attempt.score / attempt.totalMarks) * 100) : 0}%
                       </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {timeAgo(attempt.createdAt)}
-                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1">{timeAgo(attempt.createdAt)}</p>
                     </div>
                   </div>
                 ))
@@ -205,37 +247,38 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
+      {/* Quick Actions - Royal */}
+      <Card className="relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-gradient-to-br from-white via-primary/[0.02] to-blue-50/20 shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#d4a843] to-amber-600 text-white shadow-md">
+              <Sparkles className="h-4 w-4" />
+            </span>
+            <div>
+              <CardTitle className="text-base">Quick Actions</CardTitle>
+              <CardDescription className="text-xs">Royal admin shortcuts • One click</CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-4 gap-4">
-            <Link href="/admin/users">
-              <div className="p-4 border rounded-lg hover:bg-muted/50 text-center transition-colors cursor-pointer">
-                <Users className="h-6 w-6 mx-auto mb-2 text-blue-600" />
-                <p className="text-sm font-medium">Manage Users</p>
-              </div>
-            </Link>
-            <Link href="/admin/content">
-              <div className="p-4 border rounded-lg hover:bg-muted/50 text-center transition-colors cursor-pointer">
-                <BookOpen className="h-6 w-6 mx-auto mb-2 text-green-600" />
-                <p className="text-sm font-medium">Manage Content</p>
-              </div>
-            </Link>
-            <Link href="/admin/analytics">
-              <div className="p-4 border rounded-lg hover:bg-muted/50 text-center transition-colors cursor-pointer">
-                <TrendingUp className="h-6 w-6 mx-auto mb-2 text-purple-600" />
-                <p className="text-sm font-medium">View Analytics</p>
-              </div>
-            </Link>
-            <Link href="/admin/settings">
-              <div className="p-4 border rounded-lg hover:bg-muted/50 text-center transition-colors cursor-pointer">
-                <Settings className="h-6 w-6 mx-auto mb-2 text-orange-600" />
-                <p className="text-sm font-medium">Settings</p>
-              </div>
-            </Link>
+            {[
+              { href: "/admin/users", label: "Manage Users", icon: Users, grad: "from-blue-600 to-indigo-600", bg: "from-blue-50 to-indigo-50" },
+              { href: "/admin/content", label: "Manage Content", icon: BookOpen, grad: "from-emerald-600 to-teal-600", bg: "from-emerald-50 to-teal-50" },
+              { href: "/admin/analytics", label: "View Analytics", icon: TrendingUp, grad: "from-purple-600 to-violet-600", bg: "from-purple-50 to-violet-50" },
+              { href: "/admin/settings", label: "Settings", icon: Settings, grad: "from-amber-600 to-orange-600", bg: "from-amber-50 to-orange-50" },
+            ].map((a) => (
+              <Link key={a.href} href={a.href} className="group">
+                <div className={`relative overflow-hidden p-5 rounded-xl border border-primary/5 bg-gradient-to-br ${a.bg} hover:border-primary/15 hover:shadow-md transition-all text-center`}>
+                  <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-md group-hover:scale-105 transition-transform`}>
+                    <a.icon className="h-6 w-6" />
+                  </div>
+                  <p className="mt-3 text-sm font-bold group-hover:text-primary transition-colors">{a.label}</p>
+                  <div className="mx-auto mt-2 h-1 w-6 rounded-full bg-primary/20 group-hover:w-10 group-hover:bg-primary transition-all" />
+                </div>
+              </Link>
+            ))}
           </div>
         </CardContent>
       </Card>

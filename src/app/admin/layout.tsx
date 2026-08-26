@@ -10,9 +10,12 @@ export default async function AdminLayout({
   await requireAdmin();
   return (
     <AdminProviders>
-      <div className="flex min-h-[calc(100vh-4rem)]">
+      <div className="flex min-h-[calc(100vh-4rem)] bg-gradient-to-br from-muted/20 via-background to-primary/[0.02]">
         <AdminSidebar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-6 md:p-8 relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.015]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "22px 22px" }} />
+          <div className="relative">{children}</div>
+        </main>
       </div>
     </AdminProviders>
   );
