@@ -227,10 +227,11 @@ export default function Navbar() {
               <GraduationCap className="h-4 w-4" />
               Programmes
             </Button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-              <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
-              <div className="relative bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/30 p-4 border-b border-primary/5">
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+              <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden">
+              <div className="absolute top-3 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+              <div className="absolute inset-0 top-3 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
+              <div className="relative bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/30 p-4 border-b border-primary/5 mt-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
                     <Crown className="h-4 w-4" />
@@ -280,6 +281,7 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+          </div>
 
           {/* Exams */}
           <div
@@ -295,7 +297,7 @@ export default function Navbar() {
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[400px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[400px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
               <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -358,7 +360,7 @@ export default function Navbar() {
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[460px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[460px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-600 via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center justify-between">
@@ -434,7 +436,7 @@ export default function Navbar() {
               <Users className="h-4 w-4" />
               Resources
             </Button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 mt-3 w-[420px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+            <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[420px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-purple-600 via-[#d4a843] to-pink-600" />
               <div className="relative bg-gradient-to-br from-purple-50 via-white to-pink-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -510,7 +512,7 @@ export default function Navbar() {
               <Info className="h-4 w-4" />
               About
             </Button>
-            <div className="absolute right-0 top-full z-50 mt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
+            <div className="absolute right-0 top-full z-50 pt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden opacity-0 invisible translate-y-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-primary/[0.06] via-white to-amber-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
