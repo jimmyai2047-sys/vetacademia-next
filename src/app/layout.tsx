@@ -63,8 +63,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
       { url: "/favicon-192x192.png", sizes: "192x192", type: "image/png" },
     ],
@@ -73,6 +75,7 @@ export const metadata: Metadata = {
       { url: "/favicon-512x512.png", sizes: "512x512", type: "image/png" },
     ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
@@ -80,6 +83,16 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: "#005f48",
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "VetAcademia",
+  url: "https://vetacademia.in",
+  logo: "https://vetacademia.in/favicon-512x512.png",
+  description: "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
+  sameAs: ["https://vetacademia.in"],
 };
 
 export default function RootLayout({
@@ -90,6 +103,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${noto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <TooltipProvider>
           <Providers>
             <a
