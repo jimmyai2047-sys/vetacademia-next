@@ -329,8 +329,8 @@ export default async function HomePage() {
               </h1>
 
               <p className="mt-4 max-w-xl text-[15px] md:text-[17px] leading-relaxed text-muted-foreground">
-                A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc aur Ph.D ke liye complete curricula,
-                mock tests, study material aur expert guidance — ek hi jagah, har device par.
+                Complete curricula, mock tests, study materials and expert guidance for
+                A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc and Ph.D — all in one place, on every device.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
