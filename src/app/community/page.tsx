@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Send, ArrowLeft, Sparkles, Users } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Button } from "@/components/ui/button";
+import CommunityQaBadges from "@/components/community-qa-badges";
 
 function refLabel(category: string, ref: string) {
   let list = EXAM_REFS;
@@ -58,6 +59,10 @@ export default async function CommunityPage() {
       />
 
       <div className="va-divider-dots my-6"><span /></div>
+
+      <div className="mb-6">
+        <CommunityQaBadges />
+      </div>
 
       {links.length === 0 ? (
         <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 bg-muted/40 text-center shadow-sm">

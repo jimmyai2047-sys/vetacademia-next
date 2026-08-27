@@ -26,6 +26,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import ExamCountdown from "@/components/exam-countdown";
 
 const examinations = [
   {
@@ -157,6 +158,16 @@ export default function ExaminationsPage() {
             <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-amber-500/20" />
           </CardContent>
         </Card>
+      </div>
+
+      <div className="va-divider-dots my-8"><span /></div>
+
+      {/* Exam Calendar Countdown */}
+      <div className="mb-8">
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+          <span className="h-1 w-6 rounded-full bg-primary" /> Exam Calendar
+        </h2>
+        <ExamCountdown />
       </div>
 
       <div className="va-divider-dots my-8"><span /></div>
