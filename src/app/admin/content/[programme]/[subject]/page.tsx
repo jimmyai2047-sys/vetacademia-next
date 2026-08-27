@@ -13,6 +13,9 @@ import {
   Crown,
   Sparkles,
   Shield,
+  Eye,
+  ExternalLink,
+  Info,
 } from "lucide-react";
 import ChapterContentManager from "@/components/admin/chapter-content-manager";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
@@ -97,6 +100,16 @@ export default async function SubjectContentPage({
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2">
+            <Link
+              href={`/syllabus/${slug}/${subject.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button className="rounded-xl bg-white text-[#003d2e] hover:bg-white/90 font-semibold shadow-lg gap-2">
+                <Eye className="h-4 w-4" /> Preview as Student
+                <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+              </Button>
+            </Link>
             <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 text-center">
               <p className="text-xs text-white/60 uppercase tracking-widest">{hasCourses ? "Courses" : "Chapters"}</p>
               <p className="text-xl font-bold">{subject.chapters.length}</p>
@@ -108,9 +121,51 @@ export default async function SubjectContentPage({
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* Structure Info — how this content appears to students */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-amber-200/60 bg-gradient-to-br from-amber-50 via-white to-orange-50/50 shadow-sm p-5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-orange-500" />
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm shrink-0">
+            <Info className="h-4 w-4" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm text-amber-900 flex items-center gap-2">
+              Student View — Structure &amp; Position Info
+              <Link
+                href={`/syllabus/${slug}/${subject.id}`}
+                target="_blank"
+                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline ml-1"
+              >
+                <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
+              </Link>
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              {hasCourses ? (
+                <>
+                  <strong>MVSc / PhD (Course-based):</strong> Student ko <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/{slug}/{subject.id}</code> pe <strong>{subject.chapters.length} Courses</strong> grid me dikhenge — har card pe <Badge variant="outline" className="rounded-full text-[10px] mx-1">courseCode</Badge> + creditHours badge. Click karne pe <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/{slug}/{subject.id}/[courseId]</code> pe course detail + reader khulta hai. Order = DB me <code>unitNumber ASC</code> (courseCode ke basis pe).
+                </>
+              ) : (
+                <>
+                  <strong>BVSc / AHDP (Unit-based):</strong> Student ko 2 column me <strong>Theory ({theoryChapters.length})</strong> + <strong>Practical ({practicalChapters.length})</strong> dikhega. Har Unit = border card jisme <Badge variant="outline" className="rounded-full text-[10px] mx-1">Unit N</Badge> header, andar accordion list — har item pe index + title, expand karne pe <em>ChapterResources</em> + <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/reader/[chapterId]</code> link. Order = <code>unitNumber ASC</code>, Practical filter = <code>type === &quot;PRACTICAL&quot;</code>.
+                </>
+              )}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5"><Layers className="h-3 w-3 text-muted-foreground" /> Subject: {subject.name}</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5">Chapters: {subject.chapters.length}</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5">Theory: {theoryChapters.length} • Practical: {practicalChapters.length}</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5">Programme: {subject.programme.name}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
         <ChapterBulkImporter subjectId={subject.id} />
         <AddChapterButton subjectId={subject.id} />
+        <Link href={`/syllabus/${slug}/${subject.id}`} target="_blank" className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-white px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary hover:text-white transition-colors md:hidden">
+          <Eye className="h-3.5 w-3.5" /> Preview as Student <ExternalLink className="h-3 w-3" />
+        </Link>
       </div>
 
       {hasCourses ? (
@@ -124,10 +179,16 @@ export default async function SubjectContentPage({
           {subject.chapters.map((course) => (
             <div key={course.id} className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-4 space-y-3">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="secondary" className="font-mono rounded-full">
                   {course.courseCode}
                 </Badge>
+                <Link href={`/syllabus/${slug}/${subject.id}/${course.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-0.5 text-xs text-primary hover:bg-primary hover:text-white transition-colors">
+                  <Eye className="h-3 w-3" /> Preview Course
+                </Link>
+                <Link href={`/reader/${course.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted transition-colors">
+                  Reader <ExternalLink className="h-3 w-3" />
+                </Link>
                 <ChapterTitleEditor
                   chapterId={course.id}
                   initialTitle={course.title}
@@ -166,11 +227,18 @@ export default async function SubjectContentPage({
               {theoryChapters.map((ch) => (<>
                 <div key={`title-${ch.id}`} className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-4 space-y-3">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-primary to-emerald-500 opacity-60" />
-                  <ChapterTitleEditor
-                    chapterId={ch.id}
-                    initialTitle={ch.title}
-                    unitNumber={ch.unitNumber}
-                  />
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex-1 min-w-[200px]">
+                      <ChapterTitleEditor
+                        chapterId={ch.id}
+                        initialTitle={ch.title}
+                        unitNumber={ch.unitNumber}
+                      />
+                    </div>
+                    <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
+                      <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
                 <ChapterRichEditor
                   chapterId={ch.id}
                   initialContent={ch.content}
@@ -203,11 +271,18 @@ export default async function SubjectContentPage({
               {practicalChapters.map((ch) => (<>
                 <div key={`title-${ch.id}`} className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-4 space-y-3">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-teal-500 to-primary opacity-60" />
-                  <ChapterTitleEditor
-                    chapterId={ch.id}
-                    initialTitle={ch.title}
-                    unitNumber={ch.unitNumber}
-                  />
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex-1 min-w-[200px]">
+                      <ChapterTitleEditor
+                        chapterId={ch.id}
+                        initialTitle={ch.title}
+                        unitNumber={ch.unitNumber}
+                      />
+                    </div>
+                    <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
+                      <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
                 <ChapterRichEditor
                   chapterId={ch.id}
                   initialContent={ch.content}

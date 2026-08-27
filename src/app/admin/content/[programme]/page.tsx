@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Layers, Crown, Sparkles, Shield } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Crown, Sparkles, Shield, Eye, ExternalLink, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +57,12 @@ export default async function ProgrammeContentPage({
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2">
+            <Link href={`/syllabus/${slug}`} target="_blank" rel="noopener noreferrer">
+              <Button className="rounded-xl bg-white text-[#003d2e] hover:bg-white/90 font-semibold shadow-lg gap-2">
+                <Eye className="h-4 w-4" /> Preview as Student
+                <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+              </Button>
+            </Link>
             <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 text-center">
               <p className="text-xs text-white/60 uppercase tracking-widest">Subjects</p>
               <p className="text-xl font-bold">{programme.subjects.length}</p>
@@ -68,6 +74,22 @@ export default async function ProgrammeContentPage({
         </div>
       </div>
 
+      {/* Structure Info */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-amber-200/60 bg-gradient-to-br from-amber-50 via-white to-orange-50/50 shadow-sm p-5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-orange-500" />
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm shrink-0">
+            <Info className="h-4 w-4" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm text-amber-900">Student View — Programme Structure</h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Student ko <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/{slug}</code> pe yehi {programme.subjects.length} subjects dikhenge — card grid (image + badge + chapter count). Click → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/{slug}/[subjectId]</code> pe Theory/Practical accordion structure. MVSc/PhD me Course grid, BVSc/AHDP me Unit-wise list. Order = DB me <code>name ASC</code> (programme page), <code>unitNumber ASC</code> (subject page).
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div>
         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <span className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-[#d4a843]" />
@@ -75,11 +97,7 @@ export default async function ProgrammeContentPage({
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {programme.subjects.map((subject) => (
-            <Link
-              key={subject.id}
-              href={`/admin/content/${slug}/${subject.id}`}
-            >
-              <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all cursor-pointer">
+              <Card key={subject.id} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
@@ -95,12 +113,24 @@ export default async function ProgrammeContentPage({
                   )}
                 </CardHeader>
                 <CardContent>
-                  <Badge variant="secondary" className="rounded-full">
-                    {subject._count.chapters} Chapters
-                  </Badge>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <Badge variant="secondary" className="rounded-full">
+                      {subject._count.chapters} Chapters
+                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <Link href={`/admin/content/${slug}/${subject.id}`}>
+                        <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
+                      </Link>
+                      <Link href={`/syllabus/${slug}/${subject.id}`} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
+                          <Eye className="h-3 w-3" /> Preview
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2">Position: <code className="px-1 py-0.5 bg-muted rounded">/syllabus/{slug}/{subject.id}</code></p>
                 </CardContent>
               </Card>
-            </Link>
           ))}
         </div>
       </div>
