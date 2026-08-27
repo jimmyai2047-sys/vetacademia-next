@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForBuild: false,
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     // Allow Vercel Blob (expert photos, blog covers, study-material images)
     // to be served through the Next.js image optimizer.
     remotePatterns: [

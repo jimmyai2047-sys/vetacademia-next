@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "@/components/providers";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import PwaRegister from "@/components/pwa-register";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -118,6 +119,7 @@ export default function RootLayout({
             <Navbar />
             <main id="main-content" className="flex-1">{children}</main>
             <Footer />
+            <PwaRegister />
           </Providers>
         </TooltipProvider>
       </body>
