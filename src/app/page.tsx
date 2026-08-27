@@ -273,17 +273,17 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section - Modern Split */}
+      {/* Hero Section - Modern Split - Mobile Optimized */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/60">
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 -right-24 h-[520px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute -bottom-32 -left-32 h-[600px] w-[600px] rounded-full bg-blue-100 blur-3xl" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]" />
+        {/* Decorative blobs - smaller on mobile */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-16 -right-16 h-[320px] w-[320px] md:h-[520px] md:w-[520px] rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 h-[360px] w-[360px] md:h-[600px] md:w-[600px] rounded-full bg-blue-100 blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] md:bg-[size:24px_24px]" />
         </div>
 
-        <div className="container relative mx-auto px-4 py-10 md:py-16 lg:py-20">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+        <div className="container relative mx-auto px-4 py-8 md:py-16 lg:py-20">
+          <div className="grid items-center gap-8 md:gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
             {/* Left: Content */}
             <div className="flex flex-col">
               <Badge
@@ -297,7 +297,7 @@ export default async function HomePage() {
                 Trusted by 10,000+ Veterinary Students
               </Badge>
 
-              <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-[52px]">
+              <h1 className="mt-5 text-[30px] xs:text-4xl font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl lg:text-[52px]">
                 India&apos;s Premier
                 <span className="block bg-gradient-to-r from-primary via-primary to-blue-600 bg-clip-text text-transparent">
                   Veterinary Education
@@ -305,7 +305,7 @@ export default async function HomePage() {
                 Platform
               </h1>
 
-              <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
+              <p className="mt-4 max-w-xl text-[15px] md:text-[17px] leading-relaxed text-muted-foreground">
                 A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc aur Ph.D ke liye complete curricula,
                 mock tests, study material aur expert guidance — ek hi jagah, har device par.
               </p>
@@ -324,13 +324,13 @@ export default async function HomePage() {
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link href="/syllabus/ahdp" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full gap-2 shadow-md sm:w-auto">
+                  <Button size="lg" className="w-full gap-2 shadow-md sm:w-auto h-12 sm:h-10 text-[15px] font-semibold active:scale-[0.98] transition-transform">
                     Explore Programmes
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/signup" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full bg-white sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full bg-white sm:w-auto h-12 sm:h-10 text-[15px] font-semibold active:scale-[0.98] transition-transform">
                     Start Free Trial
                   </Button>
                 </Link>
@@ -366,41 +366,41 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right: Visual */}
-            <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[520px]">
-              <div className="relative h-[380px] overflow-hidden rounded-[2rem] border bg-muted shadow-2xl sm:h-[440px] lg:h-[480px]">
+            {/* Right: Visual - Mobile Optimized */}
+            <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[520px] mt-2 md:mt-0">
+              <div className="relative h-[300px] xs:h-[340px] sm:h-[400px] md:h-[440px] lg:h-[480px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
                 <Image
                   src="/images/hero-vet.jpg"
                   alt="Veterinary students learning"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 560px"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
                   className="object-cover"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent lg:hidden" />
               </div>
 
-              {/* Floating card - top */}
-              <div className="absolute -left-2 top-4 flex items-center gap-3 rounded-2xl border bg-white p-3 shadow-xl md:-left-4 md:top-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100">
-                  <Users className="h-5 w-5 text-green-600" />
+              {/* Floating card - top - mobile safe */}
+              <div className="absolute left-2 top-3 sm:-left-2 sm:top-4 flex items-center gap-2.5 rounded-xl sm:rounded-2xl border bg-white p-2.5 sm:p-3 shadow-xl md:-left-4 md:top-6 max-w-[165px] sm:max-w-none">
+                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-green-100 shrink-0">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                 </div>
-                <div className="pr-2">
-                  <p className="text-sm font-bold leading-none">Live Classes</p>
-                  <p className="text-xs text-muted-foreground">Daily • Expert Faculty</p>
+                <div className="pr-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-bold leading-none">Live Classes</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Daily • Expert</p>
                 </div>
-                <span className="ml-1 flex h-2 w-2 rounded-full bg-green-500">
+                <span className="ml-1 flex h-2 w-2 rounded-full bg-green-500 shrink-0">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75" />
                 </span>
               </div>
 
-              {/* Floating card - bottom */}
-              <div className="absolute -bottom-3 -right-2 rounded-2xl border bg-white p-4 shadow-xl md:-bottom-2 md:right-2">
-                <div className="mb-2 flex items-center gap-2">
-                  <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-                  <p className="text-xs font-semibold">500+ Mock Tests &amp; PYQs</p>
+              {/* Floating card - bottom - mobile safe */}
+              <div className="absolute -bottom-2 right-2 sm:-bottom-3 sm:-right-2 md:-bottom-2 md:right-2 rounded-xl sm:rounded-2xl border bg-white p-3 sm:p-4 shadow-xl max-w-[195px] sm:max-w-none">
+                <div className="mb-1.5 sm:mb-2 flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 animate-pulse rounded-full bg-green-500" />
+                  <p className="text-[11px] sm:text-xs font-semibold">500+ Mock Tests &amp; PYQs</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-muted-foreground flex-wrap">
                   <span className="inline-flex items-center gap-1">
                     <Brain className="h-3.5 w-3.5" /> Adaptive
                   </span>

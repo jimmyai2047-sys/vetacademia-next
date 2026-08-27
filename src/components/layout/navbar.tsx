@@ -630,43 +630,52 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Enhanced for Mobile */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger
-            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 hover:bg-muted"
+            className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md hover:shadow-lg active:scale-95 transition-all"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
           </SheetTrigger>
-          <SheetContent side="right" className="w-72 overflow-y-auto">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 px-1 pt-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-border">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/favicon-192x192.png"
-                    alt="VetAcademia"
-                    className="h-7 w-7 object-contain"
-                  />
-                </div>
-                <div>
-                  <p className="font-bold text-base leading-tight">VetAcademia</p>
-                  <p className="text-xs text-muted-foreground">
-                    Veterinary Education Hub
-                  </p>
+          <SheetContent side="right" className="w-[88vw] max-w-[360px] p-0 overflow-y-auto bg-gradient-to-b from-white via-white to-muted/10 [&>button:first-of-type]:hidden">
+            <div className="flex flex-col min-h-full">
+              {/* Sticky Header */}
+              <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-primary/5">
+                <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute -inset-1.5 rounded-xl bg-gradient-to-br from-primary/20 to-blue-500/10 blur-md" />
+                      <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-primary/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/favicon-192x192.png" alt="VetAcademia" className="h-7 w-7 object-contain" />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-bold text-[15px] leading-tight flex items-center gap-1.5">VetAcademia <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /></p>
+                      <p className="text-xs text-muted-foreground">Veterinary Education Hub</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setIsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors">
+                    <span className="text-lg leading-none">×</span>
+                  </button>
                 </div>
               </div>
 
-              <form onSubmit={handleSearch} className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search subjects..."
-                  aria-label="Search subjects"
-                  className="w-full pl-9 pr-3 h-10 rounded-xl border border-input bg-muted/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </form>
+              {/* Sticky Search */}
+              <div className="sticky top-[57px] z-10 bg-white/95 backdrop-blur-xl p-3 border-b border-primary/5">
+                <form onSubmit={handleSearch} className="relative">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search subjects, exams..."
+                    aria-label="Search subjects"
+                    className="w-full pl-10 pr-4 h-11 rounded-xl border border-primary/10 bg-gradient-to-r from-muted/30 to-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/20 shadow-sm"
+                  />
+                </form>
+              </div>
 
               <div className="space-y-1.5">
                 <Link
@@ -848,32 +857,37 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="border-t bg-muted/40 p-4 space-y-2">
+              <div className="sticky bottom-0 mt-auto border-t bg-white/98 backdrop-blur-xl p-4 space-y-3 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
                 {isAuthed ? (
                   <>
                     <Link
                       href={isAdmin ? "/admin" : "/dashboard"}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 rounded-xl bg-background px-3 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-accent"
+                      className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-4 py-3 text-sm font-bold shadow-md hover:shadow-lg transition-all"
                     >
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur text-white">
                         <LayoutDashboard className="h-4 w-4" />
                       </span>
                       {isAdmin ? "Admin Panel" : "Dashboard"}
+                      <ArrowRight className="h-4 w-4 ml-auto" />
                     </Link>
-                    {roleLinks.map((rl) => (
-                      <Link
-                        key={rl.href}
-                        href={rl.href}
-                        onClick={() => setIsOpen(false)}
-                        className="block px-3 py-2 rounded-lg text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                      >
-                        {rl.label}
-                      </Link>
-                    ))}
+                    {roleLinks.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {roleLinks.map((rl) => (
+                          <Link
+                            key={rl.href}
+                            href={rl.href}
+                            onClick={() => setIsOpen(false)}
+                            className="block px-3 py-2.5 rounded-xl text-xs font-medium text-center bg-muted/50 border border-primary/5 hover:bg-primary hover:text-white hover:border-primary transition-colors"
+                          >
+                            {rl.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full rounded-xl border-primary/10 hover:bg-red-50 hover:text-red-600 hover:border-red-200 h-11"
                       onClick={() => {
                         setIsOpen(false);
                         signOut();
@@ -885,16 +899,25 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link href="/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link href="/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full">Sign Up</Button>
-                    </Link>
+                    <div className="rounded-xl bg-gradient-to-br from-primary/[0.06] to-blue-50/30 border border-primary/10 p-3">
+                      <p className="text-xs font-bold text-primary text-center">Join 10,000+ Students</p>
+                      <p className="text-[11px] text-muted-foreground text-center mt-1">Start your veterinary journey today</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link href="/login" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" className="w-full rounded-xl h-11 border-primary/15">
+                          Login
+                        </Button>
+                      </Link>
+                      <Link href="/signup" onClick={() => setIsOpen(false)}>
+                        <Button className="w-full rounded-xl h-11 bg-gradient-to-r from-primary to-[#005f48] shadow-md">Sign Up</Button>
+                      </Link>
+                    </div>
                   </>
                 )}
+                <p className="text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" /> Secure • Trusted by 10K+
+                </p>
               </div>
             </div>
           </SheetContent>
