@@ -12,6 +12,7 @@ import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video } fro
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
+import VetContraDrugs from "@/components/vet-contra-drugs";
 import VetArticleFilters from "@/components/vet-article-filters";
 import VetReferenceCollapsible from "@/components/vet-reference-collapsible";
 import VetTestimonials from "@/components/vet-testimonials";
@@ -97,6 +98,9 @@ export default async function VetsPage() {
           <span className="text-xs text-muted-foreground">For on-field use — calculator, protocols, vitals</span>
         </div>
         <VetQuickTools />
+        <div className="mt-4">
+          <VetContraDrugs />
+        </div>
       </div>
 
       {/* Sticky CTA - Desktop */}
