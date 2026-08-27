@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Brain, Clock, FileText, Download, Sparkles, Trophy } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import MockAnalytics from "@/components/mock-analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,10 @@ export default async function MockTestsPage() {
         description="Practice with online mock tests, adaptive quizzes and track your progress — decorative analytics, real exam simulation."
         variant="primary"
       />
+
+      <div className="mt-6">
+        <MockAnalytics />
+      </div>
 
       {tests.length === 0 ? (
         <div className="mt-8 va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-10 text-center">
