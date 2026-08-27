@@ -13,6 +13,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
 import VetContraDrugs from "@/components/vet-contra-drugs";
+import VetCaseSubmit from "@/components/vet-case-submit";
+import VetInteractionChecker from "@/components/vet-interaction-checker";
+import VetVaccinationScheduler from "@/components/vet-vaccination-scheduler";
 import VetArticleFilters from "@/components/vet-article-filters";
 import VetReferenceCollapsible from "@/components/vet-reference-collapsible";
 import VetTestimonials from "@/components/vet-testimonials";
@@ -106,6 +109,13 @@ export default async function VetsPage() {
       {/* Sticky CTA - Desktop */}
       <div className="container mx-auto px-4 mt-6 hidden md:block">
         <VetStickyCta />
+      </div>
+
+      {/* Clinical Tools Grid: Case Submit + Interaction + Vaccination */}
+      <div className="container mx-auto px-4 mt-6 grid lg:grid-cols-3 gap-4">
+        <VetCaseSubmit />
+        <VetInteractionChecker />
+        <VetVaccinationScheduler />
       </div>
 
       {/* Clinical Reference - collapsible, repositioned above articles */}
