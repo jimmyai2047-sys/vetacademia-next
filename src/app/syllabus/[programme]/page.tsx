@@ -14,6 +14,9 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, Sparkles
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import { slugToProgrammeName } from "@/lib/programme";
+import SyllabusProgress from "@/components/syllabus-progress";
+import SyllabusDarkToggle from "@/components/syllabus-dark-toggle";
+import SyllabusBookmarkButton from "@/components/syllabus-bookmark-button";
 
 
 
@@ -211,6 +214,7 @@ export default async function ProgrammePage({
             {subject.paper && <Badge variant="outline" className="text-xs">{subject.paper}</Badge>}
             {subject.year && <Badge variant="outline" className="text-xs">{subject.year}</Badge>}
             {unlocked && <Badge className="bg-emerald-600 text-xs">Owned</Badge>}
+            <SyllabusBookmarkButton subjectId={subject.id} />
           </div>
           {!unlocked && buySlug && (
             <Link
@@ -227,9 +231,12 @@ export default async function ProgrammePage({
 
   return (
       <div className="container mx-auto px-4 py-8">
-        <Link href="/syllabus" className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-6">
-          <ArrowLeft className="h-4 w-4" /> All Programmes
-        </Link>
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/syllabus" className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors">
+            <ArrowLeft className="h-4 w-4" /> All Programmes
+          </Link>
+          <SyllabusDarkToggle />
+        </div>
         <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
@@ -310,6 +317,7 @@ export default async function ProgrammePage({
           </Card>
 
           <div className="space-y-4">
+            <SyllabusProgress total={allSubjects.length} completed={0} lastSubject={null} />
             <Card className="border-primary/20 bg-primary/5">
               <CardContent className="p-5 space-y-3">
                 <h3 className="font-semibold flex items-center gap-2">
