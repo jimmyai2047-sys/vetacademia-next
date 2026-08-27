@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Stethoscope } from "lucide-react";
+import { BookOpen, Stethoscope, Calculator } from "lucide-react";
 
 const tabs = [
+  { id: "quick-tools", label: "Quick Tools", icon: Calculator },
   { id: "reference", label: "Reference Guide", icon: Stethoscope },
   { id: "articles", label: "Articles", icon: BookOpen },
 ];
