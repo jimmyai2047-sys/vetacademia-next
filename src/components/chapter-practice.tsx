@@ -80,7 +80,7 @@ export default function ChapterPractice({
           )}
           {!loading && mcqs.length === 0 && (
             <p className="text-sm text-muted-foreground">
-              Is chapter ke liye abhi MCQs nahi hain.
+              No MCQs available for this chapter yet.
             </p>
           )}
 

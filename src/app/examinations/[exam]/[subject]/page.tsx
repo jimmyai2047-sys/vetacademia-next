@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { planSlugForExam } from "@/lib/plans";
-import { programmeNameToSlug } from "@/lib/programme";
+import { programmeNameToSlug, slugToProgrammeName } from "@/lib/programme";
 import { findDiscipline, getExamGroups, slugify } from "@/lib/exam-subjects";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
@@ -39,7 +39,7 @@ export default async function ExamSubjectPage({
   if (!found) {
     const groups = getExamGroups(exam).filter((g) => g.programmeSlug);
     if (groups.length > 0) {
-      const programmes = groups.map((g) => g.programmeSlug!.toUpperCase());
+      const programmes = groups.map((g) => slugToProgrammeName(g.programmeSlug!));
       const subjects = await prisma.subject.findMany({
         where: { programme: { name: { in: programmes } } },
         select: { name: true, programme: { select: { name: true } } },
@@ -47,7 +47,7 @@ export default async function ExamSubjectPage({
       const match = subjects.find((s) => slugify(s.name) === subjectSlug);
       if (match) {
         const grp = groups.find(
-          (g) => g.programmeSlug!.toUpperCase() === match.programme.name
+          (g) => slugToProgrammeName(g.programmeSlug!) === match.programme.name
         );
         found = {
           discipline: {

@@ -70,7 +70,7 @@ export default function Footer() {
                 <Sparkles className="h-3.5 w-3.5 text-[#d4a843] animate-pulse" />
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">
-                India&apos;s most loved veterinary education platform — A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc, Ph.D ke liye.
+                India&apos;s most loved veterinary education platform — for A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc, Ph.D.
               </p>
             </div>
             <div className="space-y-2.5 pt-2">

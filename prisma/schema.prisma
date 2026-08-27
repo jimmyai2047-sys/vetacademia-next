@@ -125,6 +125,12 @@ model Chapter {
   author   String? // content author / contributor (display only)
   reviewer String? // subject-matter reviewer who verified the content
 
+  description     String? // short summary / description (Hindi + English)
+  metaTitle       String? // SEO <title> override
+  metaDescription String? // SEO meta description
+  slug            String? // URL slug for the chapter page
+  tags            String[] // search / filter tags
+
   sections ChapterSection[]
   mcqs     ChapterMcq[]
 

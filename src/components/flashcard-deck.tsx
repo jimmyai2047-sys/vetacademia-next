@@ -49,6 +49,7 @@ export default function FlashcardDeck({
   const [reviewed, setReviewed] = useState<string[]>([]);
   const [known, setKnown] = useState<string[]>([]);
   const [unknown, setUnknown] = useState<string[]>([]);
+  const [lastPct, setLastPct] = useState<number | null>(null);
 
   const hasDuration = !!duration && duration > 0;
   const totalSeconds = hasDuration ? duration * 60 : 0;
@@ -62,6 +63,19 @@ export default function FlashcardDeck({
     }, 1000);
     return () => clearInterval(t);
   }, [hasDuration]);
+
+  useEffect(() => {
+    fetch("/api/progress?subjectId=flashcards")
+      .then((r) => r.json())
+      .then((d) => {
+        const row = (d.progress || []).find(
+          (p: { subjectId: string; progress: number }) =>
+            p.subjectId === "flashcards"
+        );
+        if (row) setLastPct(row.progress);
+      })
+      .catch(() => {});
+  }, []);
 
   const card = cards[order[index]];
 
@@ -97,13 +111,21 @@ export default function FlashcardDeck({
 
   const mark = (correct: boolean) => {
     markReviewed(card.id);
-    if (correct) {
-      setKnown((prev) => (prev.includes(card.id) ? prev : [...prev, card.id]));
-    } else {
-      setUnknown((prev) =>
-        prev.includes(card.id) ? prev : [...prev, card.id]
-      );
-    }
+    setKnown((prev) =>
+      correct && !prev.includes(card.id) ? [...prev, card.id] : prev
+    );
+    setUnknown((prev) =>
+      !correct && !prev.includes(card.id) ? [...prev, card.id] : prev
+    );
+    // Persist recall % so progress survives refreshes.
+    const k = known.length + (correct ? 1 : 0);
+    const u = unknown.length + (correct ? 0 : 1);
+    const pct = k + u > 0 ? Math.round((k / (k + u)) * 100) : 0;
+    fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subjectId: "flashcards", progress: pct }),
+    }).catch(() => {});
     go(1);
   };
 
@@ -117,6 +139,11 @@ export default function FlashcardDeck({
           <span>
             Card {index + 1} of {order.length}
           </span>
+          {lastPct != null && (
+            <span className="text-[11px] text-muted-foreground">
+              Last session: {lastPct}%
+            </span>
+          )}
           {card.mockTestTitle && (
             <Badge variant="outline">{card.mockTestTitle}</Badge>
           )}

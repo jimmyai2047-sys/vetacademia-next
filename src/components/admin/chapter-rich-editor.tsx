@@ -254,7 +254,7 @@ export default function ChapterRichEditor({
       const html = await compressAllDataUrls(editor.getHTML());
       const payloadSize = new Blob([JSON.stringify({ content: html })]).size;
       if (payloadSize > 4 * 1024 * 1024) {
-        setError("Content bahut bada hai. Kam images ya chhoti images try karein.");
+        setError("Content is too large. Try using fewer or smaller images.");
         setSaving(false);
         return;
       }
@@ -295,10 +295,10 @@ export default function ChapterRichEditor({
           <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
           <div className="flex-1 space-y-1">
             <p className="font-medium text-amber-800 dark:text-amber-200">
-              Word se paste kiya gaya hai — images paste nahi ho sakti.
+              Pasted from Word — images cannot be pasted directly.
             </p>
             <p className="text-xs text-amber-700 dark:text-amber-300">
-              Images ke liye Word file (.docx) select karein — mammoth server-side images extract karega.
+              For images, select a Word file (.docx) — images will be extracted server-side using Mammoth.
             </p>
             <div className="flex items-center gap-2 mt-1">
               <Button

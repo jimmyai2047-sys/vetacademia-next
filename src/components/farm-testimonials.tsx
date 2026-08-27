@@ -2,8 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
 
 const testimonials = [
-  { name: "Ramesh Jat", farm: "Dairy, Nagaur", text: "Feed calculator se roz ₹40 bacha raha hoon — 10L wali gaay ka sahi ration mil gaya.", initials: "RJ" },
-  { name: "Sunita Devi", farm: "Goat Farm, Sikar", text: "PPR vaccine reminder se sab bakriyan time pe lag gayi, mortality zero.", initials: "SD" },
+  { name: "Ramesh Jat", farm: "Dairy, Nagaur", text: "I save ₹40 daily with the feed calculator — got the perfect ration for my 10L cow.", initials: "RJ" },
+  { name: "Sunita Devi", farm: "Goat Farm, Sikar", text: "The PPR vaccine reminder ensured all goats were vaccinated on time — zero mortality.", initials: "SD" },
 ];
 
 export default function FarmTestimonials() {

@@ -117,6 +117,8 @@ export async function canAccessMockTest(test: {
   if (!access.isAuthed) return false;
 
   if (test.exam) {
+    // "other" is a catch-all exam category — open to any signed-in member.
+    if (test.exam === "other") return access.isAuthed;
     return access.examKeys.has(test.exam) || access.examPlanOwned;
   }
 

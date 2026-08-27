@@ -19,6 +19,7 @@ export default async function PostViewerPage({
     { revalidate: 120 }
   )();
   if (!post) notFound();
+  if (!post.published) notFound();
 
   // Proxy private blobs through /api/blob so they render inline (Content-
   // Disposition: inline) inside the in-site viewer iframe and can be served

@@ -69,7 +69,7 @@ export default async function FarmersPage({
         where: { published: true },
         orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
       }),
-      getPublishedPosts("ANIMAL_OWNER"),
+      getPublishedPosts("FARMERS"),
     ]);
 
   let purchasedIds: string[] = [];

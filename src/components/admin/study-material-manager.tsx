@@ -650,8 +650,8 @@ export default function StudyMaterialManager({
               {courses.length === 0 && (
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    No courses found for this subject. Pehle chapters create karein
-                    (course code chapters me set hoga):
+                    No courses found for this subject. Please create chapters first
+                    (course code will be set in chapters):
                   </p>
                   <ChapterBulkImporter subjectId={subject.id} />
                 </div>
@@ -774,8 +774,8 @@ export default function StudyMaterialManager({
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground">
                     No chapters under this
-                    {programme.isPG ? " course" : " subject"} yet. Pehle chapters
-                    create karein:
+                    {programme.isPG ? " course" : " subject"} yet. Please create
+                    chapters first:
                   </p>
                   <ChapterBulkImporter subjectId={subject.id} />
                 </div>

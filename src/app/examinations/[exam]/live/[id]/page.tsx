@@ -43,6 +43,7 @@ export default async function LiveClassPage({
     liveClass.isDemo ||
     (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
     access.examKeys.has(liveClass.exam) ||
+    (liveClass.exam === "other" && access.isAuthed) ||
     access.examPlanOwned;
 
   if (!hasAccess) {

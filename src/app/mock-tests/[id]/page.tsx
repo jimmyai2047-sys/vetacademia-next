@@ -60,7 +60,7 @@ export default async function MockTestAttemptPage({
   if (test.isDemo) {
     hasAccess = true;
   } else if (test.exam) {
-    hasAccess = examOwned;
+    hasAccess = examOwned || (test.exam === "other" && access.isAuthed);
   } else if (progSlug) {
     hasAccess = programmeOwned || yearOwned || subjectOwned;
   } else {

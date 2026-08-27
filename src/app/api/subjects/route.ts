@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { SLUG_TO_PROGRAMME_NAME } from "@/lib/programme";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const programme = (searchParams.get("programme") || "").toUpperCase();
-
-    if (!programme) {
+    const raw = (searchParams.get("programme") || "").trim();
+    if (!raw) {
       return NextResponse.json({ subjects: [] });
     }
+    // Accept either a lowercase slug (mvsc, phd, bvsc, ahdp) or a full DB name.
+    const name = SLUG_TO_PROGRAMME_NAME[raw.toLowerCase()] ?? raw;
 
     const subjects = await prisma.subject.findMany({
-      where: { programme: { name: programme } },
+      where: { programme: { name } },
       select: { name: true },
       orderBy: { name: "asc" },
       distinct: ["name"],

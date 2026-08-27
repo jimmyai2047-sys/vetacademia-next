@@ -68,7 +68,7 @@ export default async function SyllabusPage() {
         badge="VCI MSVE-2016 • ICAR Approved"
         title="Syllabus"
         titleHighlight="Explorer"
-        description="Explore the complete curriculum for all veterinary programmes — A.H.D.P., B.V.Sc & A.H., M.V.Sc, Ph.D ke subjects aur detailed syllabus ek jagah."
+        description="Explore the complete curriculum for all veterinary programmes — subjects and detailed syllabus for A.H.D.P., B.V.Sc & A.H., M.V.Sc, Ph.D in one place."
         variant="primary"
       />
       <div className="va-divider-dots my-8 max-w-[200px] mx-auto"><span /></div>

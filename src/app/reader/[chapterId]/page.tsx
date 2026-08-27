@@ -38,16 +38,17 @@ export default async function ChapterReaderRoute({
       ? access.ownedYearScopes.has(`${programmeSlug}:${chapter.subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(chapter.subjectId);
-  const hasAccess = programmeOwned || yearOwned || subjectOwned;
+  const hasAccess =
+    programmeOwned || yearOwned || subjectOwned || access.isAdmin;
 
   if (!hasAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec]">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold mb-4">Content Locked</h1>
-          <p className="text-muted-foreground mb-6">Is chapter ko dekhne ke liye enrollment zaroori hai.</p>
+          <p className="text-muted-foreground mb-6">Enrollment is required to view this chapter.</p>
           <a href={`/syllabus/${programmeSlug}/${chapter.subjectId}`} className="underline text-primary font-medium">
-            ← Syllabus pe wapas jaayein
+            ← Back to Syllabus
           </a>
         </div>
       </div>

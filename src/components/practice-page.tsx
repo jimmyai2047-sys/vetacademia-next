@@ -79,8 +79,16 @@ export default function PracticePage({
     for (const m of mcqs) {
       if (answers[m.id] === m.correctIndex) s += m.marks;
     }
+    const pct = totalMarks > 0 ? Math.round((s / totalMarks) * 100) : 0;
     setScore(s);
     setSubmitted(true);
+    if (subjectId) {
+      fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subjectId, progress: pct }),
+      }).catch(() => {});
+    }
   }
 
   function reset() {

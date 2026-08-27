@@ -492,7 +492,7 @@ export default async function HomePage() {
                       Try before you enroll — free sample study material, mock tests, adaptive tests, PYQs &amp; flashcards
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      AHDP • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — sab ke demos ek jagah
+                      AHDP • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
                     </p>
                   </div>
                 </div>
@@ -587,7 +587,7 @@ export default async function HomePage() {
               Everything You <span className="va-gradient-text">Need</span>
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Tools aur resources jo aapko topper banate hain — highly decorative, highly functional</p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Tools and resources that make you a topper — highly decorative, highly functional</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, idx) => (
@@ -649,7 +649,7 @@ export default async function HomePage() {
                       </span>
                     </h2>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Veterinary &amp; animal husbandry authorities — ek click me official portals
+                      Veterinary &amp; animal husbandry authorities — official portals in one click
                     </p>
                   </div>
                 </div>
@@ -697,7 +697,7 @@ export default async function HomePage() {
                 Why Choose <span className="va-gradient-text">VetAcademia?</span>
               </h2>
               <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-              <p className="mt-4 text-muted-foreground">Har student ka bharosemand partner — decorative nahi, deliver karne wala platform</p>
+              <p className="mt-4 text-muted-foreground">Every student&apos;s trusted partner — not just decorative, but delivering results</p>
               <div className="relative mt-8 space-y-4">
                 <div className="absolute left-[18px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary via-primary/40 to-transparent hidden sm:block" />
                 {[

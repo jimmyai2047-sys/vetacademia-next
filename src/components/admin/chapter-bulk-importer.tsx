@@ -102,11 +102,11 @@ export default function ChapterBulkImporter({
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.name.endsWith(".docx") && !file.name.endsWith(".doc")) {
-      setError("Sirf .docx file upload karein.");
+      setError("Please upload only .docx files.");
       return;
     }
     if (!title.trim()) {
-      setError("Pehle chapter title daalein.");
+      setError("Please enter the chapter title first.");
       return;
     }
 
@@ -115,7 +115,7 @@ export default function ChapterBulkImporter({
     setDone(false);
 
     try {
-      setStatus("File parse ho rahi hai...");
+      setStatus("Parsing file...");
       const mammoth = (await import("mammoth/mammoth.browser.min.js")).default;
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml(
@@ -131,14 +131,14 @@ export default function ChapterBulkImporter({
       );
       const html = result.value;
       if (!html || html.replace(/<[^>]*>/g, "").trim().length === 0) {
-        setError("File mein content nahi mila.");
+        setError("No content found in the file.");
         return;
       }
 
-      setStatus("Images upload ho rahi hain...");
+      setStatus("Uploading images...");
       const cleanedHtml = await processImagesInHtml(html, (msg) => setStatus(msg));
 
-      setStatus("Chapter save ho raha hai...");
+      setStatus("Saving chapter...");
       const sections = splitHtmlIntoTopicSections(cleanedHtml);
 
       const res = await fetch("/api/admin/chapters", {
@@ -166,18 +166,18 @@ export default function ChapterBulkImporter({
       }
 
       if (!res.ok) {
-        setError((d.error as string) || "Chapter save nahi ho paya.");
+        setError((d.error as string) || "Could not save chapter.");
         return;
       }
 
       const createdIds = (d.createdIds as string[] | undefined) ?? [];
       const chapterId = createdIds[0];
       if (!chapterId) {
-        setError("Chapter ban gaya par id nahi mili.");
+        setError("Chapter was created but ID was not returned.");
         return;
       }
 
-      setStatus(`Sections save ho rahi hain (${sections.length})...`);
+      setStatus(`Saving sections (${sections.length})...`);
       for (let i = 0; i < sections.length; i++) {
         const s = sections[i];
         const sr = await fetch("/api/admin/chapter-sections", {
@@ -215,8 +215,8 @@ export default function ChapterBulkImporter({
         <h2 className="font-semibold">Upload .docx Chapter</h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Word file select karein. Browser mein parse hogi, images automatically
-        upload ho jayengi, aur ek chapter mein save hoga.
+        Select a Word file. It will be parsed in the browser, images will be
+        uploaded automatically, and saved as a single chapter.
       </p>
 
       <div className="space-y-2">
@@ -225,7 +225,7 @@ export default function ChapterBulkImporter({
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. अध्याय 1- राजस्थान में पशुपालन का आर्थिक महत्व"
+          placeholder="e.g. Chapter 1 - Economic Importance of Animal Husbandry in Rajasthan"
           className="w-full rounded-md border bg-background px-3 py-2 text-sm"
           disabled={creating}
         />
@@ -233,7 +233,7 @@ export default function ChapterBulkImporter({
 
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
-        Is subject ke purane chapters replace karein
+        Replace existing chapters for this subject
       </label>
 
       <div className="flex items-center gap-3">
@@ -251,7 +251,7 @@ export default function ChapterBulkImporter({
       )}
       {done && (
         <p className="text-sm text-green-600 flex items-center gap-2">
-          <Check className="h-4 w-4" /> Chapter successfully save ho gaya!
+          <Check className="h-4 w-4" /> Chapter saved successfully!
         </p>
       )}
       {error && (

@@ -5,6 +5,8 @@
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +14,7 @@ import { MessageCircle, Send, ArrowLeft, Sparkles, Users } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Button } from "@/components/ui/button";
 import CommunityQaBadges from "@/components/community-qa-badges";
+import CommunityQa from "@/components/community-qa";
 
 function refLabel(category: string, ref: string) {
   let list = EXAM_REFS;
@@ -27,6 +30,18 @@ export default async function CommunityPage() {
     where: { active: true },
     orderBy: [{ category: "asc" }, { ref: "asc" }, { platform: "asc" }],
   });
+
+  const session = await getServerSession(authOptions);
+  const [doubts, doubtCount, answeredCount] = await Promise.all([
+    prisma.doubt.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 30,
+      include: { user: { select: { name: true } } },
+    }),
+    prisma.doubt.count(),
+    prisma.doubt.count({ where: { status: "ANSWERED" } }),
+  ]);
+  const solvedPct = doubtCount > 0 ? Math.round((answeredCount / doubtCount) * 100) : 0;
 
   // Group by category -> (title+ref) to handle duplicate refs like PSC with two titles
   const grouped = new Map<string, Map<string, { telegram?: typeof links[0]; whatsapp?: typeof links[0]; title: string }>>();
@@ -67,8 +82,13 @@ export default async function CommunityPage() {
 
       <div className="va-divider-dots my-6"><span /></div>
 
-      <div className="mb-6">
-        <CommunityQaBadges />
+      <div className="mb-6 space-y-4">
+        <CommunityQaBadges
+          questions={doubtCount}
+          answered={answeredCount}
+          solvedPct={solvedPct}
+        />
+        <CommunityQa initialDoubts={doubts} isAuthed={!!session?.user} />
       </div>
 
       <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">

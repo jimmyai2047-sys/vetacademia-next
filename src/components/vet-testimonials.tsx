@@ -2,8 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
 
 const testimonials = [
-  { name: "Dr. Rakesh Verma", clinic: "Hisar, Haryana", text: "Dosage calculator ne field me time bachaya — 2 min me dose confirm ho jata hai.", initials: "RV" },
-  { name: "Dr. Anjali Singh", clinic: "Tonk, Rajasthan", text: "Emergency protocols print karke clinic me lagaye — naya assistant bhi manage kar leta hai.", initials: "AS" },
+  { name: "Dr. Rakesh Verma", clinic: "Hisar, Haryana", text: "The dosage calculator saves time in the field — I can confirm the dose in 2 minutes.", initials: "RV" },
+  { name: "Dr. Anjali Singh", clinic: "Tonk, Rajasthan", text: "I printed the emergency protocols and put them up in the clinic — even my new assistant can manage now.", initials: "AS" },
 ];
 
 export default function VetTestimonials() {

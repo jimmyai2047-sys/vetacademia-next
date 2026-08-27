@@ -34,7 +34,7 @@ export default function HomeVideoTestimonials() {
             </div>
           </div>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground line-clamp-2">“VetAcademia ne meri preparation complete change kar di — bilingual notes aur mock tests top notch!”</p>
+            <p className="text-sm text-muted-foreground line-clamp-2">&ldquo;VetAcademia completely transformed my preparation — bilingual notes and mock tests are top-notch!&rdquo;</p>
           </CardContent>
         </Card>
       ))}

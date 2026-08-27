@@ -48,7 +48,16 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const rl = rateLimit(`login:${(req.headers as any)?.["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown"}`, 10, 60_000);
+        const headers = req.headers as any;
+        const xff =
+          typeof headers.get === "function"
+            ? headers.get("x-forwarded-for")
+            : headers["x-forwarded-for"];
+        const clientIp = (Array.isArray(xff) ? xff[0] : (xff as string | undefined) || "unknown")
+          .toString()
+          .split(",")[0]
+          .trim();
+        const rl = rateLimit(`login:${clientIp || "unknown"}`, 10, 60_000);
         if (!rl.allowed) {
           return null;
         }
