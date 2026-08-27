@@ -4,13 +4,11 @@
 };
 
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, ArrowLeft, Sparkles, Users, Lock } from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, Sparkles, Users } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Button } from "@/components/ui/button";
 import CommunityQaBadges from "@/components/community-qa-badges";
@@ -25,24 +23,22 @@ function refLabel(category: string, ref: string) {
 export const dynamic = "force-dynamic";
 
 export default async function CommunityPage() {
-  const session = await getServerSession(authOptions);
   const links = await prisma.communityLink.findMany({
     where: { active: true },
     orderBy: [{ category: "asc" }, { ref: "asc" }, { platform: "asc" }],
   });
 
-  // Group by category -> ref -> { telegram, whatsapp }
+  // Group by category -> (title+ref) to handle duplicate refs like PSC with two titles
   const grouped = new Map<string, Map<string, { telegram?: typeof links[0]; whatsapp?: typeof links[0]; title: string }>>();
   for (const l of links) {
+    const key = `${l.ref}::${l.title}`;
     if (!grouped.has(l.category)) grouped.set(l.category, new Map());
     const catMap = grouped.get(l.category)!;
-    if (!catMap.has(l.ref)) catMap.set(l.ref, { title: l.title, telegram: undefined, whatsapp: undefined });
-    const entry = catMap.get(l.ref)!;
+    if (!catMap.has(key)) catMap.set(key, { title: l.title, telegram: undefined, whatsapp: undefined });
+    const entry = catMap.get(key)!;
     if (l.platform === "TELEGRAM") entry.telegram = l;
     else if (l.platform === "WHATSAPP") entry.whatsapp = l;
   }
-
-  const isLoggedIn = !!session?.user;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -75,17 +71,9 @@ export default async function CommunityPage() {
         <CommunityQaBadges />
       </div>
 
-      {!isLoggedIn && (
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm flex items-center gap-2">
-          <Lock className="h-4 w-4 text-amber-600" />
-          <span>
-            <span className="font-semibold">Login to join</span> — groups side-by-side dikhenge, aapke Programme/Role ke hisaab se filter honge. Purchase karne par premium groups unlock honge.
-          </span>
-          <Link href="/login" className="ml-auto">
-            <Button size="sm" className="rounded-full">Login</Button>
-          </Link>
-        </div>
-      )}
+      <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">
+        <span className="font-semibold">Login to unlock more</span> — side-by-side Telegram + WhatsApp. Purchase karne par premium Course groups unlock honge.
+      </div>
 
       {grouped.size === 0 ? (
         <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 bg-muted/40 text-center shadow-sm">
@@ -112,80 +100,71 @@ export default async function CommunityPage() {
               </div>
 
               <div className="space-y-4">
-                {Array.from(refMap.entries()).map(([ref, pair]) => (
-                  <div key={ref} className="rounded-[1.5rem] border border-primary/5 bg-white p-3 shadow-sm">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-sm font-bold">{pair.title}</span>
-                      <Badge variant="outline" className="rounded-full text-[11px]">{refLabel(category, ref)}</Badge>
-                      {!isLoggedIn && <Lock className="h-3 w-3 text-muted-foreground ml-auto" />}
+                {Array.from(refMap.entries()).map(([key, pair]) => {
+                  const ref = key.split("::")[0];
+                  return (
+                    <div key={key} className="rounded-[1.5rem] border border-primary/5 bg-white p-3 shadow-sm">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-sm font-bold">{pair.title}</span>
+                        <Badge variant="outline" className="rounded-full text-[11px]">{refLabel(category, ref)}</Badge>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {pair.telegram ? (
+                          <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border-primary/5 bg-sky-50/50 shadow-sm">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-sm flex items-center gap-2">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-sky-600">
+                                  <Send className="h-4 w-4" />
+                                </span>
+                                Telegram
+                                <Badge variant="secondary" className="ml-auto rounded-full text-[11px]">Telegram</Badge>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-between gap-2">
+                              <span className="text-xs text-muted-foreground truncate">{pair.telegram.title}</span>
+                              <a
+                                href={pair.telegram.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-sky-600 to-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-md hover:shadow-lg"
+                              >
+                                Join <Send className="h-3.5 w-3.5" />
+                              </a>
+                            </CardContent>
+                          </Card>
+                        ) : (
+                          <div className="rounded-[1.25rem] border border-dashed p-4 text-center text-xs text-muted-foreground">No Telegram group</div>
+                        )}
+                        {pair.whatsapp ? (
+                          <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border-primary/5 bg-green-50/50 shadow-sm">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-sm flex items-center gap-2">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-600">
+                                  <MessageCircle className="h-4 w-4" />
+                                </span>
+                                WhatsApp
+                                <Badge variant="secondary" className="ml-auto rounded-full text-[11px] bg-green-100 text-green-700">WhatsApp</Badge>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-between gap-2">
+                              <span className="text-xs text-muted-foreground truncate">{pair.whatsapp.title}</span>
+                              <a
+                                href={pair.whatsapp.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-1.5 text-xs font-semibold text-white shadow-md hover:shadow-lg"
+                              >
+                                Join <MessageCircle className="h-3.5 w-3.5" />
+                              </a>
+                            </CardContent>
+                          </Card>
+                        ) : (
+                          <div className="rounded-[1.25rem] border border-dashed p-4 text-center text-xs text-muted-foreground">No WhatsApp group</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {/* Telegram */}
-                      {pair.telegram ? (
-                        <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border-primary/5 bg-sky-50/50 shadow-sm">
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-sky-600">
-                                <Send className="h-4 w-4" />
-                              </span>
-                              Telegram
-                              <Badge variant="secondary" className="ml-auto rounded-full text-[11px]">Telegram</Badge>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="flex items-center justify-between gap-2">
-                            <span className="text-xs text-muted-foreground truncate">{pair.telegram.title}</span>
-                            <a
-                              href={pair.telegram.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold shadow-md transition-all ${isLoggedIn ? "bg-gradient-to-r from-sky-600 to-blue-600 text-white hover:shadow-lg" : "bg-muted text-muted-foreground cursor-not-allowed"}`}
-                              aria-disabled={!isLoggedIn}
-                              onClick={(e) => { if (!isLoggedIn) e.preventDefault(); }}
-                            >
-                              Join <Send className="h-3.5 w-3.5" />
-                            </a>
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <div className="rounded-[1.25rem] border border-dashed p-4 text-center text-xs text-muted-foreground">No Telegram group</div>
-                      )}
-                      {/* WhatsApp */}
-                      {pair.whatsapp ? (
-                        <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border-primary/5 bg-green-50/50 shadow-sm">
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-600">
-                                <MessageCircle className="h-4 w-4" />
-                              </span>
-                              WhatsApp
-                              <Badge variant="secondary" className="ml-auto rounded-full text-[11px] bg-green-100 text-green-700">WhatsApp</Badge>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="flex items-center justify-between gap-2">
-                            <span className="text-xs text-muted-foreground truncate">{pair.whatsapp.title}</span>
-                            <a
-                              href={pair.whatsapp.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold shadow-md transition-all ${isLoggedIn ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:shadow-lg" : "bg-muted text-muted-foreground cursor-not-allowed"}`}
-                              aria-disabled={!isLoggedIn}
-                              onClick={(e) => { if (!isLoggedIn) e.preventDefault(); }}
-                            >
-                              Join <MessageCircle className="h-3.5 w-3.5" />
-                            </a>
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <div className="rounded-[1.25rem] border border-dashed p-4 text-center text-xs text-muted-foreground">No WhatsApp group</div>
-                      )}
-                    </div>
-                    {!isLoggedIn && (
-                      <p className="text-[11px] text-muted-foreground mt-2 flex items-center gap-1">
-                        <Lock className="h-3 w-3" /> Login karein tabhi Join active hoga. Purchase karne par premium Course groups unlock honge.
-                      </p>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ))}
