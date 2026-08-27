@@ -31,6 +31,9 @@ import {
 import FarmersExplorer from "@/components/farmers-explorer";
 import { BookOpen, Pill, Newspaper, PhoneCall } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import FarmQuickTools from "@/components/farm-quick-tools";
+import FarmTestimonials from "@/components/farm-testimonials";
+import FarmStickyHelpline from "@/components/farm-sticky-helpline";
 
 const SECTIONS = [
   { id: "guides-reports", label: "Guides & Reports", icon: BookOpen },
@@ -85,7 +88,7 @@ export default async function FarmersPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pb-16 md:pb-8">
       {unlocked && (
         <div className="va-card-hover mb-6 rounded-[1.25rem] border border-emerald-500/20 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 p-4 text-center shadow-sm">
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600 text-white px-3 py-1 text-xs font-bold">
@@ -121,6 +124,25 @@ export default async function FarmersPage({
         <Stat icon={Syringe} color="text-emerald-600" bg="bg-emerald-50" value={String(vaccination.length)} label="Vaccines" />
         <Stat icon={FileBarChart} color="text-orange-600" bg="bg-orange-50" value={String(deworming.length)} label="Deworming" />
         <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={String(reports.length)} label="Project Reports" />
+      </div>
+
+      {/* Quick Tools */}
+      <div className="mt-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge variant="secondary" className="rounded-full bg-amber-50 text-amber-700 border-amber-200 gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" /> Quick Tools
+          </Badge>
+          <span className="text-xs text-muted-foreground">For daily use — feed, symptom, profit</span>
+        </div>
+        <FarmQuickTools />
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="font-bold text-sm">Trusted by farmers</h3>
+          <Badge variant="outline" className="rounded-full text-xs">4.8/5</Badge>
+        </div>
+        <FarmTestimonials />
       </div>
 
       {/* Sticky in-page section nav - glass */}
@@ -279,6 +301,7 @@ export default async function FarmersPage({
           </div>
         </CardContent>
       </Card>
+      <FarmStickyHelpline />
     </div>
   );
 }
