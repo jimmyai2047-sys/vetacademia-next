@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Brain, Plus, Crown, Sparkles, Shield, Award } from "lucide-react";
+import { ArrowLeft, FileText, Brain, Plus, Crown, Sparkles, Shield, Award, Eye, ExternalLink, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -78,8 +78,65 @@ export default async function ExamContentPage({
               </p>
             </div>
           </div>
-          <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg shrink-0">
-            <Award className="h-6 w-6" />
+          <div className="hidden md:flex items-center gap-2">
+            {(() => {
+              const examMap: Record<string, string> = {
+                "veterinary-officer": "psc",
+                "livestock-assistant": "psc",
+                "icar-jrf-srf": "icar-entrance",
+                "icar-ars-net": "ars",
+                "icar-net": "net",
+              };
+              const examSlug = examMap[track] || track;
+              return (
+                <Link href={`/examinations/${examSlug}`} target="_blank" rel="noopener noreferrer">
+                  <Button className="rounded-xl bg-white text-[#003d2e] hover:bg-white/90 font-semibold shadow-lg gap-2">
+                    <Eye className="h-4 w-4" /> Preview as Student
+                    <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+                  </Button>
+                </Link>
+              );
+            })()}
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg shrink-0">
+              <Award className="h-6 w-6" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Structure Info */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-amber-200/60 bg-gradient-to-br from-amber-50 via-white to-orange-50/50 shadow-sm p-5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-orange-500" />
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm shrink-0">
+            <Info className="h-4 w-4" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm text-amber-900 flex items-center gap-2">
+              Student View — Exam Content Structure
+              {(() => {
+                const examMap: Record<string, string> = {
+                  "veterinary-officer": "psc",
+                  "livestock-assistant": "psc",
+                  "icar-jrf-srf": "icar-entrance",
+                  "icar-ars-net": "ars",
+                  "icar-net": "net",
+                };
+                const examSlug = examMap[track] || track;
+                return (
+                  <Link href={`/examinations/${examSlug}`} target="_blank" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                    <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
+                  </Link>
+                );
+              })()}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              <strong>Track: {trackInfo.label}</strong> — Student ko <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/examinations/[exam]/[subject]</code> pe ye content dikhega: <Badge variant="outline" className="rounded-full text-[10px]">Previous Year Papers</Badge> (Post.track = {trackInfo.subs.map(s=>s.tag).join(", ")}) + <Badge variant="outline" className="rounded-full text-[10px]">Mock/Adaptive Tests</Badge> (MockTest.track = same) + <Badge variant="outline" className="rounded-full text-[10px]">Study Materials</Badge> (ExamMaterial.category = {materialSections.map(s=>s.category).join(", ")}, organised Subject → {materialSections[0]?.category === "ARS" || materialSections[0]?.category === "NET" ? "Course" : "Chapter/Unit"}). Har section public <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/examinations/psc</code> etc. pe group-wise render hota hai.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5">Subs: {trackInfo.subs.map(s=>s.label).join(", ")}</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border px-2 py-0.5">Categories: {materialSections.map(s=>s.category).join(", ") || "—"}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -121,18 +178,21 @@ export default async function ExamContentPage({
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">{p.title}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between gap-2">
                       <Badge variant="outline" className="rounded-full">{p.exam || "—"}</Badge>
-                      {p.signedUrl && (
-                        <a
-                          href={p.signedUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary hover:underline font-medium"
-                        >
-                          Download
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {p.signedUrl && (
+                          <a
+                            href={p.signedUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline font-medium"
+                          >
+                            Download
+                          </a>
+                        )}
+                        <span className="text-[11px] text-muted-foreground">Pos: /examinations/... → Papers</span>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -168,14 +228,23 @@ export default async function ExamContentPage({
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">{t.title}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-center justify-between">
+                    <CardContent className="flex items-center justify-between gap-2">
                       <Badge variant="outline" className="rounded-full">{t._count.questions} Qs</Badge>
-                      <Link
-                        href={`/admin/mock-tests/${t.id}`}
-                        className="text-xs text-primary hover:underline font-medium"
-                      >
-                        Edit
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/mock-tests/${t.id}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                        >
+                          <Eye className="h-3 w-3" /> Preview
+                        </Link>
+                        <Link
+                          href={`/admin/mock-tests/${t.id}`}
+                          className="text-xs text-muted-foreground hover:text-primary hover:underline font-medium"
+                        >
+                          Edit
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}

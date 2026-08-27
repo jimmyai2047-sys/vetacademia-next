@@ -33,6 +33,9 @@ import {
   Crown,
   Sparkles,
   Shield,
+  Eye,
+  ExternalLink,
+  Info,
 } from "lucide-react";
 
 
@@ -127,6 +130,22 @@ export default async function ContentPage() {
         </div>
       </div>
 
+      {/* Structure Info */}
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-amber-200/60 bg-gradient-to-br from-amber-50 via-white to-orange-50/50 shadow-sm p-4">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-orange-500" />
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm shrink-0">
+            <Info className="h-4 w-4" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm text-amber-900">Preview + Structure Info</h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              <strong>Programmes</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]</code> (public syllabus) · <strong>Subjects</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]/[subjectId]</code> (Theory/Practical accordion, order = <code>unitNumber ASC</code>) · <strong>Examinations</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/examinations/[exam]</code> (prev year papers + mock tests + study materials). Har card pe <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> Preview</span> se student view ek click me khulega (Admin ko full access hai — no purchase needed).
+            </p>
+          </div>
+        </div>
+      </div>
+
       <Tabs defaultValue="programmes">
         <TabsList className="rounded-full bg-muted p-1">
           <TabsTrigger value="programmes" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-white">Programmes ({programmes.length})</TabsTrigger>
@@ -140,9 +159,9 @@ export default async function ContentPage() {
             {programmes.map((prog) => {
               const Icon = iconMap[prog.name] || BookOpen;
               const color = colorMap[prog.name] || "text-primary";
+              const slug = prog.name.toLowerCase();
               return (
-                <Link key={prog.id} href={`/admin/content/${prog.name.toLowerCase()}`}>
-                  <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all cursor-pointer">
+                  <Card key={prog.id} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
@@ -156,20 +175,27 @@ export default async function ContentPage() {
                       <CardDescription className="text-xs">{prog.fullName}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
+                      <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary" className="rounded-full">
                             {prog._count.subjects} Subjects
                           </Badge>
                           <Badge variant="outline" className="rounded-full">
                             {prog._count.departments} Depts
                           </Badge>
-                        </div>
-                        <Button variant="outline" size="sm" className="rounded-full border-primary/10">Manage</Button>
                       </div>
+                      <div className="flex items-center gap-1.5">
+                        <Link href={`/admin/content/${slug}`}>
+                          <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
+                        </Link>
+                        <Link href={`/syllabus/${slug}`} target="_blank" rel="noopener noreferrer">
+                          <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
+                            <Eye className="h-3 w-3" /> Preview
+                          </Button>
+                        </Link>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-2">Pos: <code className="px-1 py-0.5 bg-muted rounded">/syllabus/{slug}</code></p>
                     </CardContent>
                   </Card>
-                </Link>
               );
             })}
           </div>
@@ -201,6 +227,7 @@ export default async function ContentPage() {
                     <TableHead>Year</TableHead>
                     <TableHead>Chapters</TableHead>
                     <TableHead>Tests</TableHead>
+                    <TableHead>Preview</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -211,7 +238,9 @@ export default async function ContentPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    subjects.map((subject) => (
+                    subjects.map((subject) => {
+                      const progSlug = subject.programme.name.toLowerCase().includes("ahdp") ? "ahdp" : subject.programme.name.toLowerCase().includes("ph.d") ? "phd" : subject.programme.name.toLowerCase().includes("m.v") ? "mvsc" : "bvsc";
+                      return (
                       <TableRow key={subject.id} className="hover:bg-primary/[0.04]">
                         <TableCell className="font-mono text-sm">{subject.code || "-"}</TableCell>
                         <TableCell className="font-medium">{subject.name}</TableCell>
@@ -221,8 +250,14 @@ export default async function ContentPage() {
                         <TableCell>{subject.year || "-"}</TableCell>
                         <TableCell>{subject._count.chapters}</TableCell>
                         <TableCell>{subject._count.mockTests}</TableCell>
+                        <TableCell>
+                          <Link href={`/syllabus/${progSlug}/${subject.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                            <Eye className="h-3 w-3" /> View
+                          </Link>
+                        </TableCell>
                       </TableRow>
-                    ))
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>
@@ -288,26 +323,42 @@ export default async function ContentPage() {
 
         <TabsContent value="examinations" className="space-y-4 mt-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {EXAM_CONTENT_TRACKS.map((track) => (
-              <Link key={track.key} href={`/admin/content/exam/${track.key}`}>
-                <Card className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all cursor-pointer">
+            {EXAM_CONTENT_TRACKS.map((track) => {
+              const examMap: Record<string, string> = {
+                "veterinary-officer": "psc",
+                "livestock-assistant": "psc",
+                "icar-jrf-srf": "icar-entrance",
+                "icar-ars-net": "ars",
+                "icar-net": "net",
+              };
+              const examSlug = examMap[track.key] || "other";
+              return (
+                <Card key={track.key} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4a843] via-primary to-[#003d2e] opacity-60 group-hover:opacity-100 transition-opacity" />
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#d4a843]/15 border border-[#d4a843]/20">
                         <Award className="h-4 w-4 text-[#9a7b2e]" />
                       </span>
-                      <CardTitle className="text-lg">{track.label}</CardTitle>
+                      <CardTitle className="text-lg leading-tight">{track.label}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="outline" size="sm" className="rounded-full border-primary/10">
-                      Manage
-                    </Button>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Link href={`/admin/content/exam/${track.key}`}>
+                        <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
+                      </Link>
+                      <Link href={`/examinations/${examSlug}`} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
+                          <Eye className="h-3 w-3" /> Preview
+                        </Button>
+                      </Link>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-2">Pos: <code className="px-1 py-0.5 bg-muted rounded">/examinations/{examSlug}</code></p>
                   </CardContent>
                 </Card>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </TabsContent>
       </Tabs>
