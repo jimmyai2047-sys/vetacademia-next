@@ -5,6 +5,7 @@ import { BrandLogo } from "@/components/layout/brand-logo";
 import VisitorCounter from "@/components/visitor-counter";
 import ChatbotLazy from "@/components/chatbot-lazy";
 import ImportantLinkCard from "@/components/important-link-card";
+import HomeVideoTestimonials from "@/components/home-video-testimonials";
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
@@ -223,6 +224,29 @@ const importantLinks = [
   },
 ];
 
+const getHomeStats = unstable_cache(
+  async () => {
+    try {
+      const [users, subjects, programmesCount, experts] = await Promise.all([
+        prisma.user.count().catch(() => 10000),
+        prisma.subject.count().catch(() => 100),
+        prisma.programme.count().catch(() => 4),
+        prisma.user.count({ where: { role: { in: ["EXPERT", "VET", "ADMIN"] } } }).catch(() => 50),
+      ]);
+      return {
+        programmes: String(programmesCount || 4),
+        subjects: subjects > 100 ? `${subjects}+` : "100+",
+        students: users > 1000 ? `${Math.floor(users / 1000)}K+` : "10K+",
+        experts: String(experts || 50) + "+",
+      };
+    } catch {
+      return { programmes: "4", subjects: "100+", students: "10K+", experts: "50+" };
+    }
+  },
+  ["home-stats"],
+  { revalidate: 120 }
+);
+
 // Cache the homepage's read-only data so repeated requests (and the many
 // server-rendered visits) reuse the result instead of hitting the DB every
 // time. Pages stay dynamic; only the expensive queries are cached.
@@ -268,8 +292,7 @@ const getHomePosts = unstable_cache(
 );
 
 export default async function HomePage() {
-  const featured = await getHomeTestimonials();
-  const posts = await getHomePosts();
+  const [featured, posts, liveStats] = await Promise.all([getHomeTestimonials(), getHomePosts(), getHomeStats()]);
 
   return (
     <div className="flex flex-col">
@@ -415,7 +438,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Stats - Highly Decorative */}
+      {/* Stats - Highly Decorative - LIVE */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48] text-white">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '20px 20px' }} />
         <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -423,15 +446,20 @@ export default async function HomePage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-3/4 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <div className="container relative mx-auto px-4 py-10 md:py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x divide-white/10">
-            {stats.map((stat, idx) => (
+            {[
+              { label: "Programmes", value: liveStats.programmes, icon: GraduationCap },
+              { label: "Subjects", value: liveStats.subjects, icon: BookOpen },
+              { label: "Students", value: liveStats.students, icon: Users },
+              { label: "Experts", value: liveStats.experts, icon: Star },
+            ].map((stat, idx) => (
               <div key={stat.label} className="relative text-center px-4 py-2 group">
                 <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-white group-hover:text-primary transition-all duration-300">
-                  {idx === 0 && <GraduationCap className="h-5 w-5" />}
-                  {idx === 1 && <BookOpen className="h-5 w-5" />}
-                  {idx === 2 && <Users className="h-5 w-5" />}
-                  {idx === 3 && <Star className="h-5 w-5" />}
+                  <stat.icon className="h-5 w-5" />
                 </div>
-                <div className="text-3xl md:text-4xl font-extrabold tracking-tight">{stat.value}</div>
+                <div className="text-3xl md:text-4xl font-extrabold tracking-tight flex items-center justify-center gap-2">
+                  {stat.value}
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                </div>
                 <div className="mt-1 text-xs md:text-sm font-medium tracking-widest uppercase text-white/70">{stat.label}</div>
                 <div className="mx-auto mt-2 h-0.5 w-8 rounded-full bg-[#d4a843] opacity-60 group-hover:w-12 transition-all duration-300" />
               </div>
@@ -499,7 +527,7 @@ export default async function HomePage() {
           <div className="mt-12 grid md:grid-cols-2 gap-6 md:gap-7">
             {programmes.map((programme) => (
               <Link key={programme.name} href={programme.href} className="group">
-                <Card className="va-card-hover h-full overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/10">
+                <Card className="va-card-hover h-full overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-2xl hover:border-primary/20 hover:-translate-y-1 transition-all duration-300">
                   <div className="relative h-56 overflow-hidden">
                     <Image
                       src={programme.image}
@@ -791,6 +819,10 @@ export default async function HomePage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+          <div className="mt-8">
+            <h3 className="text-center font-bold mb-4">Video Testimonials</h3>
+            <HomeVideoTestimonials />
           </div>
           <div className="mt-10 text-center">
             <Link href="/testimonials" className="inline-block">
