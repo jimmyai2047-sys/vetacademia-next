@@ -101,9 +101,13 @@ function QuestionText({ text }: { text: string }) {
         continue;
       }
       const isHeaderRow =
-        (line.includes("सूची") || line.includes("List")) &&
+        (line.includes("सूची") ||
+          line.includes("List") ||
+          line.includes("Column") ||
+          line.includes("लेखक") ||
+          line.includes("Author")) &&
         (line.includes("→") || line.includes(":")) &&
-        !/^(?:[A-D]|I{1,3}V?|IV|VI{0,3}|[0-9]+)[\.\s]/.test(line);
+        !/^(?:\(?[A-D]\)?|\(?I{1,3}V?\)?|\(?IV\)?|\(?[0-9]+\)?)[\.\s\)]/.test(line);
       if (isHeaderRow) {
         // Header like "सूची–I (नदी) : सूची–II (सहायक नदी) :" or "List–I  →  List–II"
         // Split into two header cols
@@ -147,7 +151,7 @@ function QuestionText({ text }: { text: string }) {
           continue;
         }
       }
-      const isListRow = line.includes("→") && /^(?:[A-D]|I{1,3}V?|IV|VI{0,3}|[0-9]+)[\.\s]/.test(line);
+      const isListRow = line.includes("→") && /^(?:\(?[A-D]\)?|\(?I{1,3}V?\)?|\(?IV\)?|\(?[0-9]+\)?)[\.\s\)]/.test(line);
       if (isListRow) {
         const cols = line.split("→").map((s) => s.trim());
         if (cols.length >= 2) {
