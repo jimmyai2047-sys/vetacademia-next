@@ -482,7 +482,7 @@ export default function MockTestPlayer({
                             disabled={submitted}
                           />
                           <span className="text-sm">
-                            {String.fromCharCode(65 + oi)}. {opt}
+                            {oi + 1}). {opt}
                           </span>
                           {showCorrect && (
                             <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
@@ -615,7 +615,7 @@ function AdaptiveQuestion({
                 onChange={() => onSelect(oi)}
               />
               <span className="text-sm">
-                {String.fromCharCode(65 + oi)}. {opt}
+                {oi + 1}). {opt}
               </span>
             </label>
           );
