@@ -58,11 +58,26 @@ function QuestionText({ text }: { text: string }) {
     let tableRows: string[][] = [];
     const flushTable = () => {
       if (tableRows.length > 0) {
+        const isHeaderRow = (row: string[]) =>
+          row.some((c) => /सूची|List|लेखक|Author|List–I|सूची–I/.test(c));
+        const header = tableRows.length > 0 && isHeaderRow(tableRows[0]) ? tableRows[0] : null;
+        const bodyRows = header ? tableRows.slice(1) : tableRows;
         els.push(
           <div key={`${keyPrefix}-tbl-${els.length}`} className="my-2 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
+              {header && (
+                <thead>
+                  <tr className="bg-muted">
+                    {header.map((c, j) => (
+                      <th key={j} className="px-3 py-1.5 border-r last:border-r-0 text-left font-semibold">
+                        {c}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
               <tbody>
-                {tableRows.map((cols, idx) => (
+                {bodyRows.map((cols, idx) => (
                   <tr key={idx} className="border-b last:border-0">
                     {cols.map((c, j) => (
                       <td key={j} className="px-3 py-1.5 border-r last:border-r-0 align-top">
@@ -85,6 +100,53 @@ function QuestionText({ text }: { text: string }) {
         els.push(<div key={`${keyPrefix}-br-${els.length}`} className="h-2" />);
         continue;
       }
+      const isHeaderRow =
+        (line.includes("सूची") || line.includes("List")) &&
+        (line.includes("→") || line.includes(":")) &&
+        !/^(?:[A-D]|I{1,3}V?|IV|VI{0,3}|[0-9]+)[\.\s]/.test(line);
+      if (isHeaderRow) {
+        // Header like "सूची–I (नदी) : सूची–II (सहायक नदी) :" or "List–I  →  List–II"
+        // Split into two header cols
+        let hcols: string[] = [];
+        if (line.includes("→")) hcols = line.split("→").map((s) => s.trim());
+        else if (line.includes(":")) {
+          // For "सूची–I (नदी) : सूची–II (सहायक नदी) :" split by " : "
+          const parts = line.split(":");
+          // Reconstruct: first colon separates the two headers, but there are multiple colons
+          // Simpler: try split by " : " that separates List-I and List-II
+          const m = line.match(/^(.*?सूची[^\:]*?)\s*:\s*(.*?सूची.*)$/);
+          const m2 = line.match(/^(.*?List[^\:]*?)\s*:\s*(.*?List.*)$/);
+          if (m) hcols = [m[1].trim(), m[2].trim()];
+          else if (m2) hcols = [m2[1].trim(), m2[2].trim()];
+          else hcols = line.split(":").map((s) => s.trim()).filter(Boolean);
+          if (hcols.length === 1 && line.includes(":")) {
+            // Fallback: split by " : " that separates the two lists
+            const idx = line.indexOf(":");
+            const before = line.slice(0, idx).trim();
+            const after = line.slice(idx + 1).trim();
+            // Find second header start
+            const listIdx = after.search(/सूची|List/);
+            if (listIdx !== -1) {
+              hcols = [before + " :", after];
+            } else {
+              hcols = [before, after];
+            }
+          }
+        }
+        // Ensure we have at least 2 cols for header, if not, treat as plain
+        if (hcols.length >= 2) {
+          // Header row with bold and background
+          flushTable();
+          // Start a new table with header row
+          tableRows.push(hcols.map((c) => c.replace(/^List–I\s*→\s*List–II.*$/, "List–I").replace(/^सूची.*/, (m) => m)));
+          // Actually, for header like "List–I  →  List–II", split by "→" gives ["List–I", "List–II"]
+          // For "सूची–I (नदी) : सूची–II (सहायक नदी) :", split by " : " gives two headers
+          // Let's just push as header row with distinct styling
+          // We'll push and then continue, but we need to ensure the header row is rendered as <th> not <td>
+          // For now, push as normal row but will be styled as header via flush
+          continue;
+        }
+      }
       const isListRow = line.includes("→") && /^(?:[A-D]|I{1,3}V?|IV|VI{0,3}|[0-9]+)[\.\s]/.test(line);
       if (isListRow) {
         const cols = line.split("→").map((s) => s.trim());
@@ -93,8 +155,6 @@ function QuestionText({ text }: { text: string }) {
           continue;
         }
       }
-      // Detect header like "सूची–I (नदी) : सूची–II (सहायक नदी) :" or "List–I (River) : List–II (Tributary) :"
-      // Render it as plain centered header, not as table
       flushTable();
       els.push(
         <div key={`${keyPrefix}-ln-${els.length}`} className="leading-relaxed">
