@@ -22,6 +22,104 @@ type Q = {
 
 type ReviewEntry = { correctAnswer: number; explanation: string | null };
 
+function QuestionText({ text }: { text: string }) {
+  const DEVA = /[०-९\u0900-\u097F]/;
+  const hasHindi = (s: string) => DEVA.test(s);
+  // Split Hindi / English if both present (stored as "Hindi\nEnglish")
+  const rawLines = text.split("\n");
+  let hiLines: string[] = [];
+  let enLines: string[] = [];
+  let seenDevanagari = false;
+  let seenLatinAfterHindi = false;
+  for (const l of rawLines) {
+    if (hasHindi(l)) {
+      if (seenLatinAfterHindi) {
+        // Already saw English after Hindi, this is again Hindi? Should not happen
+        hiLines.push(l);
+      } else {
+        hiLines.push(l);
+        seenDevanagari = true;
+      }
+    } else if (l.trim() && seenDevanagari && /[A-Za-z]/.test(l)) {
+      seenLatinAfterHindi = true;
+      enLines.push(l);
+    } else if (seenDevanagari && enLines.length > 0) {
+      enLines.push(l);
+    } else if (!seenDevanagari) {
+      enLines.push(l);
+    } else {
+      hiLines.push(l);
+    }
+  }
+  const hasBilingual = hiLines.length > 0 && enLines.length > 0 && hiLines.some((l) => hasHindi(l)) && enLines.some((l) => /[A-Za-z]/.test(l));
+  // Helper to render a block (either Hi or En) with list support
+  const renderBlock = (blockLines: string[], keyPrefix: string) => {
+    const els: React.ReactNode[] = [];
+    let tableRows: string[][] = [];
+    const flushTable = () => {
+      if (tableRows.length > 0) {
+        els.push(
+          <div key={`${keyPrefix}-tbl-${els.length}`} className="my-2 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <tbody>
+                {tableRows.map((cols, idx) => (
+                  <tr key={idx} className="border-b last:border-0">
+                    {cols.map((c, j) => (
+                      <td key={j} className="px-3 py-1.5 border-r last:border-r-0 align-top">
+                        {c}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        tableRows = [];
+      }
+    };
+    for (const raw of blockLines) {
+      const line = raw.trim();
+      if (!line) {
+        flushTable();
+        els.push(<div key={`${keyPrefix}-br-${els.length}`} className="h-2" />);
+        continue;
+      }
+      const isListRow = line.includes("→") && /^(?:[A-D]|I{1,3}V?|IV|VI{0,3}|[0-9]+)[\.\s]/.test(line);
+      if (isListRow) {
+        const cols = line.split("→").map((s) => s.trim());
+        if (cols.length >= 2) {
+          tableRows.push(cols);
+          continue;
+        }
+      }
+      // Detect header like "सूची–I (नदी) : सूची–II (सहायक नदी) :" or "List–I (River) : List–II (Tributary) :"
+      // Render it as plain centered header, not as table
+      flushTable();
+      els.push(
+        <div key={`${keyPrefix}-ln-${els.length}`} className="leading-relaxed">
+          {line}
+        </div>
+      );
+    }
+    flushTable();
+    return <div className="space-y-1">{els}</div>;
+  };
+  if (hasBilingual) {
+    return (
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="border-r-0 md:border-r md:pr-4">
+          {renderBlock(hiLines, "hi")}
+        </div>
+        <div className="md:pl-2">
+          {renderBlock(enLines, "en")}
+        </div>
+      </div>
+    );
+  }
+  return renderBlock(rawLines, "single");
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -293,8 +391,8 @@ export default function MockTestPlayer({
               return (
                 <Card key={q.id}>
                   <CardHeader>
-                    <CardTitle className="text-base">
-                      {i + 1}. {q.text}
+                    <CardTitle className="text-base whitespace-pre-line">
+                      {i + 1}. <QuestionText text={q.text} />
                       <Badge variant="outline" className="ml-2 text-xs">
                         {q.marks} marks
                       </Badge>
@@ -431,8 +529,8 @@ function AdaptiveQuestion({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">
-            {index}. {q.text}
+          <CardTitle className="text-base whitespace-pre-line">
+            {index}. <QuestionText text={q.text} />
             <Badge variant="outline" className="ml-2 text-xs">
               {q.marks} marks
             </Badge>

@@ -52,6 +52,9 @@ export default async function PreviousYearPaperPage({
   let hasAccess: boolean;
   if (test.isDemo) {
     hasAccess = true;
+  } else if (test.kind === "PREVIOUS_YEAR") {
+    // Previous year papers are free study resources for everyone.
+    hasAccess = true;
   } else if (test.exam) {
     hasAccess = examOwned;
   } else if (progSlug) {

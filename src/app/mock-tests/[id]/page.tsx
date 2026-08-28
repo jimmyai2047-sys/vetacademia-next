@@ -59,6 +59,9 @@ export default async function MockTestAttemptPage({
   let hasAccess: boolean;
   if (test.isDemo) {
     hasAccess = true;
+  } else if (test.kind === "PREVIOUS_YEAR") {
+    // Previous year papers are free for everyone (browsable as mock tests)
+    hasAccess = true;
   } else if (test.exam) {
     hasAccess = examOwned || (test.exam === "other" && access.isAuthed);
   } else if (progSlug) {

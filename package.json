@@ -28,7 +28,6 @@
     "dotenv": "^17.4.2",
     "expo-server-sdk": "^3.7.0",
     "lucide-react": "^1.31.0",
-    "mammoth": "^1.12.1",
     "next": "16.3.0",
     "next-auth": "^4.24.15",
     "pdfjs-dist": "^6.2.108",
@@ -47,13 +46,19 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
+    "@google/generative-ai": "^0.21.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.1",
+    "docx": "^9.7.1",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "mammoth": "^1.12.1",
+    "pdf-parse": "^2.4.5",
+    "pdf-to-img": "^6.3.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5"

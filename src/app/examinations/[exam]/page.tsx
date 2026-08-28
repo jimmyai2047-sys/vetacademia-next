@@ -138,9 +138,9 @@ export default async function ExamPage({
     include: { _count: { select: { questions: true } } },
   });
 
-  const mockTestGroups = (() => {
+  const groupByTrack = (tests: typeof dbMockTests) => {
     const map = new Map<string, typeof dbMockTests>();
-    for (const t of dbMockTests) {
+    for (const t of tests) {
       const key = t.track || "general";
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(t);
@@ -150,7 +150,11 @@ export default async function ExamPage({
       label: k === "general" ? "General" : trackLabel(k),
       items,
     }));
-  })();
+  };
+  const prevYearMocks = dbMockTests.filter((t) => t.kind === "PREVIOUS_YEAR");
+  const otherMocks = dbMockTests.filter((t) => t.kind !== "PREVIOUS_YEAR");
+  const prevYearGroups = groupByTrack(prevYearMocks);
+  const otherGroups = groupByTrack(otherMocks);
 
   const examMaterialCats = EXAM_PREP_CATEGORIES.filter(
     (c) => c.examKey === exam
@@ -425,9 +429,59 @@ export default async function ExamPage({
           </Card>
         )}
 
+        {/* Previous Year Papers as Mock Tests - always visible (free) */}
+        {prevYearGroups.map((group) => (
+          <Card key={`pyp-${group.key}`}>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <CardTitle>
+                    Previous Year Papers (Mock Tests)
+                    {group.key !== "general" && (
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        {group.label}
+                      </span>
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    Attempt previous year papers as timed mock tests
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {group.items.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No previous year papers as tests yet.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {group.items.map((t) => (
+                    <Link
+                      key={t.id}
+                      href={`/mock-tests/${t.id}`}
+                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                    >
+                      <div>
+                        <div className="font-medium text-sm">{t.title}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t._count.questions} Questions &middot; {t.duration} min
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
         {/* Mock & Adaptive Tests (DB-driven), grouped by track */}
         {examUnlocked ? (
-          mockTestGroups.map((group) => (
+          otherGroups.map((group) => (
           <Card key={group.key}>
             <CardHeader>
               <div className="flex items-center gap-3">
