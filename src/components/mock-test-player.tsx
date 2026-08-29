@@ -151,7 +151,10 @@ function QuestionText({ text }: { text: string }) {
           continue;
         }
       }
-      const isListRow = line.includes("→") && /^(?:\(?[A-D]\)?|\(?I{1,3}V?\)?|\(?IV\)?|\(?[0-9]+\)?)[\.\s\)]/.test(line);
+      const isListRow =
+        line.includes("→") &&
+        (/^(?:\(?[A-D]\)?|\(?I{1,3}V?\)?|\(?IV\)?|\(?[0-9]+\)?)[\.\s\)]/.test(line) ||
+          line.trim().startsWith("→"));
       if (isListRow) {
         const cols = line.split("→").map((s) => s.trim());
         if (cols.length >= 2) {
