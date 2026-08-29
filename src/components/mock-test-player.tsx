@@ -458,9 +458,12 @@ export default function MockTestPlayer({
               return (
                 <Card key={q.id}>
                   <CardHeader>
-                    <CardTitle className="text-base whitespace-pre-line">
-                      {i + 1}. <QuestionText text={q.text} />
-                      <Badge variant="outline" className="ml-2 text-xs">
+                    <CardTitle className="text-base flex gap-2 items-start leading-relaxed">
+                      <span className="shrink-0 font-bold pt-[1px]">{i + 1}.</span>
+                      <span className="flex-1 min-w-0">
+                        <QuestionText text={q.text} />
+                      </span>
+                      <Badge variant="outline" className="shrink-0 text-xs ml-1">
                         {q.marks} marks
                       </Badge>
                     </CardTitle>
@@ -595,14 +598,17 @@ function AdaptiveQuestion({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base whitespace-pre-line">
-            {index}. <QuestionText text={q.text} />
-            <Badge variant="outline" className="ml-2 text-xs">
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="text-base flex gap-2 items-start leading-relaxed flex-1 min-w-0">
+            <span className="shrink-0 font-bold pt-[1px]">{index}.</span>
+            <span className="flex-1 min-w-0">
+              <QuestionText text={q.text} />
+            </span>
+            <Badge variant="outline" className="shrink-0 text-xs ml-1">
               {q.marks} marks
             </Badge>
           </CardTitle>
-          <Badge variant="secondary">{difficultyLabel(difficulty)}</Badge>
+          <Badge variant="secondary" className="shrink-0">{difficultyLabel(difficulty)}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
