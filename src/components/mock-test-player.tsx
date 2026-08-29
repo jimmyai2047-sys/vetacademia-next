@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, ArrowLeft, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, Crown, Sparkles, Clock, Trophy, Shield } from "lucide-react";
 import { TestStatsSidebar } from "@/components/test-stats";
 import { nextDifficulty, difficultyLabel } from "@/lib/adaptive";
 
@@ -34,7 +34,6 @@ function QuestionText({ text }: { text: string }) {
   for (const l of rawLines) {
     if (hasHindi(l)) {
       if (seenLatinAfterHindi) {
-        // Already saw English after Hindi, this is again Hindi? Should not happen
         hiLines.push(l);
       } else {
         hiLines.push(l);
@@ -52,7 +51,7 @@ function QuestionText({ text }: { text: string }) {
     }
   }
   const hasBilingual = hiLines.length > 0 && enLines.length > 0 && hiLines.some((l) => hasHindi(l)) && enLines.some((l) => /[A-Za-z]/.test(l));
-  // Helper to render a block (either Hi or En) with list support
+  // Helper to render a block (either Hi or En) with list support — royal justified style
   const renderBlock = (blockLines: string[], keyPrefix: string) => {
     const els: React.ReactNode[] = [];
     let tableRows: string[][] = [];
@@ -63,13 +62,13 @@ function QuestionText({ text }: { text: string }) {
         const header = tableRows.length > 0 && isHeaderRow(tableRows[0]) ? tableRows[0] : null;
         const bodyRows = header ? tableRows.slice(1) : tableRows;
         els.push(
-          <div key={`${keyPrefix}-tbl-${els.length}`} className="my-2 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+          <div key={`${keyPrefix}-tbl-${els.length}`} className="my-3 overflow-x-auto rounded-xl border border-primary/10 shadow-sm">
+            <table className="w-full text-[13.5px] border-collapse">
               {header && (
                 <thead>
-                  <tr className="bg-muted">
+                  <tr className="bg-gradient-to-r from-primary to-[#005f48] text-white">
                     {header.map((c, j) => (
-                      <th key={j} className="px-3 py-1.5 border-r last:border-r-0 text-left font-semibold">
+                      <th key={j} className="px-3.5 py-2 border-r border-white/15 last:border-r-0 text-left font-bold tracking-wide text-xs uppercase">
                         {c}
                       </th>
                     ))}
@@ -78,9 +77,9 @@ function QuestionText({ text }: { text: string }) {
               )}
               <tbody>
                 {bodyRows.map((cols, idx) => (
-                  <tr key={idx} className="border-b last:border-0">
+                  <tr key={idx} className={`border-b last:border-0 ${idx % 2 === 0 ? "bg-white" : "bg-primary/[0.04]"}`}>
                     {cols.map((c, j) => (
-                      <td key={j} className="px-3 py-1.5 border-r last:border-r-0 align-top">
+                      <td key={j} className="px-3.5 py-2 border-r border-primary/10 last:border-r-0 align-top text-justify leading-relaxed">
                         {c}
                       </td>
                     ))}
@@ -97,7 +96,7 @@ function QuestionText({ text }: { text: string }) {
       const line = raw.trim();
       if (!line) {
         flushTable();
-        els.push(<div key={`${keyPrefix}-br-${els.length}`} className="h-2" />);
+        els.push(<div key={`${keyPrefix}-br-${els.length}`} className="h-1.5" />);
         continue;
       }
       const isHeaderRow =
@@ -109,26 +108,18 @@ function QuestionText({ text }: { text: string }) {
         (line.includes("→") || line.includes(":")) &&
         !/^(?:\(?[A-D]\)?|\(?I{1,3}V?\)?|\(?IV\)?|\(?[0-9]+\)?)[\.\s\)]/.test(line);
       if (isHeaderRow) {
-        // Header like "सूची–I (नदी) : सूची–II (सहायक नदी) :" or "List–I  →  List–II"
-        // Split into two header cols
         let hcols: string[] = [];
         if (line.includes("→")) hcols = line.split("→").map((s) => s.trim());
         else if (line.includes(":")) {
-          // For "सूची–I (नदी) : सूची–II (सहायक नदी) :" split by " : "
-          const parts = line.split(":");
-          // Reconstruct: first colon separates the two headers, but there are multiple colons
-          // Simpler: try split by " : " that separates List-I and List-II
           const m = line.match(/^(.*?सूची[^\:]*?)\s*:\s*(.*?सूची.*)$/);
           const m2 = line.match(/^(.*?List[^\:]*?)\s*:\s*(.*?List.*)$/);
           if (m) hcols = [m[1].trim(), m[2].trim()];
           else if (m2) hcols = [m2[1].trim(), m2[2].trim()];
           else hcols = line.split(":").map((s) => s.trim()).filter(Boolean);
           if (hcols.length === 1 && line.includes(":")) {
-            // Fallback: split by " : " that separates the two lists
             const idx = line.indexOf(":");
             const before = line.slice(0, idx).trim();
             const after = line.slice(idx + 1).trim();
-            // Find second header start
             const listIdx = after.search(/सूची|List/);
             if (listIdx !== -1) {
               hcols = [before + " :", after];
@@ -137,17 +128,9 @@ function QuestionText({ text }: { text: string }) {
             }
           }
         }
-        // Ensure we have at least 2 cols for header, if not, treat as plain
         if (hcols.length >= 2) {
-          // Header row with bold and background
           flushTable();
-          // Start a new table with header row
           tableRows.push(hcols.map((c) => c.replace(/^List–I\s*→\s*List–II.*$/, "List–I").replace(/^सूची.*/, (m) => m)));
-          // Actually, for header like "List–I  →  List–II", split by "→" gives ["List–I", "List–II"]
-          // For "सूची–I (नदी) : सूची–II (सहायक नदी) :", split by " : " gives two headers
-          // Let's just push as header row with distinct styling
-          // We'll push and then continue, but we need to ensure the header row is rendered as <th> not <td>
-          // For now, push as normal row but will be styled as header via flush
           continue;
         }
       }
@@ -164,21 +147,23 @@ function QuestionText({ text }: { text: string }) {
       }
       flushTable();
       els.push(
-        <div key={`${keyPrefix}-ln-${els.length}`} className="leading-relaxed">
+        <div key={`${keyPrefix}-ln-${els.length}`} className="leading-[1.85] text-justify hyphens-auto text-[15px] text-foreground/90">
           {line}
         </div>
       );
     }
     flushTable();
-    return <div className="space-y-1">{els}</div>;
+    return <div className="space-y-1.5">{els}</div>;
   };
   if (hasBilingual) {
     return (
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="border-r-0 md:border-r md:pr-4">
+      <div className="grid md:grid-cols-2 gap-5">
+        <div className="border-r-0 md:border-r md:border-primary/10 md:pr-5">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#d4a843]/15 border border-[#d4a843]/30 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase text-[#8a6a0a] mb-2">हिन्दी</div>
           {renderBlock(hiLines, "hi")}
         </div>
-        <div className="md:pl-2">
+        <div className="md:pl-1">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase text-primary mb-2">English</div>
           {renderBlock(enLines, "en")}
         </div>
       </div>
@@ -386,6 +371,7 @@ export default function MockTestPlayer({
       ? questions.filter((q) => askedOrder.includes(q.id))
       : questions;
 
+  const progressPct = Math.round((attempted / Math.max(1, questions.length)) * 100);
   return (
     <div className="container mx-auto px-4 py-8">
       <Link
@@ -395,34 +381,72 @@ export default function MockTestPlayer({
         <ArrowLeft className="h-4 w-4" /> Back to Mock Tests
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
-          <p className="text-muted-foreground">
-            {duration} min &middot; {questions.length} questions &middot; {totalMarks} marks
-            {adaptive && (
-              <Badge variant="secondary" className="ml-2">
-                Adaptive
-              </Badge>
-            )}
-          </p>
+      {/* Royal header */}
+      <div className="relative overflow-hidden rounded-[1.4rem] border border-primary/10 shadow-xl mb-6">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "18px 18px" }} />
+        <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-5 py-5 sm:px-7 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start gap-3 text-white min-w-0">
+              <span className="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur border border-white/20 shadow-sm shrink-0">
+                <Trophy className="h-5 w-5 text-[#d4a843]" />
+              </span>
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur border border-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase">
+                  <Crown className="h-3 w-3 text-[#d4a843]" /> Royal Examination
+                </div>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-tight mt-1">{title}</h1>
+                <p className="text-white/75 text-xs sm:text-sm flex flex-wrap items-center gap-2 mt-1">
+                  <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-[#d4a843]" />{duration} min</span>
+                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                  <span>{questions.length} questions</span>
+                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                  <span>{totalMarks} marks</span>
+                  {adaptive && <Badge className="rounded-full bg-[#d4a843] text-[#003d2e] border-0 ml-1"><Sparkles className="h-3 w-3 mr-1" />Adaptive</Badge>}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {submitted ? (
+                <Button variant="secondary" onClick={reset} className="rounded-full bg-white text-primary hover:bg-white/90 shadow-md">
+                  <RotateCcw className="h-4 w-4 mr-1" /> Retake
+                </Button>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2 rounded-full bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 text-white">
+                  <Shield className="h-4 w-4 text-[#d4a843]" />
+                  <span className="text-xs font-semibold tracking-wide">Timed • Justified • Royal</span>
+                </div>
+              )}
+            </div>
+          </div>
+          {/* progress */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-[11px] font-semibold tracking-widest uppercase text-white/70 mb-1.5">
+              <span>Progress</span>
+              <span>{attempted}/{questions.length} • {progressPct}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/15 overflow-hidden border border-white/10">
+              <div className="h-full bg-gradient-to-r from-[#d4a843] to-white transition-all duration-500" style={{ width: `${progressPct}%` }} />
+            </div>
+          </div>
         </div>
-        {submitted && (
-          <Button variant="outline" onClick={reset} className="shrink-0">
-            <RotateCcw className="h-4 w-4 mr-1" /> Retake
-          </Button>
-        )}
       </div>
 
       {submitted && (
-        <Card className="mb-6 bg-primary/5">
+        <Card className="mb-6 overflow-hidden border-primary/10 shadow-lg bg-gradient-to-br from-white to-primary/[0.04]">
+          <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold">
-              {score} / {totalMarks}
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md mb-2">
+              <Trophy className="h-5 w-5" />
             </div>
-            <p className="text-muted-foreground">Your score</p>
+            <div className="text-3xl font-extrabold tracking-tight">
+              {score} <span className="text-lg font-semibold text-muted-foreground">/ {totalMarks}</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">Your royal score</p>
             {saved && (
-              <p className="text-xs text-green-600 mt-1">Saved to your progress</p>
+              <p className="text-xs text-green-600 mt-1 inline-flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Saved to your progress</p>
             )}
             {saveError && (
               <p className="text-xs text-amber-600 mt-1">
@@ -455,58 +479,72 @@ export default function MockTestPlayer({
                 submitted &&
                 chosen !== undefined &&
                 chosen !== correctAnswerOf(q);
+              const optLetters = ["A", "B", "C", "D", "E", "F"];
+              const shortOpts = q.options.every((o) => o.length <= 45) && q.options.length === 4;
               return (
-                <Card key={q.id}>
-                  <CardHeader>
-                    <CardTitle className="text-base flex gap-2 items-start leading-relaxed">
-                      <span className="shrink-0 font-bold pt-[1px]">{i + 1}.</span>
-                      <span className="flex-1 min-w-0">
+                <Card key={q.id} className="overflow-hidden rounded-[1.4rem] border-primary/10 shadow-sm hover:shadow-md transition-shadow bg-white">
+                  <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex gap-3 items-start leading-relaxed text-[15px]">
+                      <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#005f48] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
+                        {i + 1}
+                      </span>
+                      <span className="flex-1 min-w-0 pt-0.5">
                         <QuestionText text={q.text} />
                       </span>
-                      <Badge variant="outline" className="shrink-0 text-xs ml-1">
-                        {q.marks} marks
+                      <Badge variant="outline" className="shrink-0 rounded-full border-primary/15 bg-primary/5 text-primary text-[11px] px-2 py-0.5">
+                        {q.marks} mark{q.marks !== 1 ? "s" : ""}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2">
-                    {q.options.map((opt, oi) => {
-                      const showCorrect = submitted && oi === correctAnswerOf(q);
-                      const showWrong =
-                        submitted && chosen === oi && oi !== correctAnswerOf(q);
-                      return (
-                        <label
-                          key={oi}
-                          className={`flex items-center gap-2 rounded-md border p-3 cursor-pointer transition-colors ${
-                            showCorrect
-                              ? "border-green-500 bg-green-50"
-                              : showWrong
-                                ? "border-red-500 bg-red-50"
-                                : "hover:bg-accent"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name={q.id}
-                            checked={chosen === oi}
-                            onChange={() => select(q.id, oi)}
-                            disabled={submitted}
-                          />
-                          <span className="text-sm">
-                            {oi + 1}). {opt}
-                          </span>
-                          {showCorrect && (
-                            <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />
-                          )}
-                          {showWrong && (
-                            <XCircle className="h-4 w-4 text-red-500 ml-auto" />
-                          )}
-                        </label>
-                      );
-                    })}
+                  <CardContent className="pt-0">
+                    <div className={`grid gap-2.5 ${shortOpts ? "md:grid-cols-2" : "grid-cols-1"}`}>
+                      {q.options.map((opt, oi) => {
+                        const showCorrect = submitted && oi === correctAnswerOf(q);
+                        const showWrong = submitted && chosen === oi && oi !== correctAnswerOf(q);
+                        const isChosen = chosen === oi && !submitted;
+                        return (
+                          <label
+                            key={oi}
+                            className={`group relative flex items-start gap-3 rounded-xl border p-3.5 pr-9 cursor-pointer transition-all text-left ${
+                              showCorrect
+                                ? "border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 shadow-sm ring-1 ring-green-200"
+                                : showWrong
+                                  ? "border-red-400 bg-gradient-to-br from-red-50 to-rose-50 shadow-sm ring-1 ring-red-200"
+                                  : isChosen
+                                    ? "border-primary bg-gradient-to-br from-primary/7 to-primary/3 shadow-sm ring-1 ring-primary/20"
+                                    : "border-primary/10 bg-white hover:border-primary/20 hover:bg-primary/[0.03] hover:shadow-sm"
+                            }`}
+                          >
+                            <input type="radio" name={q.id} checked={chosen === oi} onChange={() => select(q.id, oi)} disabled={submitted} className="sr-only" />
+                            <span
+                              className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-full text-xs font-extrabold border shadow-sm transition-colors ${
+                                showCorrect
+                                  ? "bg-green-600 border-green-600 text-white"
+                                  : showWrong
+                                    ? "bg-red-500 border-red-500 text-white"
+                                    : isChosen
+                                      ? "bg-primary border-primary text-white"
+                                      : "bg-white border-primary/15 text-primary group-hover:border-primary/30"
+                              }`}
+                            >
+                              {optLetters[oi] ?? oi + 1}
+                            </span>
+                            <span className="text-[14px] leading-relaxed text-justify hyphens-auto flex-1 pt-0.5">{opt}</span>
+                            {showCorrect && <CheckCircle2 className="h-4.5 w-4.5 text-green-600 absolute right-3 top-1/2 -translate-y-1/2" />}
+                            {showWrong && <XCircle className="h-4.5 w-4.5 text-red-500 absolute right-3 top-1/2 -translate-y-1/2" />}
+                            {!submitted && isChosen && <span className="h-2 w-2 rounded-full bg-primary absolute right-3 top-1/2 -translate-y-1/2" />}
+                          </label>
+                        );
+                      })}
+                    </div>
                     {submitted && explanationOf(q) && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        <strong>Explanation:</strong> {explanationOf(q)}
-                      </p>
+                      <div className="mt-4 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/50 p-3.5">
+                        <div className="flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase text-amber-700 mb-1">
+                          <Sparkles className="h-3.5 w-3.5" /> Explanation
+                        </div>
+                        <p className="text-sm leading-relaxed text-justify text-foreground/80">{explanationOf(q)}</p>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -595,44 +633,48 @@ function AdaptiveQuestion({
   total: number;
   asked: number;
 }) {
+  const optLetters = ["A", "B", "C", "D", "E", "F"];
+  const shortOpts = q.options.every((o) => o.length <= 45) && q.options.length === 4;
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base flex gap-2 items-start leading-relaxed flex-1 min-w-0">
-            <span className="shrink-0 font-bold pt-[1px]">{index}.</span>
-            <span className="flex-1 min-w-0">
+    <Card className="overflow-hidden rounded-[1.4rem] border-primary/10 shadow-md bg-white">
+      <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="flex gap-3 items-start leading-relaxed flex-1 min-w-0 text-[15px]">
+            <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#005f48] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
+              {index}
+            </span>
+            <span className="flex-1 min-w-0 pt-0.5">
               <QuestionText text={q.text} />
             </span>
-            <Badge variant="outline" className="shrink-0 text-xs ml-1">
-              {q.marks} marks
+            <Badge variant="outline" className="shrink-0 rounded-full border-primary/15 bg-primary/5 text-primary text-[11px] px-2 py-0.5">
+              {q.marks} mark{q.marks !== 1 ? "s" : ""}
             </Badge>
           </CardTitle>
-          <Badge variant="secondary" className="shrink-0">{difficultyLabel(difficulty)}</Badge>
+          <Badge variant="secondary" className="shrink-0 rounded-full bg-amber-100 text-amber-800 border-amber-200">{difficultyLabel(difficulty)}</Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-2">
-        {q.options.map((opt, oi) => {
-          const isChosen = chosen === oi;
-          return (
-            <label
-              key={oi}
-              className={`flex items-center gap-2 rounded-md p-3 cursor-pointer transition-colors ${
-                isChosen ? "border-primary bg-primary/5 border" : "border hover:bg-accent"
-              }`}
-            >
-              <input
-                type="radio"
-                name={q.id}
-                checked={isChosen}
-                onChange={() => onSelect(oi)}
-              />
-              <span className="text-sm">
-                {oi + 1}). {opt}
-              </span>
-            </label>
-          );
-        })}
+      <CardContent className="pt-0">
+        <div className={`grid gap-2.5 ${shortOpts ? "md:grid-cols-2" : "grid-cols-1"}`}>
+          {q.options.map((opt, oi) => {
+            const isChosen = chosen === oi;
+            return (
+              <label
+                key={oi}
+                className={`group relative flex items-start gap-3 rounded-xl border p-3.5 pr-9 cursor-pointer transition-all text-left ${
+                  isChosen ? "border-primary bg-gradient-to-br from-primary/7 to-primary/3 shadow-sm ring-1 ring-primary/20" : "border-primary/10 bg-white hover:border-primary/20 hover:bg-primary/[0.03] hover:shadow-sm"
+                }`}
+              >
+                <input type="radio" name={q.id} checked={isChosen} onChange={() => onSelect(oi)} className="sr-only" />
+                <span className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-full text-xs font-extrabold border shadow-sm ${isChosen ? "bg-primary border-primary text-white" : "bg-white border-primary/15 text-primary group-hover:border-primary/30"}`}>
+                  {optLetters[oi] ?? oi + 1}
+                </span>
+                <span className="text-[14px] leading-relaxed text-justify hyphens-auto flex-1 pt-0.5">{opt}</span>
+                {isChosen && <span className="h-2 w-2 rounded-full bg-primary absolute right-3 top-1/2 -translate-y-1/2" />}
+              </label>
+            );
+          })}
+        </div>
       </CardContent>
     </Card>
   );
