@@ -6,7 +6,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { normalize } from "./normalize.mjs";
 
 const DOCX_PATH = "D:\\Preparation for Competitive Examinations\\Examination\\ICAR P.G. Entrance Examination (M.V.Sc & Ph.D.)\\ICAR PG Entrance Examination\\ICAR_AIEEA_PG_2026_Animal_Sciences_Question_Answer_with_Explanation.docx";
-const TITLE = "ICAR AIEEA PG 2026 Animal Sciences — Question Paper with Answer & Explanation";
+const TITLE = "ICAR AIEEA PG 2026 Animal Sciences";
 const TRACK = "icar-jrf";
 const EXAM = "icar-entrance";
 const YEAR = "2026";
