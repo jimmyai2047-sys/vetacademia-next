@@ -107,9 +107,9 @@ export default async function CoursePage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
         <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
         <span>/</span>
         <Link href={`/syllabus/${progSlug}`} className="hover:text-primary">
@@ -124,7 +124,7 @@ export default async function CoursePage({
         </div>
 
         {/* Hero banner */}
-        <div className="relative h-40 w-full overflow-hidden rounded-xl mb-6">
+        <div className="relative h-32 w-full overflow-hidden rounded-xl mb-4">
           <Image
             src={getSubjectImage(course.subject.name)}
             alt={course.subject.name}
@@ -137,7 +137,7 @@ export default async function CoursePage({
         </div>
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-5">
         <Link
           href={`/syllabus/${progSlug}/${subjectId}`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"

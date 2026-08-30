@@ -56,7 +56,7 @@ export default async function CommunityPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-5 max-w-4xl">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 gap-1"
@@ -98,7 +98,7 @@ export default async function CommunityPage() {
       {grouped.size === 0 ? (
         <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 bg-muted/40 text-center shadow-sm">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-[#d4a843] to-indigo-600" />
-          <CardContent className="p-10">
+          <CardContent className="p-6">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-purple-600">
               <Users className="h-6 w-6" />
             </div>
@@ -107,7 +107,7 @@ export default async function CommunityPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-5">
           {Array.from(grouped.entries()).map(([category, refMap]) => (
             <section key={category} className="relative">
               <div className="flex items-center gap-3 mb-4">
@@ -191,11 +191,11 @@ export default async function CommunityPage() {
         </div>
       )}
 
-      <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl mt-10">
+      <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl mt-6">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-700" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-        <CardContent className="relative p-6 text-center text-white">
+        <CardContent className="relative p-4 text-center text-white">
           <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Stay Connected</Badge>
           <h3 className="mt-3 text-xl font-bold">Need help finding the right group?</h3>
           <p className="mt-1 text-sm text-white/80">Login → aapke Programme/Role ke groups filter hoke side-by-side dikhenge. Course purchase par premium unlock.</p>

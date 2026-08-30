@@ -230,18 +230,18 @@ export default async function ProgrammePage({
   };
 
   return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between mb-4">
           <Link href="/syllabus" className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors">
             <ArrowLeft className="h-4 w-4" /> All Programmes
           </Link>
           <SyllabusDarkToggle />
         </div>
-        <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-5">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
           <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-          <div className="relative px-6 py-8 md:px-8 md:py-10 text-white">
+              <div className="relative px-5 py-5 md:px-6 md:py-6 text-white">
             <div className="flex flex-col md:flex-row md:items-center gap-5">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
                 <Icon className="h-8 w-8 text-white" />
@@ -269,11 +269,11 @@ export default async function ProgrammePage({
         </div>
 
         {/* Syllabus at a Glance */}
-        <div className="mb-10 grid md:grid-cols-[1fr_280px] gap-6">
+        <div className="mb-6 grid md:grid-cols-[1fr_280px] gap-5">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <h2 className="text-lg font-semibold mb-1">Syllabus at a Glance</h2>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-3">
                 {allSubjects.length} subjects · {totalCourses} courses mapped unit-wise
                 across {glanceGroups.size} {isYearProgramme ? "year" : "group"}
                 {glanceGroups.size === 1 ? "" : "s"}.

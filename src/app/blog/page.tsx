@@ -61,7 +61,7 @@ export default async function BlogPage() {
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-5">
         <DecorativePageHeader
           badge="Blog • Exam Tips • Admission & Career Guides"
           title="VetAcademia"
@@ -87,12 +87,12 @@ export default async function BlogPage() {
       </div>
 
       {/* Posts */}
-      <section className="relative overflow-hidden py-8 md:py-12">
+      <section className="relative overflow-hidden py-5 md:py-7">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.02] to-white pointer-events-none" />
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
         <div className="container relative mx-auto px-4">
           {/* Section header */}
-          <div className="mx-auto max-w-3xl text-center mb-8">
+          <div className="mx-auto max-w-3xl text-center mb-5">
             <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5">
               <Newspaper className="h-3.5 w-3.5" /> Latest Articles
             </Badge>
@@ -105,7 +105,7 @@ export default async function BlogPage() {
 
           {posts.length === 0 ? (
             <Card className="va-card-hover mx-auto max-w-xl rounded-[1.5rem] border-primary/5 bg-muted/30 text-center">
-              <CardContent className="p-10">
+              <CardContent className="p-6">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Newspaper className="h-6 w-6" /></div>
                 <p className="mt-3 font-medium">No articles published yet</p>
                 <p className="text-sm text-muted-foreground">Check back soon — we publish weekly!</p>
@@ -123,7 +123,7 @@ export default async function BlogPage() {
                     <Card className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl hover:border-primary/10 transition-all">
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div
-                        className={`relative h-44 bg-gradient-to-br ${
+                        className={`relative h-32 bg-gradient-to-br ${
                           gradients[i % gradients.length]
                         }`}
                       >
@@ -175,7 +175,7 @@ export default async function BlogPage() {
             </div>
           )}
 
-          <div className="va-divider-dots my-10 max-w-[200px] mx-auto"><span /></div>
+          <div className="va-divider-dots my-6 max-w-[200px] mx-auto"><span /></div>
 
           <div className="text-center">
             <Link href="/live-classes">

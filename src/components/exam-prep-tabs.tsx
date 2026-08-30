@@ -90,7 +90,7 @@ function MaterialCard({ m }: { m: Material }) {
             />
           </div>
         ) : m.downloadUrl && m.type === "IMAGE" ? (
-          <div className="relative w-full h-48 rounded-md overflow-hidden border bg-muted/30">
+          <div className="relative w-full h-36 rounded-md overflow-hidden border bg-muted/30">
             <Image
               src={m.downloadUrl}
               alt={m.title}
@@ -149,7 +149,7 @@ function Section({
   empty: boolean;
 }) {
   return (
-    <section className="mb-8">
+    <section className="mb-5">
       <h2 className="text-xl font-semibold flex items-center gap-2 mb-3">
         <Icon className="h-5 w-5 text-primary" /> {title}
       </h2>
@@ -185,8 +185,8 @@ export default function ExamPrepTabs({
 
   if (categories.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+      <div className="container mx-auto px-4 py-5">
+        <div className="mb-5">
           <h1 className="text-3xl font-bold">Examination Preparation</h1>
           <p className="text-muted-foreground">
             Study materials, previous year papers, mock tests and adaptive tests —
@@ -201,8 +201,8 @@ export default function ExamPrepTabs({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
+    <div className="container mx-auto px-4 py-5">
+      <div className="mb-5">
         <h1 className="text-3xl font-bold">Examination Preparation</h1>
         <p className="text-muted-foreground">
           Study materials, previous year papers, mock tests and adaptive tests —
@@ -210,7 +210,7 @@ export default function ExamPrepTabs({
         </p>
       </div>
 
-      <div className="relative h-44 w-full overflow-hidden rounded-xl mb-6">
+      <div className="relative h-32 w-full overflow-hidden rounded-xl mb-5">
         <Image
           key={cat.key}
           src={getExamPrepImage(cat.key)}
@@ -225,7 +225,7 @@ export default function ExamPrepTabs({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-5">
         {categories.map((c) => (
           <button
             key={c.key}

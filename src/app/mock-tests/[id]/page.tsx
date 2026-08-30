@@ -97,7 +97,7 @@ export default async function MockTestAttemptPage({
     const planSlug =
       progSlug || (test.exam ? planSlugForExam(test.exam) : "bvsc");
     return (
-      <div className="container mx-auto px-4 py-10 max-w-2xl">
+      <div className="container mx-auto px-4 py-6 max-w-2xl">
         <EnrollCta
           planSlug={planSlug ?? "bvsc"}
           title="Enroll to access this mock test"

@@ -66,7 +66,7 @@ export default async function ExpertsPage() {
     });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-5">
       <DecorativePageHeader
         badge="Expert Network • 50+ Verified Professionals"
         title="Expert"
@@ -90,7 +90,7 @@ export default async function ExpertsPage() {
       {/* Ornamental hero image strip with glass */}
       <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-sm">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-[#d4a843] to-primary opacity-80" />
-        <div className="relative h-[220px] overflow-hidden">
+        <div className="relative h-[180px] overflow-hidden">
           <Image
             src={getExpertHeroImage()}
             alt="Veterinary expert consultation"
@@ -112,11 +112,11 @@ export default async function ExpertsPage() {
         </div>
       </div>
 
-      <div className="va-divider-dots my-8"><span /></div>
+      <div className="va-divider-dots my-5"><span /></div>
 
       {cards.length === 0 ? (
         <Card className="va-card-hover rounded-[1.5rem] border-primary/5 bg-muted/30 text-center">
-          <CardContent className="p-10">
+          <CardContent className="p-6">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Users className="h-6 w-6" />
             </div>
@@ -220,13 +220,13 @@ export default async function ExpertsPage() {
       )}
 
       {/* CTA */}
-      <div className="mt-12 text-center">
+      <div className="mt-7 text-center">
         <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-primary to-[#003d2e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/20 blur-3xl" />
-          <CardContent className="relative p-8 text-white">
+          <CardContent className="relative p-5 text-white">
             <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> For Professionals</Badge>
             <h3 className="mt-3 text-2xl font-bold">Become an Expert</h3>
             <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />

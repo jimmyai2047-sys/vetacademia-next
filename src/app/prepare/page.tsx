@@ -59,7 +59,7 @@ export default async function PreparePage({
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="container mx-auto px-4 py-5 max-w-3xl">
         <DecorativePageHeader
           badge="Exam Preparation"
           title="Exam"
@@ -67,7 +67,7 @@ export default async function PreparePage({
           description="Structured tracks, previous year papers, and mock tests — login to unlock your personalized exam preparation hub."
           variant="primary"
         />
-        <div className="mt-8 va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-8 md:p-10 text-center">
+        <div className="mt-5 va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-5 md:p-6 text-center">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">

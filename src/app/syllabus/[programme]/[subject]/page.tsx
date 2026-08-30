@@ -155,9 +155,9 @@ export default async function SubjectPage({
 
       {/* Main content */}
       <div className="flex-1 min-w-0">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
           {/* Hero banner */}
-          <div className="relative h-48 w-full overflow-hidden rounded-xl mb-6">
+          <div className="relative h-36 w-full overflow-hidden rounded-xl mb-4">
             <Image
               src={getSubjectImage(subject.name)}
               alt={subject.name}
@@ -181,7 +181,7 @@ export default async function SubjectPage({
           </div>
 
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-5">
             <Link
               href={`/syllabus/${progSlug}`}
               className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
@@ -271,9 +271,9 @@ export default async function SubjectPage({
             </div>
           ) : (
             <>
-              {/* Theory Section */}
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-4">
+                {/* Theory Section */}
+                <div className="mb-5">
+                  <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                     <BookOpen className="h-4 w-4 text-blue-600" />
                   </div>
@@ -282,8 +282,8 @@ export default async function SubjectPage({
                 </div>
                 {Object.keys(theoryGrouped).length > 0 ? (
                   Object.entries(theoryGrouped).map(([unit, chapters]) => (
-                    <div key={unit} className="border rounded-xl overflow-hidden mb-6 shadow-sm">
-                      <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-3.5 border-b">
+                    <div key={unit} className="border rounded-xl overflow-hidden mb-4 shadow-sm">
+                      <div className="bg-gradient-to-r from-primary/5 to-transparent px-4 py-2.5 border-b">
                         <h3 className="text-base font-bold flex items-center gap-2.5">
                           <Badge variant="outline" className="text-xs font-bold px-2.5 py-0.5">{unit}</Badge>
                         </h3>

@@ -92,7 +92,7 @@ export default async function FarmersPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-16 md:pb-8">
+    <div className="container mx-auto px-4 py-5 pb-10 md:pb-5">
       {unlocked && (
         <div className="va-card-hover mb-6 rounded-[1.25rem] border border-emerald-500/20 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 p-4 text-center shadow-sm">
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600 text-white px-3 py-1 text-xs font-bold">
@@ -150,7 +150,7 @@ export default async function FarmersPage({
       </div>
 
       {/* Sticky in-page section nav - glass */}
-      <nav className="sticky top-14 z-10 -mx-1 mt-8 mb-8 rounded-[1.25rem] border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <nav className="sticky top-14 z-10 -mx-1 mt-5 mb-5 rounded-[1.25rem] border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
         <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {SECTIONS.map((s) => (
             <a
@@ -180,7 +180,7 @@ export default async function FarmersPage({
         />
       </div>
 
-      <div className="va-divider-dots my-8"><span /></div>
+      <div className="va-divider-dots my-5"><span /></div>
 
       {/* Vaccination Schedule — dedicated section */}
       <Section id="vaccination" title="Vaccination Schedule" desc="Complete vaccination calendar for livestock">
@@ -202,7 +202,7 @@ export default async function FarmersPage({
                 <tbody>
                   {vaccination.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-8 text-muted-foreground">
+                      <td colSpan={6} className="text-center py-5 text-muted-foreground">
                         No vaccination entries yet.
                       </td>
                     </tr>
@@ -246,7 +246,7 @@ export default async function FarmersPage({
                 <tbody>
                   {deworming.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                      <td colSpan={5} className="text-center py-5 text-muted-foreground">
                         No deworming entries yet.
                       </td>
                     </tr>
@@ -268,7 +268,7 @@ export default async function FarmersPage({
         </Card>
       </Section>
 
-      <div className="va-divider-dots my-8"><span /></div>
+      <div className="va-divider-dots my-5"><span /></div>
 
       {/* Admin-managed Updates & Resources */}
       {farmerPosts.length > 0 && (
@@ -278,12 +278,12 @@ export default async function FarmersPage({
       )}
 
       {/* Helpline Banner */}
-      <Card id="helpline" className="relative overflow-hidden rounded-[1.75rem] border-0 text-white mt-8 scroll-mt-20 shadow-xl">
+      <Card id="helpline" className="relative overflow-hidden rounded-[1.75rem] border-0 text-white mt-5 scroll-mt-20 shadow-xl">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/20 blur-3xl" />
-        <CardContent className="relative p-8 text-center">
+        <CardContent className="relative p-5 text-center">
           <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> 24/7 Support</Badge>
           <h3 className="mt-3 text-2xl font-bold">Need Immediate Help?</h3>
           <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />
@@ -353,7 +353,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id} className="mb-10 scroll-mt-20">
+    <div id={id} className="mb-6 scroll-mt-20">
       <div className="flex items-center gap-2 mb-1">
         <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/10 gap-1"><Sparkles className="h-3 w-3" /> {title}</Badge>
       </div>

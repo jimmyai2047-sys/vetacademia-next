@@ -125,7 +125,7 @@ export default async function LiveClassesPage() {
   return (
     <div className="flex flex-col">
       {/* Decorative Hero */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-5">
         <DecorativePageHeader
           badge="Live & Recorded"
           title="Live Classes"
@@ -134,7 +134,7 @@ export default async function LiveClassesPage() {
           variant="primary"
         />
         {/* Hero visual strip */}
-        <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-sm h-36 md:h-40">
+        <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-sm h-28 md:h-32">
           <Image
             src="/images/hero-vet.jpg"
             alt=""
@@ -157,10 +157,10 @@ export default async function LiveClassesPage() {
       </div>
 
       {/* Lists */}
-      <section className="py-10 md:py-12">
-        <div className="container mx-auto px-4 max-w-4xl space-y-10">
+      <section className="py-6 md:py-7">
+        <div className="container mx-auto px-4 max-w-4xl space-y-6">
           {classes.length === 0 ? (
-            <div className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-8 text-center">
+            <div className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-5 text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
                 <Radio className="h-6 w-6 text-primary" />
               </div>
@@ -172,7 +172,7 @@ export default async function LiveClassesPage() {
           ) : (
             sections.map((sec) =>
               sec.items.length === 0 ? null : (
-                <div key={sec.title} className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white p-5 md:p-6 shadow-sm">
+                <div key={sec.title} className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white p-4 md:p-5 shadow-sm">
                   <div className="h-1 -mx-5 -mt-5 md:-mx-6 md:-mt-6 mb-5 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-40 rounded-t-[1.5rem]" />
                   <div className="flex items-center gap-2 mb-4">
                     {sec.icon === "live" && (
@@ -203,7 +203,7 @@ export default async function LiveClassesPage() {
 
           <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 bg-muted/50 shadow-sm">
             <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-40" />
-            <CardContent className="p-6 text-center">
+            <CardContent className="p-4 text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
                 <Clock className="h-6 w-6 text-primary" />
               </div>

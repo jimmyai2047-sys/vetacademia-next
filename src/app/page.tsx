@@ -305,8 +305,8 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] md:bg-[size:24px_24px]" />
         </div>
 
-        <div className="container relative mx-auto px-4 py-8 md:py-16 lg:py-20">
-          <div className="grid items-center gap-8 md:gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+        <div className="container relative mx-auto px-4 py-6 md:py-10 lg:py-12">
+          <div className="grid items-center gap-6 md:gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
             {/* Left: Content */}
             <div className="flex flex-col">
               <Badge
@@ -390,8 +390,8 @@ export default async function HomePage() {
             </div>
 
             {/* Right: Visual - Mobile Optimized */}
-            <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[520px] mt-2 md:mt-0">
-              <div className="relative h-[300px] xs:h-[340px] sm:h-[400px] md:h-[440px] lg:h-[480px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
+            <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
+              <div className="relative h-[260px] xs:h-[300px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
                 <Image
                   src="/images/hero-vet.jpg"
                   alt="Veterinary students learning"
@@ -444,7 +444,7 @@ export default async function HomePage() {
         <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-3/4 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        <div className="container relative mx-auto px-4 py-10 md:py-12">
+        <div className="container relative mx-auto px-4 py-6 md:py-7">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x divide-white/10">
             {[
               { label: "Programmes", value: liveStats.programmes, icon: GraduationCap },
@@ -510,7 +510,7 @@ export default async function HomePage() {
       </section>
 
       {/* Programmes - Highly Decorative */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-8 md:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/[0.02] to-background" />
         <div className="absolute top-20 left-1/2 -translate-x-1/2 h-px w-32 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         <div className="container relative mx-auto px-4">
@@ -575,7 +575,7 @@ export default async function HomePage() {
       </section>
 
       {/* Features - Decorative */}
-      <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-muted/40 via-muted/20 to-background">
+      <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-b from-muted/40 via-muted/20 to-background">
         <div className="absolute inset-0 va-pattern-grid opacity-[0.03]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-primary/5 blur-2xl" />
         <div className="container relative mx-auto px-4">
@@ -683,7 +683,7 @@ export default async function HomePage() {
       </section>
 
       {/* Why Choose Us - Highly Decorative */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-8 md:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-white to-blue-50/30" />
         <div className="absolute top-0 right-0 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
@@ -771,7 +771,7 @@ export default async function HomePage() {
       </section>
 
       {/* Student Success Stories - Decorative */}
-      <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-muted/30 via-white to-muted/20">
+      <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-b from-muted/30 via-white to-muted/20">
         <div className="absolute inset-0 va-pattern-dots" />
         <div className="absolute top-20 left-1/2 -translate-x-1/2 h-px w-24 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         <div className="container relative mx-auto px-4">
@@ -835,7 +835,7 @@ export default async function HomePage() {
       </section>
 
       {/* From the Blog - Decorative */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-8 md:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white" />
         <div className="container relative mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -899,7 +899,7 @@ export default async function HomePage() {
       </section>
 
       {/* CTA - Highly Decorative */}
-      <section className="relative overflow-hidden py-16 md:py-24">
+      <section className="relative overflow-hidden py-8 md:py-12">
         <div className="absolute inset-0">
           <Image src="/images/ahdp.jpg" alt="" fill sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e]/95 via-primary/90 to-[#005f48]/90" />

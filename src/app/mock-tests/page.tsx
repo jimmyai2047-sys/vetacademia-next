@@ -144,7 +144,7 @@ export default async function MockTestsPage() {
   const otherTests = sortChronologically(testsWithLinks.filter((t) => !matchedIds.has(t.id)));
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-5">
       <DecorativePageHeader
         badge="Mock Tests"
         title="Mock"
@@ -158,7 +158,7 @@ export default async function MockTestsPage() {
       </div>
 
       {tests.length === 0 ? (
-        <div className="mt-8 va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-10 text-center">
+        <div className="mt-5 va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-6 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
             <Brain className="h-6 w-6 text-primary" />
           </div>
@@ -170,7 +170,7 @@ export default async function MockTestsPage() {
       ) : (
         <>
           {/* Category jump pills */}
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap gap-2">
             {categorized.map((cat) => (
               <a
                 key={cat.key}
@@ -194,7 +194,7 @@ export default async function MockTestsPage() {
             )}
           </div>
 
-          <div className="mt-8 space-y-10">
+          <div className="mt-5 space-y-6">
             {categorized.map((cat) => (
               <section key={cat.key} id={cat.anchor} className="scroll-mt-24">
                 <div className={`relative overflow-hidden rounded-[1.25rem] border border-white/20 shadow-md bg-gradient-to-r ${cat.gradient}`}>
@@ -216,7 +216,7 @@ export default async function MockTestsPage() {
                 </div>
 
                 {cat.tests.length === 0 ? (
-                  <div className="mt-4 rounded-[1.25rem] border border-dashed border-primary/15 bg-white/60 p-8 text-center text-sm text-muted-foreground">
+                  <div className="mt-4 rounded-[1.25rem] border border-dashed border-primary/15 bg-white/60 p-5 text-center text-sm text-muted-foreground">
                     इस श्रेणी में अभी कोई paper नहीं है ।
                   </div>
                 ) : (
