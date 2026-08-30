@@ -24,6 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/demo",
     "/privacy",
     "/terms",
+    "/catalog",
+    "/books",
     "/syllabus/ahdp",
     "/syllabus/bvsc",
     "/syllabus/mvsc",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Library, Sparkles, GraduationCap } from "lucide-react";
+import { ArrowRight, BookOpen, Library, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -102,6 +102,39 @@ export default async function BooksPage({
 
       <div className="container mx-auto px-4">
         <div className="va-divider-dots my-6"><span /></div>
+      </div>
+
+      {/* Cross-link to The Catalog — discoverable entry point */}
+      <div className="container mx-auto px-4">
+        <div className="relative overflow-hidden rounded-[1.5rem] border border-[#C9BFA0] bg-[#FBF8EF] shadow-sm">
+          <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: `repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px)` }} />
+          <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-[#3F5D3A] via-[#A8752D] to-[#3F5D3A]" />
+          <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 md:p-6">
+            <div className="flex gap-4">
+              <div className="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl bg-[#3F5D3A] text-[#F4EFDD] shadow-md shrink-0">
+                <Library className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-[#A8752D] font-semibold">New · Reading Room</span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#3F5D3A] text-[#F4EFDD] px-2 py-0.5 text-[11px] font-bold">vetacademia.in/catalog</span>
+                </div>
+                <h2 className="mt-1 font-serif text-lg md:text-xl font-bold text-[#21301F]">Browse <span className="text-[#3F5D3A]">The Catalog</span> — drawer by drawer</h2>
+                <p className="mt-1 text-sm leading-relaxed text-[#5B5641] max-w-2xl">
+                  Subject-wise textbooks with <b>Open Access</b> vs <b>Reference Only</b> stamps and safe <em>Find</em> links (WorldCat / official site). No pirated PDFs — the right route to each book.
+                </p>
+              </div>
+            </div>
+            <Link href="/catalog" className="shrink-0 w-full md:w-auto">
+              <Button className="w-full md:w-auto gap-2 rounded-xl bg-[#3F5D3A] hover:bg-[#2C4229] text-white shadow-md h-11">
+                Open The Catalog <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <p className="mt-2 text-center font-mono text-[11px] text-muted-foreground">
+          Shareable route: <code className="px-1.5 py-0.5 rounded bg-muted border">/catalog</code> · also linked in header → Resources → The Catalog and footer → Resources
+        </p>
       </div>
 
       <section className="relative overflow-hidden py-8 md:py-10">

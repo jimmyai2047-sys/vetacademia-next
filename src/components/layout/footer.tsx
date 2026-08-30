@@ -9,6 +9,7 @@ const footerLinks = {
     { name: "Ph.D", href: "/syllabus/phd" },
   ],
   resources: [
+    { name: "The Catalog", href: "/catalog" },
     { name: "My Prep", href: "/prepare" },
     { name: "Mock Tests", href: "/mock-tests" },
     { name: "Study Materials", href: "/study-materials" },

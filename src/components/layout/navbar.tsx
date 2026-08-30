@@ -51,6 +51,7 @@ import {
   Crown,
   Gem,
   ArrowRight,
+  Library,
 } from "lucide-react";
 
 const programmes = [
@@ -475,6 +476,7 @@ export default function Navbar() {
                   <p className="px-1 pb-2 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70 flex items-center gap-1.5"><span className="h-1 w-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600" /> Content</p>
                   <div className="space-y-1">
                     {[
+                      { href: "/catalog", label: "The Catalog", icon: Library, desc: "All subjects · drawer by drawer" },
                       { href: "/blog", label: "Blog", icon: Newspaper, desc: "Tips & Guides" },
                       { href: "/books", label: "Books", icon: BookOpen, desc: "Recommended" },
                       { href: "/testimonials", label: "Success Stories", icon: Star, desc: "4.8★ Reviews" },
@@ -814,6 +816,9 @@ export default function Navbar() {
                   </Link>
                   <Link href="/community" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Users className="h-4 w-4 text-primary" /> Community
+                  </Link>
+                  <Link href="/catalog" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Library className="h-4 w-4 text-primary" /> The Catalog
                   </Link>
                   <Link href="/blog" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Newspaper className="h-4 w-4 text-primary" /> Blog

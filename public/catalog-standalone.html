@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetAcademia — The Catalog</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --ink:#21301F;
+  --paper:#EFE7D2;
+  --paper-shadow:#DED2AE;
+  --card:#FBF8EF;
+  --brass:#A8752D;
+  --pine:#3F5D3A;
+  --pine-dark:#2C4229;
+  --stamp-red:#8B3A32;
+  --stamp-green:#3F6B3D;
+  --rule:#C9BFA0;
+  --hole:#D8CDA9;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 3px),
+    var(--paper);
+  color:var(--ink);
+  font-family:'Source Serif 4', serif;
+  min-height:100vh;
+}
+
+/* ---------- Header ---------- */
+.masthead{
+  border-bottom:3px double var(--ink);
+  padding:2.2rem 1.5rem 1.4rem;
+  text-align:center;
+  position:relative;
+}
+.masthead::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0; height:6px;
+  background:var(--pine);
+}
+.eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:var(--brass);
+  margin-bottom:0.6rem;
+}
+h1.title{
+  font-family:'Special Elite', monospace;
+  font-size:clamp(2.1rem, 5vw, 3.4rem);
+  margin:0;
+  letter-spacing:0.02em;
+  color:var(--ink);
+}
+h1.title span{color:var(--pine);}
+.subtitle{
+  max-width:46ch;
+  margin:0.9rem auto 0;
+  font-style:italic;
+  color:#4A4636;
+  font-size:1.02rem;
+  line-height:1.5;
+}
+.stats-strip{
+  margin-top:1.3rem;
+  display:flex;
+  justify-content:center;
+  gap:2.2rem;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  color:var(--pine-dark);
+  flex-wrap:wrap;
+}
+.stats-strip b{font-size:0.95rem; color:var(--ink);}
+
+/* ---------- Search ---------- */
+.search-row{
+  max-width:640px;
+  margin:1.6rem auto 0;
+  padding:0 1.5rem;
+}
+.search-row input{
+  width:100%;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.92rem;
+  padding:0.75rem 1rem;
+  border:1.5px solid var(--ink);
+  background:var(--card);
+  color:var(--ink);
+  outline:none;
+}
+.search-row input::placeholder{color:#8B8468;}
+.search-row input:focus{border-color:var(--pine); box-shadow:0 0 0 3px rgba(63,93,58,0.15);}
+
+/* ---------- Drawer tabs ---------- */
+.drawer{
+  max-width:1180px;
+  margin:1.8rem auto 0;
+  padding:0 1.5rem;
+  display:flex;
+  gap:0.5rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.tab{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.74rem;
+  letter-spacing:0.03em;
+  padding:0.5rem 0.85rem 0.5rem 1.6rem;
+  background:linear-gradient(180deg, #E4D9B8, #D8CBA0);
+  border:1px solid #B8AA7C;
+  border-bottom:3px solid #9C8D62;
+  border-radius:2px 2px 0 0;
+  cursor:pointer;
+  position:relative;
+  color:var(--ink);
+  transition:transform 0.12s ease, background 0.12s ease;
+  white-space:nowrap;
+}
+.tab::before{
+  content:"";
+  position:absolute;
+  left:0.55rem; top:50%;
+  transform:translateY(-50%);
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--brass);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,0.3);
+}
+.tab:hover{transform:translateY(-2px);}
+.tab.active{
+  background:var(--pine);
+  border-color:var(--pine-dark);
+  border-bottom-color:var(--pine-dark);
+  color:#F4EFDD;
+}
+.tab.active::before{background:#F4EFDD;}
+.tab .count{opacity:0.65; font-size:0.68rem;}
+
+/* ---------- Section ---------- */
+.catalog{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1.6rem 1.5rem 4rem;
+}
+.subject-heading{
+  font-family:'Special Elite', monospace;
+  font-size:1.5rem;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:0.5rem;
+  margin:2.6rem 0 1.2rem;
+  display:flex;
+  align-items:baseline;
+  gap:0.7rem;
+}
+.subject-heading .code{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.85rem;
+  color:var(--brass);
+  font-style:normal;
+}
+.subject-heading:first-child{margin-top:0;}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(255px, 1fr));
+  gap:1.1rem;
+}
+
+/* ---------- Index card ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--rule);
+  padding:1.1rem 1.1rem 1rem;
+  position:relative;
+  box-shadow:2px 3px 0 rgba(33,48,31,0.07);
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  transition:transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:3px 6px 0 rgba(33,48,31,0.12);
+}
+.card::before, .card::after{
+  content:"";
+  position:absolute;
+  top:10px;
+  width:9px; height:9px;
+  border-radius:50%;
+  background:var(--hole);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,0.35);
+}
+.card::before{left:12px;}
+.card::after{right:12px;}
+
+.card-code{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.68rem;
+  color:var(--brass);
+  letter-spacing:0.05em;
+  margin-bottom:0.5rem;
+  padding-top:0.15rem;
+}
+.card-title{
+  font-family:'Source Serif 4', serif;
+  font-weight:700;
+  font-size:1.02rem;
+  line-height:1.3;
+  margin:0 0 0.3rem;
+  color:var(--ink);
+}
+.card-author{
+  font-size:0.85rem;
+  font-style:italic;
+  color:#5B5641;
+  margin-bottom:0.8rem;
+}
+.card-footer{
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:0.5rem;
+}
+.stamp{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.62rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  border:1.5px solid;
+  padding:0.2rem 0.4rem;
+  transform:rotate(-4deg);
+  border-radius:3px;
+  font-weight:600;
+}
+.stamp.open{color:var(--stamp-green); border-color:var(--stamp-green);}
+.stamp.ref{color:var(--stamp-red); border-color:var(--stamp-red);}
+
+.find-link{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  color:var(--pine-dark);
+  text-decoration:none;
+  border-bottom:1px dotted var(--pine-dark);
+  white-space:nowrap;
+}
+.find-link:hover{color:var(--brass); border-color:var(--brass);}
+
+.empty-state{
+  text-align:center;
+  padding:3rem 1rem;
+  font-family:'IBM Plex Mono', monospace;
+  color:#8B8468;
+  display:none;
+}
+
+/* ---------- Footer ---------- */
+footer{
+  border-top:3px double var(--ink);
+  padding:2rem 1.5rem 2.6rem;
+  max-width:760px;
+  margin:0 auto;
+  text-align:center;
+}
+footer .stamp-legend{
+  display:flex;
+  justify-content:center;
+  gap:1.6rem;
+  margin-bottom:1.1rem;
+  flex-wrap:wrap;
+}
+footer .stamp-legend .item{
+  display:flex; align-items:center; gap:0.5rem;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.75rem;
+}
+footer p{
+  font-size:0.88rem;
+  color:#54503C;
+  line-height:1.6;
+}
+footer .mono-note{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.7rem;
+  color:#8B8468;
+  margin-top:1rem;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .tab, .card{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">Vet&nbsp;Academia&nbsp;·&nbsp;Est. Reading Room</div>
+  <h1 class="title">The <span>Catalog</span></h1>
+  <p class="subtitle">A working index of veterinary &amp; animal husbandry textbooks, drawer by drawer, subject by subject — sorted so you always know what's freely open and what belongs to its publisher.</p>
+  <div class="stats-strip">
+    <span><b id="statBooks">0</b> volumes</span>
+    <span><b id="statSubjects">0</b> subjects</span>
+    <span><b id="statOpen">0</b> open access</span>
+  </div>
+</header>
+
+<div class="search-row">
+  <input type="text" id="searchBox" placeholder="Search the catalog — title, author, or subject…" autocomplete="off">
+</div>
+
+<nav class="drawer" id="drawerTabs"></nav>
+
+<main class="catalog" id="catalog">
+  <p class="empty-state" id="emptyState">No cards match that search. Try another title or author.</p>
+</main>
+
+<footer>
+  <div class="stamp-legend">
+    <div class="item"><span class="stamp open">Open Access</span> published by a university, ICAR, VCI, NDDB or similar body — free to read</div>
+  </div>
+  <div class="stamp-legend">
+    <div class="item"><span class="stamp ref">Reference Only</span> a publisher's copyrighted title — no PDF here, only a route to find it properly</div>
+  </div>
+  <p>Every "Find" link opens a live catalog search (WorldCat or the issuing body's own site) rather than a stored file — nothing here hosts or links to a pirated copy. That keeps VetAcademia itself clean of copyright risk, and it's worth spot-checking the Open Access tags below against the current source before publishing, since institutional pages move.</p>
+  <div class="mono-note">VetAcademia — subject-wise reading list · built for browsing, not for downloading</div>
+</footer>
+
+<script>
+const DATA = [
+  { subject:"Veterinary Anatomy", code:"VA", books:[
+    {t:"Primary Veterinary Anatomy", a:"R.K. Ghosh", s:"ref"},
+    {t:"Essentials of Veterinary Histology and Embryology", a:"R.K. Ghosh", s:"ref"},
+    {t:"Veterinary Anatomy", a:"Various", s:"ref"},
+    {t:"Applied Veterinary Anatomy", a:"Various", s:"ref"},
+  ]},
+  { subject:"Veterinary Physiology", code:"VP", books:[
+    {t:"Veterinary Physiology", a:"TANUVAS", s:"open"},
+    {t:"Dukes' Physiology of Domestic Animals", a:"W.O. Reece (ed.)", s:"ref"},
+    {t:"Laboratory Manual for Comparative Veterinary Anatomy and Physiology", a:"P.E. Cochran", s:"ref"},
+  ]},
+  { subject:"Livestock Production Management", code:"LPM", books:[
+    {t:"Farm Animal Management", a:"Rana Ranjeet Singh & Md Manzarul Islam", s:"ref"},
+    {t:"A Textbook of Animal Husbandry", a:"G.C. Banerjee", s:"ref"},
+    {t:"Livestock Production Management", a:"N.S.R. Sastry & C.K. Thomas", s:"ref"},
+    {t:"Handbook of Good Dairy Husbandry Practices", a:"NDDB", s:"open"},
+    {t:"Manual of Avian Production and Management", a:"Nilotpal Ghosh & Rajarshi Samanta", s:"ref"},
+  ]},
+  { subject:"Veterinary Microbiology", code:"VM", books:[
+    {t:"Ananthanarayan and Paniker's Textbook of Microbiology", a:"Ananthanarayan & Paniker", s:"ref"},
+    {t:"Veterinary Mycology", a:"Indranil Samanta", s:"ref"},
+    {t:"Veterinary Microbiology", a:"TANUVAS", s:"open"},
+    {t:"General and Systematic Veterinary Virology", a:"Various", s:"ref"},
+    {t:"Veterinary Virology", a:"Various", s:"ref"},
+    {t:"Veterinary Microbiology and Microbial Disease", a:"Blackwell Science", s:"ref"},
+    {t:"Fundamentals of Veterinary Microbiology", a:"A.N. Rycroft", s:"ref"},
+  ]},
+  { subject:"Veterinary Pathology", code:"PAT", books:[
+    {t:"Textbook of Veterinary Pathology, Quick Review and Self Assessment", a:"R.S. Chauhan", s:"ref"},
+    {t:"A Textbook of Veterinary General Pathology", a:"J.L. Vegad", s:"ref"},
+    {t:"A Textbook of Veterinary Systemic Pathology", a:"J.L. Vegad & Madhu Swamy", s:"ref"},
+    {t:"A Textbook of Veterinary Special Pathology: Infectious Diseases of Livestock and Poultry", a:"J.L. Vegad & A.K. Katiyar", s:"ref"},
+    {t:"Postmortem Examination and Veterolegal Cases", a:"Veterinary Council of India", s:"open"},
+    {t:"Poultry Pathology", a:"J.L. Vegad", s:"ref"},
+    {t:"Thomson's Special Veterinary Pathology", a:"Various", s:"ref"},
+    {t:"Pathologic Basis of Veterinary Disease", a:"James F. Zachary", s:"ref"},
+    {t:"Clinical Pathology and Laboratory Techniques for Veterinary Technicians", a:"Wiley Blackwell", s:"ref"},
+  ]},
+  { subject:"Veterinary Biochemistry", code:"BIO", books:[
+    {t:"Biochemistry", a:"U. Satyanarayana & U. Chakrapani", s:"ref"},
+  ]},
+  { subject:"Animal Genetics and Breeding", code:"AGB", books:[
+    {t:"Animal Husbandry Statistics and Computer Applications", a:"R. Thiagarajan", s:"ref"},
+    {t:"Principles of Animal Genetics and Population Genetics", a:"R. Thiagarajan", s:"ref"},
+    {t:"A Text Book on Animal Genetics", a:"P. Kanakaraj", s:"ref"},
+  ]},
+  { subject:"Animal Nutrition", code:"NUT", books:[
+    {t:"Principles of Animal Nutrition and Feed Technology", a:"D.V. Reddy", s:"ref"},
+    {t:"Applied Nutrition: Livestock, Poultry, Rabbits and Laboratory Animals", a:"D.V. Reddy", s:"ref"},
+    {t:"Applied Nutrition: Cats, Dogs, Wild Animals and Birds", a:"D.V. Reddy", s:"ref"},
+    {t:"Animal Nutrition and Product Quality Laboratory Manual", a:"ICARDA", s:"open"},
+    {t:"Waltham Pocket Book of Essential Nutrition for Cats and Dogs", a:"Waltham", s:"ref"},
+  ]},
+  { subject:"Veterinary Parasitology", code:"PARA", books:[
+    {t:"Veterinary Parasitology at a Glance", a:"S.C. Mandal", s:"ref"},
+    {t:"Textbook of Veterinary Parasitology", a:"Bhatia, Pathak & Juyal", s:"ref"},
+    {t:"Veterinary Parasitology", a:"Taylor, Coop & Wall", s:"ref"},
+    {t:"Helminths, Arthropods and Protozoa of Domesticated Animals", a:"E.J.L. Soulsby", s:"ref"},
+    {t:"Essentials of Veterinary Parasitology", a:"S. Pal & P.K. Sanyal", s:"ref"},
+    {t:"Veterinary Clinical Parasitology", a:"Wiley Blackwell", s:"ref"},
+    {t:"Veterinary Parasitology", a:"Various", s:"ref"},
+  ]},
+  { subject:"Veterinary Pharmacology and Toxicology", code:"PHARM", books:[
+    {t:"Essentials of Medical Pharmacology", a:"K.D. Tripathi", s:"ref"},
+    {t:"Essentials of Veterinary Pharmacology and Therapeutics", a:"Harpal Singh Sandhu", s:"ref"},
+    {t:"Textbook of Veterinary Toxicology", a:"Harpal Singh Sandhu & Rajinder Singh Brar", s:"ref"},
+    {t:"Synopsis of Veterinary Pharmacology and Toxicology", a:"V. Vani Prasad & K.M. Koley", s:"ref"},
+    {t:"Veterinary Toxicology", a:"Radhey Mohan Tiwari & Malini Sinha", s:"ref"},
+    {t:"Pharmacology Flashcards", a:"Baron & Lee", s:"ref"},
+  ]},
+  { subject:"Veterinary Public Health and Epidemiology", code:"VPH", books:[
+    {t:"Elements of Veterinary Public Health", a:"ICAR", s:"open"},
+    {t:"Veterinary Epidemiology", a:"Michael Thrusfield", s:"ref"},
+    {t:"Textbook of Zoonoses", a:"J.S. Bedi, D. Vijay & P. Dhaka", s:"ref"},
+    {t:"Veterinary Public Health and Epidemiology", a:"Krishna Gopal Narayan", s:"ref"},
+  ]},
+  { subject:"Vet. & Animal Husbandry Extension Education", code:"EXT", books:[
+    {t:"Textbook of Animal Husbandry and Livestock Extension", a:"P. Mathialagan", s:"ref"},
+  ]},
+  { subject:"Livestock Products Technology", code:"LPT", books:[
+    {t:"Meat & Meat Products Technology, Including Poultry Products Technology", a:"B.D. Sharma", s:"ref"},
+    {t:"Modern Abattoir Practices and Animal Byproducts Technology", a:"B.D. Sharma", s:"ref"},
+    {t:"Milk and Milk Products Technology", a:"Raziuddin & Hembade", s:"ref"},
+    {t:"Lawrie's Meat Science", a:"Elsevier", s:"ref"},
+    {t:"Outlines of Dairy Technology", a:"Sukumar De", s:"ref"},
+  ]},
+  { subject:"Veterinary Medicine", code:"MED", books:[
+    {t:"Textbook of Clinical Veterinary Medicine", a:"Amalendu Chakrabarti", s:"ref"},
+    {t:"A Textbook of Preventive Veterinary Medicine", a:"Amalendu Chakrabarti", s:"ref"},
+    {t:"Textbook of Clinical Veterinary Medicine", a:"ICAR", s:"open"},
+    {t:"Textbook of Preventive Veterinary Medicine and Epidemiology", a:"ICAR", s:"open"},
+    {t:"Postmortem Examination and Veterolegal Cases", a:"Veterinary Council of India", s:"open"},
+    {t:"Clinical Veterinary Medicine", a:"A.U. Bhikane", s:"ref"},
+    {t:"Preventive Veterinary Medicine", a:"Various", s:"ref"},
+    {t:"A Textbook of the Diseases of Cattle, Horses, Sheep, Pigs and Goats", a:"Elsevier", s:"ref"},
+    {t:"Greene's Infectious Diseases of the Dog and Cat", a:"Elsevier", s:"ref"},
+    {t:"Booklet of Important Poultry Diseases", a:"MSD Animal Health", s:"ref"},
+    {t:"The Feline Patient", a:"Gary D. Norsworthy", s:"ref"},
+    {t:"Veterinary Emergency and Critical Care Procedures", a:"Various", s:"ref"},
+    {t:"Pocket Handbook of Small Animal Medicine", a:"Kit Sturgess", s:"ref"},
+  ]},
+  { subject:"Veterinary Surgery and Radiology", code:"SURG", books:[
+    {t:"A Textbook on Veterinary Surgery and Radiology", a:"Samit Kumar Nandi, Samar Halder & Mozammel Hoque", s:"ref"},
+    {t:"Ruminant Surgery", a:"R.P.S. Tyagi & Jit Singh", s:"ref"},
+    {t:"Veterinary Surgery: Practical Guide", a:"P.B. Patel & A.M. Patel", s:"ref"},
+    {t:"Zoo and Wild Animal Dentistry", a:"Emily & Eisner", s:"ref"},
+    {t:"Veterinary Dentistry", a:"Matthew Lemmons", s:"ref"},
+    {t:"Thrall's Textbook of Veterinary Diagnostic Radiology", a:"Various", s:"ref"},
+    {t:"Abdominal Ultrasound in Cats and Dogs", a:"Various", s:"ref"},
+    {t:"Barnett Veterinary Ophthalmology", a:"Keith Barnett", s:"ref"},
+  ]},
+  { subject:"Veterinary Gynaecology and Obstetrics", code:"GYN", books:[
+    {t:"Veterinary Obstetrics and Genital Diseases", a:"S.J. Roberts", s:"ref"},
+    {t:"Applied Veterinary Gynaecology and Obstetrics", a:"Pradeep Kumar", s:"ref"},
+    {t:"Applied Veterinary Andrology and Artificial Insemination", a:"Pradeep Kumar", s:"ref"},
+    {t:"Veterinary Andrology and Artificial Insemination", a:"M.S. Saxena", s:"ref"},
+    {t:"Laboratory Manual on Animal Gynaecology", a:"S.K. Agarwal, U. Shanker & M.R. Ansari", s:"ref"},
+    {t:"Reproductive Technologies in Animals", a:"Elsevier", s:"ref"},
+    {t:"Handbook of Obstetrics", a:"Elsevier", s:"ref"},
+  ]},
+  { subject:"Reference Shelf & Field Notes", code:"REF", books:[
+    {t:"Field Veterinarian Notes", a:"Various", s:"ref"},
+    {t:"Veterinary Dictionary", a:"Various", s:"ref"},
+    {t:"Animal Biotechnology Notes", a:"Various", s:"ref"},
+    {t:"Handbook for Veterinary Clinicians", a:"Various", s:"ref"},
+    {t:"A Guide to Disease Diagnosis", a:"Veterinary College, Hassan", s:"open"},
+    {t:"Ultimate Veterinary Notes Bundle", a:"Nicole Cohen", s:"ref"},
+    {t:"Animal Husbandry Statistics 2025", a:"Government of India", s:"open"},
+    {t:"Guidelines for Minimum Standards of Veterinary Infrastructure in India", a:"Government of India", s:"open"},
+  ]},
+];
+
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+function findUrl(book){
+  const q = encodeURIComponent(book.t + " " + book.a);
+  if(book.s === "open"){
+    return `https://www.google.com/search?q=${q}+official+pdf`;
+  }
+  return `https://search.worldcat.org/search?q=${q}`;
+}
+
+const drawerEl = document.getElementById('drawerTabs');
+const catalogEl = document.getElementById('catalog');
+const emptyState = document.getElementById('emptyState');
+const searchBox = document.getElementById('searchBox');
+
+let totalBooks = 0, openCount = 0;
+DATA.forEach(sub => { totalBooks += sub.books.length; sub.books.forEach(b => { if(b.s==='open') openCount++; }); });
+document.getElementById('statBooks').textContent = totalBooks;
+document.getElementById('statSubjects').textContent = DATA.length;
+document.getElementById('statOpen').textContent = openCount;
+
+// Drawer tabs
+const allTab = document.createElement('div');
+allTab.className = 'tab active';
+allTab.dataset.target = 'all';
+allTab.innerHTML = `All Drawers <span class="count">${totalBooks}</span>`;
+drawerEl.appendChild(allTab);
+
+DATA.forEach(sub => {
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.dataset.target = slug(sub.subject);
+  tab.innerHTML = `${sub.subject} <span class="count">${sub.books.length}</span>`;
+  drawerEl.appendChild(tab);
+});
+
+drawerEl.addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if(!tab) return;
+  drawerEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  const target = tab.dataset.target;
+  document.querySelectorAll('.subject-block').forEach(block => {
+    block.style.display = (target === 'all' || block.dataset.slug === target) ? '' : 'none';
+  });
+  applySearch();
+});
+
+// Render catalog
+DATA.forEach(sub => {
+  const block = document.createElement('section');
+  block.className = 'subject-block';
+  block.dataset.slug = slug(sub.subject);
+
+  const heading = document.createElement('h2');
+  heading.className = 'subject-heading';
+  heading.innerHTML = `${sub.subject} <span class="code">DRAWER ${sub.code}</span>`;
+  block.appendChild(heading);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  sub.books.forEach((b, i) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.search = (b.t + ' ' + b.a + ' ' + sub.subject).toLowerCase();
+    const codeNum = String(i+1).padStart(3,'0');
+    card.innerHTML = `
+      <div class="card-code">${sub.code}-${codeNum}</div>
+      <div class="card-title">${b.t}</div>
+      <div class="card-author">${b.a}</div>
+      <div class="card-footer">
+        <span class="stamp ${b.s}">${b.s === 'open' ? 'Open Access' : 'Reference Only'}</span>
+        <a class="find-link" href="${findUrl(b)}" target="_blank" rel="noopener">Find →</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  block.appendChild(grid);
+  catalogEl.insertBefore(block, emptyState);
+});
+
+function applySearch(){
+  const q = searchBox.value.trim().toLowerCase();
+  let visibleCount = 0;
+  document.querySelectorAll('.subject-block').forEach(block => {
+    if(block.style.display === 'none') return;
+    let blockHasVisible = false;
+    block.querySelectorAll('.card').forEach(card => {
+      const match = !q || card.dataset.search.includes(q);
+      card.style.display = match ? '' : 'none';
+      if(match){ blockHasVisible = true; visibleCount++; }
+    });
+    block.querySelector('.subject-heading').style.display = blockHasVisible ? '' : 'none';
+  });
+  emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+searchBox.addEventListener('input', applySearch);
+</script>
+</body>
+</html>
