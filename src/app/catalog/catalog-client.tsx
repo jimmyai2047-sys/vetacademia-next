@@ -302,8 +302,8 @@ export default function CatalogClient() {
         <div className="absolute inset-0 bg-gradient-to-b from-white via-amber-50/10 to-white pointer-events-none" />
         <div className="absolute inset-0 va-pattern-dots opacity-[0.03] pointer-events-none" />
         <div className="container relative mx-auto px-4">
-          {/* controls + count — sticky glass (fixed overlap: lower subjects were hidden behind sticky bar) */}
-          <div className="sticky top-[64px] z-20 -mx-4 px-4 py-2.5 bg-white/90 backdrop-blur-xl border-y border-primary/10 md:mx-0 md:rounded-2xl md:border md:shadow-sm mb-6 supports-[backdrop-filter]:bg-white/75">
+          {/* controls — NOT sticky (sticky was covering drawer headers on scroll — removed to fix cut) */}
+          <div className="mx-4 md:mx-0 rounded-2xl border border-primary/10 bg-white shadow-sm px-4 py-2.5 mb-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm">
                 <span className="font-semibold">{visibleSubjects.length}</span> <span className="text-muted-foreground">drawers</span>
@@ -349,7 +349,7 @@ export default function CatalogClient() {
               {filtered.map(
                 (sub: any) =>
                   sub.show && (
-                    <Card key={sub.code} id={`drawer-${sub.code}`} className="overflow-hidden rounded-[1.25rem] border border-primary/10 bg-white/80 backdrop-blur-xl shadow-sm scroll-mt-[120px]">
+                    <Card key={sub.code} id={`drawer-${sub.code}`} className="overflow-hidden rounded-[1.25rem] border border-primary/10 bg-white/80 backdrop-blur-xl shadow-sm">
                       {/* Subject header — button */}
                       <button
                         type="button"
