@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -52,6 +53,10 @@ function toGeminiContents(messages: InMsg[]) {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(`assistant:${clientIp(req)}`, 20, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ fallback: true }, { status: 429, headers: { "Retry-After": "60" } });
+  }
   const origin = req.headers.get("origin");
   const host = req.headers.get("host");
   const isLocal = host && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
