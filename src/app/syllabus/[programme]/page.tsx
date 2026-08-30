@@ -153,7 +153,7 @@ export default async function ProgrammePage({
     _count: { chapters: number };
   }) => {
     const imageUrl = getSubjectImage(subject.name);
-    const programmeOwned = access.programmeSlugs.has(slug);
+    const programmeOwned = access.programmeSlugs.has(slug) || access.isAdmin;
     let unlocked = programmeOwned;
     let buySlug: string | null = null;
     if (!programmeOwned) {

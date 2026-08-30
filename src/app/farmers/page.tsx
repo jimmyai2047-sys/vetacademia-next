@@ -53,7 +53,7 @@ export default async function FarmersPage({
   const { unlocked } = await searchParams;
   const session = await getServerSession(authOptions);
 
-  const [guides, vaccination, deworming, reports, farmerPosts] =
+  const [guides, vaccination, deworming, reports, farmerPostsRaw] =
     await Promise.all([
       prisma.farmGuide.findMany({
         where: { published: true },
@@ -69,8 +69,12 @@ export default async function FarmersPage({
         where: { published: true },
         orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
       }),
-      getPublishedPosts("FARMERS"),
+      Promise.all([getPublishedPosts("FARMERS"), getPublishedPosts("ANIMAL_OWNER")]).then(
+        ([a, b]) => [...a, ...b]
+      ),
     ]);
+  // Keep for template (renamed variable)
+  const farmerPosts = farmerPostsRaw;
 
   let purchasedIds: string[] = [];
   if (session?.user?.id && reports.length > 0) {

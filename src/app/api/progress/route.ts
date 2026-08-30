@@ -29,6 +29,25 @@ export async function POST(req: Request) {
   if (!subjectId) {
     return NextResponse.json({ error: "subjectId required" }, { status: 400 });
   }
+  // "flashcards" is a synthetic subjectId for the flashcards deck — it has no
+  // Subject row, so the FK would fail. Auto-create a placeholder Subject once.
+  if (subjectId === "flashcards") {
+    const existing = await prisma.subject.findUnique({ where: { id: "flashcards" } });
+    if (!existing) {
+      const prog = await prisma.programme.findFirst({ select: { id: true } });
+      if (prog) {
+        await prisma.subject.create({
+          data: {
+            id: "flashcards",
+            name: "Flashcards",
+            code: "FLASH-001",
+            programmeId: prog.id,
+          },
+        });
+      }
+    }
+  }
+
   await prisma.userProgress.upsert({
     where: { userId_subjectId: { userId: session.user.id, subjectId } },
     create: {

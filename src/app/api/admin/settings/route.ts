@@ -21,7 +21,9 @@ const DEFAULTS: Record<string, string> = {
   maintenanceMode: "false",
 };
 
-export async function GET() {
+export async function GET(req: Request) {
+  const auth = await requireAdminApi(req as any);
+  if ("error" in auth) return auth.error;
   try {
     const rows = await prisma.setting.findMany();
     const settings: Record<string, string> = { ...DEFAULTS };

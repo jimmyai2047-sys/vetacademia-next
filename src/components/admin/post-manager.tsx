@@ -35,6 +35,7 @@ type Post = {
 };
 
 const CATEGORIES = [
+  { key: "FARMERS", label: "Farmers" },
   { key: "ANIMAL_OWNER", label: "Animal Owners" },
   { key: "VETS", label: "Vets" },
   { key: "ADVISORY", label: "Advisory" },
@@ -51,7 +52,7 @@ const EXAMS = [
 
 export default function PostManager() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState("ANIMAL_OWNER");
+  const [activeCategory, setActiveCategory] = useState("FARMERS");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Post | null>(null);

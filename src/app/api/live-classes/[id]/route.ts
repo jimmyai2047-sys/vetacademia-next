@@ -36,6 +36,7 @@ export async function GET(
       liveClass.isDemo ||
       (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
       access.examKeys.has(liveClass.exam) ||
+      (liveClass.exam === "other" && access.isAuthed) ||
       access.examPlanOwned;
     if (!allowed) {
       const { recordingUrl, youtubeUrl, ...rest } = liveClass;

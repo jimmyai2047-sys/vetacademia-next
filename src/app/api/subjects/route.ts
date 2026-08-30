@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const name = SLUG_TO_PROGRAMME_NAME[raw.toLowerCase()] ?? raw;
 
     const subjects = await prisma.subject.findMany({
-      where: { programme: { name } },
+      where: { programme: { name: { equals: name, mode: "insensitive" } } },
       select: { name: true },
       orderBy: { name: "asc" },
       distinct: ["name"],

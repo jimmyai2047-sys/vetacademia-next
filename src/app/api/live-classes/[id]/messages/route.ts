@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getAccess } from "@/lib/access";
+import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function GET(
   req: Request,
@@ -55,10 +57,17 @@ export async function GET(
 }
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+    const rl = rateLimit(`live-chat:${clientIp(req)}`, 20, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many messages" }, { status: 429 });
+    }
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Login required" }, { status: 401 });

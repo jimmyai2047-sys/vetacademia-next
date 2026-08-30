@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const MODES = ["VIDEO", "CHAT", "CALL"] as const;
 
@@ -33,6 +35,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+    const rl = rateLimit(`consultations:${clientIp(req)}`, 20, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

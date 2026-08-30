@@ -58,7 +58,7 @@ export default async function CoursePage({
       ? access.ownedYearScopes.has(`${progSlug}:${course.subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(course.subject.id);
-  const hasAccess = programmeOwned || yearOwned || subjectOwned;
+  const hasAccess = programmeOwned || yearOwned || subjectOwned || access.isAdmin;
 
   let purchasePlanSlug: string = progSlug;
   let purchaseViaCheckout = false;

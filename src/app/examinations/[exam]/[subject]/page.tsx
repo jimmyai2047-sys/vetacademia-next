@@ -54,7 +54,7 @@ export default async function ExamSubjectPage({
             slug: subjectSlug,
             name: match.name,
             subjectName: match.name,
-            programmeSlug: match.programme.name.toLowerCase(),
+            programmeSlug: programmeNameToSlug(match.programme.name),
           },
           group: grp,
         };

@@ -67,7 +67,7 @@ export default async function SubjectPage({
       ? access.ownedYearScopes.has(`${progSlug}:${subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(subject.id);
-  const hasAccess = programmeOwned || yearOwned || subjectOwned;
+  const hasAccess = programmeOwned || yearOwned || subjectOwned || access.isAdmin;
 
   // Resolve the plan to purchase when locked.
   let purchasePlanSlug: string = progSlug;

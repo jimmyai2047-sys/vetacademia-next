@@ -1,0 +1,1536 @@
+[
+  {
+    "qnum": 3,
+    "text": "X-rays are classified as hard and soft based on the following characters:\n(A). Density\n(B). Current\n(C). Penetrating power\n(D). Wavelength\n(E). Frequency",
+    "options": [
+      "A and B only",
+      "D only",
+      "B and E only",
+      "C only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Hard and soft X-rays are differentiated on the basis of their penetrating power — hard X-rays are highly penetrating (short wavelength/high energy) while soft X-rays are weakly penetrating.",
+    "marks": 1
+  },
+  {
+    "qnum": 4,
+    "text": "In ruminants, acetonemia is primarily seen due to:\n(A). Disorders of carbohydrate metabolism\n(B). Disorders of fat metabolism\n(C). Disorders of protein metabolism\n(D). Disorder of B-complex vitamins\n(E). Deficiency of calcium and magnesium",
+    "options": [
+      "A only",
+      "B and C only",
+      "C and E only",
+      "D only"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Bovine ketosis (acetonemia) results from negative energy balance, i.e., a disturbance of carbohydrate metabolism, leading to excessive mobilisation of body fat and ketone body formation.",
+    "marks": 1
+  },
+  {
+    "qnum": 5,
+    "text": "Staphylococcus pseudointermedius can be identified on the basis of following characters:\n(A). Coagulase negative\n(B). Susceptible to polymyxin B\n(C). V P test positive\n(D). β-galactosidase positive",
+    "options": [
+      "B and D only",
+      "A and C only",
+      "A and B only",
+      "C and D only"
+    ],
+    "correctAnswer": 0,
+    "explanation": "S. pseudintermedius (Staphylococcus intermedius group) is coagulase-positive and VP-negative, but is characteristically susceptible to polymyxin B and β-galactosidase positive — features used to differentiate it from S. aureus.",
+    "marks": 1
+  },
+  {
+    "qnum": 6,
+    "text": "Match List I with List II:\nList I:\n(A). Sabin-Feldman dye test\n(B). Knott's Technique\n(C). Capillary tube agglutination\n(D). Animal inoculation test\nList II:\n(I). Trypanosomiasis\n(II). Anaplasmosis\n(III). Filariosis\n(IV). Toxoplasmosis",
+    "options": [
+      "A – II, B – III, C – IV, D – I",
+      "A – IV, B – II, C – I, D – III",
+      "A – IV, B – III, C – II, D – I",
+      "A – III, B – II, C – I, D – IV"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Sabin-Feldman dye test = Toxoplasmosis; Knott's technique concentrates and detects microfilariae = Filariosis; Capillary/card agglutination test = Anaplasmosis; Animal (rodent) inoculation test = Trypanosomiasis.",
+    "marks": 1
+  },
+  {
+    "qnum": 7,
+    "text": "Match List I with List II:\nList I:\n(A). Epiplocele\n(B). Vesicocele\n(C). Hysterocele\n(D). Omphalocele\nList II:\n(I). Uterus\n(II). Omentum\n(III). Umbilical region\n(IV). Bladder",
+    "options": [
+      "A – II, B – IV, C – III, D – I",
+      "A – II, B – III, C – I, D – IV",
+      "A – I, B – II, C – III, D – IV",
+      "A – II, B – IV, C – I, D – III"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Epiplocele = hernia of omentum; Vesicocele = hernia of urinary bladder; Hysterocele = hernia of the uterus; Omphalocele = hernia at the umbilical region.",
+    "marks": 1
+  },
+  {
+    "qnum": 8,
+    "text": "What percentage of the medullar cavity of the fractured bone should the narrowest point of the intramedullary pin fill?",
+    "options": [
+      "50 percent",
+      "100 percent",
+      "40 percent",
+      "65 – 75 percent"
+    ],
+    "correctAnswer": 3,
+    "explanation": "An intramedullary pin should occupy about 65–75% of the medullary canal diameter at its narrowest point for adequate stability without excess cortical weakening.",
+    "marks": 1
+  },
+  {
+    "qnum": 9,
+    "text": "Insecticide resistance can be avoided by:",
+    "options": [
+      "Frequent change of insecticides",
+      "Continuous use of same insecticide for a long time",
+      "Change of group of insecticides",
+      "Use of higher doses of insecticides"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Rotating insecticide classes/mode-of-action groups (not just brand names) prevents selection pressure for resistance genes within a single target pathway.",
+    "marks": 1
+  },
+  {
+    "qnum": 10,
+    "text": "On daily basis, which immunoglobulin is produced in maximum amount?",
+    "options": [
+      "IgG",
+      "IgM",
+      "IgA",
+      "IgE"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Although serum IgG concentration is highest, the mucosal immune system (gut, respiratory, mammary) produces more IgA per day than any other immunoglobulin class.",
+    "marks": 1
+  },
+  {
+    "qnum": 11,
+    "text": "In dogs, weighing 10 Kg BW, functional concentration of 30-40% oxygen can be achieved through an in venous catheter positioned transtracheally if the flow rate of oxygen is:",
+    "options": [
+      "1 – 2 L / min",
+      "3.5 L / min",
+      "6 – 7 L / min",
+      "10 L / min"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Transtracheal oxygen delivery bypasses upper airway dead space, so a low flow of about 1–2 L/min is sufficient to achieve 30–40% inspired oxygen in a small dog.",
+    "marks": 1
+  },
+  {
+    "qnum": 12,
+    "text": "Sertoli Cell Tumour is most likely to occur:",
+    "options": [
+      "In ovary of queen cat",
+      "In ovary of 8-12 year old bitch",
+      "In retained testicle of 7 year old dog",
+      "In distal limb of 6 month old dog"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Sertoli cell tumours arise from testicular sex-cord stroma and are strongly associated with cryptorchid (retained) testes in older dogs.",
+    "marks": 1
+  },
+  {
+    "qnum": 13,
+    "text": "In dogs, irregular pulse in femoral artery is indicative of:\n(A). Myocardial damage\n(B). Nephritis\n(C). Hepatitis\n(D). Brain disease\n(E). Pancreatitis",
+    "options": [
+      "A only",
+      "B and C only",
+      "D and E only",
+      "E only"
+    ],
+    "correctAnswer": 0,
+    "explanation": "An irregular femoral pulse (pulse deficit) reflects cardiac arrhythmia, which results from myocardial damage/disease.",
+    "marks": 1
+  },
+  {
+    "qnum": 14,
+    "text": "Phonendoscope was invented by:",
+    "options": [
+      "Bazzi and Bianchi",
+      "Landsteiner",
+      "Anderson",
+      "Leevancock"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The phonendoscope, an enhanced stethoscope, was invented by Bazzi and improved/popularised by Bianchi.",
+    "marks": 1
+  },
+  {
+    "qnum": 15,
+    "text": "Given below are two statements:\nStatement (I): Cystitis is usually NOT associated with a bacterial infection.\nStatement (II): It is clinically characterized by pollakiuria, dysuria, and hematuria.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Cystitis is, in fact, most often associated with bacterial (ascending) infection, so Statement I is false; the classic clinical signs are pollakiuria, dysuria and haematuria, so Statement II is true.",
+    "marks": 1
+  },
+  {
+    "qnum": 16,
+    "text": "Larval stage of which parasite is found in the peritoneal cavity of sheep?",
+    "options": [
+      "Echinococcus multilocularis",
+      "Taenia hydatigena",
+      "Taenia saginata",
+      "Taenia solium"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The larval (metacestode) stage of Taenia hydatigena, called Cysticercus tenuicollis, is commonly found in the peritoneal cavity/liver of sheep.",
+    "marks": 1
+  },
+  {
+    "qnum": 17,
+    "text": "Ciprofloxacin inhibits the following enzyme in eukaryotic cells:",
+    "options": [
+      "Topoisomerase II",
+      "Topoisomerase IV",
+      "Alkaline phosphatase",
+      "Acetyl choline esterase"
+    ],
+    "correctAnswer": 0,
+    "explanation": "While fluoroquinolones primarily target bacterial DNA gyrase and topoisomerase IV, their off-target action in eukaryotic cells is on topoisomerase II.",
+    "marks": 1
+  },
+  {
+    "qnum": 18,
+    "text": "Given below are two statements:\nStatement (I): In cattle, ultrasonography is superior for visualization of small volumes of pleural fluid.\nStatement (II): The pleural fluid can be detected by auscultation and acoustic percussion.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Ultrasonography detects even small amounts of pleural fluid better than any other method, and larger accumulations are also classically detectable clinically by dull percussion and muffled auscultation — both statements are true.",
+    "marks": 1
+  },
+  {
+    "qnum": 19,
+    "text": "Enzootic abortion of ewes (EAE) is caused by:",
+    "options": [
+      "Campylobacter fetus fetus",
+      "Chlamydophila abortus",
+      "Ehrlichia ovina",
+      "Corynebacterium pseudotuberculosis"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Enzootic abortion of ewes is caused by Chlamydophila (Chlamydia) abortus, producing characteristic placentitis and late-term abortion.",
+    "marks": 1
+  },
+  {
+    "qnum": 20,
+    "text": "In which disease condition, recurrent bloat is seen:\n(A). Diaphragmatic hernia\n(B). Legume bloat\n(C). Enteritis\n(D). Vagal indigestion\n(E). Rhinitis",
+    "options": [
+      "B and C only",
+      "C and E only",
+      "A and B only",
+      "A and D only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Diaphragmatic hernia and vagal indigestion both interfere with the normal eructation reflex/forestomach motility, producing recurrent bloat.",
+    "marks": 1
+  },
+  {
+    "qnum": 21,
+    "text": "Given below are two statements:\nStatement (I): Trichophyton mentagrophyte perforates hair shaft and produces wedge-shaped areas in hair perforation test.\nStatement (II): Hair perforation test is used to distinguish Trichophyton mentagrophyte from Trichophyton rubrum.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 0,
+    "explanation": "T. mentagrophytes gives a positive (wedge-shaped perforation) in vitro hair perforation test, while T. rubrum is negative — this is exactly why the test is used to differentiate the two dermatophytes.",
+    "marks": 1
+  },
+  {
+    "qnum": 22,
+    "text": "Holometabola belongs to which group of insects?",
+    "options": [
+      "Ticks",
+      "Fleas",
+      "Lice",
+      "Bugs"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Fleas (Siphonaptera) undergo complete (holometabolous) metamorphosis with egg-larva-pupa-adult stages, unlike lice and bugs which are hemimetabolous, and ticks which are not insects at all.",
+    "marks": 1
+  },
+  {
+    "qnum": 23,
+    "text": "Ingluviotomy in chicken is indicated for the:",
+    "options": [
+      "Prevention of indiscriminate breeding",
+      "Management of impaction of crop",
+      "Fattening of cockerels",
+      "Prevention from flying"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Ingluviotomy is surgical incision of the ingluvies (crop), performed to relieve crop impaction.",
+    "marks": 1
+  },
+  {
+    "qnum": 24,
+    "text": "White heifers' disease is associated with:",
+    "options": [
+      "Cystic ovary",
+      "Uterus unicornis",
+      "Ovarian hypoplasia",
+      "Para ovarian cyst"
+    ],
+    "correctAnswer": 1,
+    "explanation": "White heifer disease is a congenital anomaly of the Müllerian duct system in white Shorthorn cattle, resulting in segmental genital tract aplasia and a functional uterus unicornis.",
+    "marks": 1
+  },
+  {
+    "qnum": 25,
+    "text": "α – Fetoprotein causes:",
+    "options": [
+      "De-feminization of surge center of hypothalamus",
+      "Atrophy of the pituitary gland",
+      "Differentiation of male and female sex",
+      "Atrophy of gonads"
+    ],
+    "correctAnswer": 2,
+    "explanation": "α-Fetoprotein binds circulating oestrogen in the fetal/neonatal female, protecting the brain from masculinising oestrogen exposure and thereby permitting normal sexual differentiation.",
+    "marks": 1
+  },
+  {
+    "qnum": 26,
+    "text": "Given below are two statements:\nStatement (I): Potato soup coloured discharge in cattle is seen in Trichomonas infection.\nStatement (II): Pyometra in cattle is caused by Trichomonas infection.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is true but Statement II is false",
+      "Statement I is false but Statement II is true"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Tritrichomonas foetus infection classically produces a thick, purulent, 'potato-soup'-like uterine discharge and is a recognised cause of bovine pyometra — both statements are true.",
+    "marks": 1
+  },
+  {
+    "qnum": 27,
+    "text": "In acidic urine, we may observe the following type of crystals during microscopic examination:\n(A). Uric Acid\n(B). Triple phosphate\n(C). Calcium oxalate\n(D). Hippuric acid\n(E). Amorphous phosphate",
+    "options": [
+      "B and E only",
+      "B, C and E only",
+      "D and E only",
+      "A, C and D only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Uric acid, calcium oxalate and hippuric acid crystals form in acidic urine, whereas triple (struvite) phosphate and amorphous phosphate crystallise in alkaline urine.",
+    "marks": 1
+  },
+  {
+    "qnum": 28,
+    "text": "Match List I with List II:\nList I:\n(A). Hydroallantois\n(B). Mummified fetus\n(C). ECG (equine chorionic gonadotropin)\n(D). Pseudo pregnancy in bitch\nList II:\n(I). Cabergoline\n(II). Bloated bull frog\n(III). Persistent corpus luteum\n(IV). Placental hormone",
+    "options": [
+      "A – II, B – III, C – IV, D – I",
+      "A – III, B – IV, C – I, D - II",
+      "A – IV, B – I, C – II, D – III",
+      "A – I, B – II, C – III, D – IV"
+    ],
+    "correctAnswer": 0,
+    "explanation": "ECG (eCG/PMSG) is a placental gonadotropic hormone; mummified fetus results from a persistent corpus luteum maintaining pregnancy hormonally; cabergoline (a dopamine agonist/anti-prolactin) is used to manage pseudopregnancy in the bitch; hydroallantois pairs with the remaining option by elimination.",
+    "marks": 1
+  },
+  {
+    "qnum": 29,
+    "text": "In cirrhosis of liver, following post-mortem findings are recorded:\n(A). Presence of normal architecture\n(B). Fatty infiltration\n(C). Degeneration of hepatocytes\n(D). Loss of intracellular connective tissue matrix\n(E). Atrophy of the liver",
+    "options": [
+      "A and C only",
+      "B and D only",
+      "A and E only",
+      "C and E only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Cirrhosis shows hepatocyte degeneration and, in advanced stages, a small/atrophic, nodular liver; normal architecture is lost (not preserved) and fibrous connective tissue increases rather than being lost.",
+    "marks": 1
+  },
+  {
+    "qnum": 30,
+    "text": "Obtectate type of pupa is characteristic of:",
+    "options": [
+      "Psychodidae",
+      "Tabanidae",
+      "Ostreidae",
+      "Calliphoridae"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Unlike most higher Diptera (which form a coarctate puparium, e.g. Calliphoridae) or exarate pupae (e.g. Tabanidae), Psychodidae (moth flies) are unusual among flies in having an obtect pupa.",
+    "marks": 1
+  },
+  {
+    "qnum": 31,
+    "text": "Which among the following acts as entry receptor of Rabies virus?",
+    "options": [
+      "Heparin Sulphate",
+      "Acetylcholine",
+      "ICAM – I",
+      "Dopamine"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The nicotinic acetylcholine receptor is one of the classically described cellular entry receptors used by the rabies virus at the neuromuscular junction.",
+    "marks": 1
+  },
+  {
+    "qnum": 32,
+    "text": "Which of the following is used as antidote for cyanide poisoning in bovines?\n(A). Sodium EDTA\n(B). Sodium nitrite\n(C). Sodium thiosulphate\n(D). Dimercaprol\n(E). BAL",
+    "options": [
+      "A and D only",
+      "E only",
+      "A, D and E only",
+      "B and C only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Sodium nitrite (generates methaemoglobin to bind cyanide) followed by sodium thiosulphate (provides sulphur for rhodanese to form thiocyanate) is the classic two-step antidote regimen for cyanide poisoning.",
+    "marks": 1
+  },
+  {
+    "qnum": 33,
+    "text": "What is the appropriate time for injection of Vitamin D3 to prevent occurrence of Milk fever?",
+    "options": [
+      "One month before calving",
+      "1 week before calving",
+      "2 weeks before calving",
+      "3 weeks before calving"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Vitamin D3 injections are recommended about one week before expected calving; given earlier, its hypercalcaemic effect wanes before parturition.",
+    "marks": 1
+  },
+  {
+    "qnum": 34,
+    "text": "The primary causes of non-inflammatory edema include:\n(A). Increased intravascular hydrostatic pressure\n(B). Increased vascular permeability\n(C). Increased colloid osmotic pressure\n(D). Lymphatic obstruction\n(E). Electrocution",
+    "options": [
+      "B and D only",
+      "A and D only",
+      "C and E only",
+      "B and E only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Non-inflammatory (transudative) oedema arises from increased hydrostatic pressure or lymphatic obstruction/decreased oncotic pressure, whereas increased vascular permeability is the hallmark of inflammatory oedema.",
+    "marks": 1
+  },
+  {
+    "qnum": 35,
+    "text": "On post-mortem examination, cloudiness of air sac membrane with pericarditis and fibrinous perihepatitis are noticed in which disease?",
+    "options": [
+      "Avian influenza",
+      "Chronic respiratory disease",
+      "Egg peritonitis",
+      "Colibacillosis"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Airsacculitis with fibrinous pericarditis and perihepatitis is the classic triad of avian colibacillosis (colisepticaemia).",
+    "marks": 1
+  },
+  {
+    "qnum": 36,
+    "text": "During rumenotomy the rumen is fixed to the skin by using:",
+    "options": [
+      "Balfour's frame",
+      "Weingarth's frame",
+      "Finochietto frame",
+      "Gelpi frame"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Weingarth's ring/frame is the instrument classically used to fix the rumen wall to the skin incision during rumenotomy.",
+    "marks": 1
+  },
+  {
+    "qnum": 37,
+    "text": "Which of the following enzyme hydrolyses the acetylcholine?\n(A). Acetylcholine transferase\n(B). Acetylcholine esterase\n(C). Acetylcholine dehydrogenase\n(D). Sorbitol dehydrogenase\n(E). Monoamine oxidase",
+    "options": [
+      "A and C only",
+      "B only",
+      "D and E only",
+      "A, B and C only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Acetylcholinesterase hydrolyses acetylcholine into choline and acetate, terminating cholinergic neurotransmission.",
+    "marks": 1
+  },
+  {
+    "qnum": 38,
+    "text": "Spinnbarkeit test of the cervical mucus is used to measure:",
+    "options": [
+      "Fern pattern",
+      "Elasticity",
+      "pH",
+      "Viscosity"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Spinnbarkeit refers to the stretchability/elasticity of oestrogen-dominated cervical mucus, tested by drawing it into a thread.",
+    "marks": 1
+  },
+  {
+    "qnum": 39,
+    "text": "A new class of anthelmintic monepantel is member of:",
+    "options": [
+      "Amidine group",
+      "Salicylanilide group",
+      "Amino-acetonitrile derivatives",
+      "Macrocylic lactone"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Monepantel belongs to the amino-acetonitrile derivative (AAD) class of anthelmintics, acting on nematode-specific acetylcholine receptor subunits.",
+    "marks": 1
+  },
+  {
+    "qnum": 40,
+    "text": "Given below are two statements:\nStatement (I): Kumri is a condition caused by Setaria digitata in cattle.\nStatement (II): The pathogenic effects in cattle are mainly due to erratic migration of mature worms in the Central Nervous System.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Cattle are the normal (definitive) host of Setaria digitata and remain asymptomatic; Kumri (lumbar paralysis) occurs in aberrant hosts such as horses, sheep and goats, so Statement I is false. The CNS damage in aberrant hosts is indeed due to erratic larval/worm migration, so Statement II is true.",
+    "marks": 1
+  },
+  {
+    "qnum": 41,
+    "text": "Match List I with List II:\nList I:\n(A). Fetal dystocia\n(B). Isthmo-ampullary junction of fallopian tube\n(C). Negative energy balance\n(D). French mini straw\nList II:\n(I). 0.25 ml\n(II). Infertility\n(III). Common in polytocous species\n(IV). Fertilization",
+    "options": [
+      "A – I, B – III, C – IV, D – II",
+      "A – IV, B – I, C – III, D – II",
+      "A – I, B – II, C – IV, D – III",
+      "A – III, B – IV, C – II, D – I"
+    ],
+    "correctAnswer": 3,
+    "explanation": "French mini straws hold 0.25 ml of semen; negative energy balance is a major cause of infertility in dairy cattle; fertilisation occurs at the isthmo-ampullary junction; fetal-related dystocia (malpresentation) is comparatively more common in polytocous species.",
+    "marks": 1
+  },
+  {
+    "qnum": 42,
+    "text": "Salbutamol causes bronchodilation by its action on:",
+    "options": [
+      "α – 1 adrenergic receptor",
+      "α – 2 adrenergic receptor",
+      "β – 1 adrenergic receptor",
+      "β – 2 adrenergic receptor"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Salbutamol is a selective β2-adrenergic agonist, causing bronchial smooth muscle relaxation and bronchodilation.",
+    "marks": 1
+  },
+  {
+    "qnum": 43,
+    "text": "The second messenger cAMP is inactivated by:",
+    "options": [
+      "Adenyl cyclase",
+      "Guanylyl cyclase",
+      "Phospholipase C",
+      "Phosphodiesterase"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Phosphodiesterase hydrolyses cAMP to inactive 5'-AMP, terminating its second-messenger signal; adenylyl cyclase, in contrast, synthesises cAMP.",
+    "marks": 1
+  },
+  {
+    "qnum": 44,
+    "text": "Match List I with List II:\nList I:\n(A). Increased prolactin\n(B). Cabergoline\n(C). Mifepristone\n(D). Prostaglandin F2α\nList II:\n(I). Termination of pregnancy in bitches without side effects\n(II). Treatment of pyometra in bitches\n(III). Induction of estrus in bitches\n(IV). Pseudopregnancy",
+    "options": [
+      "A – II, B – IV, C – III, D – I",
+      "A – III, B – II, C – IV, D – I",
+      "A – IV, B – III, C – I, D – II",
+      "A – IV, B – I, C – II, D – III"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Increased prolactin causes pseudopregnancy; cabergoline (a dopamine agonist/prolactin inhibitor) is used to terminate pregnancy with minimal side effects; the antiprogestin mifepristone is used to treat pyometra; prostaglandin F2α is used to induce/synchronize estrus.",
+    "marks": 1
+  },
+  {
+    "qnum": 45,
+    "text": "Match List I with List II:\nList I:\n(A). Husk or Hoose\n(B). Verminous endarteritis\n(C). Anaemia in pups\n(D). Visceral larva migrans\nList II:\n(I). Strongylus vulgaris\n(II). Ancylostoma caninum\n(III). Dictyocaulus viviparous\n(IV). Toxocara canis",
+    "options": [
+      "A – III, B – I, C – IV, D – II",
+      "A – II, B – III, C – I, D – IV",
+      "A – II, B – IV, C – III, D – I",
+      "A – III, B – I, C – II, D – IV"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Husk/hoose (lungworm disease) is caused by Dictyocaulus viviparus; verminous endarteritis in horses by Strongylus vulgaris; anaemia in pups by the hookworm Ancylostoma caninum; visceral larva migrans by Toxocara canis.",
+    "marks": 1
+  },
+  {
+    "qnum": 46,
+    "text": "Match List I with List II:\nList I:\n(A). Dacrocystorhinography\n(B). Intravenous pyelography\n(C). EEG\n(D). Sialography\nList II:\n(I). Encephalomalacia\n(II). Salivary gland\n(III). Kidney and ureters\n(IV). Urinary bladder",
+    "options": [
+      "A – II, B – III, C – IV, D – I",
+      "A – IV, B – III, C – I, D – II",
+      "A – I, B – II, C – III, D – IV",
+      "A – III, B – IV, C – II, D – I"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Sialography images the salivary glands; intravenous pyelography images the kidneys and ureters; EEG helps assess brain lesions such as encephalomalacia; dacryocystorhinography pairs with the remaining option by elimination.",
+    "marks": 1
+  },
+  {
+    "qnum": 47,
+    "text": "Increase in progesterone level is required for ovulation in which species?\n(A). Mare\n(B). Bitch\n(C). Cattle\n(D). Camel\n(E). Goat",
+    "options": [
+      "A only",
+      "B only",
+      "C and D only",
+      "A, D and E only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In the bitch, pre-ovulatory luteinisation of follicles causes progesterone to begin rising before ovulation itself occurs — a feature unique among domestic species.",
+    "marks": 1
+  },
+  {
+    "qnum": 48,
+    "text": "Given below are two statements:\nStatement (I): Macrocyclic lactone (ivermectin) is not effective against trematodes and cestodes.\nStatement (II): The inhibitory neurotransmitter present in trematodes and cestodes is glycine.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Ivermectin indeed has no efficacy against trematodes/cestodes because they lack the glutamate-gated chloride channels ivermectin targets — Statement I is true. Statement II's claim about glycine being their inhibitory neurotransmitter is not the accepted basis for this resistance, so it is false.",
+    "marks": 1
+  },
+  {
+    "qnum": 49,
+    "text": "Which of the following materials is used as an antigen in Casoni's test?",
+    "options": [
+      "Hydatid fluid",
+      "Adult worm",
+      "Egg",
+      "Protoscolices"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Casoni's intradermal test uses sterile hydatid cyst fluid as antigen to detect hypersensitivity in hydatidosis (Echinococcus) infection.",
+    "marks": 1
+  },
+  {
+    "qnum": 50,
+    "text": "Upper gastrointestinal endoscopy helps in the diagnosis of:\n(A). Hypertrophic gastritis\n(B). Abnormal motility\n(C). Esophagitis\n(D). Enteritis\n(E). Colitis",
+    "options": [
+      "D and E only",
+      "B and D only",
+      "B and E only",
+      "A and C only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Upper GI endoscopy visualises the oesophagus and stomach, allowing diagnosis of oesophagitis and gastritis; enteritis and colitis are lower GI conditions not assessed by upper endoscopy.",
+    "marks": 1
+  },
+  {
+    "qnum": 51,
+    "text": "Omeprazole produces antacid action by inhibiting:",
+    "options": [
+      "H1 receptor",
+      "H2 receptor",
+      "H+ - K+ ATPase",
+      "Na+ - K+ ATPase"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Omeprazole is a proton pump inhibitor that irreversibly blocks the gastric parietal cell H+/K+ ATPase, reducing acid secretion.",
+    "marks": 1
+  },
+  {
+    "qnum": 52,
+    "text": "Brucella abortus Indian Biovar(s) has following characteristics:\n(A). It is modified Z N staining negative\n(B). It is grown under 5 – 10% CO2 concentration\n(C). It is urease positive\n(D). It is non-H2S producer\n(E). Thayer Martin medium does not show its growth",
+    "options": [
+      "A and D only",
+      "A and E only",
+      "B and C only",
+      "D and E only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Brucella abortus (including the Indian biovar) is urease-positive and, being a capnophilic biovar, requires increased (5–10%) CO2 for growth.",
+    "marks": 1
+  },
+  {
+    "qnum": 53,
+    "text": "Multi fragmented fracture fixation in dogs with dynamic compression plate is called:",
+    "options": [
+      "Neutralization Plating",
+      "Dynamic Compression Plating",
+      "Reconstruction Plating",
+      "Buttress Plating"
+    ],
+    "correctAnswer": 3,
+    "explanation": "When a plate spans multiple (comminuted) fragments and supports/prevents their collapse under load rather than compressing bone ends together, the technique is termed buttress plating.",
+    "marks": 1
+  },
+  {
+    "qnum": 54,
+    "text": "The early embryo in the uterus is nourished by:",
+    "options": [
+      "Yolk sac",
+      "Blastocoel",
+      "Histotrophic nutrition",
+      "Endometrium"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Before placental attachment is established, the early embryo/conceptus is nourished by histotrophic nutrition — secretions ('uterine milk') from the endometrial glands.",
+    "marks": 1
+  },
+  {
+    "qnum": 55,
+    "text": "The wound is known as infected if the bacterial count exceeds:",
+    "options": [
+      "10^5 number of bacteria per gram of tissue",
+      "10^6 number of bacteria per gram of tissue",
+      "10^2 number of bacteria per gram of tissue",
+      "10^8 number of bacteria per gram of tissue"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A tissue bacterial load exceeding 10^5 organisms per gram is the standard surgical threshold defining a wound as infected.",
+    "marks": 1
+  },
+  {
+    "qnum": 56,
+    "text": "Possession of F – 18 Fimbriae and production of Stx2e toxin and haemolysin is related to which pathotype of Escherichia coli?",
+    "options": [
+      "Enterotoxigenic",
+      "Shigatoxigenic",
+      "Septicaemic",
+      "Uropathogenic"
+    ],
+    "correctAnswer": 1,
+    "explanation": "F18-fimbriated E. coli producing Shiga toxin 2e (edema disease E. coli) belongs to the Shiga toxin-producing (Shigatoxigenic) pathotype.",
+    "marks": 1
+  },
+  {
+    "qnum": 57,
+    "text": "Ovulation during primary oocyte stage occurs in which of the following species?\n(A). Cow\n(B). Buffalo\n(C). Bitch\n(D). Mare\n(E). Goat",
+    "options": [
+      "A and B only",
+      "D only",
+      "C only",
+      "A and E only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Uniquely among domestic species, the bitch ovulates a primary oocyte, which completes maturation to the secondary oocyte stage within the oviduct 2–3 days after ovulation.",
+    "marks": 1
+  },
+  {
+    "qnum": 58,
+    "text": "Split estrus is seen in:",
+    "options": [
+      "Buffaloes",
+      "Pigs",
+      "Goat",
+      "Bitch"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Young bitches occasionally show 'split estrus' — proestrus signs that regress and then recur before true behavioural estrus and ovulation occur.",
+    "marks": 1
+  },
+  {
+    "qnum": 59,
+    "text": "A setting in an X-ray machine indicates:",
+    "options": [
+      "Tubular current",
+      "Filament current",
+      "Potential difference",
+      "Frequency"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The milliampere (mA) setting of an X-ray machine controls the tube (tubular) current, i.e., the flow of electrons across the tube.",
+    "marks": 1
+  },
+  {
+    "qnum": 60,
+    "text": "Fetal sex determination using ultrasonography can be done in cattle between:",
+    "options": [
+      "10-30 days",
+      "60-80 days",
+      "120-140 days",
+      "160-190 days"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In cattle, ultrasonographic fetal sexing (based on genital tubercle location) is most reliably done between about 60 and 80 days of gestation.",
+    "marks": 1
+  },
+  {
+    "qnum": 61,
+    "text": "Match List I with List II:\nList I:\n(A). Stiff lamb disease\n(B). Azoturia\n(C). Trichinella spiralis\n(D). Black quarter\nList II:\n(I). Myoglobinuria\n(II). Parasitic myositis\n(III). White muscle disease\n(IV). Gangrenous myositis",
+    "options": [
+      "A – III, B – I, C – II, D – IV",
+      "A – I, B – II, C – IV, D - III",
+      "A – II, B – IV, C – III, D - I",
+      "A – IV, B – III, C – I, D – II"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Stiff lamb disease is another name for nutritional white muscle disease; azoturia (exertional rhabdomyolysis) causes myoglobinuria; Trichinella spiralis causes parasitic myositis; blackleg (black quarter) causes gangrenous myositis.",
+    "marks": 1
+  },
+  {
+    "qnum": 62,
+    "text": "Nerve block for enucleation of eye ball in cattle is:",
+    "options": [
+      "Paravertebral",
+      "Retrobulbar",
+      "Supra orbital",
+      "Cornual"
+    ],
+    "correctAnswer": 1,
+    "explanation": "A retrobulbar nerve block anaesthetises the eye and surrounding structures, commonly used for enucleation in cattle.",
+    "marks": 1
+  },
+  {
+    "qnum": 63,
+    "text": "Milliamperage (mA) setting in an X – ray machine decides the:",
+    "options": [
+      "Quality of the X-rays",
+      "Quantity of the X-rays",
+      "Intensity of ionization",
+      "Direction of X-rays"
+    ],
+    "correctAnswer": 1,
+    "explanation": "mA determines the number of electrons (and hence X-ray photons) produced, i.e., the quantity of X-rays; kVp determines their quality/penetrating power.",
+    "marks": 1
+  },
+  {
+    "qnum": 64,
+    "text": "To assess the function of liver, we can use following tests in dog:\n(A). BSP clearance test\n(B). Estimation of LDH enzyme\n(C). Estimation of bilirubin\n(D). Trypsin test\n(E). Test for malabsorption of intestine",
+    "options": [
+      "B and D only",
+      "D and E only",
+      "A and C only",
+      "B and E only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "BSP (bromosulphthalein) clearance and serum bilirubin estimation are classic, specific tests of hepatic function in dogs.",
+    "marks": 1
+  },
+  {
+    "qnum": 65,
+    "text": "Given below are two statements:\nStatement (I): Trichomoniasis in bulls can be diagnosed by examination of serum using MAT test.\nStatement (II): Brucellosis in cattle causes disease of the placenta.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Bovine trichomoniasis is diagnosed from preputial washings/culture, not by a serum MAT test (which is used for toxoplasmosis) — Statement I is false. Brucellosis characteristically causes placentitis, so Statement II is true.",
+    "marks": 1
+  },
+  {
+    "qnum": 66,
+    "text": "Which of the following fungi is used for biological control of nematodes?",
+    "options": [
+      "Beauveria bassiana",
+      "Duddingtonia flagrans",
+      "Aspergillus niger",
+      "Metarhizium anisopliae"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Duddingtonia flagrans is a nematode-trapping (nematophagous) fungus widely used for the biological control of gastrointestinal nematodes on pasture.",
+    "marks": 1
+  },
+  {
+    "qnum": 67,
+    "text": "Match List I with List II:\nList I:\n(A). Copper\n(B). Arsenic\n(C). Selenium\n(D). Mercury\nList II:\n(I). Rice water diarrhoea\n(II). Blind staggers\n(III). Damage to fetal nervous system\n(IV). Port wine coloured urine",
+    "options": [
+      "A – I, B – II, C – III, D – IV",
+      "A – II, B – III, C – IV, D - I",
+      "A – III, B – IV, C – I, D - II",
+      "A – IV, B – I, C – II, D – III"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Copper toxicosis causes intravascular haemolysis and port-wine coloured urine; arsenic poisoning causes rice-water diarrhoea; selenium toxicosis causes blind staggers; mercury is teratogenic, damaging the fetal nervous system.",
+    "marks": 1
+  },
+  {
+    "qnum": 68,
+    "text": "Which one of the following is an INCORRECT pair?",
+    "options": [
+      "Strongylus vulgaris – Aneurysm",
+      "Cysticercus tenuicollis – Gid",
+      "Hydatid cyst – Pressure atrophy",
+      "Stephanofilaria assamensis – Hump sore"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Gid (coenurosis) is caused by Coenurus cerebralis (Taenia multiceps), not Cysticercus tenuicollis, making this the incorrect pair.",
+    "marks": 1
+  },
+  {
+    "qnum": 69,
+    "text": "The site of incision for pericardiotomy in bovines is:",
+    "options": [
+      "Along the fifth rib on the left side",
+      "Along the sixth rib on the right side",
+      "Along the fifth rib on the right side",
+      "Post xiphoid incision"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Pericardiotomy in cattle is classically performed through an incision along the left fifth intercostal space/rib.",
+    "marks": 1
+  },
+  {
+    "qnum": 70,
+    "text": "Reconstructive surgery is surgery done for:",
+    "options": [
+      "The correction of deformities",
+      "Preserving a disabled part",
+      "Removal of root cause of disease",
+      "The confirmation of a diagnosis"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Reconstructive surgery aims to correct deformities and restore form/function, distinguishing it from curative or diagnostic procedures.",
+    "marks": 1
+  },
+  {
+    "qnum": 71,
+    "text": "Abnormal gastric distension causes dog sitting posture which is common among:",
+    "options": [
+      "Cattle",
+      "Sheep and Goat",
+      "Pigs",
+      "Horses"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Gastric distension/colic in horses classically produces a characteristic 'dog-sitting' posture as the animal attempts to relieve abdominal pain.",
+    "marks": 1
+  },
+  {
+    "qnum": 72,
+    "text": "Which type of stomatitis is produced in case of actinomycosis?",
+    "options": [
+      "Fibrinous",
+      "Ulcerative",
+      "Sclerosing",
+      "Necrotic"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Actinomycosis ('lumpy jaw') produces chronic pyogranulomatous lesions with marked bony proliferation and sclerosis, giving a sclerosing character to the lesion.",
+    "marks": 1
+  },
+  {
+    "qnum": 73,
+    "text": "β- Carotene is a rich source of:",
+    "options": [
+      "Protein",
+      "Vitamin-E",
+      "Vitamin-D",
+      "Vitamin-A"
+    ],
+    "correctAnswer": 3,
+    "explanation": "β-Carotene is a provitamin that is enzymatically cleaved in the body to form Vitamin A (retinol).",
+    "marks": 1
+  },
+  {
+    "qnum": 74,
+    "text": "The mode of infection of Toxocara canis is:\n(A). Ingestion of infective eggs\n(B). Direct skin penetration\n(C). Aerosol route of transmission\n(D). Lactogenic route of infection\n(E). Ingestion of infected paratenic host",
+    "options": [
+      "A, B, C and E",
+      "A, B, D and E",
+      "A, C and D only",
+      "A, C, D and E"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Toxocara canis is transmitted mainly by ingestion of infective eggs, the lactogenic (transmammary) route, and ingestion of infected paratenic hosts (e.g. rodents); aerosol transmission does not occur.",
+    "marks": 1
+  },
+  {
+    "qnum": 75,
+    "text": "Which of the following bacteria produce endospores?\n(A). Actinomyces spp.\n(B). Bacillus anthracis\n(C). Nocardia spp.\n(D). Clostridium spp.\n(E). Dermatophillus spp.",
+    "options": [
+      "A and C only",
+      "C and E only",
+      "A and E only",
+      "B and D only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Only Bacillus and Clostridium species among bacteria form true endospores; Actinomyces, Nocardia and Dermatophilus do not.",
+    "marks": 1
+  },
+  {
+    "qnum": 76,
+    "text": "The following tests can be applied to determine Minimum Inhibitory Concentration (MIC) values against an isolated bacterium:\n(A). Kirby Bauer method\n(B). Broth Dilution method\n(C). E – test\n(D). Miles Mishra Technique",
+    "options": [
+      "A and B only",
+      "A and D only",
+      "B and C only",
+      "C and D only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Broth dilution and the E-test give a quantitative MIC value, whereas the Kirby-Bauer disc diffusion method is only qualitative, and Miles-Misra is a viable count technique.",
+    "marks": 1
+  },
+  {
+    "qnum": 77,
+    "text": "The adverse effect of xylazine hydrochloride is reversed with the use of:\n(A). Neostigmine\n(B). Atropine sulphate\n(C). Acetyl choline\n(D). Yohimbine hydrochloride\n(E). Dopamine",
+    "options": [
+      "A and C",
+      "B and E",
+      "C only",
+      "D only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Yohimbine, an alpha-2 adrenergic antagonist, is the specific reversal agent for xylazine's sedative/adverse effects.",
+    "marks": 1
+  },
+  {
+    "qnum": 78,
+    "text": "Which of the following phase I enzymes has major contribution in drug metabolism?\n(A). CYP2A6\n(B). CYP2D6\n(C). CYP3A4\n(D). CYP2D9\n(E). CYP3A9",
+    "options": [
+      "A and B only",
+      "D and E only",
+      "C only",
+      "E only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "CYP3A4 is the most abundant hepatic cytochrome P450 isoform and metabolises the largest proportion of drugs.",
+    "marks": 1
+  },
+  {
+    "qnum": 79,
+    "text": "Signs of neo-natal hypoglycemia in piglets occur when the blood glucose levels falls to about:",
+    "options": [
+      "50 mg/dL",
+      "80 mg/dL",
+      "120 mg/dL",
+      "180 mg/dL"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Clinical hypoglycaemia in neonatal piglets is typically seen once blood glucose falls to around 50 mg/dL or below.",
+    "marks": 1
+  },
+  {
+    "qnum": 80,
+    "text": "Match List I with List II:\nList I:\n(A). Hyperadrenocorticism\n(B). Vitamin-E and Selenium\n(C). Scabies\n(D). Spinal Cord disease\nList II:\n(I). Obesity\n(II). Muscular dystrophy\n(III). Postural reactions\n(IV). Intense pruritis",
+    "options": [
+      "A – I, B – II, C – IV, D – III",
+      "A – II, B – IV, C – III, D – I",
+      "A – IV, B – III, C – I, D – II",
+      "A – III, B – II, C – IV, D – I"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Hyperadrenocorticism (Cushing's) causes obesity; Vitamin E/Selenium deficiency causes nutritional muscular dystrophy; scabies causes intense pruritis; spinal cord disease is assessed via postural reaction deficits.",
+    "marks": 1
+  },
+  {
+    "qnum": 81,
+    "text": "Which one of the following morphological features is related to Trichuris ovis?",
+    "options": [
+      "Spirally coiled spicule",
+      "Whip like appearance of the parasite",
+      "Presence of leaf crowns",
+      "Boot shaped spicules"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Trichuris (whipworm) species have a characteristic whip-like body — a long thin anterior end and a thicker posterior end.",
+    "marks": 1
+  },
+  {
+    "qnum": 82,
+    "text": "Colour code of nitrous oxide cylinder in India is:",
+    "options": [
+      "White",
+      "Blue",
+      "Grey",
+      "Orange"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In India, nitrous oxide gas cylinders are colour-coded blue.",
+    "marks": 1
+  },
+  {
+    "qnum": 83,
+    "text": "Horn cancer is a malignant tumour of which type of cells?",
+    "options": [
+      "Squamous",
+      "Columnar",
+      "Cuboidal",
+      "Transitional"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Horn cancer in cattle is a squamous cell carcinoma arising from the keratinised epithelium of the horn.",
+    "marks": 1
+  },
+  {
+    "qnum": 84,
+    "text": "Which of the following animals has Type – II Peyer's Patches which are located at random intervals in ileum and jejunum?",
+    "options": [
+      "Cattle",
+      "Pigs",
+      "Horses",
+      "Rabbits"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Rabbits characteristically possess multiple, persistent (Type II) Peyer's patches scattered along the jejunum and ileum, in addition to the large ileocaecal sacculus rotundus.",
+    "marks": 1
+  },
+  {
+    "qnum": 85,
+    "text": "What is the range of pH of normal cow milk?",
+    "options": [
+      "6.6 – 6.8",
+      "5.6 – 6.5",
+      "7.4 – 7.8",
+      "8.6 – 9.0"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Fresh normal cow milk has a pH in the slightly acidic range of about 6.6–6.8.",
+    "marks": 1
+  },
+  {
+    "qnum": 86,
+    "text": "The viruses belonging to family Parvoviridae have the following characters:\n(A). Icosahedral symmetry\n(B). Enveloped virion\n(C). Single stranded RNA\n(D). Single stranded DNA\n(E). Replication in nucleus of host cell",
+    "options": [
+      "A and B only",
+      "D and E only",
+      "B and C only",
+      "A and C only"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Parvoviruses are small, non-enveloped, icosahedral viruses with a single-stranded DNA genome that replicate in the host cell nucleus.",
+    "marks": 1
+  },
+  {
+    "qnum": 87,
+    "text": "Contagious acne (Canadian horse pox) is caused by:",
+    "options": [
+      "Rhodococcus equi",
+      "Corynebacterium pseudotuberculosis",
+      "Seripox virus",
+      "Mucomyces mellaei"
+    ],
+    "correctAnswer": 1,
+    "explanation": "'Canadian horsepox'/contagious acne of horses is caused by Corynebacterium pseudotuberculosis (equine biovar), producing folliculitis/pustular skin lesions.",
+    "marks": 1
+  },
+  {
+    "qnum": 88,
+    "text": "Part Film Distance (PFD) in radiography must be:",
+    "options": [
+      "0 cm",
+      "80 – 90 cm",
+      "100 – 110 cm",
+      "120 – 130 cm"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The body part being radiographed should be placed in direct contact with the film/cassette (i.e., PFD = 0) to minimise magnification and geometric distortion.",
+    "marks": 1
+  },
+  {
+    "qnum": 89,
+    "text": "For queen cat, balanced anesthesia involves administration of a sequence of the following drugs:\n(A). Ketamine hydrochloride\n(B). Atropine Sulphate\n(C). Diazepam\n(D). Xylazine hydrochloride",
+    "options": [
+      "B → C → D → A",
+      "C → D → B → A",
+      "D → C → B → A",
+      "B → D → C → A"
+    ],
+    "correctAnswer": 3,
+    "explanation": "A typical balanced anaesthesia protocol premedicates with atropine, then a sedative (xylazine), then diazepam, followed by the dissociative agent ketamine for induction.",
+    "marks": 1
+  },
+  {
+    "qnum": 90,
+    "text": "Match List I with List II:\nList I:\n(A). Cysteine Crystals\n(B). Struvite Crystals\n(C). Gag reflex\n(D). Gastrocnemius reflex\nList II:\n(I). Vagus Nerve\n(II). L7 – S1\n(III). Alkaline urine\n(IV). Acidic Urine",
+    "options": [
+      "A – IV, B – III, C – I, D – II",
+      "A – III, B – II, C – I, D – IV",
+      "A – II, B – I, C – III, D – IV",
+      "A – I, B – II, C – IV, D – III"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Cystine crystals form in acidic urine; struvite (triple phosphate) crystals form in alkaline urine; the gag reflex is mediated via the vagus (and glossopharyngeal) nerve; the gastrocnemius reflex tests the L7–S1 spinal segment.",
+    "marks": 1
+  },
+  {
+    "qnum": 91,
+    "text": "Atropine sulphate is contraindicated in the patients suffering from:\n(A). Heart failure\n(B). Dyspnea\n(C). Pre-existing tachycardia\n(D). Vomition\n(E). Enteritis",
+    "options": [
+      "B only",
+      "D and E only",
+      "A and C only",
+      "D only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Atropine increases heart rate and myocardial oxygen demand, so it is contraindicated in animals with heart failure or pre-existing tachycardia/tachyarrhythmias.",
+    "marks": 1
+  },
+  {
+    "qnum": 92,
+    "text": "Nipah virus belongs to which genus of the family Paramyxoviridae?",
+    "options": [
+      "Respirovirus",
+      "Avula virus",
+      "Henipavirus",
+      "Rubula virus"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Nipah virus, along with Hendra virus, belongs to the genus Henipavirus within family Paramyxoviridae.",
+    "marks": 1
+  },
+  {
+    "qnum": 93,
+    "text": "Given below are two statements:\nStatement (I): Male feminizing syndrome in dogs occurs due to Sertoli Cell tumour.\nStatement (II): Gynaecomastia in male feminizing syndrome occurs due to tumour of Leydig cell.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is correct but Statement II is false",
+      "Statement I is incorrect but Statement II is true"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Male feminizing syndrome and its features including gynaecomastia arise from oestrogen-secreting Sertoli cell tumours, not Leydig cell tumours — Statement II is false.",
+    "marks": 1
+  },
+  {
+    "qnum": 94,
+    "text": "Which among the following is a primary binding/serological test?",
+    "options": [
+      "ELISA",
+      "Bacterial Agglutination",
+      "Complement Fixation",
+      "Gel Precipitation"
+    ],
+    "correctAnswer": 0,
+    "explanation": "ELISA is a primary binding assay that directly measures antigen-antibody binding via a labelled reagent, unlike agglutination, precipitation and complement fixation, which are secondary tests relying on a visible end reaction.",
+    "marks": 1
+  },
+  {
+    "qnum": 95,
+    "text": "Specific gravity is the principle involved in the following methods of faecal examination:\n(A). Direct smear method\n(B). Lanes technique\n(C). Agglutination test\n(D). Willis technique\n(E). Faecal trypsin test",
+    "options": [
+      "A and C only",
+      "A and E only",
+      "B and E only",
+      "B and D only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Willis' flotation technique and Lane's technique both rely on a solution of high specific gravity to float parasite eggs/oocysts above faecal debris.",
+    "marks": 1
+  },
+  {
+    "qnum": 96,
+    "text": "The fracture of proximal end of ulna is known as:",
+    "options": [
+      "Monteggia's fracture",
+      "Colle's fracture",
+      "Avulsion fracture",
+      "Supra condylar fracture"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A fracture of the proximal ulna, typically with radial head luxation, is termed a Monteggia fracture.",
+    "marks": 1
+  },
+  {
+    "qnum": 97,
+    "text": "An example of tendon suture is:",
+    "options": [
+      "Parker-Kerr",
+      "Bunnel",
+      "Far-Far-Near-Near",
+      "Far-Near-Near-Far"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The Bunnell suture is a classic locking-loop pattern used for tendon repair.",
+    "marks": 1
+  },
+  {
+    "qnum": 98,
+    "text": "Match List I with List II:\nList I:\n(A). Cubones test\n(B). Endometrial cups\n(C). Oxytocin\n(D). Tocolysis\nList II:\n(I). Induction of parturition in mare\n(II). Prevention of uterine contractions\n(III). ECG\n(IV). Estrogen",
+    "options": [
+      "A – III, B – IV, C – II, D – I",
+      "A – IV, B – I, C – II, D – III",
+      "A – II, B – III, C – IV, D – I",
+      "A – IV, B – III, C – I, D – II"
+    ],
+    "correctAnswer": 3,
+    "explanation": "The Cuboni test detects oestrogen conjugates in mare urine for pregnancy diagnosis; endometrial cups secrete equine chorionic gonadotropin (eCG); oxytocin is used to induce parturition; tocolysis means preventing/suppressing uterine contractions.",
+    "marks": 1
+  },
+  {
+    "qnum": 99,
+    "text": "Which of the following are burrowing mites?\n(A). Sarcoptes scabiei\n(B). Psoroptes ovis\n(C). Notoedres cati\n(D). Chorioptes bovis\n(E). Cnemidocoptes mutans",
+    "options": [
+      "A and D only",
+      "A, B and D only",
+      "A, C and E only",
+      "A, C and D only"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Sarcoptes, Notoedres and Cnemidocoptes are burrowing mites that tunnel into the epidermis; Psoroptes and Chorioptes are surface-dwelling, non-burrowing mites.",
+    "marks": 1
+  },
+  {
+    "qnum": 100,
+    "text": "Theiler's disease is the most common cause of acute hepatitis in:",
+    "options": [
+      "Cattle",
+      "Sheep and Goat",
+      "Dogs",
+      "Horse"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Theiler's disease (serum hepatitis), often linked to administration of equine biological products, is a major cause of acute hepatic necrosis in horses.",
+    "marks": 1
+  },
+  {
+    "qnum": 101,
+    "text": "Choosing the forelegs in a postural abnormality occurs during fracture of 3rd phalanges in case of:",
+    "options": [
+      "Cattle",
+      "Dogs",
+      "Horses",
+      "Sheep and Goat"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Because of the split-claw weight-bearing anatomy in cattle, a fractured third phalanx often results in a characteristic weight-shifting/postural change onto the forelimbs.",
+    "marks": 1
+  },
+  {
+    "qnum": 102,
+    "text": "Which ELISA is used to differentiate between infected and vaccinated animal in Foot and Mouth disease?",
+    "options": [
+      "Liquid Phase Blocking ELISA",
+      "NSP (Non-Structural Protein) based ELISA",
+      "Sandwich ELISA",
+      "DOT ELISA"
+    ],
+    "correctAnswer": 1,
+    "explanation": "NSP-based ELISA detects antibodies against viral non-structural proteins, which are present only after natural infection (not after vaccination with purified antigen), thereby serving as a DIVA (Differentiating Infected from Vaccinated Animals) test.",
+    "marks": 1
+  },
+  {
+    "qnum": 103,
+    "text": "Select the correct sequence of Schistosoma nasale life cycle:\n(A). Redia\n(B). Cercaria\n(C). Miracidium\n(D). Sporocyst\n(E). Metacercaria",
+    "options": [
+      "C → D → A → E",
+      "C → D → B",
+      "C → A → D → E",
+      "C → B → E"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Schistosomes (blood flukes) lack a redia stage and their cercariae directly infect the host without forming metacercariae; the cycle proceeds miracidium → sporocyst → cercaria.",
+    "marks": 1
+  },
+  {
+    "qnum": 104,
+    "text": "Gag reflex test is carried out to test the cranial nerve namely:",
+    "options": [
+      "Glossopharyngeal",
+      "Oculomotor",
+      "Trochlear",
+      "Facial"
+    ],
+    "correctAnswer": 0,
+    "explanation": "The gag reflex tests the glossopharyngeal (afferent) and vagus (efferent) nerves.",
+    "marks": 1
+  },
+  {
+    "qnum": 105,
+    "text": "Given below are two statements:\nStatement (I): The general principles of mastitis control is unsuccessful for the control of coliform mastitis.\nStatement (II): Because infection of the mammary gland occurs by direct contact with the environment usually between milkings.",
+    "options": [
+      "Both Statement I and Statement II are true",
+      "Both Statement I and Statement II are false",
+      "Statement I is true but Statement II is false",
+      "Statement I is false but Statement II is true"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Coliform (environmental) mastitis is not well controlled by standard contagious-pathogen control measures precisely because infection arises from environmental exposure between milkings, so both statements are true.",
+    "marks": 1
+  },
+  {
+    "qnum": 106,
+    "text": "Potency of a drug is inversely proportional to:",
+    "options": [
+      "Dose",
+      "Concentration",
+      "Response",
+      "Formulation"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Potency is defined by the dose required to produce a given effect — the lower the dose needed, the higher the potency, i.e., potency is inversely related to dose.",
+    "marks": 1
+  },
+  {
+    "qnum": 107,
+    "text": "Which type of necrosis is noticed in abscess?",
+    "options": [
+      "Fat necrosis",
+      "Liquefactive necrosis",
+      "Coagulative necrosis",
+      "Caseous necrosis"
+    ],
+    "correctAnswer": 1,
+    "explanation": "An abscess is a collection of pus formed by liquefactive necrosis of tissue.",
+    "marks": 1
+  },
+  {
+    "qnum": 108,
+    "text": "Primary uterine inertia can be treated with:",
+    "options": [
+      "Estrogen",
+      "Progesterone",
+      "Prostaglandin F2α",
+      "Combination of oxytocin and calcium"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Primary uterine inertia, often linked to hypocalcaemia and poor myometrial tone, is treated with a combination of oxytocin and calcium borogluconate.",
+    "marks": 1
+  },
+  {
+    "qnum": 109,
+    "text": "Prolonged estrus sign in cattle is seen in:",
+    "options": [
+      "Cystic follicle",
+      "Para ovarian cyst",
+      "Delayed ovulation",
+      "Luteal cyst"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Follicular (cystic follicle) disease causes persistently high oestrogen levels, resulting in prolonged/continuous oestrus (nymphomania).",
+    "marks": 1
+  },
+  {
+    "qnum": 110,
+    "text": "Match List I with List II:\nList I:\n(A). Uremia in dogs\n(B). Canine Pemphigus\n(C). Mania\n(D). Pollakiuria\nList II:\n(I). Lower urinary tract infection\n(II). Increased senso motor stimulation\n(III). Autoimmune disease\n(IV). Tongue tip necrosis",
+    "options": [
+      "A – IV, B – III, C – II, D – I",
+      "A – III, B – II, C – I, D - IV",
+      "A – II, B – I, C – IV, D - III",
+      "A – I, B – IV, C – III, D - II"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Uraemia can cause tongue-tip necrosis/ulceration; canine pemphigus is an autoimmune skin disease; mania relates to increased sensorimotor stimulation; pollakiuria is commonly associated with lower urinary tract infection.",
+    "marks": 1
+  },
+  {
+    "qnum": 111,
+    "text": "In tuberculin testing, which of the following types of reaction is shown by the animal?\n(A). Active allergic reaction\n(B). Cytotoxic hypersensitivity\n(C). Delayed hypersensitivity\n(D). Arthus reaction\n(E). Auto-immune reaction",
+    "options": [
+      "A only",
+      "B and D only",
+      "E only",
+      "C only"
+    ],
+    "correctAnswer": 3,
+    "explanation": "The tuberculin skin test is a classic example of a Type IV (delayed-type/cell-mediated) hypersensitivity reaction.",
+    "marks": 1
+  },
+  {
+    "qnum": 112,
+    "text": "Match List I with List II:\nList I:\n(A). 8th Cranial nerve\n(B). Traumatic Reticulo Peritonitis\n(C). 2nd Cranial nerve\n(D). Abomasal ulcer\nList II:\n(I). Occult blood test\n(II). Menace test\n(III). Pole test\n(IV). Colorie test",
+    "options": [
+      "A – I, B – III, C – II, D – IV",
+      "A – II, B – III, C – IV, D - I",
+      "A – III, B – IV, C – I, D - II",
+      "A – IV, B – III, C – II, D - I"
+    ],
+    "correctAnswer": 3,
+    "explanation": "The pole test is used to elicit pain in traumatic reticuloperitonitis; the menace response tests the 2nd cranial (optic) nerve; abomasal ulcer is screened for via the faecal occult blood test; the 8th cranial nerve pairs with the remaining option by elimination.",
+    "marks": 1
+  },
+  {
+    "qnum": 113,
+    "text": "A subunit vaccine of CoxAbic contains:",
+    "options": [
+      "Precocious line Eimeria tenella",
+      "Gametocytes of Eimeria brunetti",
+      "Schizonts of Eimeria necatrix",
+      "Gametocytes of Eimeria maxima"
+    ],
+    "correctAnswer": 3,
+    "explanation": "CoxAbic is a maternal subunit vaccine against avian coccidiosis prepared from purified gametocyte antigens of Eimeria maxima.",
+    "marks": 1
+  },
+  {
+    "qnum": 114,
+    "text": "Match List I with List II:\nList I:\n(A). Contagious mastitis\n(B). Summer mastitis\n(C). Environmental mastitis\n(D). Fungal mastitis\nList II:\n(I). Escherichia Coli\n(II). Arcanobacterium pyogenes\n(III). Staphylococcus aureus\n(IV). Trichosporon spp.",
+    "options": [
+      "A – III, B – II, C – I, D – IV",
+      "A – II, B – I, C – IV, D - III",
+      "A – IV, B – III, C – I, D - II",
+      "A – I, B – IV, C – II, D - III"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Staphylococcus aureus causes contagious mastitis; Arcanobacterium (Trueperella) pyogenes causes summer mastitis; E. coli causes environmental mastitis; Trichosporon spp. cause fungal mastitis.",
+    "marks": 1
+  },
+  {
+    "qnum": 115,
+    "text": "In Haematoxylin and Eosin staining, mucin takes the following colour:",
+    "options": [
+      "Blue",
+      "Pink",
+      "Violet",
+      "Yellow"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Mucin is basophilic and stains pale blue with haematoxylin in routine H&E staining, rather than the pink (eosinophilic) colour of most cytoplasmic protein.",
+    "marks": 1
+  },
+  {
+    "qnum": 116,
+    "text": "Match List I with List II:\nList I:\n(A). Haemonchosis\n(B). Cestodiasis\n(C). Babesiosis\n(D). Coccidiosis\nList II:\n(I). Diminazene aceturate\n(II). Amprolium\n(III). Praziquantel\n(IV). Fenbendazole",
+    "options": [
+      "A – I, B – II, C – III, D – IV",
+      "A – II, B – III, C – IV, D - I",
+      "A – III, B – IV, C – I, D - II",
+      "A – IV, B – III, C – I, D - II"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Fenbendazole treats haemonchosis (a nematode infection); praziquantel treats cestodiasis; diminazene aceturate treats babesiosis; amprolium treats coccidiosis.",
+    "marks": 1
+  },
+  {
+    "qnum": 117,
+    "text": "Match List I with List II:\nList I:\n(A). Congestive Heart failure\n(B). Acute Heart failure\n(C). Cardiac Murmur\n(D). Cardiac Thrill\nList II:\n(I). Large size Leak\n(II). Moderate size leak\n(III). Severe pale mucous membrane\n(IV). Exercise intolerance",
+    "options": [
+      "A – IV, B – III, C – II, D – I",
+      "A – III, B – II, C – I, D – IV",
+      "A – II, B – I, C – IV, D – III",
+      "A – I, B – II, C – III, D – IV"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Congestive heart failure causes exercise intolerance; acute heart failure presents with severe pallor of mucous membranes (shock); an audible murmur suggests a moderate-sized valve leak, while a palpable thrill suggests a larger leak.",
+    "marks": 1
+  },
+  {
+    "qnum": 118,
+    "text": "Which one of the following is an ideal transducer for doing ultrasonographic examination of reticulum in a cow?",
+    "options": [
+      "3.5 MHz linear transducer",
+      "5.0 MHz transducer",
+      "7.5 MHz transducer",
+      "8.5 MHz transducer"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A lower-frequency (3.5 MHz) linear transducer provides the depth of penetration required to image the reticulum through the cranioventral abdominal wall of a cow.",
+    "marks": 1
+  },
+  {
+    "qnum": 119,
+    "text": "Ketamine hydrochloride is under the category of:",
+    "options": [
+      "Sedative drug",
+      "Analgesic drug",
+      "Muscle relaxant",
+      "Dissociative anesthetic"
+    ],
+    "correctAnswer": 3,
+    "explanation": "Ketamine is classified as a dissociative anaesthetic, producing a cataleptic, analgesic state distinct from classical general anaesthesia.",
+    "marks": 1
+  },
+  {
+    "qnum": 120,
+    "text": "The maximum dose rate of lignocaine hydrochloride in goat should not exceed:",
+    "options": [
+      "20 mg/kg Body Weight",
+      "30 mg/kg Body Weight",
+      "10 mg/kg Body Weight",
+      "40 mg/kg Body Weight"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The maximum recommended safe dose of lignocaine in goats is around 10 mg/kg body weight, beyond which systemic toxicity risk rises significantly.",
+    "marks": 1
+  }
+]

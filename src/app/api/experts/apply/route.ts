@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const applySchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -14,6 +16,13 @@ const applySchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+    const rl = rateLimit(`experts-apply:${clientIp(req)}`, 5, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
     const body = await req.json();
     const data = applySchema.parse(body);
 
