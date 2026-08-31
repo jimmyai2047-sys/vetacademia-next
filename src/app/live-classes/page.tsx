@@ -158,7 +158,7 @@ export default async function LiveClassesPage() {
 
       {/* Lists */}
       <section className="py-6 md:py-7">
-        <div className="container mx-auto px-4 max-w-4xl space-y-6">
+        <div className="container mx-auto px-4 max-w-7xl space-y-6">
           {classes.length === 0 ? (
             <div className="va-card-hover rounded-[1.5rem] border border-primary/5 bg-white shadow-sm p-5 text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">

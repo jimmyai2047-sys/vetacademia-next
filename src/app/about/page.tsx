@@ -51,7 +51,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8 max-w-5xl">
+      <div className="container mx-auto px-4 pt-8 max-w-6xl">
         <DecorativePageHeader
           badge="About VetAcademia • Since 2020 • Trusted by 10K+"
           title="About"
@@ -61,13 +61,13 @@ export default function AboutPage() {
         />
       </div>
 
-      <div className="container mx-auto px-4 max-w-5xl">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="va-divider-dots my-6"><span /></div>
       </div>
 
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white pointer-events-none" />
-        <div className="container relative mx-auto px-4 max-w-5xl pb-12">
+        <div className="container relative mx-auto px-4 max-w-6xl pb-12">
 
           {/* Mission */}
           <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border border-primary/10 bg-gradient-to-br from-primary/5 via-white to-blue-50/30 shadow-sm mb-8">
@@ -149,7 +149,7 @@ export default function AboutPage() {
                 <p className="text-muted-foreground leading-relaxed text-[15px]">
                   Dr. Ashok Baindha is the Founder &amp; Director of VetAcademia. He graduated as B.V.Sc &amp; A.H. from the College of Veterinary and Animal Sciences (CVAS), Bikaner in 2009, earned his M.V.Sc from the National Dairy Research Institute (NDRI), Karnal in 2011, and completed his PhD (in-service) from RAJUVAS, Bikaner in 2022. A UGC NET (2010) and ICAR NET (2011) qualifier, he brings more than 13 years of experience in teaching, research and extension, with a specialization in entrepreneurship. He has published 20+ research papers, books and book chapters, led the World Bank–funded NAHEP project of ICAR, and represented India at international training in Fiji (2019).
                 </p>
-                <div className="grid sm:grid-cols-2 gap-3 pt-2">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
                   {[
                     "B.V.Sc & A.H. — CVAS Bikaner (2009)",
                     "M.V.Sc — NDRI Karnal (2011)",

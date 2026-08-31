@@ -345,7 +345,7 @@ export default function CatalogClient() {
               </CardContent>
             </Card>
           ) : (
-            <div className="mx-auto max-w-5xl space-y-3 pt-1">
+            <div className="mx-auto max-w-7xl space-y-3 pt-1">
               {filtered.map(
                 (sub: any) =>
                   sub.show && (
@@ -530,7 +530,7 @@ export default function CatalogClient() {
           )}
 
           {/* Legend */}
-          <div className="mx-auto max-w-4xl mt-8">
+          <div className="mx-auto max-w-6xl mt-8">
             <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white/75 backdrop-blur-xl shadow-xl">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
               <div className="relative p-6 md:p-8 text-center">

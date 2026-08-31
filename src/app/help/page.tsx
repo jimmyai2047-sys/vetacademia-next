@@ -67,7 +67,7 @@ const helpTopics = [
 export default function HelpPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-4xl">
+      <div className="container mx-auto px-4 pt-8 max-w-7xl">
         <DecorativePageHeader
           badge="Help Center • Guides • Support"
           title="Help"
@@ -85,14 +85,14 @@ export default function HelpPage() {
         />
       </div>
 
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="va-divider-dots my-6"><span /></div>
       </div>
 
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white pointer-events-none" />
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
-        <div className="container relative mx-auto px-4 max-w-4xl pb-12">
+        <div className="container relative mx-auto px-4 max-w-7xl pb-12">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
             <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Quick Start</Badge>

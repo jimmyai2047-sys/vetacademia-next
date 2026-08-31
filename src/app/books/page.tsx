@@ -142,7 +142,7 @@ export default async function BooksPage({
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
         <div className="container relative mx-auto px-4">
           {/* Level filter - decorative pill bar */}
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-7xl">
             <div className="flex items-center justify-center gap-2 mb-3">
               <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
               <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Filter by Level</span>

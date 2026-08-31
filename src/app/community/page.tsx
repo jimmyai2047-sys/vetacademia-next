@@ -56,7 +56,7 @@ export default async function CommunityPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-5 max-w-4xl">
+    <div className="container mx-auto px-4 py-5 max-w-7xl">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 gap-1"

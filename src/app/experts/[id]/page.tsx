@@ -53,7 +53,7 @@ export default async function ExpertDetailPage({
   });
 
   return (
-    <div className="container mx-auto px-4 py-5 max-w-4xl">
+    <div className="container mx-auto px-4 py-5 max-w-6xl">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
         <Link href="/" className="hover:text-foreground transition-colors">Home</Link>

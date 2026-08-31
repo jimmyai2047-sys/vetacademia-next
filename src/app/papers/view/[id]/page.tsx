@@ -29,7 +29,7 @@ export default async function PostViewerPage({
     : null;
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="flex items-center justify-between gap-3 mb-4">
         <Link
           href="/papers"

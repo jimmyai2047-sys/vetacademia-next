@@ -30,7 +30,7 @@ export default async function PapersPage() {
   ]);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 group"
@@ -110,7 +110,7 @@ export default async function PapersPage() {
                               <span className="text-xs text-muted-foreground">· {group.papers.length}</span>
                               <div className="h-px flex-1 bg-muted ml-2" />
                             </div>
-                            <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {group.papers.map((p) => (
                                 <div key={p.id} className="relative group">
                                   <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl hover:border-primary/10 transition-colors h-full">
@@ -169,7 +169,7 @@ export default async function PapersPage() {
             Reference Documents
             <span className="ml-2 h-px flex-1 bg-gradient-to-r from-primary/10 to-transparent hidden sm:block" />
           </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => (
               <Card key={post.id} className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl">
                 <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
