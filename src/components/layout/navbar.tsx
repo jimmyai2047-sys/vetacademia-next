@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { isExpertRole } from "@/lib/roles";
-import { BrandLogo } from "@/components/layout/brand-logo";
 import {
   Menu,
   GraduationCap,
@@ -196,17 +195,19 @@ export default function Navbar() {
       <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary va-gradient-animate" />
       <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(0,95,72,0.07)]">
         <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
-        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-4">
-          {/* Logo - decorative */}
-          <div className="relative flex items-center gap-3">
-            <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-primary/10 to-blue-500/10 blur-xl opacity-60" />
-            <BrandLogo src="/favicon-192x192.png" imgClassName="h-11 w-auto relative" />
-            <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
-            <div className="hidden sm:block">
-              <p className="text-[11px] font-semibold tracking-[0.18em] text-primary uppercase leading-none">VetAcademia</p>
-              <p className="text-[10px] tracking-widest text-muted-foreground uppercase">Excellence • Since 2020</p>
-            </div>
-          </div>
+        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-0 sm:px-4">
+          {/* Logo - Left most corner attached */}
+          <Link href="/" className="relative flex items-center h-full -ml-1 sm:ml-0 shrink-0 group">
+            <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-vetacademia.png"
+              alt="VetAcademia - Veterinary Education Platform"
+              className="relative h-12 sm:h-14 w-auto object-contain object-left"
+              width={180}
+              height={56}
+            />
+          </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-7">
