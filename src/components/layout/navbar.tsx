@@ -61,9 +61,17 @@ const programmes = [
 ];
 
 const examCategories = [
-  { name: "Public Service Commission", href: "/examinations/psc", icon: Shield, desc: "Vet. Officer / LSA" },
-  { name: "ICAR Entrance", href: "/examinations/icar-entrance", icon: BookMarked, desc: "JRF / SRF" },
-  { name: "NET", href: "/examinations/net", icon: Microscope, desc: "ICAR / CSIR / UGC" },
+  // PSC — अलग-अलग plate
+  { name: "V.O. / V.S. (PSC)", href: "/examinations/psc#veterinary-officer", icon: Stethoscope, desc: "PSC — B.V.Sc • V.O. / V.S." },
+  { name: "L.S.A. (PSC)", href: "/examinations/psc#livestock-assistant", icon: Tractor, desc: "PSC — AHDP • RSSB" },
+  // ICAR Entrance — JRF / SRF अलग-अलग plate
+  { name: "ICAR-JRF", href: "/examinations/icar-jrf", icon: BookMarked, desc: "ICAR Entrance — JRF" },
+  { name: "ICAR-SRF", href: "/examinations/icar-srf", icon: FlaskConical, desc: "ICAR Entrance — SRF" },
+  // NET — CSIR / UGC / ICAR अलग-अलग plate
+  { name: "ICAR-NET", href: "/examinations/net-icar", icon: Award, desc: "NET — ICAR (ASRB)" },
+  { name: "CSIR-NET", href: "/examinations/net-csir", icon: Microscope, desc: "NET — CSIR" },
+  { name: "UGC-NET", href: "/examinations/net-ugc", icon: BookOpen, desc: "NET — UGC" },
+  // ARS & Other — अलग plate
   { name: "ARS", href: "/examinations/ars", icon: Award, desc: "Research Scientist" },
   { name: "Other Exams", href: "/examinations/other", icon: FileQuestion, desc: "Various Exams" },
 ];
@@ -301,7 +309,7 @@ export default function Navbar() {
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[400px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
               <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -310,11 +318,11 @@ export default function Navbar() {
                   </span>
                   <div>
                     <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-blue-700">Competitive Exams <Gem className="h-3 w-3 text-[#d4a843]" /></p>
-                    <p className="text-xs text-muted-foreground">PSC • ICAR • NET • ARS • 410+ Papers</p>
+                    <p className="text-xs text-muted-foreground">VO • LSA • JRF • SRF • ICAR/CSIR/UGC-NET • ARS • 410+ Papers</p>
                   </div>
                 </div>
               </div>
-              <div className="relative p-2.5 space-y-1 max-h-[360px] overflow-y-auto">
+              <div className="relative p-2.5 space-y-1 max-h-[420px] overflow-y-auto">
                 {examCategories.map((c) => (
                   <Link
                     key={c.name}

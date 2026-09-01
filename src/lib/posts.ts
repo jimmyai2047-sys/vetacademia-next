@@ -8,6 +8,7 @@ export type PublicPost = {
   fileName: string | null;
   fileType: string | null;
   downloadUrl: string | null;
+  track?: string | null;
 };
 
 export async function getPublishedPosts(
@@ -32,6 +33,7 @@ export async function getPublishedPosts(
       fileName: p.fileName,
       fileType: p.fileType,
       downloadUrl: await getSignedUrl(p.fileUrl),
+      track: (p as any).track ?? null,
     }))
   );
 }

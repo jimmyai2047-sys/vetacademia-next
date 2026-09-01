@@ -135,8 +135,13 @@ export function planSlugForExam(examKey: string): string | null {
     case "psc":
       return "veterinary-officer";
     case "icar-entrance":
+    case "icar-jrf":
+    case "icar-srf":
       return "icar-jrf-srf";
     case "net":
+    case "net-icar":
+    case "net-csir":
+    case "net-ugc":
       return "net";
     case "ars":
       return "ars";

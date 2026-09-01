@@ -3,8 +3,15 @@
 
 const examImages: Record<string, string> = {
   psc: "https://images.unsplash.com/photo-1569858241634-5aee6e47091a?w=1200&q=80",
+  "psc-vo": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1200&q=80",
+  "psc-lsa": "https://images.unsplash.com/photo-1657536011755-b6cbe9c4c522?w=1200&q=80",
   "icar-entrance": "https://images.unsplash.com/photo-1648792940059-3b782a7b8b20?w=1200&q=80",
+  "icar-jrf": "https://images.unsplash.com/photo-1464983953574-0892a716854b?w=1200&q=80",
+  "icar-srf": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80",
   net: "https://images.unsplash.com/photo-1517697382483-dfc60dfb913f?w=1200&q=80",
+  "net-icar": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=1200&q=80",
+  "net-csir": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&q=80",
+  "net-ugc": "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=1200&q=80",
   ars: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80",
   other: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=1200&q=80",
 };

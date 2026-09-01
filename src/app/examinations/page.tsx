@@ -24,53 +24,146 @@ import {
   BookOpen,
   Sparkles,
   GraduationCap,
+  Stethoscope,
+  Tractor,
+  FlaskConical,
+  Atom,
+  Library,
 } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import ExamCountdown from "@/components/exam-countdown";
 
-const examinations = [
+const examinations: Array<{
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: typeof Building2;
+  color: string;
+  lightColor: string;
+  textColor: string;
+  badge: string;
+  papers: number;
+  mockTests: number;
+  href: string;
+  group: string;
+}> = [
+  // ── PSC ──
   {
-    id: "psc",
-    title: "Public Service Commission",
-    subtitle: "Veterinary Officer / Surgeon, Livestock Assistant",
+    id: "psc-vo",
+    title: "Veterinary Officer / Surgeon",
+    subtitle: "V.O. / V.S. — PSC",
     description:
-      "Prepare for state and central PSC examinations for Veterinary Officer, Veterinary Surgeon, and Livestock Assistant positions.",
-    icon: Building2,
-    color: "bg-blue-500",
+      "B.V.Sc & A.H. based PSC preparation for Veterinary Officer / Veterinary Surgeon — state & central recruitment with General Knowledge.",
+    icon: Stethoscope,
+    color: "bg-blue-600",
     lightColor: "bg-blue-50",
     textColor: "text-blue-600",
-    badge: "State & Central",
-    papers: 120,
-    mockTests: 45,
+    badge: "V.O. / V.S. — B.V.Sc",
+    papers: 70,
+    mockTests: 28,
+    href: "/examinations/psc#veterinary-officer",
+    group: "PSC",
   },
   {
-    id: "icar-entrance",
-    title: "ICAR Entrance",
-    subtitle: "JRF and SRF",
+    id: "psc-lsa",
+    title: "Livestock Assistant",
+    subtitle: "L.S.A. — PSC",
     description:
-      "Comprehensive preparation for ICAR-JRF (Junior Research Fellow) and ICAR-SRF (Senior Research Fellow) entrance examinations.",
+      "AHDP based PSC preparation for Livestock Assistant (L.S.A.) — Rajasthan Staff Selection Board syllabus with Rajasthan GK.",
+    icon: Tractor,
+    color: "bg-teal-600",
+    lightColor: "bg-teal-50",
+    textColor: "text-teal-600",
+    badge: "L.S.A. — AHDP",
+    papers: 50,
+    mockTests: 20,
+    href: "/examinations/psc#livestock-assistant",
+    group: "PSC",
+  },
+  // ── ICAR Entrance — JRF & SRF अलग-अलग plate ──
+  {
+    id: "icar-jrf",
+    title: "ICAR-JRF",
+    subtitle: "ICAR Entrance — JRF",
+    description:
+      "Junior Research Fellowship (JRF) — B.V.Sc & A.H. level ICAR entrance for PG admission with scholarship. Chapter / Unit based preparation.",
     icon: Beaker,
-    color: "bg-emerald-500",
+    color: "bg-emerald-600",
     lightColor: "bg-emerald-50",
     textColor: "text-emerald-600",
-    badge: "JRF & SRF",
-    papers: 80,
-    mockTests: 30,
+    badge: "ICAR-JRF",
+    papers: 45,
+    mockTests: 18,
+    href: "/examinations/icar-jrf",
+    group: "ICAR Entrance",
   },
   {
-    id: "net",
-    title: "National Eligibility Test",
-    subtitle: "ICAR, CSIR, UGC",
+    id: "icar-srf",
+    title: "ICAR-SRF",
+    subtitle: "ICAR Entrance — SRF",
     description:
-      "Ace the National Eligibility Test conducted by ICAR, CSIR, and UGC for lectureship and research fellowship eligibility.",
+      "Senior Research Fellowship (SRF) — M.V.Sc level ICAR entrance for Ph.D. admission. Discipline / Course based preparation.",
+    icon: FlaskConical,
+    color: "bg-green-600",
+    lightColor: "bg-green-50",
+    textColor: "text-green-600",
+    badge: "ICAR-SRF",
+    papers: 40,
+    mockTests: 15,
+    href: "/examinations/icar-srf",
+    group: "ICAR Entrance",
+  },
+  // ── NET — ICAR / CSIR / UGC अलग-अलग plate ──
+  {
+    id: "net-icar",
+    title: "ICAR-NET",
+    subtitle: "NET — ICAR",
+    description:
+      "ICAR-NET (ASRB) — National Eligibility Test for Lectureship / Assistant Professor in veterinary & agricultural sciences.",
     icon: Award,
-    color: "bg-purple-500",
+    color: "bg-purple-600",
     lightColor: "bg-purple-50",
     textColor: "text-purple-600",
-    badge: "ICAR / CSIR / UGC",
-    papers: 100,
-    mockTests: 40,
+    badge: "ICAR-NET",
+    papers: 45,
+    mockTests: 20,
+    href: "/examinations/net-icar",
+    group: "NET",
   },
+  {
+    id: "net-csir",
+    title: "CSIR-NET",
+    subtitle: "NET — CSIR",
+    description:
+      "CSIR-NET — National Eligibility Test for JRF & Lectureship in Life Sciences, conducted by CSIR for research careers.",
+    icon: Atom,
+    color: "bg-indigo-600",
+    lightColor: "bg-indigo-50",
+    textColor: "text-indigo-600",
+    badge: "CSIR-NET",
+    papers: 35,
+    mockTests: 15,
+    href: "/examinations/net-csir",
+    group: "NET",
+  },
+  {
+    id: "net-ugc",
+    title: "UGC-NET",
+    subtitle: "NET — UGC",
+    description:
+      "UGC-NET — National Eligibility Test for Assistant Professor & JRF in higher education, conducted by NTA on behalf of UGC.",
+    icon: Library,
+    color: "bg-violet-600",
+    lightColor: "bg-violet-50",
+    textColor: "text-violet-600",
+    badge: "UGC-NET",
+    papers: 30,
+    mockTests: 12,
+    href: "/examinations/net-ugc",
+    group: "NET",
+  },
+  // ── ARS ──
   {
     id: "ars",
     title: "Agricultural Research Scientist",
@@ -81,10 +174,13 @@ const examinations = [
     color: "bg-orange-500",
     lightColor: "bg-orange-50",
     textColor: "text-orange-600",
-    badge: "ARS",
+    badge: "ARS — ASRB",
     papers: 60,
     mockTests: 25,
+    href: "/examinations/ars",
+    group: "ARS",
   },
+  // ── Other ──
   {
     id: "other",
     title: "Other Examinations",
@@ -98,8 +194,19 @@ const examinations = [
     badge: "Multiple",
     papers: 50,
     mockTests: 20,
+    href: "/examinations/other",
+    group: "Other",
   },
 ];
+
+const groupOrder = ["PSC", "ICAR Entrance", "NET", "ARS", "Other"];
+const groupMeta: Record<string, { label: string; desc: string; color: string }> = {
+  PSC: { label: "PSC", desc: "Rajasthan PSC — VO & LSA", color: "from-blue-600 to-teal-600" },
+  "ICAR Entrance": { label: "ICAR Entrance", desc: "JRF & SRF", color: "from-emerald-600 to-green-600" },
+  NET: { label: "NET", desc: "ICAR • CSIR • UGC", color: "from-purple-600 to-violet-600" },
+  ARS: { label: "ARS", desc: "ASRB Research Scientist", color: "from-orange-500 to-amber-500" },
+  Other: { label: "Other Exams", desc: "State & Institutional Exams", color: "from-rose-500 to-pink-500" },
+};
 
 export default function ExaminationsPage() {
   return (
@@ -120,8 +227,8 @@ export default function ExaminationsPage() {
             <div className="mx-auto h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
               <GraduationCap className="h-5 w-5 text-primary" />
             </div>
-            <div className="text-2xl font-extrabold">5</div>
-            <div className="text-xs text-muted-foreground">Exam Categories</div>
+            <div className="text-2xl font-extrabold">9</div>
+            <div className="text-xs text-muted-foreground">Exam Plates</div>
             <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-primary/20" />
           </CardContent>
         </Card>
@@ -172,71 +279,93 @@ export default function ExaminationsPage() {
 
       <div className="va-divider-dots my-8"><span /></div>
 
-      {/* Examination Categories */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {examinations.map((exam) => (
-          <Link key={exam.id} href={`/examinations/${exam.id}`}>
-            <Card className="va-card-hover group relative h-full cursor-pointer overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl hover:border-primary/10">
-              <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
-              <div className="relative h-40 w-full overflow-hidden">
-                <Image
-                  src={getExamImage(exam.id)}
-                  alt={exam.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <exam.icon className="h-12 w-12 text-white/70" />
-                </div>
-                <div className="absolute right-3 top-3">
-                  <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white text-[10px] gap-1">
-                    <Sparkles className="h-3 w-3 text-[#d4a843]" /> {exam.badge}
-                  </Badge>
-                </div>
+      {/* Examination Categories — grouped into plates: PSC (VO/LSA), ICAR (JRF/SRF), NET (ICAR/CSIR/UGC), ARS, Other */}
+      <div className="space-y-10">
+        {groupOrder.map((groupName) => {
+          const items = examinations.filter((e) => e.group === groupName);
+          const meta = groupMeta[groupName];
+          if (!items.length) return null;
+          return (
+            <div key={groupName}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`h-1 w-8 rounded-full bg-gradient-to-r ${meta.color}`} />
+                <h2 className="text-lg font-extrabold tracking-tight">{meta.label}</h2>
+                <span className="text-xs text-muted-foreground border rounded-full px-2.5 py-0.5 bg-white">{meta.desc}</span>
+                <span className="text-xs text-muted-foreground hidden sm:inline">— {items.length} plate{items.length > 1 ? "s" : ""}</span>
               </div>
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`w-14 h-14 rounded-xl ${exam.lightColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform border border-transparent group-hover:border-primary/10`}
-                  >
-                    <exam.icon className={`h-7 w-7 ${exam.textColor}`} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {exam.title}
-                      </CardTitle>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <Badge variant="secondary" className="text-xs rounded-full">
-                      {exam.badge}
-                    </Badge>
-                  </div>
-                </div>
-                <CardDescription className="text-sm font-medium text-foreground/70 mt-2">
-                  {exam.subtitle}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {exam.description}
-                </p>
-                <div className="flex items-center gap-4 text-sm">
-                  <div>
-                    <span className="font-semibold">{exam.papers}</span>{" "}
-                    <span className="text-muted-foreground">Papers</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold">{exam.mockTests}</span>{" "}
-                    <span className="text-muted-foreground">Mock Tests</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((exam) => (
+                  <Link key={exam.id} href={exam.href}>
+                    <Card className="va-card-hover group relative h-full cursor-pointer overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl hover:border-primary/10">
+                      <div className={`h-1 bg-gradient-to-r ${meta.color} opacity-70 group-hover:opacity-100 transition-opacity`} />
+                      <div className="relative h-40 w-full overflow-hidden">
+                        <Image
+                          src={getExamImage(exam.id)}
+                          alt={exam.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 400px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <exam.icon className="h-12 w-12 text-white/70" />
+                        </div>
+                        <div className="absolute right-3 top-3">
+                          <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white text-[10px] gap-1">
+                            <Sparkles className="h-3 w-3 text-[#d4a843]" /> {exam.badge}
+                          </Badge>
+                        </div>
+                        <div className="absolute left-3 top-3">
+                          <Badge className="rounded-full bg-white/90 text-foreground text-[10px] border-0 shadow">
+                            {exam.group}
+                          </Badge>
+                        </div>
+                      </div>
+                      <CardHeader>
+                        <div className="flex items-start gap-4">
+                          <div
+                            className={`w-14 h-14 rounded-xl ${exam.lightColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform border border-transparent group-hover:border-primary/10`}
+                          >
+                            <exam.icon className={`h-7 w-7 ${exam.textColor}`} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                                {exam.title}
+                              </CardTitle>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <Badge variant="secondary" className="text-xs rounded-full">
+                              {exam.badge}
+                            </Badge>
+                          </div>
+                        </div>
+                        <CardDescription className="text-sm font-medium text-foreground/70 mt-2">
+                          {exam.subtitle}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                          {exam.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-sm">
+                          <div>
+                            <span className="font-semibold">{exam.papers}</span>{" "}
+                            <span className="text-muted-foreground">Papers</span>
+                          </div>
+                          <div>
+                            <span className="font-semibold">{exam.mockTests}</span>{" "}
+                            <span className="text-muted-foreground">Mock Tests</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="va-divider-dots my-8"><span /></div>

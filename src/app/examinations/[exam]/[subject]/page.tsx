@@ -33,11 +33,19 @@ export default async function ExamSubjectPage({
   params: Promise<{ exam: string; subject: string }>;
 }) {
   const { exam, subject: subjectSlug } = await params;
+  const canonicalExamMap: Record<string, string> = {
+    "icar-jrf": "icar-entrance",
+    "icar-srf": "icar-entrance",
+    "net-icar": "net",
+    "net-csir": "net",
+    "net-ugc": "net",
+  };
+  const canonicalExam = canonicalExamMap[exam] ?? exam;
 
   // Resolve discipline (static config, plus DB fallback for programme-based tracks).
-  let found = findDiscipline(exam, subjectSlug);
+  let found = findDiscipline(canonicalExam, subjectSlug);
   if (!found) {
-    const groups = getExamGroups(exam).filter((g) => g.programmeSlug);
+    const groups = getExamGroups(canonicalExam).filter((g) => g.programmeSlug);
     if (groups.length > 0) {
       const programmes = groups.map((g) => slugToProgrammeName(g.programmeSlug!));
       const subjects = await prisma.subject.findMany({
@@ -65,8 +73,8 @@ export default async function ExamSubjectPage({
   const { discipline, group } = found;
 
   const access = await getAccess();
-  const examUnlocked = access.examKeys.has(exam) || access.examPlanOwned;
-  const requiredPlan = group?.planSlug ?? planSlugForExam(exam);
+  const examUnlocked = access.examKeys.has(exam) || access.examKeys.has(canonicalExam) || access.examPlanOwned;
+  const requiredPlan = group?.planSlug ?? planSlugForExam(canonicalExam);
   const unlocked = group?.planSlug
     ? access.planSlugs.has(group.planSlug)
     : examUnlocked;
@@ -99,7 +107,7 @@ export default async function ExamSubjectPage({
             )
           )
       : Promise.resolve([]),
-    getPublishedPosts("PREVIOUS_YEAR", exam, subjectSlug),
+    getPublishedPosts("PREVIOUS_YEAR", canonicalExam, subjectSlug),
   ]);
 
   // Merge all year records that share this subject name (e.g. III Year + IV Year).
@@ -120,16 +128,18 @@ export default async function ExamSubjectPage({
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to {exam === "icar-entrance" ? "ICAR Entrance" : exam.toUpperCase()}
+        Back to {canonicalExam === "icar-entrance" ? "ICAR Entrance" : canonicalExam.toUpperCase()}
       </Link>
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{discipline.name}</h1>
         <div className="flex items-center gap-2 mt-2 flex-wrap">
           <Badge variant="secondary">
-            {exam === "icar-entrance"
-              ? "ICAR-JRF / SRF"
-              : exam.toUpperCase()}
+            {canonicalExam === "icar-entrance"
+              ? exam === "icar-jrf" ? "ICAR-JRF" : exam === "icar-srf" ? "ICAR-SRF" : "ICAR-JRF / SRF"
+              : canonicalExam === "net"
+                ? exam === "net-icar" ? "ICAR-NET" : exam === "net-csir" ? "CSIR-NET" : exam === "net-ugc" ? "UGC-NET" : "NET"
+                : exam.toUpperCase()}
           </Badge>
           {group && <Badge variant="outline">{group.name}</Badge>}
           {discipline.isGeneral && <Badge variant="outline">Paper</Badge>}
