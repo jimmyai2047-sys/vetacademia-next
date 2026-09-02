@@ -295,70 +295,6 @@ export default function Navbar() {
           </div>
           </div>
 
-          {/* Exams */}
-          <div
-            className="group relative"
-            onMouseEnter={() => setMenu("exams", true)}
-            onMouseLeave={() => setMenu("exams", false)}
-            onFocus={() => setMenu("exams", true)}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("exams", false);
-            }}
-          >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["exams"]}>
-              <FileCheck className="h-4 w-4" />
-              Exams
-            </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
-              <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md">
-                    <Award className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-blue-700">Competitive Exams <Gem className="h-3 w-3 text-[#d4a843]" /></p>
-                    <p className="text-xs text-muted-foreground">VO • LSA • JRF • SRF • ICAR/CSIR/UGC-NET • ARS • 410+ Papers</p>
-                  </div>
-                </div>
-              </div>
-              <div className="relative p-2.5 space-y-1 max-h-[420px] overflow-y-auto">
-                {examCategories.map((c) => (
-                  <Link
-                    key={c.name}
-                    href={c.href}
-                    onClick={closeAllMenus}
-                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-emerald-50/30 hover:shadow-sm transition-all"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent transition-all">
-                      <c.icon className="h-4 w-4" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
-                        {c.name}
-                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
-                      </div>
-                      <div className="text-xs text-muted-foreground">{c.desc}</div>
-                    </div>
-                    <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              <div className="relative p-2.5 bg-gradient-to-r from-primary/[0.04] via-blue-50/20 to-transparent border-t border-primary/5">
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href="/study-materials" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-white border border-primary/10 px-3 py-2.5 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
-                    <BookOpenCheck className="h-3.5 w-3.5 text-primary" /> Study Materials
-                  </Link>
-                  <Link href="/papers" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
-                    <FileCheck className="h-3.5 w-3.5" /> PYQ Papers
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Prepare */}
           <div
             className="group relative"
@@ -369,7 +305,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prepare", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]}>
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]} title="Prepare — practice, mocks & PYQs">
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
@@ -431,6 +367,73 @@ export default function Navbar() {
                       <span className="text-[11px] font-bold leading-tight">{t.label}</span>
                     </Link>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Exams */}
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("exams", true)}
+            onMouseLeave={() => setMenu("exams", false)}
+            onFocus={() => setMenu("exams", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("exams", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["exams"]} title="Exams — info, syllabus & eligibility">
+              <FileCheck className="h-4 w-4" />
+              Exams
+            </Button>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
+              <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md">
+                    <Award className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-blue-700">Competitive Exams <Gem className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">VO • LSA • JRF • SRF • ICAR/CSIR/UGC-NET • ARS • 410+ Papers</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1 max-h-[420px] overflow-y-auto">
+                {examCategories.map((c) => (
+                  <Link
+                    key={c.name}
+                    href={c.href}
+                    onClick={closeAllMenus}
+                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-emerald-50/30 hover:shadow-sm transition-all"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent transition-all">
+                      <c.icon className="h-4 w-4" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
+                        {c.name}
+                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
+                      </div>
+                      <div className="text-xs text-muted-foreground">{c.desc}</div>
+                    </div>
+                    <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <div className="relative p-2.5 bg-gradient-to-r from-primary/[0.04] via-blue-50/20 to-transparent border-t border-primary/5 space-y-2">
+                <Link href="/examinations" onClick={closeAllMenus} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                  <FileCheck className="h-3.5 w-3.5" /> View All Examinations
+                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/study-materials" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-white border border-primary/10 px-3 py-2.5 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
+                    <BookOpenCheck className="h-3.5 w-3.5 text-primary" /> Study Materials
+                  </Link>
+                  <Link href="/papers" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                    <FileCheck className="h-3.5 w-3.5" /> PYQ Papers
+                  </Link>
                 </div>
               </div>
             </div>
@@ -687,7 +690,7 @@ export default function Navbar() {
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search subjects, exams..."
+                    placeholder="Search subjects..."
                     aria-label="Search subjects"
                     className="w-full pl-10 pr-4 h-11 rounded-xl border border-primary/10 bg-gradient-to-r from-muted/30 to-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/20 shadow-sm"
                   />
@@ -734,6 +737,45 @@ export default function Navbar() {
                 </MobileNavSection>
 
                 <MobileNavSection
+                  title="Prepare"
+                  icon={BookOpen}
+                  open={!!expanded.prepare}
+                  onToggle={() => toggleSection("prepare")}
+                >
+                  {prepCategories.map((c) => (
+                    <Link
+                      key={c.name}
+                      href={c.href}
+                      className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span>
+                        <span className="block">{c.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {c.desc}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                  <Link href="/mock-tests" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileText className="h-4 w-4 text-primary" /> Mock Tests
+                  </Link>
+                  <Link href="/flashcards" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <BookMarked className="h-4 w-4 text-primary" /> Flashcards
+                  </Link>
+                  <Link href="/papers" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileCheck className="h-4 w-4 text-primary" /> Previous Year Papers
+                  </Link>
+                  <Link href="/live-classes" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Radio className="h-4 w-4 text-primary" /> Live Classes
+                  </Link>
+                  <Link href="/demo" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <Play className="h-4 w-4 text-primary" /> Free Demo
+                  </Link>
+                </MobileNavSection>
+
+                <MobileNavSection
                   title="Exams"
                   icon={FileCheck}
                   open={!!expanded.exams}
@@ -770,45 +812,6 @@ export default function Navbar() {
                   >
                     <BookOpenCheck className="h-4 w-4 text-primary" />
                     Study Materials
-                  </Link>
-                </MobileNavSection>
-
-                <MobileNavSection
-                  title="Prepare"
-                  icon={BookOpen}
-                  open={!!expanded.prepare}
-                  onToggle={() => toggleSection("prepare")}
-                >
-                  {prepCategories.map((c) => (
-                    <Link
-                      key={c.name}
-                      href={c.href}
-                      className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <c.icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>
-                        <span className="block">{c.name}</span>
-                        <span className="block text-xs text-muted-foreground">
-                          {c.desc}
-                        </span>
-                      </span>
-                    </Link>
-                  ))}
-                  <Link href="/mock-tests" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <FileText className="h-4 w-4 text-primary" /> Mock Tests
-                  </Link>
-                  <Link href="/flashcards" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <BookMarked className="h-4 w-4 text-primary" /> Flashcards
-                  </Link>
-                  <Link href="/papers" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <FileCheck className="h-4 w-4 text-primary" /> Previous Year Papers
-                  </Link>
-                  <Link href="/live-classes" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <Radio className="h-4 w-4 text-primary" /> Live Classes
-                  </Link>
-                  <Link href="/demo" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <Play className="h-4 w-4 text-primary" /> Free Demo
                   </Link>
                 </MobileNavSection>
 

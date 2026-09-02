@@ -13,6 +13,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { GraduationCap, Sparkles } from "lucide-react";
+import { prepareChapterHtml } from "@/lib/chapter-images";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,7 @@ export default async function PreparePage({
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
             Structured tracks, previous year papers, and mock tests are available to enrolled members. Highly decorative, highly focused preparation.
           </p>
-          <Link href="/login" className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
+          <Link href={`/login?callbackUrl=${encodeURIComponent(tab ? `/prepare?tab=${tab}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
             <Sparkles className="h-4 w-4" /> Log In
           </Link>
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
@@ -103,7 +104,7 @@ export default async function PreparePage({
           type: m.type,
           title: m.title,
           description: m.description,
-          body: m.body,
+          body: m.body ? await prepareChapterHtml(m.body) : null,
           downloadUrl: m.fileUrl ? await getSignedUrl(m.fileUrl) : null,
           externalUrl: m.externalUrl,
           embedUrl: ytEmbed(m.externalUrl),

@@ -12,7 +12,7 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 export default function ContactPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-3xl">
+      <div className="container mx-auto px-4 pt-8 max-w-7xl">
         <DecorativePageHeader
           badge="Contact • Support • 24/7 Help"
           title="Contact"
@@ -32,16 +32,16 @@ export default function ContactPage() {
         />
       </div>
 
-      <div className="container mx-auto px-4 max-w-3xl">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="va-divider-dots my-6"><span /></div>
       </div>
 
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white pointer-events-none" />
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
-        <div className="container relative mx-auto px-4 max-w-3xl pb-12">
+        <div className="container relative mx-auto px-4 max-w-7xl pb-8">
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 opacity-60 group-hover:opacity-100 transition-opacity" />
               <CardContent className="p-6 flex items-start gap-4 relative">

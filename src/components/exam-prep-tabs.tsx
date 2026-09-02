@@ -23,6 +23,7 @@ import {
   Music,
   Film,
   File,
+  BookOpen,
 } from "lucide-react";
 
 type Material = {
@@ -104,12 +105,25 @@ function MaterialCard({ m }: { m: Material }) {
         ) : null}
 
         {m.body ? (
-          <div className="mt-3 rounded-md border bg-muted/30 p-3">
-            <ProtectedHtml html={m.body} />
+          <div className="mt-3 rounded-xl border bg-white p-3 max-h-[320px] overflow-hidden relative">
+            <div className="pointer-events-none">
+              <ProtectedHtml html={m.body} />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+            <Link href={`/prepare/material/${m.id}`} className="absolute bottom-3 right-3">
+              <Button size="sm" className="rounded-full shadow-md gap-1.5">
+                <BookOpen className="h-3.5 w-3.5" /> Read Full — User Friendly
+              </Button>
+            </Link>
           </div>
         ) : null}
 
         <div className="mt-3 flex flex-wrap gap-2">
+          <Link href={`/prepare/material/${m.id}`}>
+            <Button size="sm" variant="default" className="rounded-full gap-1.5">
+              <BookOpen className="h-3.5 w-3.5" /> Open Reader
+            </Button>
+          </Link>
           {m.downloadUrl && (
             <a href={m.downloadUrl} target="_blank" rel="noopener noreferrer">
               <Button size="sm" variant="outline">
@@ -124,11 +138,11 @@ function MaterialCard({ m }: { m: Material }) {
               rel="noopener noreferrer"
             >
               <Button size="sm" variant="outline">
-                <Play className="h-4 w-4 mr-1" /> Open
+                <Play className="h-4 w-4 mr-1" /> Open Link
               </Button>
             </a>
           )}
-          {!m.downloadUrl && !m.externalUrl && (
+          {!m.downloadUrl && !m.externalUrl && !m.body && (
             <span className="text-xs text-muted-foreground">No file attached</span>
           )}
         </div>
