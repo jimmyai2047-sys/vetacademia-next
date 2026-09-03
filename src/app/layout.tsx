@@ -20,9 +20,9 @@ const noto = Noto_Sans({
   display: "swap",
 });
 
-// Render all routes dynamically so the build never depends on a live DB
-// connection (Vercel build environment can't always reach Neon at build time).
-export const dynamic = "force-dynamic";
+// Most routes are now statically cached with `revalidate` or `unstable_cache`.
+// Only auth-dependent routes (admin, dashboard, etc.) opt into `force-dynamic`
+// individually; the layout itself stays static for better TTFB.
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vetacademia.in"),

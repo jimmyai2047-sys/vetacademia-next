@@ -60,10 +60,7 @@ export default async function PostViewerPage({
       )}
 
       {viewUrl ? (
-        <div
-          className="w-full rounded-lg overflow-hidden border bg-muted"
-          style={{ height: "80vh" }}
-        >
+        <div className="w-full rounded-lg overflow-hidden border bg-muted h-[80vh]">
           <iframe
             src={viewUrl}
             className="w-full h-full border-0"

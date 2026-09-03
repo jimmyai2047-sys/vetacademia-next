@@ -20,6 +20,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { TestStatsSidebar } from "@/components/test-stats";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export type Flashcard = {
   id: string;
@@ -121,7 +122,7 @@ export default function FlashcardDeck({
     const k = known.length + (correct ? 1 : 0);
     const u = unknown.length + (correct ? 0 : 1);
     const pct = k + u > 0 ? Math.round((k / (k + u)) * 100) : 0;
-    fetch("/api/progress", {
+    csrfFetch("/api/progress", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subjectId: "flashcards", progress: pct }),

@@ -38,21 +38,14 @@ export default function MobileCheckout() {
   }, []);
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        padding: 32,
-        textAlign: "center",
-        marginTop: "20vh",
-      }}
-    >
-      <h2 style={{ color: "#0a7ea4" }}>VetAcademia</h2>
+    <div className="font-sans p-8 text-center mt-[20vh]">
+      <h2 className="text-[#0a7ea4]">VetAcademia</h2>
       {error ? (
-        <p style={{ color: "#c0392b" }}>{error}</p>
+        <p className="text-[#c0392b]">{error}</p>
       ) : (
-        <p style={{ color: "#555" }}>{status}</p>
+        <p className="text-[#555]">{status}</p>
       )}
-      <p style={{ color: "#999", fontSize: 13, marginTop: 16 }}>
+      <p className="text-[#999] text-[13px] mt-4">
         Complete payment in the popup. You can close this tab afterwards.
       </p>
     </div>

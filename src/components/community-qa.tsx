@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Send, CheckCircle2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Doubt = {
   id: string;
@@ -37,7 +38,7 @@ export default function CommunityQa({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/community/questions", {
+      const res = await csrfFetch("/api/community/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: question.trim(), subject: subject.trim() || null }),

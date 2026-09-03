@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateCsrf } from "@/lib/csrf";
 
 // GET: list recent community questions (public).
 // POST: create a question (login required).
@@ -14,7 +15,10 @@ export async function GET() {
   return NextResponse.json({ doubts });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  if (!validateCsrf(req)) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Login required" }, { status: 401 });

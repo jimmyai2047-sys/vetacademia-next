@@ -237,7 +237,7 @@ export default function Navbar() {
               <GraduationCap className="h-4 w-4" />
               Programmes
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden">
               <div className="absolute top-3 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
               <div className="absolute inset-0 top-3 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
@@ -309,7 +309,7 @@ export default function Navbar() {
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[460px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["prepare"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[460px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["prepare"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-600 via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center justify-between">
@@ -386,7 +386,7 @@ export default function Navbar() {
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
               <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -453,7 +453,7 @@ export default function Navbar() {
               <Users className="h-4 w-4" />
               Resources
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[420px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["resources"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["resources"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-purple-600 via-[#d4a843] to-pink-600" />
               <div className="relative bg-gradient-to-br from-purple-50 via-white to-pink-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -530,7 +530,7 @@ export default function Navbar() {
               <Info className="h-4 w-4" />
               About
             </Button>
-            <div onClick={closeAllMenus} className={`absolute right-0 top-full z-50 pt-3 w-[340px] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["about"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute right-0 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["about"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-primary/[0.06] via-white to-amber-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">

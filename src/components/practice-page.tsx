@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Mcq = {
   id: string;
@@ -83,7 +84,7 @@ export default function PracticePage({
     setScore(s);
     setSubmitted(true);
     if (subjectId) {
-      fetch("/api/progress", {
+      csrfFetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subjectId, progress: pct }),

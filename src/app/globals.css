@@ -602,8 +602,8 @@
     padding-left: max(1rem, env(safe-area-inset-left));
     padding-right: max(1rem, env(safe-area-inset-right));
   }
-  /* Larger tap targets for mobile */
-  button, a {
+  /* Larger tap targets for mobile — scoped to buttons/tap targets, not inline text links */
+  button, a.btn, a[role="button"], [role="button"] {
     min-height: 44px;
     min-width: 44px;
   }

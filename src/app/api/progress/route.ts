@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateCsrf } from "@/lib/csrf";
 
 // Per-user study progress (practice scores, flashcard recall %). Persisted so
 // progress survives refreshes. Not CSRF-gated (matches other mutation routes
@@ -18,7 +19,10 @@ export async function GET(req: Request) {
   return NextResponse.json({ progress: rows });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  if (!validateCsrf(req)) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

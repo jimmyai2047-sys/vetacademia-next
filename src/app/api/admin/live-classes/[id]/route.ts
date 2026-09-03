@@ -7,6 +7,11 @@ export async function GET(
   ctx: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getAdminSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await ctx.params;
     const liveClass = await prisma.liveClass.findUnique({
       where: { id },
