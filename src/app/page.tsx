@@ -45,7 +45,7 @@ export const metadata = {
   },
 };
 
-export const revalidate = 120;
+export const dynamic = "force-dynamic";
 
 const programmes = [
   {
