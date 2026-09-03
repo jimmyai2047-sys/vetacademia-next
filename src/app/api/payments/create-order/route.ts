@@ -1,16 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import Razorpay from "razorpay";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { validateCsrf } from "@/lib/csrf";
 import { isRazorpayLive } from "@/lib/razorpay-config";
 
 const keyId = process.env.RAZORPAY_KEY_ID;
 const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
     const rl = rateLimit(`pay-order:${clientIp(req)}`, 20, 60_000);
     if (!rl.allowed) {
       return NextResponse.json(

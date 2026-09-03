@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
+import { sanitizeHtml } from "@/lib/sanitize";
 import dynamic from "next/dynamic";
 
 const ChapterContentViewer = dynamic(
@@ -186,7 +187,7 @@ export default function ReaderPage({
             <div
               className="chapter-content"
               dangerouslySetInnerHTML={{
-                __html: sections[activeSectionIndex!].html,
+                __html: sanitizeHtml(sections[activeSectionIndex!].html),
               }}
             />
 

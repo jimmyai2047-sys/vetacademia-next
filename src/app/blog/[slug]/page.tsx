@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
+import SanitizedHtml from "@/components/sanitized-html";
 
 export const dynamic = "force-dynamic";
 
@@ -99,9 +100,9 @@ export default async function BlogPostPage({
           </span>
         </div>
 
-        <div
+        <SanitizedHtml
           className="prose prose-sm md:prose-base max-w-none text-foreground/90 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          html={post.content}
         />
 
         <div className="mt-12 pt-6 border-t">
