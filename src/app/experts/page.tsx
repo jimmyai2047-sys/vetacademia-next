@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight } from "lucide-react";
-import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
@@ -27,24 +26,15 @@ function proxyUrl(blobUrl: string): string {
   return `/api/blob?url=${encodeURIComponent(blobUrl)}`;
 }
 
-const getExperts = unstable_cache(
-  async () => {
-    try {
-      return await prisma.expert.findMany({
-        include: {
-          user: { select: { name: true } },
-          _count: { select: { consultations: true } },
-        },
-        orderBy: { createdAt: "asc" },
-      });
-    } catch (err) {
-      console.error("Experts page DB error:", err);
-      return [];
-    }
-  },
-  ["experts-list"],
-  { revalidate: 120 }
-);
+async function getExperts() {
+  return prisma.expert.findMany({
+    include: {
+      user: { select: { name: true } },
+      _count: { select: { consultations: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
 
 export default async function ExpertsPage() {
   const experts = await getExperts();
