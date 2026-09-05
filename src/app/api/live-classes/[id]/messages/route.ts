@@ -24,6 +24,7 @@ export async function GET(
       liveClass.isDemo ||
       (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
       access.examKeys.has(liveClass.exam) ||
+      (liveClass.exam === "other" && access.isAuthed) ||
       access.examPlanOwned;
     if (!hasAccess) {
       return NextResponse.json({ error: "Access denied" }, { status: 401 });
@@ -93,6 +94,7 @@ export async function POST(
       liveClass.isDemo ||
       (liveClass.planSlug != null && access.planSlugs.has(liveClass.planSlug)) ||
       access.examKeys.has(liveClass.exam) ||
+      (liveClass.exam === "other" && access.isAuthed) ||
       access.examPlanOwned;
     if (!hasAccess) {
       return NextResponse.json({ error: "Access denied" }, { status: 401 });

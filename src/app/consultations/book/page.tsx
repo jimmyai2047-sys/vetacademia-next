@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { csrfFetch } from "@/lib/csrf-client";
 import {
   Select,
   SelectContent,
@@ -105,7 +106,7 @@ function BookForm() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/consultations", {
+      const res = await csrfFetch("/api/consultations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

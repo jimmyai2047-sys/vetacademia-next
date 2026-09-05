@@ -33,6 +33,7 @@ function contentLinkForPlan(plan: {
   if (plan.type === "EXAM" && plan.examSlug) {
     const key = getExamKeysForPlan(plan.examSlug)[0];
     if (key) return `/examinations/${key}`;
+    return "/examinations";
   }
   return "/";
 }

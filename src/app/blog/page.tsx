@@ -14,7 +14,7 @@ export const metadata = {
     "Veterinary exam preparation tips, admission guides, syllabus breakdowns and career advice for BVSc, ICAR, Veterinary Officer and ARS aspirants.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 const gradients = [
   "from-primary to-primary/70",

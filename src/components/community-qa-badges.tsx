@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, ShieldCheck, Award, HelpCircle } from "lucide-react";
 
 const DEFAULTS = [
-  { label: "Questions", value: "24", icon: HelpCircle, color: "text-blue-600", bg: "bg-blue-50" },
-  { label: "Expert Replies", value: "18", icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
-  { label: "Solved", value: "92%", icon: Award, color: "text-amber-600", bg: "bg-amber-50" },
+  { label: "Questions", value: "0", icon: HelpCircle, color: "text-blue-600", bg: "bg-blue-50" },
+  { label: "Expert Replies", value: "0", icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
+  { label: "Solved", value: "0%", icon: Award, color: "text-amber-600", bg: "bg-amber-50" },
 ];
 
 export default function CommunityQaBadges({

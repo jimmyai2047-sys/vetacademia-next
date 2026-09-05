@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function CancelConsultationButton({
   id,
@@ -18,7 +19,7 @@ export default function CancelConsultationButton({
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/consultations/${id}`, {
+      const res = await csrfFetch(`/api/consultations/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) {

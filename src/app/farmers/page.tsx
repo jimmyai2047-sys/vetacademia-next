@@ -70,7 +70,11 @@ export default async function FarmersPage({
         orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
       }),
       Promise.all([getPublishedPosts("FARMERS"), getPublishedPosts("ANIMAL_OWNER")]).then(
-        ([a, b]) => [...a, ...b]
+        ([a, b]) => {
+          const map = new Map<string, (typeof a)[number]>();
+          for (const p of [...a, ...b]) if (!map.has(p.id)) map.set(p.id, p);
+          return [...map.values()];
+        }
       ),
     ]);
   // Keep for template (renamed variable)

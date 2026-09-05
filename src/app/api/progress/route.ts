@@ -40,14 +40,26 @@ export async function POST(req: NextRequest) {
     if (!existing) {
       const prog = await prisma.programme.findFirst({ select: { id: true } });
       if (prog) {
-        await prisma.subject.create({
-          data: {
-            id: "flashcards",
-            name: "Flashcards",
-            code: "FLASH-001",
-            programmeId: prog.id,
-          },
-        });
+        try {
+          await prisma.subject.create({
+            data: {
+              id: "flashcards",
+              name: "Flashcards",
+              code: "FLASH-001",
+              programmeId: prog.id,
+            },
+          });
+        } catch (e: unknown) {
+          // P2002 race: another request created it concurrently — ignore
+          if (
+            typeof e === "object" &&
+            e !== null &&
+            "code" in e &&
+            (e as { code?: string }).code !== "P2002"
+          ) {
+            throw e;
+          }
+        }
       }
     }
   }
