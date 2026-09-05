@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { signToken } from "@/lib/mobileAuth";
+import { SELF_REGISTERABLE_ROLES } from "@/lib/roles";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -26,13 +27,21 @@ export async function POST(req: Request) {
       );
     }
 
+    const requestedRole = (data.role || "STUDENT").toUpperCase();
+    if (!SELF_REGISTERABLE_ROLES.includes(requestedRole)) {
+      return NextResponse.json(
+        { error: `Role ${requestedRole} cannot be self-registered` },
+        { status: 403 }
+      );
+    }
+
     const hashed = await bcrypt.hash(data.password, 12);
     const user = await prisma.user.create({
       data: {
         name: data.name,
         email,
         password: hashed,
-        role: (data.role || "STUDENT").toUpperCase(),
+        role: requestedRole,
         programme: data.programme,
       },
     });
