@@ -39,6 +39,43 @@ export default async function LectureRoute({
   if (chapter.sections.length === 0) notFound();
   if (index >= chapter.sections.length) notFound();
 
+  // Sidebar flowchart — same as overview page
+  const allChaptersForSidebar = await prisma.chapter.findMany({
+    where: { subjectId: chapter.subjectId },
+    orderBy: [{ unitNumber: "asc" }, { title: "asc" }],
+    select: { id: true, title: true, type: true, unitNumber: true },
+  });
+  const _groupByUnit = (chapters: typeof allChaptersForSidebar) =>
+    chapters.reduce(
+      (acc, ch) => {
+        const key = `Unit ${ch.unitNumber}`;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(ch);
+        return acc;
+      },
+      {} as Record<string, typeof allChaptersForSidebar>
+    );
+  const _theory = allChaptersForSidebar.filter((c) => c.type !== "PRACTICAL");
+  const _practical = allChaptersForSidebar.filter((c) => c.type === "PRACTICAL");
+  const _theoryGrouped = _groupByUnit(_theory);
+  const _practicalGrouped = _groupByUnit(_practical);
+  const sidebarUnits: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[] = [];
+  let _globalIdx = 0;
+  for (const [unit, chapters] of Object.entries(_theoryGrouped)) {
+    sidebarUnits.push({
+      unit,
+      type: "theory",
+      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++_globalIdx })),
+    });
+  }
+  for (const [unit, chapters] of Object.entries(_practicalGrouped)) {
+    sidebarUnits.push({
+      unit,
+      type: "practical",
+      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++_globalIdx })),
+    });
+  }
+
   const access = await getAccess();
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
   const programmeOwned = access.programmeSlugs.has(programmeSlug);
@@ -125,6 +162,7 @@ export default async function LectureRoute({
       sections={preparedSections}
       resources={resources}
       activeSectionIndex={index}
+      sidebarUnits={sidebarUnits}
     />
   );
 }

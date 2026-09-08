@@ -152,7 +152,7 @@ export default function ReaderPage({
 
         {/* ── MODE: Overview (lecture list) ── */}
         {hasSections && !isSingleLecture && (
-          <div className="max-w-2xl mx-auto">
+          <div className="w-full">
             <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               Lectures ({sections.length})
             </p>
@@ -189,7 +189,7 @@ export default function ReaderPage({
 
         {/* ── MODE: Single lecture ── */}
         {isSingleLecture && (
-          <div className="max-w-3xl mx-auto">
+          <div className="w-full">
             {/* Lecture content — LSA copy protection + watermark */}
             <div
               className={`chapter-content ${isLSA ? "select-none watermark-lsa relative" : ""}`}
