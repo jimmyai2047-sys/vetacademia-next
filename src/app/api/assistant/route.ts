@@ -60,8 +60,11 @@ export async function POST(req: NextRequest) {
   const origin = req.headers.get("origin");
   const host = req.headers.get("host");
   const isLocal = host && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
-  if (origin && !isLocal && origin.replace(/^https?:\/\//, "") !== host) {
-    return NextResponse.json({ fallback: true }, { status: 200 });
+  // Fail-closed: in production, require Origin and must match host
+  if (!isLocal) {
+    if (!origin || origin.replace(/^https?:\/\//, "") !== host) {
+      return NextResponse.json({ fallback: true }, { status: 200 });
+    }
   }
 
   const key = process.env.GEMINI_API_KEY;

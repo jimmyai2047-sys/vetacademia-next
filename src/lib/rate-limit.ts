@@ -1,10 +1,21 @@
-const RATE_LIMIT_STORE = new Map<string, { count: number; resetAt: number }>();
+declare global {
+  var __VA_RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> | undefined;
+}
+const RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> =
+  globalThis.__VA_RATE_LIMIT_STORE ?? (globalThis.__VA_RATE_LIMIT_STORE = new Map());
 
 export function rateLimit(
   key: string,
   maxRequests = 60,
   windowMs = 60_000
 ): { allowed: boolean; remaining: number } {
+  // Periodic cleanup to prevent unbounded growth on long-lived serverless instances
+  if (RATE_LIMIT_STORE.size > 5000) {
+    const now2 = Date.now();
+    for (const [k, v] of RATE_LIMIT_STORE.entries()) {
+      if (now2 > v.resetAt) RATE_LIMIT_STORE.delete(k);
+    }
+  }
   const now = Date.now();
   const entry = RATE_LIMIT_STORE.get(key);
 

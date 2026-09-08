@@ -53,13 +53,26 @@ export async function GET(req: NextRequest) {
     const filename = decodeURIComponent(
       parsed.pathname.split("/").pop() || "file"
     );
+    const allowedOrigins = [
+      "https://vetacademia.in",
+      "https://www.vetacademia.in",
+      "https://view.officeapps.live.com",
+      "https://docs.google.com",
+    ];
+    const requestOrigin = req.headers.get("origin");
+    const allowOrigin =
+      requestOrigin && allowedOrigins.includes(requestOrigin)
+        ? requestOrigin
+        : "https://vetacademia.in";
+
     return new NextResponse(buf, {
       status: 200,
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": `inline; filename="${filename}"`,
         "Cache-Control": "public, max-age=3600",
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": allowOrigin,
+        "Vary": "Origin",
       },
     });
   } catch (err) {
