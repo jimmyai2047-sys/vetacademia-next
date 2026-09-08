@@ -320,6 +320,24 @@
   border: 1px solid var(--border);
   border-radius: 8px;
 }
+/* Maps (India/Rajasthan) — 20% bigger than normal diagrams */
+.chapter-content img[alt*="Map"],
+.chapter-content img[alt*="map"],
+.chapter-content img[alt*="MAP"] {
+  max-width: 74% !important;
+  max-height: 430px !important;
+}
+.chapter-content figure:has(img[alt*="Map"]),
+.chapter-content figure:has(img[alt*="map"]),
+.chapter-content figure:has(img[alt*="MAP"]) {
+  max-width: 86% !important;
+}
+.chapter-content figure:has(img[alt*="Map"]) img,
+.chapter-content figure:has(img[alt*="map"]) img,
+.chapter-content figure:has(img[alt*="MAP"]) img {
+  max-width: 100% !important;
+  max-height: 420px !important;
+}
 @media (max-width: 768px) {
   .chapter-content img,
   .chapter-content figure { max-width: 100%; max-height: none; }
