@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
+import SyllabusSidebar from "@/components/syllabus-sidebar";
 import { sanitizeHtml } from "@/lib/sanitize";
 import dynamic from "next/dynamic";
 
@@ -52,6 +53,7 @@ interface Props {
   }[];
   /** null = overview (all sections listed), number = single lecture mode */
   activeSectionIndex: number | null;
+  sidebarUnits?: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[];
 }
 
 export default function ReaderPage({
@@ -67,6 +69,7 @@ export default function ReaderPage({
   sections,
   resources,
   activeSectionIndex,
+  sidebarUnits,
 }: Props) {
   const [readerOpen, setReaderOpen] = useState(false);
   const hasSections = sections.length > 0;
@@ -75,8 +78,11 @@ export default function ReaderPage({
   const isLSA = true; // All programmes (BVSc/MVSc/PhD) + Exams — copy block + watermark on every chapter
 
   return (
-    <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a]">
-      <div className="max-w-3xl lg:max-w-6xl mx-auto px-4 py-12">
+    <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a] flex">
+      {sidebarUnits && sidebarUnits.length > 0 && (
+        <SyllabusSidebar units={sidebarUnits} subjectName={subjectName} />
+      )}
+      <div className="flex-1 min-w-0 max-w-[1100px] mx-auto px-4 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Link
