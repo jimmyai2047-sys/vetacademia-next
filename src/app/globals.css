@@ -282,12 +282,15 @@
 .chapter-content ol { list-style: decimal; padding-left: 1.8em; margin: 0.8em 0; }
 .chapter-content li { margin: 0.3em 0; line-height: 1.75; text-align: justify; }
 
-/* ── Images & Figures ─────────────────────────────────────────────────── */
+/* ── Images & Figures — compact for readability ──────────────────────── */
 .chapter-content img {
-  max-width: 100%;
+  max-width: 62%;
+  max-height: 360px;
+  width: auto;
   height: auto;
+  object-fit: contain;
   border-radius: 8px;
-  margin: 1.2em auto;
+  margin: 1em auto;
   display: block;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   border: 1px solid var(--border);
@@ -295,13 +298,13 @@
   padding: 4px;
 }
 .chapter-content figure {
-  margin: 2em auto;
+  margin: 1.6em auto;
   text-align: center;
-  max-width: 100%;
+  max-width: 72%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.75em;
+  padding: 0.6em;
   border: 1px solid var(--border);
   background: white;
   border-radius: 12px;
@@ -309,8 +312,18 @@
 }
 .chapter-content figure img {
   margin: 0 auto;
+  max-width: 92%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   border: 1px solid var(--border);
   border-radius: 8px;
+}
+@media (max-width: 768px) {
+  .chapter-content img,
+  .chapter-content figure { max-width: 100%; max-height: none; }
+  .chapter-content figure img { max-width: 100%; }
 }
 .chapter-content figcaption {
   font-size: 0.85em;
