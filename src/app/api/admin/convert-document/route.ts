@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 
 const ACCEPT = [
   ".docx",
+  ".doc",
   ".xlsx",
   ".xls",
   ".pdf",
@@ -159,6 +160,17 @@ export async function POST(req: Request) {
       case ".docx":
         html = await extractDocx(buffer);
         break;
+      case ".doc": {
+        // Old .doc is binary Word 97-2003 — mammoth only handles .docx.
+        // Give a clear actionable error instead of generic "unsupported".
+        return NextResponse.json(
+          {
+            error:
+              "Old .doc format not supported. Please open the file in Word → Save As → Word Document (*.docx) and upload the .docx again. Alternatively, copy-paste the text.",
+          },
+          { status: 400 }
+        );
+      }
       case ".xlsx":
       case ".xls":
         html = await extractXlsx(buffer);
