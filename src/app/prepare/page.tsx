@@ -40,6 +40,8 @@ type PreparedCategory = {
     downloadUrl: string | null;
     externalUrl: string | null;
     embedUrl: string | null;
+    subject: string | null;
+    topic: string | null;
   }[];
   papers: { id: string; title: string; downloadUrl: string | null }[];
   mockTests: { id: string; title: string; questions: number; duration: number }[];
@@ -49,6 +51,7 @@ type PreparedCategory = {
     questions: number;
     duration: number;
   }[];
+  lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
 };
 
 export default async function PreparePage({
@@ -108,8 +111,29 @@ export default async function PreparePage({
           downloadUrl: m.fileUrl ? await getSignedUrl(m.fileUrl) : null,
           externalUrl: m.externalUrl,
           embedUrl: ytEmbed(m.externalUrl),
+          subject: (m as any).subject || null,
+          topic: (m as any).topic || null,
         }))
       );
+
+      // For LSA, fetch AHDP subjects to show as plates (same subjects as AHDP programme)
+      let lsaSubjects: PreparedCategory["lsaSubjects"] = undefined;
+      if (c.key === "LSA") {
+        const ahdpSubjects = await prisma.subject.findMany({
+          where: { programme: { name: "A.H.D.P." } },
+          orderBy: [{ name: "asc" }],
+          select: { id: true, name: true, code: true, _count: { select: { chapters: true } } },
+        });
+        // Also count ExamMaterials per subject for LSA
+        const counts = new Map<string, number>();
+        for (const m of materials) if ((m as any).subject) counts.set((m as any).subject, (counts.get((m as any).subject) || 0) + 1);
+        lsaSubjects = ahdpSubjects.map((s) => ({
+          id: s.id,
+          name: s.name,
+          code: s.code,
+          chapterCount: counts.get(s.name) || 0,
+        }));
+      }
 
       const papers = await prisma.post.findMany({
         where: {
@@ -157,6 +181,7 @@ export default async function PreparePage({
         papers: paperList,
         mockTests: mockTests.map(mapTest),
         adaptiveTests: adaptiveTests.map(mapTest),
+        lsaSubjects,
       };
     })
   );

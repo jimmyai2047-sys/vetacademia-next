@@ -47,10 +47,11 @@ type TestItem = {
 type PreparedCategory = {
   key: string;
   label: string;
-  materials: Material[];
+  materials: (Material & { subject?: string | null; topic?: string | null })[];
   papers: { id: string; title: string; downloadUrl: string | null }[];
   mockTests: TestItem[];
   adaptiveTests: TestItem[];
+  lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
 };
 
 const TYPE_ICON: Record<string, any> = {
@@ -255,16 +256,69 @@ export default function ExamPrepTabs({
         ))}
       </div>
 
+      {cat.key === "LSA" && cat.lsaSubjects && (
+        <Section title="Subjects (A.H.D.P. — LSA)" icon={BookOpen} empty={cat.lsaSubjects.length === 0}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cat.lsaSubjects.map((s) => (
+              <Card key={s.id} id={`subject-${s.id}`} className="hover:shadow-md transition-shadow scroll-mt-20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    {s.name}
+                  </CardTitle>
+                  {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
+                </CardHeader>
+                <CardContent className="flex items-center justify-between">
+                  <Badge variant="secondary" className="text-xs">{s.chapterCount} chapters</Badge>
+                  <span className="text-xs text-muted-foreground">{s.chapterCount === 0 ? "No chapters yet" : "View below"}</span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Section>
+      )}
+
       <Section
         title="Study Materials"
         icon={FileText}
         empty={cat.materials.length === 0}
       >
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cat.materials.map((m) => (
-            <MaterialCard key={m.id} m={m} />
-          ))}
-        </div>
+        {cat.key === "LSA" && cat.lsaSubjects ? (
+          <div className="space-y-6">
+            {cat.lsaSubjects.map((s) => {
+              const mats = cat.materials.filter((m) => m.subject === s.name);
+              if (mats.length === 0) return null;
+              return (
+                <div key={s.id} id={`subject-${s.id}-materials`} className="scroll-mt-20">
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" /> {s.name} <Badge variant="outline" className="text-xs">{mats.length}</Badge>
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {mats.map((m) => (
+                      <MaterialCard key={m.id} m={m} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+            {cat.materials.filter((m) => !m.subject).length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold mb-3">General</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {cat.materials.filter((m) => !m.subject).map((m) => (
+                    <MaterialCard key={m.id} m={m} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cat.materials.map((m) => (
+              <MaterialCard key={m.id} m={m} />
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section
