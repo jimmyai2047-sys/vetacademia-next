@@ -419,6 +419,24 @@
   margin: 2em 0;
 }
 
+/* LSA watermark — very light logo behind chapter, readability intact */
+.watermark-lsa {
+  position: relative;
+}
+.watermark-lsa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/favicon.png") center / 420px no-repeat;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 0;
+}
+.watermark-lsa > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Editor placeholder */
 [contenteditable][data-placeholder]:empty::before {
   content: attr(data-placeholder);

@@ -72,6 +72,7 @@ export default function ReaderPage({
   const hasSections = sections.length > 0;
   const isSingleLecture =
     activeSectionIndex !== null && activeSectionIndex >= 0 && activeSectionIndex < sections.length;
+  const isLSA = true; // All programmes (BVSc/MVSc/PhD) + Exams — copy block + watermark on every chapter
 
   return (
     <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a]">
@@ -183,9 +184,14 @@ export default function ReaderPage({
         {/* ── MODE: Single lecture ── */}
         {isSingleLecture && (
           <div className="max-w-3xl mx-auto">
-            {/* Lecture content */}
+            {/* Lecture content — LSA copy protection + watermark */}
             <div
-              className="chapter-content"
+              className={`chapter-content ${isLSA ? "select-none watermark-lsa relative" : ""}`}
+              style={isLSA ? { userSelect: "none", WebkitUserSelect: "none" } as React.CSSProperties : undefined}
+              onCopy={isLSA ? (e) => e.preventDefault() : undefined}
+              onCut={isLSA ? (e) => e.preventDefault() : undefined}
+              onContextMenu={isLSA ? (e) => e.preventDefault() : undefined}
+              onDragStart={isLSA ? (e: React.DragEvent) => e.preventDefault() : undefined}
               dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(sections[activeSectionIndex!].html),
               }}
@@ -265,13 +271,14 @@ export default function ReaderPage({
       </div>
 
       {/* Kindle Reader (legacy content only) */}
-      {readerOpen && (
-        <ChapterReader
-          title={title}
-          html={html}
-          onClose={() => setReaderOpen(false)}
-        />
-      )}
+        {readerOpen && (
+          <ChapterReader
+            title={title}
+            html={html}
+            isLSA={isLSA}
+            onClose={() => setReaderOpen(false)}
+          />
+        )}
 
 
     </div>

@@ -9,6 +9,7 @@ interface ChapterReaderProps {
   title: string;
   html: string;
   onClose?: () => void;
+  isLSA?: boolean;
 }
 
 function splitIntoBlocks(html: string): string[] {
@@ -70,7 +71,7 @@ function buildPages(blocks: string[], maxChars: number = 3000): string[][] {
   return pages.length ? pages : [[]];
 }
 
-export default function ChapterReader({ title, html, onClose }: ChapterReaderProps) {
+export default function ChapterReader({ title, html, onClose, isLSA }: ChapterReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [pages, setPages] = useState<string[][]>([[]]);
@@ -172,8 +173,18 @@ export default function ChapterReader({ title, html, onClose }: ChapterReaderPro
         <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6 overflow-y-auto">
           <div
             ref={contentRef}
-            className="chapter-content"
-            style={{ fontSize: `${fontScale}rem`, lineHeight: "1.85" }}
+            className={`chapter-content ${isLSA ? "select-none watermark-lsa relative" : ""}`}
+            style={
+              {
+                fontSize: `${fontScale}rem`,
+                lineHeight: "1.85",
+                ...(isLSA ? { userSelect: "none", WebkitUserSelect: "none" } : {}),
+              } as React.CSSProperties
+            }
+            onCopy={isLSA ? (e) => e.preventDefault() : undefined}
+            onCut={isLSA ? (e) => e.preventDefault() : undefined}
+            onContextMenu={isLSA ? (e) => e.preventDefault() : undefined}
+            onDragStart={isLSA ? (e: React.DragEvent) => e.preventDefault() : undefined}
             dangerouslySetInnerHTML={{ __html: pages[page]?.join("") || "" }}
           />
         </div>
