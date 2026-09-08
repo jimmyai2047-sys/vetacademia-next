@@ -82,7 +82,7 @@ export default function ReaderPage({
       {sidebarUnits && sidebarUnits.length > 0 && (
         <SyllabusSidebar units={sidebarUnits} subjectName={subjectName} />
       )}
-      <div className="flex-1 min-w-0 max-w-[1100px] mx-auto px-4 lg:px-8 py-8">
+      <div className="flex-1 min-w-0 max-w-[1440px] mx-auto px-4 lg:px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Link
