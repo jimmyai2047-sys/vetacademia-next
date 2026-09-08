@@ -257,69 +257,74 @@ export default function ExamPrepTabs({
       </div>
 
       {cat.key === "LSA" && cat.lsaSubjects && (
-        <Section title="Subjects (A.H.D.P. — LSA)" icon={BookOpen} empty={cat.lsaSubjects.length === 0}>
+        <Section title="Subjects (A.H.D.P. — LSA) — Click a plate to see its chapters" icon={BookOpen} empty={cat.lsaSubjects.length === 0}>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cat.lsaSubjects.map((s) => (
-              <Card key={s.id} id={`subject-${s.id}`} className="hover:shadow-md transition-shadow scroll-mt-20">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    {s.name}
-                  </CardTitle>
-                  {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
-                </CardHeader>
-                <CardContent className="flex items-center justify-between">
-                  <Badge variant="secondary" className="text-xs">{s.chapterCount} chapters</Badge>
-                  <span className="text-xs text-muted-foreground">{s.chapterCount === 0 ? "No chapters yet" : "View below"}</span>
-                </CardContent>
-              </Card>
-            ))}
+            {cat.lsaSubjects.map((s) => {
+              const mats = cat.materials.filter((m) => m.subject === s.name);
+              const isExpanded = typeof window !== "undefined" ? document.getElementById(`lsa-subject-${s.id}`)?.dataset.expanded === "true" : false;
+              return (
+                <Card key={s.id} id={`subject-${s.id}`} className="hover:shadow-md transition-shadow scroll-mt-20 overflow-hidden">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const el = document.getElementById(`lsa-subject-${s.id}`);
+                      if (el) {
+                        const isOpen = el.dataset.expanded === "true";
+                        el.dataset.expanded = isOpen ? "false" : "true";
+                        el.style.display = isOpen ? "none" : "block";
+                      }
+                    }}
+                  >
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                        {s.name}
+                      </CardTitle>
+                      {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between">
+                      <Badge variant="secondary" className="text-xs">{mats.length} chapters</Badge>
+                      <span className="text-xs text-primary font-medium">{mats.length === 0 ? "No chapters yet — click to add" : `Click to ${mats.length > 0 ? "view" : "add"} →`}</span>
+                    </CardContent>
+                  </div>
+                  <div id={`lsa-subject-${s.id}`} data-expanded="false" style={{ display: "none" }} className="border-t bg-muted/20 p-3">
+                    {mats.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No chapters yet for {s.name}. Add via Admin → Content → Examination → LSA → Subject: {s.name}
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-primary" /> Chapters ({mats.length}) — one by one</span>
+                          <Badge variant="outline" className="text-[10px]">Progress • Reader as in test file</Badge>
+                        </div>
+                        <div className="grid gap-3">
+                          {mats
+                            .slice()
+                            .sort((a, b) => (a.topic || a.title).localeCompare(b.topic || b.title))
+                            .map((m, idx) => (
+                              <div key={m.id} className="flex items-center gap-3 rounded-xl border bg-white p-3 hover:shadow-sm transition-shadow">
+                                <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">{String(idx + 1).padStart(2, "0")}</span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium truncate">{m.topic || m.title}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{m.title}</p>
+                                </div>
+                                <Link href={`/prepare/material/${m.id}`} className="shrink-0">
+                                  <Button size="sm" variant="default" className="rounded-full text-xs h-7 px-3">Read →</Button>
+                                </Link>
+                              </div>
+                            ))}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">Reader will open with left flowchart (Programme → AHDP → {s.name} → Chapter → Lecture → Practice) + wide justified content, watermark & copy-block — exactly like test file.</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </Section>
       )}
-
-      <Section
-        title="Study Materials"
-        icon={FileText}
-        empty={cat.materials.length === 0}
-      >
-        {cat.key === "LSA" && cat.lsaSubjects ? (
-          <div className="space-y-6">
-            {cat.lsaSubjects.map((s) => {
-              const mats = cat.materials.filter((m) => m.subject === s.name);
-              if (mats.length === 0) return null;
-              return (
-                <div key={s.id} id={`subject-${s.id}-materials`} className="scroll-mt-20">
-                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-primary" /> {s.name} <Badge variant="outline" className="text-xs">{mats.length}</Badge>
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mats.map((m) => (
-                      <MaterialCard key={m.id} m={m} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-            {cat.materials.filter((m) => !m.subject).length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3">General</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {cat.materials.filter((m) => !m.subject).map((m) => (
-                    <MaterialCard key={m.id} m={m} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cat.materials.map((m) => (
-              <MaterialCard key={m.id} m={m} />
-            ))}
-          </div>
-        )}
-      </Section>
 
       <Section
         title="Previous Year Papers"
