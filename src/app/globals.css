@@ -389,14 +389,14 @@
 .chapter-content table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.5em 0;
-  font-size: 0.92rem;
+  margin: 1em 0;
+  font-size: 0.88rem;
   display: table;
   table-layout: auto;
 }
 .chapter-content table-wrap {
   overflow-x: auto;
-  margin: 1.5em 0;
+  margin: 1em 0;
   border-radius: 8px;
   border: 1px solid var(--border);
   -webkit-overflow-scrolling: touch;
@@ -416,10 +416,11 @@
 .chapter-content th,
 .chapter-content td {
   border: 1px solid var(--border);
-  padding: 0.6em 0.9em;
+  padding: 0.35em 0.7em;
   text-align: left;
   vertical-align: middle;
   color: var(--foreground);
+  line-height: 1.45;
 }
 .chapter-content th {
   background: var(--primary);
