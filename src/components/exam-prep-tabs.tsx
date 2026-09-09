@@ -309,9 +309,7 @@ export default function ExamPrepTabs({
                                   <p className="text-sm font-medium truncate">{m.topic || m.title}</p>
                                   <p className="text-xs text-muted-foreground truncate">{m.title}</p>
                                 </div>
-                                <Link href={`/prepare/material/${m.id}`} className="shrink-0">
-                                  <Button size="sm" variant="default" className="rounded-full text-xs h-7 px-3">Read →</Button>
-                                </Link>
+                                <Button render={<Link href={`/prepare/material/${m.id}`} />} size="sm" variant="default" className="rounded-full text-xs h-7 px-3 shrink-0">Read →</Button>
                               </div>
                             ))}
                         </div>
