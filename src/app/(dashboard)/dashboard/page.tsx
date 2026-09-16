@@ -88,6 +88,7 @@ export default async function DashboardPage() {
         prisma.mockTestAttempt.findMany({
           where: { userId: session.user.id },
           orderBy: { createdAt: "desc" },
+          take: 200,
           include: {
             mockTest: {
               select: { title: true, totalMarks: true, subject: { select: { name: true } } },

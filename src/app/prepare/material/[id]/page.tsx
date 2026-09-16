@@ -40,7 +40,7 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
   const backTab = m.category ? `?tab=${m.category}` : "";
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl">
       <Link href={`/prepare${backTab}`} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 transition-colors">
         <ArrowLeft className="h-4 w-4" /> Back to Prepare
       </Link>
@@ -96,8 +96,8 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
         <Link href={`/prepare${backTab}`}>
           <Button variant="outline" className="rounded-full gap-2"><ArrowLeft className="h-4 w-4" /> Back</Button>
         </Link>
-        <Link href="/examinations/psc#livestock-assistant">
-          <Button variant="ghost" className="rounded-full gap-2"><FileText className="h-4 w-4" /> View LSA Hub</Button>
+        <Link href={m.category === "VO" ? "/examinations/psc" : m.category === "LSA" ? "/examinations/psc#livestock-assistant" : m.category === "ARS" ? "/examinations/ars" : m.category === "ICAR_ENTRANCE" ? "/examinations/icar-entrance" : m.category === "NET" ? "/examinations/net" : "/examinations"}>
+          <Button variant="ghost" className="rounded-full gap-2"><FileText className="h-4 w-4" /> View Exam Hub</Button>
         </Link>
       </div>
     </div>

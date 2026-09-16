@@ -48,6 +48,7 @@ export default async function LiveClassesPage() {
     .findMany({
       where: { status: { in: ["SCHEDULED", "LIVE", "ENDED"] } },
       orderBy: [{ scheduledAt: "desc" }],
+      take: 100,
       select: {
         id: true,
         title: true,
