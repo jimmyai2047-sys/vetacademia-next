@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { signToken } from "@/lib/mobileAuth";
 import { SELF_REGISTERABLE_ROLES } from "@/lib/roles";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -15,6 +16,10 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const rl = rateLimit(`mobile-register:${clientIp(req)}`, 10, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
+    }
     const body = await req.json();
     const data = schema.parse(body);
     const email = data.email.toLowerCase();

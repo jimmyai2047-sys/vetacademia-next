@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyResetToken } from "@/lib/reset-token";
 import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   token: z.string().min(1),
@@ -17,6 +18,10 @@ export async function POST(req: NextRequest) {
         { error: "Invalid CSRF token" },
         { status: 403 }
       );
+    }
+    const rl = rateLimit(`reset:${clientIp(req)}`, 10, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }
 
     const body = await req.json();

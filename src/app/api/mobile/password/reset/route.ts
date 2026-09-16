@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { verifyResetToken } from "@/lib/reset-token";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
+    const rl = rateLimit(`mobile-reset:${clientIp(req)}`, 10, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
+    }
     const body = (await req.json().catch(() => ({}))) as {
       token?: string;
       password?: string;

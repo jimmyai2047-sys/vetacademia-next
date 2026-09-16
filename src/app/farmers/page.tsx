@@ -58,16 +58,20 @@ export default async function FarmersPage({
       prisma.farmGuide.findMany({
         where: { published: true },
         orderBy: [{ category: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+        take: 100,
       }),
       prisma.vaccinationSchedule.findMany({
         orderBy: [{ order: "asc" }, { disease: "asc" }],
+        take: 100,
       }),
       prisma.dewormingSchedule.findMany({
         orderBy: [{ order: "asc" }, { animal: "asc" }],
+        take: 100,
       }),
       prisma.projectReport.findMany({
         where: { published: true },
         orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+        take: 100,
       }),
       Promise.all([getPublishedPosts("FARMERS"), getPublishedPosts("ANIMAL_OWNER")]).then(
         ([a, b]) => {

@@ -100,6 +100,7 @@ export default async function PreparePage({
       const materials = await prisma.examMaterial.findMany({
         where: { category: c.key, published: true },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        take: 200,
       });
       const mats = await Promise.all(
         materials.map(async (m) => ({
@@ -142,6 +143,7 @@ export default async function PreparePage({
           published: true,
         },
         orderBy: { createdAt: "desc" },
+        take: 100,
       });
       const paperList = await Promise.all(
         papers.map(async (p) => ({
@@ -154,11 +156,13 @@ export default async function PreparePage({
       const mockTests = await prisma.mockTest.findMany({
         where: { track: { in: c.tracks }, isAdaptive: false },
         orderBy: { createdAt: "desc" },
+        take: 100,
         include: { _count: { select: { questions: true } } },
       });
       const adaptiveTests = await prisma.mockTest.findMany({
         where: { track: { in: c.tracks }, isAdaptive: true },
         orderBy: { createdAt: "desc" },
+        take: 100,
         include: { _count: { select: { questions: true } } },
       });
 

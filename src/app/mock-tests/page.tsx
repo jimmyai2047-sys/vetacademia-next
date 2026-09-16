@@ -123,6 +123,7 @@ const CATEGORIES: CategoryDef[] = [
 export default async function MockTestsPage() {
   const tests = await prisma.mockTest.findMany({
     orderBy: { createdAt: "desc" },
+    take: 200,
     include: { _count: { select: { questions: true } } },
   });
 

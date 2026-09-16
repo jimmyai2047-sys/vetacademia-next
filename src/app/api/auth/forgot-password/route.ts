@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { signResetToken } from "@/lib/reset-token";
 import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,6 +11,10 @@ export async function POST(req: NextRequest) {
         { error: "Invalid CSRF token" },
         { status: 403 }
       );
+    }
+    const rl = rateLimit(`forgot:${clientIp(req)}`, 5, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }
 
     const { email } = await req.json().catch(() => ({}) as { email?: string });
