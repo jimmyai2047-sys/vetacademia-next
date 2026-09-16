@@ -6,6 +6,7 @@ import Providers from "@/components/providers";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import PwaRegister from "@/components/pwa-register";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -120,6 +121,7 @@ export default function RootLayout({
             <main id="main-content" className="flex-1">{children}</main>
             <Footer />
             <PwaRegister />
+            <SpeedInsights />
           </Providers>
         </TooltipProvider>
       </body>
