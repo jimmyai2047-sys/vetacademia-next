@@ -1,4 +1,4 @@
-import crypto from "crypto";
+﻿import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -40,7 +40,7 @@ async function sendOtp(
 ): Promise<void> {
   const isProd = process.env.NODE_ENV === "production";
   if (isProd) {
-    // No provider configured yet — fail loudly so we never silently skip sending.
+    // No provider configured yet â€” fail loudly so we never silently skip sending.
     console.warn(
       `[otp] Production sender not configured for purpose=${purpose}. OTP for ${contact} was NOT delivered.`
     );
@@ -56,7 +56,7 @@ export async function createOtpChallenge(
   purpose: string,
   ip: string
 ): Promise<{ ok: boolean; devCode?: string; error?: string }> {
-  const rl = rateLimit(`otp:${ip}:${purpose}`, 5, 60_000);
+  const rl = await rateLimit(`otp:${ip}:${purpose}`, 5, 60_000);
   if (!rl.allowed) {
     return { ok: false, error: "Too many OTP requests. Try again later." };
   }

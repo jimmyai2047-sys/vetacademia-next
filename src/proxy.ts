@@ -18,12 +18,12 @@ export function setMaintenanceMode(value: boolean) {
   maintenanceCheckedAt = Date.now();
 }
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const authLimit = AUTH_LIMITS[pathname];
   if (authLimit) {
-    const rl = rateLimit(
+    const rl = await rateLimit(
       `auth:${pathname}:${clientIp(req)}`,
       authLimit.limit,
       authLimit.windowMs
@@ -37,7 +37,7 @@ export function proxy(req: NextRequest) {
   }
 
   if (pathname.startsWith("/api/admin")) {
-    const rl = rateLimit(`admin:${clientIp(req)}`, 120, 60_000);
+    const rl = await rateLimit(`admin:${clientIp(req)}`, 120, 60_000);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please slow down." },

@@ -12,7 +12,7 @@ export async function DELETE(
   if (!validateCsrf(req)) {
     return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   }
-  const rl = rateLimit(`consultations-del:${clientIp(req)}`, 20, 60_000);
+  const rl = await rateLimit(`consultations-del:${clientIp(req)}`, 20, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }

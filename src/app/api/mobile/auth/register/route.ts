@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -16,7 +16,7 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const rl = rateLimit(`mobile-register:${clientIp(req)}`, 10, 60_000);
+    const rl = await rateLimit(`mobile-register:${clientIp(req)}`, 10, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }

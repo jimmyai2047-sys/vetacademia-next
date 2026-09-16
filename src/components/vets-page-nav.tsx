@@ -6,6 +6,7 @@ import { BookOpen, Stethoscope, Calculator } from "lucide-react";
 const tabs = [
   { id: "quick-tools", label: "Quick Tools", icon: Calculator },
   { id: "reference", label: "Reference Guide", icon: Stethoscope },
+  { id: "proformas", label: "Proformas", icon: BookOpen },
   { id: "articles", label: "Articles", icon: BookOpen },
 ];
 

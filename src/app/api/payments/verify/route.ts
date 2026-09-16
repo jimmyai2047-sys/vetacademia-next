@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay";
 import { getServerSession } from "next-auth";
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (!validateCsrf(req)) {
       return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
-    const rl = rateLimit(`pay-verify:${clientIp(req)}`, 20, 60_000);
+    const rl = await rateLimit(`pay-verify:${clientIp(req)}`, 20, 60_000);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },

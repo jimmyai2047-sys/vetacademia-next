@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { signResetToken } from "@/lib/reset-token";
 import { validateCsrf } from "@/lib/csrf";
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     }
-    const rl = rateLimit(`forgot:${clientIp(req)}`, 5, 60_000);
+    const rl = await rateLimit(`forgot:${clientIp(req)}`, 5, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }

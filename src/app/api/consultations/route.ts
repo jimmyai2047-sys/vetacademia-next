@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (!validateCsrf(req)) {
       return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
-    const rl = rateLimit(`consultations:${clientIp(req)}`, 20, 60_000);
+    const rl = await rateLimit(`consultations:${clientIp(req)}`, 20, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }

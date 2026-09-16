@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
     }
 
-    const rl = rateLimit(`admission:${clientIp(req)}`, 8, 60_000);
+    const rl = await rateLimit(`admission:${clientIp(req)}`, 8, 60_000);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many attempts. Please try again in a minute." },

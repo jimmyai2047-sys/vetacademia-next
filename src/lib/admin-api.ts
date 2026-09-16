@@ -22,7 +22,7 @@ export async function requireAdminApi(
   const ip = getClientIp(req);
   const path = new URL(req.url).pathname;
   const limiter = opts?.strict ? strictRateLimit : adminRateLimit;
-  const { allowed } = limiter(ip, path);
+  const { allowed } = await limiter(ip, path);
   if (!allowed) {
     return {
       error: NextResponse.json(

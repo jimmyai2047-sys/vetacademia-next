@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!validateCsrf(req)) {
       return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
-    const rl = rateLimit(`experts-apply:${clientIp(req)}`, 5, 60_000);
+    const rl = await rateLimit(`experts-apply:${clientIp(req)}`, 5, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }

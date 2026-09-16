@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ total: 0, live: 0 });
     }
 
-    const rl = rateLimit(`visitors:${clientIp(req)}`, 20, 60_000);
+    const rl = await rateLimit(`visitors:${clientIp(req)}`, 20, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ total: 0, live: 0 });
     }

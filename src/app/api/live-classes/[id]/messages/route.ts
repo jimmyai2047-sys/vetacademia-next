@@ -65,7 +65,7 @@ export async function POST(
     if (!validateCsrf(req)) {
       return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
-    const rl = rateLimit(`live-chat:${clientIp(req)}`, 20, 60_000);
+    const rl = await rateLimit(`live-chat:${clientIp(req)}`, 20, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many messages" }, { status: 429 });
     }

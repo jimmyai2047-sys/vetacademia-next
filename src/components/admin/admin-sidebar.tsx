@@ -22,6 +22,7 @@ import {
   NotebookPen,
   Activity,
   ClipboardList,
+  ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +40,7 @@ const sidebarItems = [
   { name: "Live Classes", href: "/admin/live-classes", icon: Radio },
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: NotebookPen },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
+  { name: "Vet Proformas", href: "/admin/vet-proformas", icon: ScrollText },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Activity Log", href: "/admin/activity-log", icon: Activity },
   { name: "Admission Enquiries", href: "/admin/admissions", icon: ClipboardList },

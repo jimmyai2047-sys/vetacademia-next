@@ -793,6 +793,30 @@ model Setting {
   updatedAt DateTime @updatedAt
 }
 
+// ==================== VET PROFORMAS ====================
+// Admin-managed proformas for veterinarians (e.g. Post Mortem, Health Certificate for Export)
+// Stored as separate model so each proforma can have both Word and PDF files.
+
+model VetProforma {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // POST_MORTEM | HEALTH_CERTIFICATE | OTHER
+  description String?
+  wordUrl     String?
+  wordName    String?
+  wordSize    Int?
+  pdfUrl      String?
+  pdfName     String?
+  pdfSize     Int?
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([published])
+}
+
 // ==================== PUSH NOTIFICATIONS ====================
 
 model DeviceToken {

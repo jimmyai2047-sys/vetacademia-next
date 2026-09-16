@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     }
-    const rl = rateLimit(`reset:${clientIp(req)}`, 10, 60_000);
+    const rl = await rateLimit(`reset:${clientIp(req)}`, 10, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+﻿import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
           .toString()
           .split(",")[0]
           .trim();
-        const rl = rateLimit(`login:${clientIp || "unknown"}`, 10, 60_000);
+        const rl = await rateLimit(`login:${clientIp || "unknown"}`, 10, 60_000);
         if (!rl.allowed) {
           return null;
         }
