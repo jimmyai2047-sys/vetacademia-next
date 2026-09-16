@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -207,13 +208,13 @@ export default function Navbar() {
           {/* Logo - Left most corner attached */}
           <Link href="/" className="relative flex items-center h-full -ml-1 sm:ml-0 shrink-0 group">
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/logo-vetacademia.webp"
               alt="VetAcademia - Veterinary Education Platform"
               className="relative h-12 sm:h-14 w-auto object-contain object-left"
               width={180}
               height={56}
+              priority
             />
           </Link>
 
@@ -669,7 +670,7 @@ export default function Navbar() {
                       <div className="absolute -inset-1.5 rounded-xl bg-gradient-to-br from-primary/20 to-blue-500/10 blur-md" />
                       <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-primary/10">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/favicon-192x192.png" alt="VetAcademia" className="h-7 w-7 object-contain" />
+                        <img src="/favicon-192x192.png" alt="VetAcademia" className="h-7 w-7 object-contain" loading="lazy" />
                       </div>
                     </div>
                     <div>

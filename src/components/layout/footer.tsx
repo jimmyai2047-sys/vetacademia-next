@@ -60,7 +60,7 @@ export default function Footer() {
                 <div className="absolute -inset-3 rounded-2xl bg-white/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-[0_8px_32px_rgba(0,0,0,0.2)] ring-1 ring-white/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/favicon-192x192.png" alt="VetAcademia" className="h-14 w-14 object-contain" />
+                  <img src="/favicon-192x192.png" alt="VetAcademia" className="h-14 w-14 object-contain" loading="lazy" decoding="async" />
                 </div>
               </div>
             </Link>

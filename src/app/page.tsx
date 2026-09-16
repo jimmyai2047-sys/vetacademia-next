@@ -1,11 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
+import dynamicImport from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import { BrandLogo } from "@/components/layout/brand-logo";
 import VisitorCounter from "@/components/visitor-counter";
 import ChatbotLazy from "@/components/chatbot-lazy";
 import ImportantLinkCard from "@/components/important-link-card";
-import HomeVideoTestimonials from "@/components/home-video-testimonials";
+// Below-fold video section — split into its own chunk so it doesn't inflate
+// the initial JS/hydration cost of the homepage.
+const HomeVideoTestimonials = dynamicImport(
+  () => import("@/components/home-video-testimonials"),
+  {
+    loading: () => (
+      <div className="grid md:grid-cols-2 gap-6 animate-pulse" aria-hidden="true">
+        <div className="h-48 rounded-[1.5rem] bg-muted" />
+        <div className="h-48 rounded-[1.5rem] bg-muted" />
+      </div>
+    ),
+  }
+);
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";

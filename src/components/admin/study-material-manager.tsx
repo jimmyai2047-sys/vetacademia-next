@@ -803,6 +803,7 @@ function CoverThumb({ url, alt }: { url?: string | null; alt: string }) {
       src={src || undefined}
       alt={alt}
       className="h-12 w-12 rounded-md object-cover border shrink-0"
+      loading="lazy"
     />
   );
 }

@@ -414,6 +414,8 @@ export default function AdminExpertsPage() {
                       src={e.photoUrl}
                       alt={e.name}
                       className="h-14 w-14 rounded-xl object-cover border shadow-sm"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white flex items-center justify-center font-semibold shadow-sm">
