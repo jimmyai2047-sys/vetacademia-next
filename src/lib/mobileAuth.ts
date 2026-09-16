@@ -4,8 +4,9 @@ function getSecret(): string {
   const s = process.env.MOBILE_JWT_SECRET;
   if (!s) {
     if (process.env.NODE_ENV === "production") {
-      console.warn("MOBILE_JWT_SECRET not set - using fallback. Set it in Vercel env for security.");
+      throw new Error("MOBILE_JWT_SECRET is not set. Set it in Vercel env - falling back would allow token forgery.");
     }
+    console.warn("MOBILE_JWT_SECRET not set - using dev fallback only.");
     return "vetacademia-mobile-secret-change-me";
   }
   return s;

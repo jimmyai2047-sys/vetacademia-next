@@ -8,7 +8,7 @@ import VetsPageNav from "@/components/vets-page-nav";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video } from "lucide-react";
+import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
@@ -20,6 +20,7 @@ import VetArticleFilters from "@/components/vet-article-filters";
 import VetReferenceCollapsible from "@/components/vet-reference-collapsible";
 import VetTestimonials from "@/components/vet-testimonials";
 import VetStickyCta from "@/components/vet-sticky-cta";
+import VetProformas from "@/components/vet-proformas";
 
 export const dynamic = "force-dynamic";
 
@@ -121,6 +122,20 @@ export default async function VetsPage() {
       {/* Clinical Reference - collapsible, repositioned above articles */}
       <div className="container mx-auto px-4 mt-6">
         <VetReferenceCollapsible />
+      </div>
+
+      {/* Proformas — Post Mortem, Health Certificate for Export (Word + PDF) */}
+      <div className="container mx-auto px-4 mt-6" id="proformas">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge className="rounded-full bg-emerald-600 gap-1.5"><FileText className="h-3 w-3" /> Proformas</Badge>
+          <span className="text-xs text-muted-foreground">Post Mortem & Health Certificate for Export — Word & PDF</span>
+        </div>
+        <h2 className="text-xl font-bold">Proformas for <span className="va-gradient-text">Veterinarians</span></h2>
+        <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-emerald-600 to-[#d4a843]" />
+        <p className="mt-2 text-sm text-muted-foreground">Download official proformas — editable Word and print-ready PDF. Managed by admin.</p>
+        <div className="mt-4">
+          <VetProformas />
+        </div>
       </div>
 
       {/* Testimonials - credibility */}

@@ -209,7 +209,7 @@ export default function Navbar() {
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo-vetacademia.png"
+              src="/logo-vetacademia.webp"
               alt="VetAcademia - Veterinary Education Platform"
               className="relative h-12 sm:h-14 w-auto object-contain object-left"
               width={180}

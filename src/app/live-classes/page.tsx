@@ -136,7 +136,7 @@ export default async function LiveClassesPage() {
         {/* Hero visual strip */}
         <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-sm h-28 md:h-32">
           <Image
-            src="/images/hero-vet.jpg"
+            src="/images/hero-vet.webp"
             alt=""
             fill
             className="object-cover"

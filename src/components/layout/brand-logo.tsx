@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export function BrandLogo({
   className,
-  src = "/logos/fexicon.png",
+  src = "/logos/fexicon.webp",
   imgClassName,
 }: {
   className?: string;

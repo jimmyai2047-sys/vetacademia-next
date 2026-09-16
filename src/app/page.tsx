@@ -148,7 +148,7 @@ const importantLinks = [
   {
     name: "RUVAS",
     href: "https://ruvasjaipur.rajasthan.gov.in/",
-    logo: "/logos/ruvas.png",
+    logo: "/logos/ruvas.webp",
     short: "RU",
     color: "#1d4ed8",
   },
@@ -211,7 +211,7 @@ const importantLinks = [
   {
     name: "WOAH",
     href: "https://www.woah.org/en/home/",
-    logo: "/logos/woah.png",
+    logo: "/logos/woah.webp",
     short: "WO",
     color: "#1e40af",
   },
@@ -393,7 +393,7 @@ export default async function HomePage() {
             <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
               <div className="relative h-[260px] xs:h-[300px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
                 <Image
-                  src="/images/hero-vet.jpg"
+                  src="/images/hero-vet.webp"
                   alt="Veterinary students learning"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
