@@ -50,6 +50,8 @@ const nextConfig: NextConfig = {
     localPatterns: [
       { pathname: "/images/**" },
       { pathname: "/logos/**" },
+      { pathname: "/logo-vetacademia.webp" },
+      { pathname: "/logo-vetacademia.png" },
       { pathname: "/api/blob**" },
     ],
   },

@@ -132,6 +132,8 @@ export default function Navbar() {
   }
   const [search, setSearch] = useState("");
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+  // Fallback to PNG if the WebP logo ever fails to load (stale cache/CDN).
+  const [logoSrc, setLogoSrc] = useState("/logo-vetacademia.webp");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -209,12 +211,15 @@ export default function Navbar() {
           <Link href="/" className="relative flex items-center h-full -ml-1 sm:ml-0 shrink-0 group">
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
             <Image
-              src="/logo-vetacademia.webp"
+              src={logoSrc}
               alt="VetAcademia - Veterinary Education Platform"
               className="relative h-12 sm:h-14 w-auto object-contain object-left"
               width={180}
               height={56}
               priority
+              onError={() => {
+                if (logoSrc !== "/logo-vetacademia.png") setLogoSrc("/logo-vetacademia.png");
+              }}
             />
           </Link>
 
