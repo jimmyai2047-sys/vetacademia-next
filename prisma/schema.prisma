@@ -800,7 +800,7 @@ model Setting {
 model VetProforma {
   id          String   @id @default(cuid())
   title       String
-  type        String   // POST_MORTEM | HEALTH_CERTIFICATE | OTHER
+  type        String   // POST_MORTEM | HEALTH_CERTIFICATE | VALUATION | INSURANCE | OTHER
   description String?
   wordUrl     String?
   wordName    String?

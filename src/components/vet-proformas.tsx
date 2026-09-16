@@ -4,7 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, File, Download, Award } from "lucide-react";
-import Link from "next/link";
+
+const TYPE_LABELS: Record<string, string> = {
+  POST_MORTEM: "Post Mortem",
+  HEALTH_CERTIFICATE: "Health Certificate",
+  VALUATION: "Valuation",
+  INSURANCE: "Insurance",
+  OTHER: "Proforma",
+};
+
+function typeLabel(t: string) {
+  return TYPE_LABELS[t] ?? t.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 export default async function VetProformas() {
   const items = await prisma.vetProforma.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "desc" }] });
@@ -31,7 +42,7 @@ export default async function VetProformas() {
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Award className="h-4 w-4" /></span>
               <CardTitle className="text-base">{p.title}</CardTitle>
-              <Badge variant="outline" className="rounded-full text-xs ml-auto">{p.type === "POST_MORTEM" ? "Post Mortem" : p.type === "HEALTH_CERTIFICATE" ? "Health Certificate" : p.type}</Badge>
+              <Badge variant="outline" className="rounded-full text-xs ml-auto">{typeLabel(p.type)}</Badge>
             </div>
             {p.description && <p className="text-xs text-muted-foreground mt-1">{p.description}</p>}
           </CardHeader>

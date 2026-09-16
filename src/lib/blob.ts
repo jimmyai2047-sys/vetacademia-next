@@ -13,6 +13,8 @@ const cache = new Map<string, { url: string; expires: number }>();
  */
 export async function getSignedUrl(blobUrl: string | null | undefined): Promise<string> {
   if (!blobUrl) return "";
+  // Local public files (e.g. /proformas/...) need no signing — return as-is.
+  if (blobUrl.startsWith("/")) return blobUrl;
   const token = process.env.BLOB_READ_WRITE_TOKEN;
   if (!token) return blobUrl;
 

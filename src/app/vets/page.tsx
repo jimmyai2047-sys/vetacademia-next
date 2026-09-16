@@ -124,15 +124,15 @@ export default async function VetsPage() {
         <VetReferenceCollapsible />
       </div>
 
-      {/* Proformas — Post Mortem, Health Certificate for Export (Word + PDF) */}
+      {/* Proformas — Post Mortem, Health Certificates, Valuation, Insurance (Word + PDF) */}
       <div className="container mx-auto px-4 mt-6" id="proformas">
         <div className="flex items-center gap-2 mb-3">
           <Badge className="rounded-full bg-emerald-600 gap-1.5"><FileText className="h-3 w-3" /> Proformas</Badge>
-          <span className="text-xs text-muted-foreground">Post Mortem & Health Certificate for Export — Word & PDF</span>
+          <span className="text-xs text-muted-foreground">Post Mortem • Health Certificates • Valuation • Insurance — Word & PDF</span>
         </div>
         <h2 className="text-xl font-bold">Proformas for <span className="va-gradient-text">Veterinarians</span></h2>
         <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-emerald-600 to-[#d4a843]" />
-        <p className="mt-2 text-sm text-muted-foreground">Download official proformas — editable Word and print-ready PDF. Managed by admin.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Download official field proformas — editable Word and print-ready PDF. Managed by admin.</p>
         <div className="mt-4">
           <VetProformas />
         </div>
