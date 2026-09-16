@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
 
 declare global {
   var __VA_RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> | undefined;
@@ -8,11 +8,16 @@ const RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> =
 
 // On Vercel, rate limits must be shared across all serverless lambda instances,
 // otherwise an attacker can bypass a per-instance in-memory Map by dispersing
-// requests across instances. Prefer Vercel KV (Redis). Falls back to an
-// in-process Map only for local dev / when KV env vars are not configured.
-const USE_KV = Boolean(
-  process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-);
+// requests across instances. Prefer Upstash Redis (installed via the Vercel
+// Marketplace — injects UPSTASH_REDIS_REST_URL/TOKEN). Falls back to an
+// in-process Map only for local dev / when Redis env vars are not configured.
+const REDIS_URL =
+  process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || "";
+const REDIS_TOKEN =
+  process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || "";
+const USE_REDIS = Boolean(REDIS_URL && REDIS_TOKEN);
+
+const redis = USE_REDIS ? new Redis({ url: REDIS_URL, token: REDIS_TOKEN }) : null;
 
 async function rateLimitMap(
   key: string,
@@ -45,13 +50,13 @@ export async function rateLimit(
   maxRequests = 60,
   windowMs = 60_000
 ): Promise<{ allowed: boolean; remaining: number }> {
-  if (!USE_KV) return rateLimitMap(key, maxRequests, windowMs);
+  if (!USE_REDIS || !redis) return rateLimitMap(key, maxRequests, windowMs);
 
   try {
     // Atomic INCR + EXPIRE is the standard Redis fixed-window rate limiter.
-    const count = await kv.incr(key);
+    const count = await redis.incr(key);
     if (count === 1) {
-      await kv.expire(key, Math.ceil(windowMs / 1000));
+      await redis.expire(key, Math.ceil(windowMs / 1000));
     }
     return {
       allowed: count <= maxRequests,
@@ -60,7 +65,7 @@ export async function rateLimit(
   } catch (err) {
     // Never fail-open into an unauthenticated bypass — fall back to in-process
     // limiting (best-effort) rather than letting everything through.
-    console.error("Vercel KV rate-limit error, falling back to in-memory:", err);
+    console.error("Upstash Redis rate-limit error, falling back to in-memory:", err);
     return rateLimitMap(key, maxRequests, windowMs);
   }
 }
