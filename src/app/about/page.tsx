@@ -115,7 +115,7 @@ export default function AboutPage() {
               <Card className="va-card-hover overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-sm p-2">
                 <div className="relative aspect-square rounded-[1.2rem] overflow-hidden bg-muted">
                   <Image
-                    src="/images/ashok-baindha.jpg"
+                    src="/images/ashok-baindha.webp"
                     alt="Dr. Ashok Baindha — Founder & Director, VetAcademia"
                     fill
                     className="object-cover"

@@ -52,6 +52,7 @@ import {
   Gem,
   ArrowRight,
   Library,
+  X,
 } from "lucide-react";
 
 const programmes = [
@@ -683,8 +684,8 @@ export default function Navbar() {
                       <p className="text-xs text-muted-foreground">Veterinary Education Hub</p>
                     </div>
                   </div>
-                  <button onClick={() => setIsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors">
-                    <span className="text-lg leading-none">×</span>
+                  <button onClick={() => setIsOpen(false)} aria-label="Close menu" className="flex h-11 w-11 items-center justify-center rounded-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors">
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
               </div>

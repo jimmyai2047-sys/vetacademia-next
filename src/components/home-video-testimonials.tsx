@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Star } from "lucide-react";
 
 const videos = [
-  { id: "dQw4w9WgXcQ", name: "Aarav Sharma", exam: "B.V.Sc • 1st Year", thumb: "/images/bvsc.jpg", rating: 5 },
-  { id: "dQw4w9WgXcQ", name: "Priya Nair", exam: "ICAR JRF", thumb: "/images/ahdp.jpg", rating: 5 },
+  { id: "dQw4w9WgXcQ", name: "Aarav Sharma", exam: "B.V.Sc • 1st Year", thumb: "/images/bvsc.webp", rating: 5 },
+  { id: "dQw4w9WgXcQ", name: "Priya Nair", exam: "ICAR JRF", thumb: "/images/ahdp.webp", rating: 5 },
 ];
 
 export default function HomeVideoTestimonials() {

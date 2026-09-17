@@ -66,7 +66,7 @@ const programmes = [
     description: "Comprehensive diploma in animal husbandry practices",
     icon: BookOpen,
     href: "/syllabus/ahdp",
-    image: "/images/ahdp.jpg",
+    image: "/images/ahdp.webp",
     color: "bg-primary",
   },
   {
@@ -75,7 +75,7 @@ const programmes = [
     description: "Professional undergraduate veterinary degree",
     icon: GraduationCap,
     href: "/syllabus/bvsc",
-    image: "/images/bvsc.jpg",
+    image: "/images/bvsc.webp",
     color: "bg-blue-600",
   },
   {
@@ -84,7 +84,7 @@ const programmes = [
     description: "Advanced postgraduate veterinary specializations",
     icon: FlaskConical,
     href: "/syllabus/mvsc",
-    image: "/images/mvsc.jpg",
+    image: "/images/mvsc.webp",
     color: "bg-purple-600",
   },
   {
@@ -93,7 +93,7 @@ const programmes = [
     description: "Doctoral research programs in veterinary fields",
     icon: Stethoscope,
     href: "/syllabus/phd",
-    image: "/images/phd.jpg",
+    image: "/images/phd.webp",
     color: "bg-orange-600",
   },
 ];
@@ -104,28 +104,28 @@ const features = [
     title: "Mock Tests",
     description: "Adaptive mock tests with detailed analytics",
     href: "/mock-tests",
-    image: "/images/features-mocktest.jpg",
+    image: "/images/features-mocktest.webp",
   },
   {
     icon: FileText,
     title: "Study Materials",
     description: "Comprehensive notes, PDFs, and video lessons",
     href: "/study-materials",
-    image: "/images/features-study.jpg",
+    image: "/images/features-study.webp",
   },
   {
     icon: Users,
     title: "Expert Consultation",
     description: "One-on-one sessions with veterinary experts",
     href: "/experts",
-    image: "/images/features-experts.jpg",
+    image: "/images/features-experts.webp",
   },
   {
     icon: BookOpen,
     title: "Syllabus",
     description: "Complete curriculum & chapter-wise content for every programme",
     href: "/syllabus",
-    image: "/images/bvsc.jpg",
+    image: "/images/bvsc.webp",
   },
 ];
 
@@ -167,56 +167,56 @@ const importantLinks = [
   {
     name: "RAJUVAS",
     href: "https://rajuvas.org",
-    logo: "/logos/rajuvas.png",
+    logo: "/logos/rajuvas.webp",
     short: "RA",
     color: "#16a34a",
   },
   {
     name: "ICAR",
     href: "https://icar.org.in",
-    logo: "/logos/icar.png",
+    logo: "/logos/icar.webp",
     short: "IC",
     color: "#dc2626",
   },
   {
     name: "VCI",
     href: "https://vci.dahd.gov.in/",
-    logo: "/logos/vci.png",
+    logo: "/logos/vci.webp",
     short: "VC",
     color: "#0891b2",
   },
   {
     name: "NDDB",
     href: "https://nddb.coop",
-    logo: "/logos/nddb.png",
+    logo: "/logos/nddb.webp",
     short: "ND",
     color: "#ca8a04",
   },
   {
     name: "APEDA",
     href: "https://apeda.gov.in",
-    logo: "/logos/apeda.png",
+    logo: "/logos/apeda.webp",
     short: "AP",
     color: "#15803d",
   },
   {
     name: "DOAHD (GOI)",
     href: "https://www.dahd.gov.in/",
-    logo: "/logos/dohd.png",
+    logo: "/logos/dohd.webp",
     short: "DH",
     color: "#2563eb",
   },
   {
     name: "NBAGR",
     href: "https://nbagr.res.in",
-    logo: "/logos/nbagr.jpg",
+    logo: "/logos/nbagr.webp",
     short: "NB",
     color: "#7c3aed",
   },
   {
     name: "ASRB",
     href: "https://asrb.gov.in/",
-    logo: "/logos/asrb.png",
+    logo: "/logos/asrb.webp",
     short: "AS",
     color: "#0d9488",
   },
@@ -332,7 +332,7 @@ export default async function HomePage() {
                 Trusted by 10,000+ Veterinary Students
               </Badge>
 
-              <h1 className="mt-5 text-[30px] xs:text-4xl font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl lg:text-[52px]">
+              <h1 className="mt-5 text-[30px] font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl lg:text-[52px]">
                 India&apos;s Premier
                 <span className="block bg-gradient-to-r from-primary via-primary to-blue-600 bg-clip-text text-transparent">
                   Veterinary Education
@@ -403,7 +403,7 @@ export default async function HomePage() {
 
             {/* Right: Visual - Mobile Optimized */}
             <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
-              <div className="relative h-[260px] xs:h-[300px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
+              <div className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
                 <Image
                   src="/images/hero-vet.webp"
                   alt="Veterinary students learning"
@@ -424,7 +424,7 @@ export default async function HomePage() {
                   <p className="text-xs sm:text-sm font-bold leading-none">Live Classes</p>
                   <p className="text-[11px] sm:text-xs text-muted-foreground">Daily • Expert</p>
                 </div>
-                <span className="ml-1 flex h-2 w-2 rounded-full bg-green-500 shrink-0">
+                <span className="relative ml-1 flex h-2 w-2 rounded-full bg-green-500 shrink-0">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75" />
                 </span>
               </div>
@@ -739,7 +739,7 @@ export default async function HomePage() {
               <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/10 via-[#d4a843]/10 to-blue-500/10 blur-2xl" />
               <div className="relative overflow-hidden rounded-[2rem] border bg-white p-2 shadow-2xl">
                 <div className="relative h-[380px] md:h-[440px] overflow-hidden rounded-[1.5rem]">
-                  <Image src="/images/bvsc.jpg" alt="Veterinary Education" fill sizes="(max-width: 1024px) 100vw, 560px" className="object-cover" />
+                  <Image src="/images/bvsc.webp" alt="Veterinary Education" fill sizes="(max-width: 1024px) 100vw, 560px" className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-[#005f48]/20 to-transparent" />
                   {/* Floating badge */}
                   <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-md border border-white/20 px-3 py-1.5 text-xs font-bold shadow-lg">
@@ -913,7 +913,7 @@ export default async function HomePage() {
       {/* CTA - Highly Decorative */}
       <section className="relative overflow-hidden py-8 md:py-12">
         <div className="absolute inset-0">
-          <Image src="/images/ahdp.jpg" alt="" fill sizes="100vw" className="object-cover" />
+          <Image src="/images/ahdp.webp" alt="" fill sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e]/95 via-primary/90 to-[#005f48]/90" />
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '22px 22px' }} />
         </div>
