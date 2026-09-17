@@ -64,7 +64,7 @@ export default function VetProformaManager() {
           <div className="grid md:grid-cols-2 gap-3">
             <div><Label>Title *</Label><Input value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Post Mortem Report" /></div>
             <div><Label>Type *</Label>
-              <Select value={type} onValueChange={(v) => setType(v ?? "POST_MORTEM")}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="POST_MORTEM">Post Mortem</SelectItem><SelectItem value="HEALTH_CERTIFICATE">Health Certificate</SelectItem><SelectItem value="VALUATION">Valuation Certificate</SelectItem><SelectItem value="INSURANCE">Insurance / Scheme</SelectItem><SelectItem value="OTHER">Other</SelectItem></SelectContent></Select>
+              <Select value={type} onValueChange={(v) => setType(v ?? "POST_MORTEM")}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="POST_MORTEM">Post Mortem</SelectItem><SelectItem value="HEALTH_CERTIFICATE">Health Certificate</SelectItem><SelectItem value="VALUATION">Valuation Certificate</SelectItem><SelectItem value="INSURANCE">Insurance / Scheme</SelectItem><SelectItem value="VACCINATION">Vaccination</SelectItem><SelectItem value="FITNESS">Fitness</SelectItem><SelectItem value="REPRODUCTION">Reproduction</SelectItem><SelectItem value="DISEASE_REPORT">Disease Report</SelectItem><SelectItem value="OTHER">Other</SelectItem></SelectContent></Select>
             </div>
           </div>
           <div><Label>Description</Label><Input value={desc} onChange={e=>setDesc(e.target.value)} placeholder="Short description (optional)" /></div>

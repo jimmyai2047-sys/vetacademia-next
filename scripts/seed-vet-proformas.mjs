@@ -103,6 +103,52 @@ const ROWS = [
     pdf: "mangla-pashu-bima-yojana.pdf",
     pdfName: "मुख्यमंत्री मंगला पशु बीमा योजना.pdf",
   },
+  // ---- DRAFT model formats (VetAcademia-drafted, verify with State AHD) ----
+  {
+    title: "Vaccination Certificate — Individual Animal (Draft)",
+    type: "VACCINATION",
+    description: "Draft: individual-animal vaccination record with batch and next-due fields. Verify with State AHD.",
+    word: "vaccination-certificate-animal.docx",
+    wordName: "Vaccination Certificate — Individual Animal (Draft).docx",
+    pdf: "vaccination-certificate-animal.pdf",
+    pdfName: "Vaccination Certificate — Individual Animal (Draft).pdf",
+  },
+  {
+    title: "Fitness Certificate for Domestic Movement / Market (Draft)",
+    type: "FITNESS",
+    description: "Draft: fitness for sale, market-mela, transport. For export only AQCS may certify. Verify with State AHD.",
+    word: "fitness-certificate-domestic.docx",
+    wordName: "Fitness Certificate for Domestic Movement-Market (Draft).docx",
+    pdf: "fitness-certificate-domestic.pdf",
+    pdfName: "Fitness Certificate for Domestic Movement-Market (Draft).pdf",
+  },
+  {
+    title: "Pregnancy Diagnosis Certificate (Draft)",
+    type: "REPRODUCTION",
+    description: "Draft: AI history plus per-rectal/USG finding with expected calving date. Verify with State AHD.",
+    word: "pregnancy-diagnosis-certificate.docx",
+    wordName: "Pregnancy Diagnosis Certificate (Draft).docx",
+    pdf: "pregnancy-diagnosis-certificate.pdf",
+    pdfName: "Pregnancy Diagnosis Certificate (Draft).pdf",
+  },
+  {
+    title: "Disease Outbreak Intimation & Sample Dispatch Checklist (Draft)",
+    type: "DISEASE_REPORT",
+    description: "Draft: field aid aligned to NADRS 2.0 FIR workflow and the 2009 Act, with sample packing checklist. Verify with State AHD.",
+    word: "outbreak-intimation-sample-checklist.docx",
+    wordName: "Disease Outbreak Intimation and Sample Dispatch Checklist (Draft).docx",
+    pdf: "outbreak-intimation-sample-checklist.pdf",
+    pdfName: "Disease Outbreak Intimation and Sample Dispatch Checklist (Draft).pdf",
+  },
+  {
+    title: "Drug Withdrawal Period — Quick Reference Chart (Draft)",
+    type: "OTHER",
+    description: "Draft: indicative milk/meat withdrawal chart with FSSAI banned-drug box. Label is final. Verify with State AHD.",
+    word: "drug-withdrawal-quick-chart.docx",
+    wordName: "Drug Withdrawal Period Quick Reference Chart (Draft).docx",
+    pdf: "drug-withdrawal-quick-chart.pdf",
+    pdfName: "Drug Withdrawal Period Quick Reference Chart (Draft).pdf",
+  },
 ];
 
 const titles = ROWS.map((r) => r.title);

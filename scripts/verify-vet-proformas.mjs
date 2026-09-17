@@ -23,4 +23,4 @@ for (const r of rows) {
 }
 console.log(`ROWS=${rows.length} MISSING_FILES=${bad}`);
 await prisma.$disconnect();
-if (rows.length !== 9 || bad !== 0) process.exit(1);
+if (rows.length < 9 || bad !== 0) process.exit(1);

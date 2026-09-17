@@ -10,6 +10,10 @@ const TYPE_LABELS: Record<string, string> = {
   HEALTH_CERTIFICATE: "Health Certificate",
   VALUATION: "Valuation",
   INSURANCE: "Insurance",
+  VACCINATION: "Vaccination",
+  FITNESS: "Fitness",
+  REPRODUCTION: "Reproduction",
+  DISEASE_REPORT: "Disease Report",
   OTHER: "Proforma",
 };
 
