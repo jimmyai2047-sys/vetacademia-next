@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import VisitorCounter from "@/components/visitor-counter";
 import ChatbotLazy from "@/components/chatbot-lazy";
 import ImportantLinkCard from "@/components/important-link-card";
+import JoinCommunity from "@/components/join-community";
+import SocialLinks from "@/components/social-icons";
 // Below-fold video section — split into its own chunk so it doesn't inflate
 // the initial JS/hydration cost of the homepage.
 const HomeVideoTestimonials = dynamicImport(
@@ -369,6 +371,14 @@ export default async function HomePage() {
                     Start Free Trial
                   </Button>
                 </Link>
+              </div>
+
+              {/* Follow us — Facebook / Instagram / WhatsApp / Telegram */}
+              <div className="mt-5 flex items-center gap-3">
+                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Follow us:
+                </span>
+                <SocialLinks variant="light" />
               </div>
 
               {/* Social proof */}
@@ -909,6 +919,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Join Our Community — Facebook / Instagram / WhatsApp / Telegram */}
+      <JoinCommunity />
 
       {/* CTA - Highly Decorative */}
       <section className="relative overflow-hidden py-8 md:py-12">

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "@/components/providers";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 import PwaRegister from "@/components/pwa-register";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -94,7 +95,10 @@ const organizationSchema = {
   url: "https://vetacademia.in",
   logo: "https://vetacademia.in/favicon-512x512.png",
   description: "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
-  sameAs: ["https://vetacademia.in"],
+  sameAs: [
+    "https://www.facebook.com/profile.php?id=61593778203571",
+    "https://www.instagram.com/vetacademia.india/",
+  ],
 };
 
 export default function RootLayout({
@@ -120,6 +124,7 @@ export default function RootLayout({
             <Navbar />
             <main id="main-content" className="flex-1">{children}</main>
             <Footer />
+            <FloatingWhatsApp />
             <PwaRegister />
             <SpeedInsights />
           </Providers>

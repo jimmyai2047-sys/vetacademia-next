@@ -885,6 +885,45 @@ export default function Navbar() {
                   <FileText className="h-4 w-4" />
                   Admission
                 </Link>
+
+                <div className="rounded-xl border border-primary/10 bg-muted/30 p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground text-center">
+                    Connect with us
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <a
+                      href="https://www.facebook.com/profile.php?id=61593778203571"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center rounded-lg bg-[#1877F2] px-2 py-2 text-xs font-semibold text-white"
+                    >
+                      Facebook
+                    </a>
+                    <a
+                      href="https://www.instagram.com/vetacademia.india/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center rounded-lg bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] px-2 py-2 text-xs font-semibold text-white"
+                    >
+                      Instagram
+                    </a>
+                    <a
+                      href="https://wa.me/918949929291?text=Hi%20VetAcademia%2C%20I%20need%20help%20with%20my%20preparation"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center rounded-lg bg-[#25D366] px-2 py-2 text-xs font-semibold text-white"
+                    >
+                      WhatsApp
+                    </a>
+                    <Link
+                      href="/community"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center rounded-lg bg-[#229ED9] px-2 py-2 text-xs font-semibold text-white"
+                    >
+                      Telegram Groups
+                    </Link>
+                  </div>
+                </div>
               </div>
 
               <div className="sticky bottom-0 mt-auto border-t bg-white/98 backdrop-blur-xl p-4 space-y-3 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">

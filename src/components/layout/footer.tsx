@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GraduationCap, Mail, Phone, MapPin, Sparkles, Heart, ArrowUpRight } from "lucide-react";
+import SocialLinks from "@/components/social-icons";
 
 const footerLinks = {
   programmes: [
@@ -87,6 +88,15 @@ export default function Footer() {
                   <span className="text-sm text-white/80">{text}</span>
                 </div>
               ))}
+            </div>
+            <div className="pt-1">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#d4a843]">
+                Connect with us
+              </p>
+              <SocialLinks className="mt-3" />
+              <p className="mt-2 text-xs text-white/50">
+                Follow for updates • DM us on WhatsApp
+              </p>
             </div>
           </div>
 
