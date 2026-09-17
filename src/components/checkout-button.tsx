@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function CheckoutButton({
   planSlug,
@@ -51,7 +52,7 @@ export default function CheckoutButton({
       description: reportId ? "Unlock report" : `Plan: ${planSlug || ""}`,
       handler: async (response: any) => {
         try {
-          const vRes = await fetch("/api/payments/verify", {
+          const vRes = await csrfFetch("/api/payments/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -86,7 +87,7 @@ export default function CheckoutButton({
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/purchase", {
+      const res = await csrfFetch("/api/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
@@ -110,7 +111,7 @@ export default function CheckoutButton({
       }
 
       // TEST MODE: complete the payment immediately.
-      const payRes = await fetch(`/api/purchase/${data.id}/pay`, {
+      const payRes = await csrfFetch(`/api/purchase/${data.id}/pay`, {
         method: "POST",
       });
       if (payRes.ok) {
@@ -131,7 +132,7 @@ export default function CheckoutButton({
         return;
       }
 
-      const orderRes = await fetch("/api/payments/create-order", {
+      const orderRes = await csrfFetch("/api/payments/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
