@@ -416,13 +416,15 @@ export default async function HomePage() {
               <div className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
                 <Image
                   src="/images/hero-vet.webp"
-                  alt="Veterinary students learning"
+                  alt="Veterinarian caring for animals - VetAcademia"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
                   className="object-cover"
                   priority
+                  unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent lg:hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+                <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[inherit]" />
               </div>
 
               {/* Floating card - top - mobile safe */}

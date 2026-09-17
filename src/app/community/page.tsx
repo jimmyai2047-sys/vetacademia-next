@@ -92,7 +92,7 @@ export default async function CommunityPage() {
       </div>
 
       <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">
-        <span className="font-semibold">Login to unlock more</span> — side-by-side Telegram + WhatsApp. Purchase karne par premium Course groups unlock honge.
+        <span className="font-semibold">Login to unlock more</span> — side-by-side Telegram + WhatsApp. Premium course groups unlock on purchase.
       </div>
 
       {grouped.size === 0 ? (
@@ -198,7 +198,7 @@ export default async function CommunityPage() {
         <CardContent className="relative p-4 text-center text-white">
           <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Stay Connected</Badge>
           <h3 className="mt-3 text-xl font-bold">Need help finding the right group?</h3>
-          <p className="mt-1 text-sm text-white/80">Login → aapke Programme/Role ke groups filter hoke side-by-side dikhenge. Course purchase par premium unlock.</p>
+          <p className="mt-1 text-sm text-white/80">Login → Groups for your programme and role are filtered and shown side by side. Course purchase par premium unlock.</p>
           <div className="mt-4 flex justify-center gap-3">
             <Link href="/contact"><Button variant="secondary" size="sm" className="rounded-full bg-white text-purple-700 hover:bg-white/90">Contact Support</Button></Link>
             <Link href="/syllabus"><Button variant="outline" size="sm" className="rounded-full border-white/30 bg-white/10 backdrop-blur text-white hover:bg-white hover:text-purple-700">Browse Syllabus</Button></Link>

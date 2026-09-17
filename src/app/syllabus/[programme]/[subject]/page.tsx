@@ -22,6 +22,7 @@ import ChapterResources from "@/components/chapter-resources";
 import { getSignedUrl } from "@/lib/blob";
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
+import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
 import SyllabusSidebar from "@/components/syllabus-sidebar";
 
@@ -59,6 +60,8 @@ export default async function SubjectPage({
   )();
 
   if (!subject) notFound();
+
+  if (programmeNameToSlug(subject.programme.name) !== progSlug) notFound();
 
   const access = await getAccess();
   const programmeOwned = access.programmeSlugs.has(progSlug);

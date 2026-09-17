@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { slugToProgrammeName } from "@/lib/programme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ export default async function ProgrammeContentPage({
   const { programme: slug } = await params;
 
   const programme = await prisma.programme.findFirst({
-    where: { name: slug.toUpperCase() },
+    where: { name: { equals: slugToProgrammeName(slug), mode: "insensitive" } },
     include: {
       subjects: {
         orderBy: { name: "asc" },

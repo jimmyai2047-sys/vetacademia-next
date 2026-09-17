@@ -17,7 +17,7 @@ export default async function FlashcardsPage() {
     where: { mockTest: { kind: { not: "PREVIOUS_YEAR" } } },
     orderBy: { createdAt: "desc" },
     include: { mockTest: { select: { title: true } } },
-  });
+  }).catch(() => []);
 
   const cards = questions.map((q) => {
     let options: string[] = [];

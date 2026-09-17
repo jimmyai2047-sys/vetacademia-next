@@ -77,7 +77,7 @@ export default async function LiveClassesPage() {
   function ClassRow({ c }: { c: (typeof classes)[number] }) {
     return (
       <Link href={`/examinations/${c.exam}/live/${c.id}`}>
-        <div className="va-card-hover group flex items-center justify-between p-4 rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg hover:border-primary/10 transition-all">
+        <div className="va-card-hover group relative flex items-center justify-between p-4 rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg hover:border-primary/10 transition-all">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-[1.25rem]" />
           <div className="flex items-center gap-3 min-w-0">
             <div

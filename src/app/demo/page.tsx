@@ -50,22 +50,22 @@ export default async function DemoPage() {
     prisma.studyMaterial.findMany({
       where: { isDemo: true },
       include: { subject: { include: { programme: true } } },
-    }),
+    }).catch(() => []),
     prisma.mockTest.findMany({
       where: { isDemo: true },
       include: {
         _count: { select: { questions: true } },
         subject: { include: { programme: true } },
       },
-    }),
-    prisma.examMaterial.findMany({ where: { isDemo: true } }),
+    }).catch(() => []),
+    prisma.examMaterial.findMany({ where: { isDemo: true } }).catch(() => []),
     prisma.question.findMany({
       where: { mockTest: { isDemo: true, kind: { not: "PREVIOUS_YEAR" } } },
       include: {
         mockTest: { include: { subject: { include: { programme: true } } } },
       },
       take: 40,
-    }),
+    }).catch(() => []),
   ]);
 
   const progSlug = (m: { subject?: { programme?: { name: string } } | null }) =>

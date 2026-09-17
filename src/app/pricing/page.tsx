@@ -44,11 +44,29 @@ export default async function PricingPage({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const { plan: highlight } = await searchParams;
-  const [plans, access, subjects] = await Promise.all([
-    prisma.plan.findMany({ orderBy: { sortOrder: "asc" } }),
-    getAccess(),
-    prisma.subject.findMany({ select: { id: true, name: true } }),
-  ]);
+  let plans: Awaited<ReturnType<typeof prisma.plan.findMany>> = [];
+  let access: Awaited<ReturnType<typeof getAccess>> = {
+    userId: null,
+    isAuthed: false,
+    isAdmin: false,
+    planSlugs: new Set<string>(),
+    programmeSlugs: new Set<string>(),
+    examKeys: new Set<string>(),
+    examPlanOwned: false,
+    ownedYearScopes: new Set<string>(),
+    ownedSubjectIds: new Set<string>(),
+  };
+  let subjects: { id: string; name: string }[] = [];
+  try {
+    [plans, access, subjects] = await Promise.all([
+      prisma.plan.findMany({ orderBy: { sortOrder: "asc" } }),
+      getAccess(),
+      prisma.subject.findMany({ select: { id: true, name: true } }),
+    ]);
+  } catch {
+    plans = [];
+    subjects = [];
+  }
 
   const allSubjectNames = new Set(subjects.map((s) => s.name));
 
@@ -192,6 +210,13 @@ export default async function PricingPage({
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
         <div className="container relative mx-auto px-4 py-8">
 
+          {plans.length === 0 && (
+            <Card className="mb-8">
+              <CardContent className="p-6 text-center text-muted-foreground">
+                No plans available yet. Please check back soon.
+              </CardContent>
+            </Card>
+          )}
           <section className="mb-12">
             <div className="flex items-center gap-3 mb-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><GraduationCap className="h-5 w-5" /></div>

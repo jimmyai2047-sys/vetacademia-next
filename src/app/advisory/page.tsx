@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export const dynamic = "force-dynamic";
 
 export default async function AdvisoryPage() {
-  const posts = await getPublishedPosts("ADVISORY");
+  const posts = await getPublishedPosts("ADVISORY").catch(() => []);
   return (
     <div className="container mx-auto px-4 py-8">
       <DecorativePageHeader

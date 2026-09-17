@@ -73,6 +73,7 @@ export default async function SyllabusPage() {
       />
       <div className="va-divider-dots my-8 max-w-[200px] mx-auto"><span /></div>
 
+      {programmes.length === 0 && <p>No programmes yet</p>}
       <div className="grid md:grid-cols-2 gap-6">
         {programmes.map((programme) => {
           const slug = programmeNameToSlug(programme.name);

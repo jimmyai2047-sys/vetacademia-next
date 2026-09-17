@@ -59,7 +59,7 @@ export default async function AdminPricingPage() {
             Programmes (Full)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {fullCourses.map((p) => (
+            {fullCourses.length === 0 ? <p>No plans yet</p> : fullCourses.map((p) => (
               <PlanEditor
                 key={p.slug}
                 plan={{
@@ -81,7 +81,7 @@ export default async function AdminPricingPage() {
           Year Plans (BVSc / AHDP)
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {yearPlans.map((p) => (
+          {yearPlans.length === 0 ? <p>No plans yet</p> : yearPlans.map((p) => (
             <PlanEditor
               key={p.slug}
               plan={{
@@ -103,7 +103,7 @@ export default async function AdminPricingPage() {
           Subject Plans (M.V.Sc / Ph.D)
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subjectPlans.map((p) => (
+          {subjectPlans.length === 0 ? <p>No plans yet</p> : subjectPlans.map((p) => (
             <PlanEditor
               key={p.slug}
               plan={{
@@ -125,7 +125,7 @@ export default async function AdminPricingPage() {
           Exam Preparation
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {exams.map((p) => (
+          {exams.length === 0 ? <p>No plans yet</p> : exams.map((p) => (
             <PlanEditor
               key={p.slug}
               plan={{

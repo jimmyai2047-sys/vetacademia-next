@@ -64,9 +64,16 @@ export default function AdminExpertsPage() {
 
   async function fetchExperts() {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/admin/experts");
       if (res.ok) setExperts(await res.json());
+      else {
+        const data = await res.json().catch(() => null);
+        setError((data as { error?: string } | null)?.error || "Failed to load");
+      }
+    } catch {
+      setError("Failed to load");
     } finally {
       setLoading(false);
     }

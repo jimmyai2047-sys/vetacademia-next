@@ -51,6 +51,8 @@ export default async function CoursePage({
 
   if (!course) notFound();
 
+  if (course.subject.id !== subjectId) notFound();
+
   const access = await getAccess();
   const programmeOwned = access.programmeSlugs.has(progSlug);
   const yearOwned =
@@ -162,6 +164,9 @@ export default async function CoursePage({
       {/* Theory / Practical split */}
       {hasAccess ? (
       <div className="grid md:grid-cols-2 gap-6">
+        {theoryCredits === 0 && practicalCredits === 0 && (
+          <p>Content coming soon</p>
+        )}
         {theoryCredits > 0 && (
           <Card className="border-blue-200">
             <CardHeader className="flex flex-row items-center gap-3 space-y-0">

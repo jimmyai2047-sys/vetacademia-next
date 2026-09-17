@@ -102,7 +102,7 @@ export default async function BlogPostPage({
 
         <SanitizedHtml
           className="prose prose-sm md:prose-base max-w-none text-foreground/90 leading-relaxed"
-          html={post.content}
+          html={post.content ?? ""}
         />
 
         <div className="mt-12 pt-6 border-t">

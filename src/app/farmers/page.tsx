@@ -53,34 +53,47 @@ export default async function FarmersPage({
   const { unlocked } = await searchParams;
   const session = await getServerSession(authOptions);
 
-  const [guides, vaccination, deworming, reports, farmerPostsRaw] =
-    await Promise.all([
-      prisma.farmGuide.findMany({
-        where: { published: true },
-        orderBy: [{ category: "asc" }, { order: "asc" }, { createdAt: "desc" }],
-        take: 100,
-      }),
-      prisma.vaccinationSchedule.findMany({
-        orderBy: [{ order: "asc" }, { disease: "asc" }],
-        take: 100,
-      }),
-      prisma.dewormingSchedule.findMany({
-        orderBy: [{ order: "asc" }, { animal: "asc" }],
-        take: 100,
-      }),
-      prisma.projectReport.findMany({
-        where: { published: true },
-        orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
-        take: 100,
-      }),
-      Promise.all([getPublishedPosts("FARMERS"), getPublishedPosts("ANIMAL_OWNER")]).then(
-        ([a, b]) => {
-          const map = new Map<string, (typeof a)[number]>();
-          for (const p of [...a, ...b]) if (!map.has(p.id)) map.set(p.id, p);
-          return [...map.values()];
-        }
-      ),
-    ]);
+  let guides: Awaited<ReturnType<typeof prisma.farmGuide.findMany>> = [];
+  let vaccination: Awaited<ReturnType<typeof prisma.vaccinationSchedule.findMany>> = [];
+  let deworming: Awaited<ReturnType<typeof prisma.dewormingSchedule.findMany>> = [];
+  let reports: Awaited<ReturnType<typeof prisma.projectReport.findMany>> = [];
+  let farmerPostsRaw: Awaited<ReturnType<typeof getPublishedPosts>> = [];
+  try {
+    [guides, vaccination, deworming, reports, farmerPostsRaw] =
+      await Promise.all([
+        prisma.farmGuide.findMany({
+          where: { published: true },
+          orderBy: [{ category: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+          take: 100,
+        }),
+        prisma.vaccinationSchedule.findMany({
+          orderBy: [{ order: "asc" }, { disease: "asc" }],
+          take: 100,
+        }),
+        prisma.dewormingSchedule.findMany({
+          orderBy: [{ order: "asc" }, { animal: "asc" }],
+          take: 100,
+        }),
+        prisma.projectReport.findMany({
+          where: { published: true },
+          orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+          take: 100,
+        }),
+        Promise.all([getPublishedPosts("FARMERS"), getPublishedPosts("ANIMAL_OWNER")]).then(
+          ([a, b]) => {
+            const map = new Map<string, (typeof a)[number]>();
+            for (const p of [...a, ...b]) if (!map.has(p.id)) map.set(p.id, p);
+            return [...map.values()];
+          }
+        ),
+      ]);
+  } catch {
+    guides = [];
+    vaccination = [];
+    deworming = [];
+    reports = [];
+    farmerPostsRaw = [];
+  }
   // Keep for template (renamed variable)
   const farmerPosts = farmerPostsRaw;
 

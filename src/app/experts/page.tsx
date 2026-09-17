@@ -37,7 +37,7 @@ async function getExperts() {
 }
 
 export default async function ExpertsPage() {
-  const experts = await getExperts();
+  const experts = await getExperts().catch(() => []);
 
   const cards = experts.map((e: typeof experts[number]) => {
       const photo = e.photoUrl ? proxyUrl(e.photoUrl) : null;

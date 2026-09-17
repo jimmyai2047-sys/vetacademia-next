@@ -35,16 +35,21 @@ export default async function ConsultationsPage() {
     select: { id: true },
   });
 
-  const consultations = await prisma.consultation.findMany({
-    where: expert
-      ? { expertId: expert.id }
-      : { studentId: session.user.id },
-    orderBy: { slot: "desc" },
-    include: {
-      student: { select: { name: true, email: true } },
-      expert: { include: { user: { select: { name: true } } } },
-    },
-  });
+  let consultations: any[] = [];
+  try {
+    consultations = await prisma.consultation.findMany({
+      where: expert
+        ? { expertId: expert.id }
+        : { studentId: session.user.id },
+      orderBy: { slot: "desc" },
+      include: {
+        student: { select: { name: true, email: true } },
+        expert: { include: { user: { select: { name: true } } } },
+      },
+    });
+  } catch {
+    consultations = [];
+  }
 
   const isExpert = !!expert;
 

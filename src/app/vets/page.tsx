@@ -25,7 +25,7 @@ import VetProformas from "@/components/vet-proformas";
 export const dynamic = "force-dynamic";
 
 export default async function VetsPage() {
-  const vetPosts = await getPublishedPosts("VETS");
+  const vetPosts = await getPublishedPosts("VETS").catch(() => []);
   return (
     <div className="pb-16 md:pb-0">
       <div className="container mx-auto px-4 pt-8">

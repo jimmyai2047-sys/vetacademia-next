@@ -34,14 +34,20 @@ function formatAction(action: string): string {
 export default function ActivityLogPage() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/admin/audit");
       if (res.ok) setEntries(await res.json());
+      else {
+        const data = await res.json().catch(() => null);
+        setError((data as { error?: string } | null)?.error || "Failed to load activity log");
+      }
     } catch {
-      // ignore
+      setError("Failed to load activity log");
     } finally {
       setLoading(false);
     }
@@ -86,11 +92,22 @@ export default function ActivityLogPage() {
         </div>
       </div>
 
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+      )}
+
       {loading ? (
         <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardContent className="p-6">
             <p className="text-sm text-muted-foreground flex items-center gap-2"><RefreshCw className="h-4 w-4 animate-spin" /> Loading...</p>
+          </CardContent>
+        </Card>
+      ) : error ? (
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+          <CardContent className="p-6">
+            <p className="text-sm text-red-600">Failed to load activity log.</p>
           </CardContent>
         </Card>
       ) : entries.length === 0 ? (

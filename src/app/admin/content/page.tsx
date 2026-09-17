@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EXAM_CONTENT_TRACKS } from "@/lib/exam-tracks";
+import { programmeNameToSlug } from "@/lib/programme";
 import {
   BookOpen,
   GraduationCap,
@@ -159,7 +160,7 @@ export default async function ContentPage() {
             {programmes.map((prog) => {
               const Icon = iconMap[prog.name] || BookOpen;
               const color = colorMap[prog.name] || "text-primary";
-              const slug = prog.name.toLowerCase();
+              const slug = programmeNameToSlug(prog.name);
               return (
                   <Card key={prog.id} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />

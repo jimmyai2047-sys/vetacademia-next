@@ -30,19 +30,23 @@ export default async function SearchPage({
   }[] = [];
 
   if (term) {
-    const subjects = await prisma.subject.findMany({
-      where: { name: { contains: term, mode: "insensitive" } },
-      include: { programme: { select: { name: true } } },
-      take: 50,
-      orderBy: { name: "asc" },
-    });
-    results = subjects.map((s) => ({
-      id: s.id,
-      name: s.name,
-      code: s.code,
-      programmeName: s.programme.name,
-      programmeSlug: programmeNameToSlug(s.programme.name),
-    }));
+    try {
+      const subjects = await prisma.subject.findMany({
+        where: { name: { contains: term, mode: "insensitive" } },
+        include: { programme: { select: { name: true } } },
+        take: 50,
+        orderBy: { name: "asc" },
+      });
+      results = subjects.map((s) => ({
+        id: s.id,
+        name: s.name,
+        code: s.code,
+        programmeName: s.programme.name,
+        programmeSlug: programmeNameToSlug(s.programme.name),
+      }));
+    } catch {
+      results = [];
+    }
   }
 
   return (

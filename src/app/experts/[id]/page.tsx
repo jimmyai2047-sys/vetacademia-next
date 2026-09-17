@@ -21,13 +21,18 @@ export default async function ExpertDetailPage({
 }) {
   const { id } = await params;
 
-  const expert = await prisma.expert.findUnique({
-    where: { id },
-    include: {
-      user: { select: { name: true, email: true } },
-      _count: { select: { consultations: true } },
-    },
-  });
+  let expert;
+  try {
+    expert = await prisma.expert.findUnique({
+      where: { id },
+      include: {
+        user: { select: { name: true, email: true } },
+        _count: { select: { consultations: true } },
+      },
+    });
+  } catch {
+    notFound();
+  }
 
   if (!expert) notFound();
 

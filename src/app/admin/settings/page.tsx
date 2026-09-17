@@ -22,15 +22,22 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/settings")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load settings");
+        return r.json();
+      })
       .then((data) => {
         setSettings(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : "Failed to load settings");
+        setLoading(false);
+      });
   }, []);
 
   function update(key: string, value: string) {
@@ -45,6 +52,7 @@ export default function SettingsPage() {
   async function handleSave() {
     setSaving(true);
     setSaved(false);
+    setError(null);
     try {
       const res = await fetch("/api/admin/settings", {
         method: "PUT",
@@ -54,7 +62,12 @@ export default function SettingsPage() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+      } else {
+        const data = await res.json().catch(() => null);
+        setError((data as { error?: string } | null)?.error || "Failed to save settings");
       }
+    } catch {
+      setError("Failed to save settings");
     } finally {
       setSaving(false);
     }
@@ -70,6 +83,9 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+      )}
       {/* Royal Gradient Header */}
       <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
         <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />

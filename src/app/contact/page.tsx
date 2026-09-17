@@ -127,7 +127,7 @@ export default function ContactPage() {
                 <Badge className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Connect with us</Badge>
                 <p className="font-semibold mt-3 text-lg">Follow VetAcademia</p>
                 <div className="mx-auto mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-                <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">Updates, results, live class alerts — Facebook aur Instagram par follow karo, WhatsApp par direct baat karo.</p>
+                <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">Updates, results, live class alerts — Follow us on Facebook and Instagram, or chat with us directly on WhatsApp.</p>
                 <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
                   <a
                     href={SOCIAL_LINKS.facebook}

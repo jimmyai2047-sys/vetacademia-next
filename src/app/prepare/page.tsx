@@ -82,7 +82,7 @@ export default async function PreparePage({
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
             Structured tracks, previous year papers, and mock tests are available to enrolled members. Highly decorative, highly focused preparation.
           </p>
-          <Link href={`/login?callbackUrl=${encodeURIComponent(tab ? `/prepare?tab=${tab}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
+          <Link href={`/login?redirect=${encodeURIComponent(tab ? `/prepare?tab=${tab}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
             <Sparkles className="h-4 w-4" /> Log In
           </Link>
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
@@ -95,8 +95,10 @@ export default async function PreparePage({
     );
   }
 
-  const categories: PreparedCategory[] = await Promise.all(
-    EXAM_PREP_CATEGORIES.map(async (c) => {
+  let categories: PreparedCategory[] = [];
+  try {
+    categories = await Promise.all(
+      EXAM_PREP_CATEGORIES.map(async (c) => {
       const materials = await prisma.examMaterial.findMany({
         where: { category: c.key, published: true },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
@@ -187,8 +189,11 @@ export default async function PreparePage({
         adaptiveTests: adaptiveTests.map(mapTest),
         lsaSubjects,
       };
-    })
-  );
+      })
+    );
+  } catch {
+    categories = [];
+  }
 
   return (
     <ExamPrepTabs
