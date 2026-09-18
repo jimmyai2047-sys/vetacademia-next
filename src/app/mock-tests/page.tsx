@@ -5,7 +5,6 @@ export const metadata = {
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getSignedUrl } from "@/lib/blob";
 import {
   Card,
   CardContent,
@@ -139,12 +138,22 @@ export default async function MockTestsPage() {
     },
   });
 
-  const testsWithLinks = await Promise.all(
-    tests.map(async (t) => ({
-      ...t,
-      signedUrl: await getSignedUrl(t.fileUrl),
-    }))
-  );
+  // Download links go through the /api/blob proxy (which signs server-side on
+  // demand) instead of pre-signing 200 URLs at render time — keeps the HTML
+  // small and avoids 200 signing calls per page load.
+  function linkFor(fileUrl: string | null | undefined): string {
+    if (!fileUrl) return "";
+    if (fileUrl.startsWith("/")) return fileUrl;
+    if (fileUrl.includes("blob.vercel-storage.com")) {
+      return `/api/blob?url=${encodeURIComponent(fileUrl)}`;
+    }
+    return fileUrl;
+  }
+
+  const testsWithLinks = tests.map((t) => ({
+    ...t,
+    signedUrl: linkFor(t.fileUrl),
+  }));
 
   // Categorise — chronologically sorted within each category (oldest → newest)
   const categorized = CATEGORIES.map((cat) => ({
