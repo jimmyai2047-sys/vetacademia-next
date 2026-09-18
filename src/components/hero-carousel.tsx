@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 
 const slides = [
   { src: "/images/hero-vet-v2.webp", alt: "Veterinarian caring for animals" },
-  { src: "/images/hero-slide-2.webp", alt: "Veterinary education" },
+  { src: "/images/hero-zebu.webp", alt: "Zebu cattle" },
   { src: "/images/hero-goat.webp", alt: "Goat in farm" },
   { src: "/images/hero-horse.webp", alt: "Horses in pasture" },
   { src: "/images/hero-cow.webp", alt: "Dairy cow in green field" },
+  { src: "/images/hero-buffalo.webp", alt: "Water buffalo" },
   { src: "/images/hero-dog.webp", alt: "Pet dog" },
   { src: "/images/hero-slide-5.webp", alt: "Vet with cattle" },
   { src: "/images/hero-sheep.webp", alt: "Sheep in meadow" },
