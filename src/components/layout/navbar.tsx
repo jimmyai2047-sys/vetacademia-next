@@ -209,9 +209,9 @@ export default function Navbar() {
       <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary va-gradient-animate" />
       <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(0,95,72,0.07)]">
         <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
-        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-0 sm:px-4">
+        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-3 sm:px-4">
           {/* Logo - Left most corner attached */}
-          <Link href="/" className="relative flex items-center h-full -ml-1 sm:ml-0 shrink-0 group">
+          <Link href="/" className="relative flex items-center h-full ml-0 shrink-0 group">
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
             <Image
               src={logoSrc}
@@ -251,7 +251,7 @@ export default function Navbar() {
           >
             <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
               <GraduationCap className="h-4 w-4" />
-              Programmes
+              Student Corner
             </Button>
             <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden">
@@ -744,7 +744,7 @@ export default function Navbar() {
                 </Link>
 
                 <MobileNavSection
-                  title="Programmes"
+                  title="Student Corner"
                   icon={GraduationCap}
                   open={!!expanded.programmes}
                   onToggle={() => toggleSection("programmes")}
