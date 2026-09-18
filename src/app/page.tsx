@@ -7,6 +7,7 @@ import ChatbotLazy from "@/components/chatbot-lazy";
 import ImportantLinkCard from "@/components/important-link-card";
 import JoinCommunity from "@/components/join-community";
 import SocialLinks from "@/components/social-icons";
+import HeroCarousel from "@/components/hero-carousel";
 // Below-fold video section — split into its own chunk so it doesn't inflate
 // the initial JS/hydration cost of the homepage.
 const HomeVideoTestimonials = dynamicImport(
@@ -271,6 +272,7 @@ const getHomeTestimonials = unstable_cache(
         where: { isApproved: true },
         orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
         take: 3,
+        select: { id: true, name: true, exam: true, quote: true, rating: true },
       });
     } catch {
       return [];
@@ -413,19 +415,7 @@ export default async function HomePage() {
 
             {/* Right: Visual - Mobile Optimized */}
             <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
-              <div className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
-                <Image
-                  src="/images/hero-vet.webp"
-                  alt="Veterinarian caring for animals - VetAcademia"
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
-                  className="object-cover"
-                  priority
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
-                <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[inherit]" />
-              </div>
+              <HeroCarousel />
 
               {/* Floating card - top - mobile safe */}
               <div className="absolute left-2 top-3 sm:-left-2 sm:top-4 flex items-center gap-2.5 rounded-xl sm:rounded-2xl border bg-white p-2.5 sm:p-3 shadow-xl md:-left-4 md:top-6 max-w-[165px] sm:max-w-none">
@@ -886,13 +876,13 @@ export default async function HomePage() {
                 <Link key={p.id} href={`/blog/${p.slug}`} className="group">
                   <Card className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white p-0 shadow-sm hover:border-primary/10">
                     <div className={`relative h-44 overflow-hidden bg-gradient-to-br ${blogGradients[i % blogGradients.length]}`}>
-                      {p.coverImageUrl ? (
-                        <Image src={p.coverImageUrl} alt={p.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-[1.06] transition-transform duration-700" />
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <Newspaper className="h-10 w-10 text-white/80" />
-                        </div>
-                      )}
+                      <Image
+                        src={p.coverImageUrl || "/images/bvsc.webp"}
+                        alt={p.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-[1.06] transition-transform duration-700"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                       {tags[0] && (
                         <Badge className="absolute left-3 top-3 rounded-full bg-white/95 backdrop-blur-md text-primary border-0 shadow-md hover:bg-white">

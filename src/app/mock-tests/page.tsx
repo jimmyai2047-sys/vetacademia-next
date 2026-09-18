@@ -124,7 +124,19 @@ export default async function MockTestsPage() {
   const tests = await prisma.mockTest.findMany({
     orderBy: { createdAt: "desc" },
     take: 200,
-    include: { _count: { select: { questions: true } } },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      duration: true,
+      fileUrl: true,
+      fileName: true,
+      exam: true,
+      year: true,
+      examSubjectSlug: true,
+      createdAt: true,
+      _count: { select: { questions: true } },
+    },
   });
 
   const testsWithLinks = await Promise.all(

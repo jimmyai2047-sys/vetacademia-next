@@ -44,7 +44,18 @@ export default async function PricingPage({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const { plan: highlight } = await searchParams;
-  let plans: Awaited<ReturnType<typeof prisma.plan.findMany>> = [];
+  let plans: {
+    slug: string;
+    name: string;
+    type: string;
+    description: string | null;
+    price: number;
+    programmeSlug: string | null;
+    examSlug: string | null;
+    year: string | null;
+    subjectId: string | null;
+    sortOrder: number;
+  }[] = [];
   let access: Awaited<ReturnType<typeof getAccess>> = {
     userId: null,
     isAuthed: false,
@@ -59,7 +70,21 @@ export default async function PricingPage({
   let subjects: { id: string; name: string }[] = [];
   try {
     [plans, access, subjects] = await Promise.all([
-      prisma.plan.findMany({ orderBy: { sortOrder: "asc" } }),
+      prisma.plan.findMany({
+        orderBy: { sortOrder: "asc" },
+        select: {
+          slug: true,
+          name: true,
+          type: true,
+          description: true,
+          price: true,
+          programmeSlug: true,
+          examSlug: true,
+          year: true,
+          subjectId: true,
+          sortOrder: true,
+        },
+      }),
       getAccess(),
       prisma.subject.findMany({ select: { id: true, name: true } }),
     ]);
