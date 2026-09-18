@@ -204,6 +204,9 @@ export default function Footer() {
               All systems operational • Made in India
             </p>
           </div>
+          <p className="mt-4 text-center text-[11px] leading-relaxed text-white/40">
+            Photos: Unsplash &amp; Wikimedia Commons contributors • Institutional logos belong to their respective organisations
+          </p>
         </div>
       </div>
     </footer>
