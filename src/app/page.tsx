@@ -414,7 +414,7 @@ export default async function HomePage() {
             </div>
 
             {/* Right: Visual - Mobile Optimized */}
-            <div className="relative mx-auto w-full max-w-[560px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
+            <div className="relative mx-auto w-full max-w-[640px] lg:mx-0 lg:h-[420px] mt-1 md:mt-0">
               <HeroCarousel />
 
               {/* Floating card - top - mobile safe */}

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 const slides = [
   { src: "/images/hero-vet-v2.webp", alt: "Veterinarian caring for animals" },
   { src: "/images/hero-slide-2.webp", alt: "Veterinary education" },
-  { src: "/images/hero-slide-3.webp", alt: "Animal husbandry training" },
-  { src: "/images/hero-slide-4.webp", alt: "Vet students with animals" },
+  { src: "/images/hero-horse.webp", alt: "Horses in pasture" },
+  { src: "/images/hero-cow.webp", alt: "Dairy cow in green field" },
   { src: "/images/hero-slide-5.webp", alt: "Vet with cattle" },
   { src: "/images/hero-slide-6.webp", alt: "Animal health checkup" },
   { src: "/images/hero-slide-7.webp", alt: "Veterinary clinic" },
@@ -16,7 +16,7 @@ const slides = [
 export default function HeroCarousel() {
   const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 1000);
+    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 4500);
     return () => clearInterval(t);
   }, []);
   return (
