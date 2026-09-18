@@ -200,18 +200,20 @@ export default function VetReference() {
           Blood Profile - Normal Values
         </h3>
 
+        {/* Three tables side-by-side on desktop, stacked on mobile */}
+        <div className="grid gap-4 lg:grid-cols-3">
         {/* Hematology */}
-        <Card className="mb-4">
+        <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-base">Hematology Parameters</CardTitle>
+            <CardTitle className="text-[15px]">Hematology Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-[13px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left p-3 font-medium">Parameter</th>
-                    <th className="text-left p-3 font-medium">Normal Range</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Parameter</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Normal Range</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -226,8 +228,8 @@ export default function VetReference() {
                     { label: "MCHC", value: animal.bloodProfile.mchc },
                   ].map((param, i) => (
                     <tr key={i} className="border-b last:border-0 hover:bg-accent transition-colors">
-                      <td className="p-3 font-medium">{param.label}</td>
-                      <td className="p-3 text-muted-foreground">{param.value}</td>
+                      <td className="px-2.5 py-2 font-medium">{param.label}</td>
+                      <td className="px-2.5 py-2 text-muted-foreground break-words">{param.value}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -237,17 +239,17 @@ export default function VetReference() {
         </Card>
 
         {/* Differential Count */}
-        <Card className="mb-4">
+        <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-base">Differential Leukocyte Count</CardTitle>
+            <CardTitle className="text-[15px]">Differential Leukocyte Count</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-[13px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left p-3 font-medium">Cell Type</th>
-                    <th className="text-left p-3 font-medium">Percentage</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Cell Type</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Percentage</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -259,8 +261,8 @@ export default function VetReference() {
                     { label: "Basophils", value: animal.bloodProfile.basophils },
                   ].map((param, i) => (
                     <tr key={i} className="border-b last:border-0 hover:bg-accent transition-colors">
-                      <td className="p-3 font-medium">{param.label}</td>
-                      <td className="p-3 text-muted-foreground">{param.value}</td>
+                      <td className="px-2.5 py-2 font-medium">{param.label}</td>
+                      <td className="px-2.5 py-2 text-muted-foreground break-words">{param.value}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -270,17 +272,17 @@ export default function VetReference() {
         </Card>
 
         {/* Biochemistry */}
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-base">Biochemistry Parameters</CardTitle>
+            <CardTitle className="text-[15px]">Biochemistry Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-[13px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left p-3 font-medium">Parameter</th>
-                    <th className="text-left p-3 font-medium">Normal Range</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Parameter</th>
+                    <th className="text-left px-2.5 py-2 font-medium">Normal Range</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,15 +297,16 @@ export default function VetReference() {
                     { label: "AST (SGOT)", value: animal.bloodProfile.ast },
                   ].map((param, i) => (
                     <tr key={i} className="border-b last:border-0 hover:bg-accent transition-colors">
-                      <td className="p-3 font-medium">{param.label}</td>
-                      <td className="p-3 text-muted-foreground">{param.value}</td>
+                      <td className="px-2.5 py-2 font-medium">{param.label}</td>
+                      <td className="px-2.5 py-2 text-muted-foreground break-words">{param.value}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </CardContent>
+            </CardContent>
         </Card>
+        </div>
       </div>
 
       {/* Disclaimer */}
