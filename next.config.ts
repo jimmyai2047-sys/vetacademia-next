@@ -63,6 +63,12 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // Expert Advisory merged into the Animal Owner Corner.
+      { source: "/advisory", destination: "/farmers", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

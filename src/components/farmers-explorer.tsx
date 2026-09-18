@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ProtectedHtml from "@/components/protected-html";
 import { FARM_TYPES } from "@/lib/farm-types";
 import { getFarmTypeImage } from "@/lib/page-images";
+import { useFarmLanguage } from "@/components/farm-language-context";
+import { FarmHtml, FarmText } from "@/components/farm-translated";
+import { fill } from "@/dictionaries/farmers-ui";
 import { Search, X } from "lucide-react";
 import type { FarmItem } from "@/components/admin/farmers-admin-client";
 
@@ -69,6 +71,15 @@ function matchesDeworming(d: DewormingItem, q: string): boolean {
     .includes(q);
 }
 
+const FARM_TYPE_DICT_KEY: Record<string, "ftScientific" | "ftDairy" | "ftGoat" | "ftSheep" | "ftPoultry" | "ftPig"> = {
+  SCIENTIFIC: "ftScientific",
+  DAIRY: "ftDairy",
+  GOAT: "ftGoat",
+  SHEEP: "ftSheep",
+  POULTRY: "ftPoultry",
+  PIG: "ftPig",
+};
+
 export default function FarmersExplorer({
   guides,
   reports,
@@ -82,15 +93,20 @@ export default function FarmersExplorer({
   vaccination: VaccinationItem[];
   deworming: DewormingItem[];
 }) {
+  const { lang, dict: t } = useFarmLanguage();
   const [filter, setFilter] = useState<string>("ALL");
   const [query, setQuery] = useState<string>("");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const types: { key: string; label: string; icon: string }[] = [
-    { key: "ALL", label: "All", icon: "🌾" },
-    ...FARM_TYPES,
+    { key: "ALL", label: t.all, icon: "🌾" },
+    ...FARM_TYPES.map((f) => ({
+      key: f.key,
+      label: t[FARM_TYPE_DICT_KEY[f.key]] ?? f.label,
+      icon: f.icon,
+    })),
   ];
-  const activeType = types.find((t) => t.key === filter);
+  const activeType = types.find((x) => x.key === filter);
 
   const q = query.trim().toLowerCase();
 
@@ -132,9 +148,9 @@ export default function FarmersExplorer({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search guides, reports, vaccines, schedules..."
+            placeholder={t.searchPlaceholder}
             className="h-10 pl-9 pr-9"
-            aria-label="Search animal owner content"
+            aria-label={t.searchPlaceholder}
           />
           {query && (
             <button
@@ -147,18 +163,18 @@ export default function FarmersExplorer({
           )}
         </div>
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {types.map((t) => (
+          {types.map((x) => (
             <button
-              key={t.key}
-              onClick={() => setFilter(t.key)}
+              key={x.key}
+              onClick={() => setFilter(x.key)}
               className={
                 "shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-colors " +
-                (filter === t.key
+                (filter === x.key
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background text-muted-foreground border-border hover:bg-muted")
               }
             >
-              {t.icon} {t.label}
+              {x.icon} {x.label}
             </button>
           ))}
         </div>
@@ -166,9 +182,9 @@ export default function FarmersExplorer({
 
       {!hasResults && (
         <div className="mb-10 rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center">
-          <p className="font-medium">No matching content found</p>
+          <p className="font-medium">{t.noResults}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Try a different search term or farm-type filter.
+            {t.noResultsHint}
           </p>
           <Button
             variant="outline"
@@ -179,7 +195,7 @@ export default function FarmersExplorer({
               setFilter("ALL");
             }}
           >
-            Reset filters
+            {t.resetFilters}
           </Button>
         </div>
       )}
@@ -189,10 +205,10 @@ export default function FarmersExplorer({
         <>
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="text-2xl font-bold">
-              {filter === "ALL" ? "Scientific & Farming Guides" : `${activeType?.label} Guides`}
+              {filter === "ALL" ? t.guidesTitle : fill(t.guidesFor, { type: activeType?.label ?? filter })}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {filteredGuides.length} {filteredGuides.length === 1 ? "guide" : "guides"}
+              {fill(t.guidesCount, { n: filteredGuides.length })}
             </span>
           </div>
           <div className="grid md:grid-cols-2 gap-4 mb-10">
@@ -213,19 +229,19 @@ export default function FarmersExplorer({
                   <CardHeader>
                     <div className="flex items-start justify-between gap-3">
                       <Link href={`/farmers/${g.id}`} className="hover:underline">
-                        <CardTitle className="text-lg">{String(g.title)}</CardTitle>
+                        <CardTitle className="text-lg"><FarmText text={String(g.title)} lang={lang} /></CardTitle>
                       </Link>
                       <Badge variant="outline" className="shrink-0">
-                        {String(g.category)}
+                        {FARM_TYPE_DICT_KEY[String(g.category)] ? t[FARM_TYPE_DICT_KEY[String(g.category)]] : String(g.category)}
                       </Badge>
                     </div>
                     {g.summary && (
-                      <p className="text-sm text-muted-foreground">{String(g.summary)}</p>
+                      <p className="text-sm text-muted-foreground"><FarmText text={String(g.summary)} lang={lang} /></p>
                     )}
                   </CardHeader>
                   <CardContent>
                     {open && g.content ? (
-                      <ProtectedHtml html={String(g.content)} />
+                      <FarmHtml html={String(g.content)} lang={lang} />
                     ) : null}
                     <Button
                       variant="ghost"
@@ -233,7 +249,7 @@ export default function FarmersExplorer({
                       className="mt-2"
                       onClick={() => toggle(g.id)}
                     >
-                      {open ? "Show less" : g.content ? "Read guide" : "No detail"}
+                      {open ? t.showLess : g.content ? t.readGuide : t.noDetail}
                     </Button>
                   </CardContent>
                 </Card>
@@ -248,10 +264,10 @@ export default function FarmersExplorer({
         <>
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="text-2xl font-bold">
-              {filter === "ALL" ? "Project Reports" : `${activeType?.label} Project Reports`}
+              {filter === "ALL" ? t.reportsTitle : fill(t.reportsFor, { type: activeType?.label ?? filter })}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {filteredReports.length} {filteredReports.length === 1 ? "report" : "reports"}
+              {fill(t.reportsCount, { n: filteredReports.length })}
             </span>
           </div>
           <div className="grid md:grid-cols-2 gap-4 mb-8">
@@ -275,9 +291,9 @@ export default function FarmersExplorer({
                   </div>
                   <CardHeader>
                     <div className="flex items-start justify-between gap-3">
-                      <CardTitle className="text-lg">{String(r.title)}</CardTitle>
+                      <CardTitle className="text-lg"><FarmText text={String(r.title)} lang={lang} /></CardTitle>
                       {unlocked ? (
-                        <Badge className="bg-emerald-600 shrink-0">Unlocked</Badge>
+                        <Badge className="bg-emerald-600 shrink-0">{t.unlocked}</Badge>
                       ) : (
                         <Badge variant="secondary" className="shrink-0">
                           Rs.{price}
@@ -285,32 +301,32 @@ export default function FarmersExplorer({
                       )}
                     </div>
                     {r.summary && (
-                      <p className="text-sm text-muted-foreground">{String(r.summary)}</p>
+                      <p className="text-sm text-muted-foreground"><FarmText text={String(r.summary)} lang={lang} /></p>
                     )}
                   </CardHeader>
                   <CardContent>
                     {unlocked ? (
                       <>
                         {r.fullContent ? (
-                          <ProtectedHtml html={String(r.fullContent)} />
+                          <FarmHtml html={String(r.fullContent)} lang={lang} />
                         ) : (
                           <p className="text-sm text-muted-foreground">
-                            Full report content not provided.
+                            {t.fullMissing}
                           </p>
                         )}
                       </>
                     ) : (
                       <>
                         {r.demoContent ? (
-                          <ProtectedHtml html={String(r.demoContent)} />
+                          <FarmHtml html={String(r.demoContent)} lang={lang} />
                         ) : (
                           <p className="text-sm text-muted-foreground">
-                            A sample preview of this report is shown to all animal owners.
+                            {t.samplePreview}
                           </p>
                         )}
                         <Link href={`/checkout?report=${r.id}`} className="block mt-4">
                           <Button className="w-full">
-                            Unlock Full Report &middot; Rs.{price}
+                            {fill(t.unlockReport, { n: price })}
                           </Button>
                         </Link>
                       </>
@@ -327,9 +343,9 @@ export default function FarmersExplorer({
       {q && filteredVaccination.length > 0 && (
         <>
           <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-2xl font-bold">Vaccination Schedule</h2>
+            <h2 className="text-2xl font-bold">{t.vaccTitle}</h2>
             <span className="text-sm text-muted-foreground">
-              {filteredVaccination.length} match{filteredVaccination.length !== 1 ? "es" : ""}
+              {fill(t.matchesCount, { n: filteredVaccination.length })}
             </span>
           </div>
           <Card className="mb-10">
@@ -338,24 +354,24 @@ export default function FarmersExplorer({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="text-left p-4 font-medium">Disease</th>
-                      <th className="text-left p-4 font-medium">Animals</th>
-                      <th className="text-left p-4 font-medium">1st Dose</th>
-                      <th className="text-left p-4 font-medium">Booster</th>
-                      <th className="text-left p-4 font-medium">Annual</th>
-                      <th className="text-left p-4 font-medium">Vaccine</th>
+                      <th className="text-left p-4 font-medium">{t.disease}</th>
+                      <th className="text-left p-4 font-medium">{t.animals}</th>
+                      <th className="text-left p-4 font-medium">{t.firstDose}</th>
+                      <th className="text-left p-4 font-medium">{t.booster}</th>
+                      <th className="text-left p-4 font-medium">{t.annual}</th>
+                      <th className="text-left p-4 font-medium">{t.vaccine}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredVaccination.map((v) => (
                       <tr key={v.id} className="border-b last:border-0 hover:bg-accent/50">
-                        <td className="p-4 font-medium">{v.disease}</td>
-                        <td className="p-4 text-muted-foreground">{v.animals}</td>
-                        <td className="p-4 text-muted-foreground">{v.firstDose}</td>
-                        <td className="p-4 text-muted-foreground">{v.booster}</td>
-                        <td className="p-4 text-muted-foreground">{v.annual}</td>
+                        <td className="p-4 font-medium"><FarmText as="span" text={v.disease} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={v.animals} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={v.firstDose} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={v.booster} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={v.annual} lang={lang} /></td>
                         <td className="p-4">
-                          <Badge variant="secondary">{v.vaccine}</Badge>
+                          <Badge variant="secondary"><FarmText as="span" text={v.vaccine} lang={lang} /></Badge>
                         </td>
                       </tr>
                     ))}
@@ -371,9 +387,9 @@ export default function FarmersExplorer({
       {q && filteredDeworming.length > 0 && (
         <>
           <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-2xl font-bold">Deworming Schedule</h2>
+            <h2 className="text-2xl font-bold">{t.dewTitle}</h2>
             <span className="text-sm text-muted-foreground">
-              {filteredDeworming.length} match{filteredDeworming.length !== 1 ? "es" : ""}
+              {fill(t.matchesCount, { n: filteredDeworming.length })}
             </span>
           </div>
           <Card className="mb-10">
@@ -382,21 +398,21 @@ export default function FarmersExplorer({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="text-left p-4 font-medium">Animal</th>
-                      <th className="text-left p-4 font-medium">1st Dose</th>
-                      <th className="text-left p-4 font-medium">Frequency</th>
-                      <th className="text-left p-4 font-medium">Best Time</th>
-                      <th className="text-left p-4 font-medium">Products</th>
+                      <th className="text-left p-4 font-medium">{t.animal}</th>
+                      <th className="text-left p-4 font-medium">{t.firstDose}</th>
+                      <th className="text-left p-4 font-medium">{t.frequency}</th>
+                      <th className="text-left p-4 font-medium">{t.bestTime}</th>
+                      <th className="text-left p-4 font-medium">{t.products}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredDeworming.map((d) => (
                       <tr key={d.id} className="border-b last:border-0 hover:bg-accent/50">
-                        <td className="p-4 font-medium">{d.animal}</td>
-                        <td className="p-4 text-muted-foreground">{d.firstDose}</td>
-                        <td className="p-4 text-muted-foreground">{d.frequency}</td>
-                        <td className="p-4 text-muted-foreground">{d.bestTime}</td>
-                        <td className="p-4 text-muted-foreground">{d.products}</td>
+                        <td className="p-4 font-medium"><FarmText as="span" text={d.animal} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={d.firstDose} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={d.frequency} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={d.bestTime} lang={lang} /></td>
+                        <td className="p-4 text-muted-foreground"><FarmText as="span" text={d.products} lang={lang} /></td>
                       </tr>
                     ))}
                   </tbody>

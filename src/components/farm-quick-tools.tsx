@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useFarmLanguage } from "@/components/farm-language-context";
 import { Wheat, Stethoscope, Calculator, AlertCircle, IndianRupee } from "lucide-react";
 
 const feedRates: Record<string, { dry: number; green: number; concentrate: number }> = {
@@ -23,7 +24,23 @@ const symptomMap: Record<string, string[]> = {
   "Low milk": ["Mastitis", "FMD", "Worms"],
 };
 
+const SPECIES_DICT_KEY: Record<string, "spCattle" | "spBuffalo" | "spGoatSheep" | "spPoultry"> = {
+  Cattle: "spCattle",
+  Buffalo: "spBuffalo",
+  "Goat / Sheep": "spGoatSheep",
+  Poultry: "spPoultry",
+};
+
+const SYMPTOM_DICT_KEY: Record<string, "symFever" | "symBloat" | "symDiarrhea" | "symCough" | "symLowMilk"> = {
+  Fever: "symFever",
+  Bloat: "symBloat",
+  Diarrhea: "symDiarrhea",
+  Cough: "symCough",
+  "Low milk": "symLowMilk",
+};
+
 export default function FarmQuickTools() {
+  const { dict: t } = useFarmLanguage();
   // Feed calculator
   const [species, setSpecies] = useState("Cattle");
   const [weight, setWeight] = useState("300");
@@ -61,45 +78,45 @@ export default function FarmQuickTools() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
               <Wheat className="h-4 w-4" />
             </span>
-            Feed Calculator
+            {t.feedTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-3 gap-2">
             <div className="space-y-1">
-              <Label className="text-xs">Species</Label>
+              <Label className="text-xs">{t.species}</Label>
               <select value={species} onChange={(e) => setSpecies(e.target.value)} className="h-9 w-full rounded-xl border border-input bg-background px-2 text-xs">
                 {Object.keys(feedRates).map((s) => (
                   <option key={s} value={s}>
-                    {s}
+                    {SPECIES_DICT_KEY[s] ? t[SPECIES_DICT_KEY[s]] : s}
                   </option>
                 ))}
               </select>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Weight (kg)</Label>
+              <Label className="text-xs">{t.weight}</Label>
               <Input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="h-9 rounded-xl" />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Milk (L)</Label>
+              <Label className="text-xs">{t.milk}</Label>
               <Input type="number" value={milk} onChange={(e) => setMilk(e.target.value)} className="h-9 rounded-xl" />
             </div>
           </div>
           <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 space-y-1 text-xs">
             <div className="flex justify-between">
-              <span>Dry fodder</span>
-              <span className="font-bold">{dry.toFixed(1)} kg/day</span>
+              <span>{t.dry}</span>
+              <span className="font-bold">{dry.toFixed(1)} {t.perDay}</span>
             </div>
             <div className="flex justify-between">
-              <span>Green fodder</span>
-              <span className="font-bold">{green.toFixed(1)} kg/day</span>
+              <span>{t.green}</span>
+              <span className="font-bold">{green.toFixed(1)} {t.perDay}</span>
             </div>
             <div className="flex justify-between">
-              <span>Concentrate</span>
-              <span className="font-bold">{concentrate.toFixed(1)} kg/day</span>
+              <span>{t.conc}</span>
+              <span className="font-bold">{concentrate.toFixed(1)} {t.perDay}</span>
             </div>
             <div className="flex justify-between border-t pt-1 font-bold text-amber-700">
-              <span>Est. cost</span>
+              <span>{t.estCost}</span>
               <span>₹{cost.toFixed(0)}/day</span>
             </div>
           </div>
@@ -114,7 +131,7 @@ export default function FarmQuickTools() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-600">
               <Stethoscope className="h-4 w-4" />
             </span>
-            Symptom Checker
+            {t.symTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -125,12 +142,12 @@ export default function FarmQuickTools() {
                 onClick={() => setSymptoms((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]))}
                 className={`px-2.5 py-1 rounded-full text-xs border ${symptoms.includes(s) ? "bg-red-600 text-white border-red-600" : "bg-white hover:bg-muted"}`}
               >
-                {s}
+                {SYMPTOM_DICT_KEY[s] ? t[SYMPTOM_DICT_KEY[s]] : s}
               </button>
             ))}
           </div>
           {symptoms.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Select 2-3 symptoms for possible diseases.</p>
+            <p className="text-xs text-muted-foreground">{t.symHint}</p>
           ) : (
             <div className="space-y-1.5">
               {possible.map(([d, c]) => (
@@ -139,11 +156,11 @@ export default function FarmQuickTools() {
                     <AlertCircle className="h-3.5 w-3.5 text-red-600" /> {d}
                   </span>
                   <Badge variant="outline" className="rounded-full text-[10px]">
-                    {c} match
+                    {c} {t.matchUnit}
                   </Badge>
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground">* First-aid only — consult vet immediately.</p>
+              <p className="text-[10px] text-muted-foreground">{t.firstAid}</p>
             </div>
           )}
         </CardContent>
@@ -157,32 +174,32 @@ export default function FarmQuickTools() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
               <Calculator className="h-4 w-4" />
             </span>
-            Profit Calculator
+            {t.profitTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Investment (₹)</Label>
+            <Label className="text-xs">{t.investment}</Label>
             <Input type="number" value={invest} onChange={(e) => setInvest(e.target.value)} className="h-9 rounded-xl" />
           </div>
           <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 space-y-1 text-xs">
             <div className="flex justify-between">
-              <span>Monthly profit (avg)</span>
+              <span>{t.monthlyProfit}</span>
               <span className="font-bold flex items-center gap-1">
                 <IndianRupee className="h-3 w-3" /> {monthlyProfit.toLocaleString("en-IN")}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Annual ROI</span>
+              <span>{t.annualRoi}</span>
               <span className="font-bold text-emerald-700">{roi.toFixed(1)}%</span>
             </div>
             <div className="flex justify-between">
-              <span>Break-even</span>
-              <span className="font-bold">{breakeven} months</span>
+              <span>{t.breakeven}</span>
+              <span className="font-bold">{breakeven} {t.months}</span>
             </div>
           </div>
           <Button variant="outline" className="w-full rounded-xl h-8 text-xs" onClick={() => (window.location.href = "#guides-reports")}>
-            View Reports to compare
+            {t.viewReports}
           </Button>
         </CardContent>
       </Card>

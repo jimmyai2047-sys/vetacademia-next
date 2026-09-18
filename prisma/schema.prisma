@@ -39,6 +39,7 @@ model User {
   studentConsultations Consultation[] @relation("StudentConsultations")
   expertProfile     Expert?
   payments          Payment[]
+  generatedReports  GeneratedReport[]
   studyMaterials    StudyMaterial[]
   flashcardProgress FlashcardProgress[]
   chatMessages      ChatMessage[]
@@ -710,6 +711,30 @@ model Payment {
   @@index([projectReportId])
 }
 
+// ==================== GENERATED PROJECT REPORTS (farmer report builder) ====================
+// A paid (Rs.2500) custom-generated bank-format report. Draft is preview-only;
+// the final PDF is stored on Blob after payment and re-downloadable from dashboard.
+model GeneratedReport {
+  id          String   @id @default(cuid())
+  userId      String
+  animalType  String   // GOAT | SHEEP | CATTLE | BUFFALO | PIG | POULTRY
+  title       String
+  language    String   @default("en") // en | hi
+  inputJson   String   // form inputs (amounts regenerate deterministically)
+  blobUrl     String?  // final PDF on private Blob (set after payment)
+  paymentId   String?  // Payment.id once PAID
+  amount      Int      @default(2500)
+  status      String   @default("DRAFT") // DRAFT | PAID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([animalType])
+  @@index([status])
+}
+
 // ==================== COMMUNITY LINKS (WhatsApp / Telegram) ====================
 
 model CommunityLink {
@@ -815,6 +840,80 @@ model VetProforma {
 
   @@index([type])
   @@index([published])
+}
+
+// ==================== GOVT SCHEMES (animal-owner yojana & bima) ====================
+// Admin-managed: each card shows benefit summary + rich details (eligibility,
+// documents, how to apply) + apply link + last date. Public text auto-translates.
+
+model GovtScheme {
+  id        String   @id @default(cuid())
+  title     String
+  category  String // BIMA | SUBSIDY | LOAN | VACCINATION | OTHER
+  level     String // CENTRAL | RAJASTHAN | ALL_STATES
+  summary   String?
+  details   String? // rich HTML: benefits, eligibility, documents, steps
+  linkUrl   String?
+  linkLabel String?
+  lastDate  String? // free text, e.g. "31 March 2026" or "Open all year"
+  published Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
+}
+
+// ==================== PASHU DIARY (animal-owner records) ====================
+// Login-required: each animal belongs to one user. Milk + health events hang
+// off the animal; upcoming vaccinations/dewormings are derived from nextDue.
+
+model MyAnimal {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  tagNo     String?
+  species   String // Cattle | Buffalo | Goat | Sheep | Poultry | Pig | Other
+  breed     String?
+  gender    String? // Female | Male
+  dob       DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  milkLogs MilkLog[]
+  events   AnimalEvent[]
+
+  @@index([userId])
+}
+
+model MilkLog {
+  id        String   @id @default(cuid())
+  animalId  String
+  date      DateTime @db.Date
+  morning   Float    @default(0)
+  evening   Float    @default(0)
+  createdAt DateTime @default(now())
+
+  animal MyAnimal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@unique([animalId, date])
+  @@index([animalId, date])
+}
+
+model AnimalEvent {
+  id        String    @id @default(cuid())
+  animalId  String
+  type      String // VACCINATION | DEWORMING | AI_BREEDING | CALVING | ILLNESS | OTHER
+  title     String
+  eventDate DateTime  @db.Date
+  nextDue   DateTime? @db.Date
+  notes     String?
+  createdAt DateTime  @default(now())
+
+  animal MyAnimal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@index([animalId, eventDate])
 }
 
 // ==================== PUSH NOTIFICATIONS ====================

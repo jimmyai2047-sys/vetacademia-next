@@ -11,7 +11,7 @@ import FarmersAdminClient, { type FarmItem } from "@/components/admin/farmers-ad
 export const dynamic = "force-dynamic";
 
 export default async function AdminFarmersPage() {
-  const [guides, vaccination, deworming, reports] = await Promise.all([
+  const [guides, vaccination, deworming, reports, schemes] = await Promise.all([
     prisma.farmGuide.findMany({
       orderBy: [{ category: "asc" }, { order: "asc" }, { createdAt: "desc" }],
     }),
@@ -23,6 +23,9 @@ export default async function AdminFarmersPage() {
     }),
     prisma.projectReport.findMany({
       orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.govtScheme.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     }),
   ]);
 
@@ -49,7 +52,7 @@ export default async function AdminFarmersPage() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Animal Owner Content</h1>
             <p className="text-white/70 text-sm flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage farm guides, vaccination & deworming schedules, and paid project reports
+              <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage farm guides, vaccination & deworming schedules, paid project reports and govt schemes
             </p>
           </div>
         </div>
@@ -60,6 +63,7 @@ export default async function AdminFarmersPage() {
         vaccination={vaccination as unknown as FarmItem[]}
         deworming={deworming as unknown as FarmItem[]}
         reports={reports as unknown as FarmItem[]}
+        schemes={schemes as unknown as FarmItem[]}
       />
     </div>
   );

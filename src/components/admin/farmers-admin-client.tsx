@@ -19,7 +19,22 @@ const API: Record<string, string> = {
   vaccination: "/api/admin/vaccination",
   deworming: "/api/admin/deworming",
   reports: "/api/admin/project-reports",
+  schemes: "/api/admin/govt-schemes",
 };
+
+const SCHEME_CATEGORIES = [
+  { key: "BIMA", label: "🛡 Bima (Insurance)" },
+  { key: "SUBSIDY", label: "💰 Subsidy" },
+  { key: "LOAN", label: "🏦 Loan" },
+  { key: "VACCINATION", label: "💉 Free Vaccination" },
+  { key: "OTHER", label: "📋 Other" },
+];
+
+const SCHEME_LEVELS = [
+  { key: "CENTRAL", label: "Central Govt" },
+  { key: "RAJASTHAN", label: "Rajasthan Govt" },
+  { key: "ALL_STATES", label: "All States" },
+];
 
 const inputCls =
   "w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -62,6 +77,8 @@ function blankFor(kind: string): Values {
     return { disease: "", animals: "", firstDose: "", booster: "", annual: "", vaccine: "", order: 0 };
   if (kind === "deworming")
     return { animal: "", firstDose: "", frequency: "", bestTime: "", products: "", order: 0 };
+  if (kind === "schemes")
+    return { category: "SUBSIDY", level: "RAJASTHAN", title: "", summary: "", details: "", linkUrl: "", linkLabel: "", lastDate: "", published: true, order: 0 };
   return {
     farmType: "DAIRY",
     title: "",
@@ -102,7 +119,7 @@ function Editor({
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
       <CardHeader>
         <CardTitle className="text-base">
-          {item ? "Edit" : "Add New"} {kind === "guides" ? "Farm Guide" : kind === "vaccination" ? "Vaccination Entry" : kind === "deworming" ? "Deworming Entry" : "Project Report"}
+          {item ? "Edit" : "Add New"} {kind === "guides" ? "Farm Guide" : kind === "vaccination" ? "Vaccination Entry" : kind === "deworming" ? "Deworming Entry" : kind === "schemes" ? "Govt Scheme" : "Project Report"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -162,6 +179,51 @@ function Editor({
             </Field>
             <Field label="Products">
               <input className={inputCls} value={String(v.products)} onChange={(e) => set("products", e.target.value)} />
+            </Field>
+          </>
+        )}
+
+        {kind === "schemes" && (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Category">
+                <select className={inputCls} value={String(v.category)} onChange={(e) => set("category", e.target.value)}>
+                  {SCHEME_CATEGORIES.map((c) => (
+                    <option key={c.key} value={c.key}>{c.label}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Level">
+                <select className={inputCls} value={String(v.level)} onChange={(e) => set("level", e.target.value)}>
+                  {SCHEME_LEVELS.map((c) => (
+                    <option key={c.key} value={c.key}>{c.label}</option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+            <Field label="Title">
+              <input className={inputCls} value={String(v.title)} onChange={(e) => set("title", e.target.value)} />
+            </Field>
+            <Field label="Summary (one-line benefit)">
+              <input className={inputCls} value={String(v.summary ?? "")} onChange={(e) => set("summary", e.target.value)} />
+            </Field>
+            <Field label="Details — benefits, eligibility, documents, how to apply (HTML allowed)">
+              <FileExtractField
+                label="scheme"
+                onExtracted={(html) => set("details", html)}
+              />
+              <textarea className={inputCls + " min-h-[140px]"} value={String(v.details ?? "")} onChange={(e) => set("details", e.target.value)} />
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Apply Link URL">
+                <input className={inputCls} value={String(v.linkUrl ?? "")} onChange={(e) => set("linkUrl", e.target.value)} placeholder="https://..." />
+              </Field>
+              <Field label="Link Button Label">
+                <input className={inputCls} value={String(v.linkLabel ?? "")} onChange={(e) => set("linkLabel", e.target.value)} placeholder="Apply Online" />
+              </Field>
+            </div>
+            <Field label="Last Date (free text, e.g. 31 March 2026 / Open all year)">
+              <input className={inputCls} value={String(v.lastDate ?? "")} onChange={(e) => set("lastDate", e.target.value)} />
             </Field>
           </>
         )}
@@ -229,11 +291,13 @@ export default function FarmersAdminClient({
   vaccination,
   deworming,
   reports,
+  schemes,
 }: {
   guides: (Values & { id: string })[];
   vaccination: (Values & { id: string })[];
   deworming: (Values & { id: string })[];
   reports: (Values & { id: string })[];
+  schemes: (Values & { id: string })[];
 }) {
   const router = useRouter();
   const [data, setData] = useState({
@@ -241,6 +305,7 @@ export default function FarmersAdminClient({
     vaccination,
     deworming,
     reports,
+    schemes,
   });
   const [edit, setEdit] = useState<{ kind: string; id?: string } | null>(null);
   const [adding, setAdding] = useState<string | null>(null);
@@ -306,7 +371,7 @@ export default function FarmersAdminClient({
         <div className="flex justify-end mb-3">
           {!showAdd && (
             <Button variant="outline" onClick={() => setAdding(kind)} className="rounded-xl border-primary/10 hover:bg-primary hover:text-white hover:border-primary">
-              + Add {kind === "guides" ? "Guide" : kind === "vaccination" ? "Vaccination" : kind === "deworming" ? "Deworming" : "Report"}
+              + Add {kind === "guides" ? "Guide" : kind === "vaccination" ? "Vaccination" : kind === "deworming" ? "Deworming" : kind === "schemes" ? "Scheme" : "Report"}
             </Button>
           )}
         </div>
@@ -380,6 +445,7 @@ export default function FarmersAdminClient({
         <TabsTrigger value="vaccination" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Vaccination ({data.vaccination.length})</TabsTrigger>
         <TabsTrigger value="deworming" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Deworming ({data.deworming.length})</TabsTrigger>
         <TabsTrigger value="reports" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Project Reports ({data.reports.length})</TabsTrigger>
+        <TabsTrigger value="schemes" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Yojana/Bima ({data.schemes.length})</TabsTrigger>
       </TabsList>
 
       <TabsContent value="guides" className="mt-4">
@@ -440,6 +506,23 @@ export default function FarmersAdminClient({
               </td>
               <td className="p-3 font-medium">{i.title}</td>
               <td className="p-3"><span className="font-semibold text-primary">Rs.{Number(i.price)}</span></td>
+              <td className="p-3">{i.published ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">Yes</Badge> : <Badge variant="secondary" className="rounded-full">No</Badge>}</td>
+            </>
+          )}
+        />
+      </TabsContent>
+
+      <TabsContent value="schemes" className="mt-4">
+        <TabBody
+          kind="schemes"
+          columns={["Category", "Title", "Level", "Published"]}
+          renderRow={(i) => (
+            <>
+              <td className="p-3">
+                <Badge variant="outline" className="rounded-full">{i.category}</Badge>
+              </td>
+              <td className="p-3 font-medium">{i.title}</td>
+              <td className="p-3 text-muted-foreground">{i.level}</td>
               <td className="p-3">{i.published ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">Yes</Badge> : <Badge variant="secondary" className="rounded-full">No</Badge>}</td>
             </>
           )}

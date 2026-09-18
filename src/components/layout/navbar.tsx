@@ -176,7 +176,9 @@ export default function Navbar() {
       ]
     : isAnimalOwner
     ? [
-        { href: "/advisory", label: "Advisory" },
+        { href: "/farmers", label: "Animal Owner Corner" },
+        { href: "/farmers/project-report", label: "Project Report" },
+        { href: "/farmers#expert-advisory", label: "Advisory" },
         { href: "/experts", label: "Book Consultation" },
         { href: "/community", label: "Community" },
       ]
@@ -225,9 +227,16 @@ export default function Navbar() {
           </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
           <Link href="/">
             <Button variant="ghost" className="gap-1.5"><Home className="h-4 w-4" />Home</Button>
+          </Link>
+
+          <Link href="/farmers">
+            <Button variant="ghost" className="gap-1.5"><Tractor className="h-4 w-4" />Animal Owner</Button>
+          </Link>
+          <Link href="/vets">
+            <Button variant="ghost" className="gap-1.5"><HeartPulse className="h-4 w-4" />Vets</Button>
           </Link>
 
           {/* Programmes */}
@@ -469,7 +478,7 @@ export default function Navbar() {
                   </span>
                   <div>
                     <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-purple-700">Resources • Community & Content <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
-                    <p className="text-xs text-muted-foreground">Experts • Vets • Farmers • Blog • Books</p>
+                    <p className="text-xs text-muted-foreground">Experts • Community • Blog • Books</p>
                   </div>
                 </div>
               </div>
@@ -479,8 +488,6 @@ export default function Navbar() {
                   <div className="space-y-1">
                     {[
                       { href: "/experts", label: "Experts", icon: Users, desc: "1:1 Consult" },
-                      { href: "/advisory", label: "Animal Owner", icon: Tractor, desc: "Farmer Help" },
-                      { href: "/vets", label: "Vets", icon: HeartPulse, desc: "Find Vets" },
                       { href: "/community", label: "Community", icon: Users, desc: "Join Now" },
                     ].map((l) => (
                       <Link key={l.href} href={l.href} className="group/item flex items-center gap-2.5 rounded-xl px-2.5 py-2 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/20 hover:shadow-sm transition-all">
@@ -715,6 +722,26 @@ export default function Navbar() {
                   </span>
                   Home
                 </Link>
+                <Link
+                  href="/farmers"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700">
+                    <Tractor className="h-4 w-4" />
+                  </span>
+                  Animal Owner Corner
+                </Link>
+                <Link
+                  href="/vets"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/10 text-red-600">
+                    <HeartPulse className="h-4 w-4" />
+                  </span>
+                  Vets
+                </Link>
 
                 <MobileNavSection
                   title="Programmes"
@@ -831,11 +858,8 @@ export default function Navbar() {
                   <Link href="/experts" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Users className="h-4 w-4 text-primary" /> Experts
                   </Link>
-                  <Link href="/advisory" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <Tractor className="h-4 w-4 text-primary" /> Animal Owner
-                  </Link>
-                  <Link href="/vets" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
-                    <HeartPulse className="h-4 w-4 text-primary" /> Vets
+                  <Link href="/farmers/project-report" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
+                    <FileText className="h-4 w-4 text-primary" /> Project Report
                   </Link>
                   <Link href="/community" className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setIsOpen(false)}>
                     <Users className="h-4 w-4 text-primary" /> Community

@@ -1,11 +1,14 @@
 import Link from "next/link";
 import ProtectedHtml from "@/components/protected-html";
+import { FarmHtml, FarmText } from "@/components/farm-translated";
+import type { FarmerLang } from "@/dictionaries/farmer-languages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download } from "lucide-react";
 import { PublicPost } from "@/lib/posts";
 
-export default function PostList({ posts }: { posts: PublicPost[] }) {
+export default function PostList({ posts, lang }: { posts: PublicPost[]; lang?: FarmerLang }) {
   if (!posts.length) return null;
+  const translate = !!lang && lang !== "en";
   return (
     <div className="space-y-4">
       {posts.map((p) => (
@@ -19,15 +22,17 @@ export default function PostList({ posts }: { posts: PublicPost[] }) {
                   href={`/papers/view/${p.id}`}
                   className="hover:underline"
                 >
-                  {p.title}
+                  {translate && lang ? <FarmText text={p.title} lang={lang} /> : p.title}
                 </Link>
+              ) : translate && lang ? (
+                <FarmText text={p.title} lang={lang} />
               ) : (
                 p.title
               )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 relative">
-            {p.content && <ProtectedHtml html={p.content} />}
+            {p.content && (translate && lang ? <FarmHtml html={p.content} lang={lang} /> : <ProtectedHtml html={p.content} />)}
             {p.downloadUrl && (
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <Link
@@ -35,7 +40,7 @@ export default function PostList({ posts }: { posts: PublicPost[] }) {
                   className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white shadow-sm hover:bg-primary/90"
                 >
                   <FileText className="h-3.5 w-3.5" />
-                  View in browser
+                  {translate && lang ? <FarmText text="View in browser" lang={lang} /> : "View in browser"}
                 </Link>
                 <a
                   href={p.downloadUrl}
@@ -45,7 +50,7 @@ export default function PostList({ posts }: { posts: PublicPost[] }) {
                   className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
                 >
                   <Download className="h-3.5 w-3.5" />
-                  Download
+                  {translate && lang ? <FarmText text="Download" lang={lang} /> : "Download"}
                 </a>
               </div>
             )}
