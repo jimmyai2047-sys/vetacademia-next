@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 const slides = [
   { src: "/images/hero-vet-v2.webp", alt: "Veterinarian caring for animals" },
   { src: "/images/hero-slide-2.webp", alt: "Veterinary education" },
+  { src: "/images/hero-goat.webp", alt: "Goat in farm" },
   { src: "/images/hero-horse.webp", alt: "Horses in pasture" },
   { src: "/images/hero-cow.webp", alt: "Dairy cow in green field" },
+  { src: "/images/hero-dog.webp", alt: "Pet dog" },
   { src: "/images/hero-slide-5.webp", alt: "Vet with cattle" },
+  { src: "/images/hero-sheep.webp", alt: "Sheep in meadow" },
   { src: "/images/hero-slide-6.webp", alt: "Animal health checkup" },
   { src: "/images/hero-slide-7.webp", alt: "Veterinary clinic" },
+  { src: "/images/hero-bird.webp", alt: "Colorful bird" },
   { src: "/images/hero-slide-8.webp", alt: "Livestock care" },
+  { src: "/images/hero-cat.webp", alt: "Pet cat" },
 ];
 
 export default function HeroCarousel() {
