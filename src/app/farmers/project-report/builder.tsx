@@ -201,6 +201,31 @@ function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies
   return [];
 }
 
+function animalCountKey(animalType: AnimalType, poultryType: string): string {
+  if (animalType === "GOAT") return "does";
+  if (animalType === "SHEEP") return "ewes";
+  if (animalType === "PIG") return "sows";
+  if (animalType === "POULTRY") return "batchSize";
+  if (animalType === "DAIRY") return "animals";
+  return "animals";
+}
+function animalCountLabel(animalType: AnimalType, poultryType: string): string {
+  if (animalType === "GOAT") return "Number of Does (Females)";
+  if (animalType === "SHEEP") return "Number of Ewes (Females)";
+  if (animalType === "PIG") return "Number of Sows";
+  if (animalType === "POULTRY") return poultryType === "LAYER" ? "Number of Birds (Layer)" : "Batch Size (Birds per batch)";
+  if (animalType === "DAIRY") return "Number of Animals (Cows/Buffaloes)";
+  return "Number of Animals";
+}
+function animalCountDefault(animalType: AnimalType, poultryType: string): string {
+  if (animalType === "GOAT") return "20";
+  if (animalType === "SHEEP") return "20";
+  if (animalType === "PIG") return "10";
+  if (animalType === "POULTRY") return poultryType === "LAYER" ? "500" : "1000";
+  if (animalType === "DAIRY") return "10";
+  return "10";
+}
+
 interface FormDraft {
   animalType: AnimalType;
   poultryType: "BROILER" | "LAYER";
@@ -389,6 +414,11 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
 
   async function makePreview() {
     setError(null);
+    if (form.schemeShort === "__OTHER__" || !form.schemeShort.trim() || !form.program.trim() || !form.plan.trim() || !form.department.trim()) {
+      setError("Please select a Scheme/Programme (or choose Other and fill Scheme Line, Programme, Plan and Department).");
+      setBusy(false);
+      return;
+    }
     setBusy(true);
     try {
       const cleanedRates: Record<string, unknown> = {};
@@ -542,24 +572,73 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
 
       {step === 0 && (
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><Tractor className="h-4 w-4" /> Choose Animal Type — Step 0</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><Tractor className="h-4 w-4" /> Choose Scheme & Animal — Step 0</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-3">
-              {ANIMAL_OPTIONS.map((a) => (
-                <button
-                  key={a.value}
-                  onClick={() => handleAnimalChange(a.value)}
-                  className={`text-left rounded-xl border-2 p-4 flex gap-3 transition ${form.animalType === a.value ? "border-emerald-600 bg-emerald-50" : "border-border hover:border-emerald-300 bg-white"}`}
+            {/* Scheme / Programme — moved from Location to here, asked before Animal */}
+            <div className="rounded-xl border bg-muted/20 p-3 space-y-3">
+              <div>
+                <Label className="mb-1.5 block text-[15px] font-medium">Scheme / Programme (Choose From List)<ReqMark /></Label>
+                <Select
+                  value={(() => {
+                    if (form.schemeShort === "__OTHER__") return "__OTHER__";
+                    if (SCHEME_MASTER.some((s) => s.name === form.schemeShort)) return form.schemeShort;
+                    if (form.schemeShort && form.schemeShort.trim() !== "") return "__OTHER__";
+                    return "";
+                  })()}
+                  onValueChange={(v: string | null) => {
+                    if (!v) return;
+                    if (v === "__OTHER__") {
+                      set("schemeShort", "__OTHER__");
+                      set("program", "");
+                      set("plan", "");
+                      set("department", "");
+                      return;
+                    }
+                    const s = SCHEME_MASTER.find((x) => x.name === v);
+                    if (!s) return;
+                    set("schemeShort", s.name);
+                    set("program", s.name);
+                    set("plan", s.focus);
+                    set("department", s.department);
+                  }}
                 >
-                  <span className="text-2xl">{a.icon}</span>
-                  <div className="flex-1">
-                    <p className="font-semibold">{a.label} <span className="text-xs font-normal text-muted-foreground">({a.hindi})</span></p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{a.desc}</p>
-                    {form.animalType === a.value && <Badge className="mt-2 bg-emerald-600">Selected</Badge>}
-                  </div>
-                </button>
-              ))}
+                  <SelectTrigger className="text-[15px] w-full"><SelectValue placeholder="Select Scheme" /></SelectTrigger>
+                  <SelectContent className="w-[min(640px,90vw)] max-w-[90vw]">
+                    <SelectItem value="__OTHER__" className="font-semibold text-emerald-700">Other (Custom Scheme) — if not in list, choose Other and type below</SelectItem>
+                    <SelectGroup><SelectLabel>Central Government</SelectLabel>{SCHEME_MASTER.filter((s) => s.level === "Central").map((s) => (<SelectItem key={s.id} value={s.name} className="whitespace-normal">{s.name}</SelectItem>))}</SelectGroup>
+                    <SelectGroup><SelectLabel>Rajasthan State</SelectLabel>{SCHEME_MASTER.filter((s) => s.level === "State").map((s) => (<SelectItem key={s.id} value={s.name} className="whitespace-normal">{s.name}</SelectItem>))}</SelectGroup>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">If your scheme is not in the dropdown, select <b>Other</b> at the top and type the details below.</p>
+              </div>
+              <div><Field required label="Scheme Line (Cover Title)" value={form.schemeShort === "__OTHER__" ? "" : form.schemeShort} onChange={(v) => set("schemeShort", v)} placeholder={form.schemeShort === "__OTHER__" ? "Type custom scheme line (will appear on cover)" : "Scheme line for cover"} /></div>
+              <div className="grid md:grid-cols-2 gap-3">
+                <Field required label="Programme" value={form.program} onChange={(v) => set("program", v)} placeholder="Programme name" />
+                <Field required label="Plan / Details" value={form.plan} onChange={(v) => set("plan", v)} placeholder="Plan / Details" />
+              </div>
+              <Field required label="Department" value={form.department} onChange={(v) => set("department", v)} placeholder="Department" />
             </div>
+
+            <div>
+              <Label className="mb-1.5 block text-[15px] font-medium">Choose Animal Type<ReqMark /></Label>
+              <div className="grid md:grid-cols-2 gap-3">
+                {ANIMAL_OPTIONS.map((a) => (
+                  <button
+                    key={a.value}
+                    onClick={() => handleAnimalChange(a.value)}
+                    className={`text-left rounded-xl border-2 p-4 flex gap-3 transition ${form.animalType === a.value ? "border-emerald-600 bg-emerald-50" : "border-border hover:border-emerald-300 bg-white"}`}
+                  >
+                    <span className="text-2xl">{a.icon}</span>
+                    <div className="flex-1">
+                      <p className="font-semibold">{a.label} <span className="text-xs font-normal text-muted-foreground">({a.hindi})</span></p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{a.desc}</p>
+                      {form.animalType === a.value && <Badge className="mt-2 bg-emerald-600">Selected</Badge>}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {form.animalType === "POULTRY" && (
               <div className="rounded-lg border p-3 bg-muted/30">
                 <Label className="mb-1.5 block text-[15px] font-medium">Poultry Type<ReqMark /></Label>
@@ -585,6 +664,25 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                 </div>
               </div>
             )}
+
+            {/* Number of Animals — same page as Animal Type */}
+            <div className="rounded-xl border-2 border-emerald-100 bg-emerald-50/40 p-3">
+              <Label className="mb-1.5 block text-[15px] font-medium">{animalCountLabel(form.animalType, form.poultryType)}<ReqMark /></Label>
+              <div className="flex items-stretch max-w-xs">
+                <Input
+                  inputMode="numeric"
+                  value={form.rates[animalCountKey(form.animalType, form.poultryType)] ?? ""}
+                  onChange={(e) => set(`rates.${animalCountKey(form.animalType, form.poultryType)}`, e.target.value)}
+                  placeholder={animalCountDefault(form.animalType, form.poultryType)}
+                  className="text-[15px] rounded-r-none bg-white"
+                />
+                <span className="inline-flex items-center whitespace-nowrap rounded-r-md border border-l-0 bg-white px-3 text-[13px] font-medium text-muted-foreground">
+                  {form.animalType === "POULTRY" ? "birds" : form.animalType === "DAIRY" ? "animals" : form.animalType === "PIG" ? "sows" : "heads"}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Leave blank for default ({animalCountDefault(form.animalType, form.poultryType)}). This will set the unit size in the DPR (e.g. 20+1, 10+1).</p>
+            </div>
+
             <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Wheat className="h-3.5 w-3.5" /> Dairy under Processing (cattle/buffalo milk) → next is Feed Processing unit; others coming Soon.</p>
           </CardContent>
         </Card>
@@ -618,7 +716,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
 
       {step === 2 && (
         <Card>
-          <CardHeader><CardTitle className="text-base">Project location & scheme — {animalLabel}</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Project location — {animalLabel}</CardTitle></CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-4">
             <div className="md:col-span-2 border rounded-lg p-3 grid md:grid-cols-2 gap-4 bg-muted/20">
               <p className="md:col-span-2 text-xs font-semibold text-muted-foreground">Project Address (Reverse Order — PDF Me Sahi Order Me Aayega)</p>
@@ -646,23 +744,6 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
             <Field required label="Nearby Vet Hospital" value={form.location.vetHospital} onChange={(v) => set("location.vetHospital", v)} placeholder="Hospital name, place" />
             <Field required label="Vet Officer / Designation" value={form.location.vetOfficer} onChange={(v) => set("location.vetOfficer", v)} placeholder="Officer name and post" />
             <div className="md:col-span-2"><Field required label="PVK / Expert For Guidance" value={form.location.pvk} onChange={(v) => set("location.pvk", v)} placeholder="KVK / PVK / expert details" /></div>
-            <div className="md:col-span-2">
-              <Label className="mb-1.5 block text-[15px] font-medium">Scheme / Programme (Choose From List)<ReqMark /></Label>
-              <Select value={SCHEME_MASTER.some((s) => s.name === form.schemeShort) ? form.schemeShort : ""} onValueChange={(v: string | null) => {
-                if (!v) return; const s = SCHEME_MASTER.find((x) => x.name === v); if (!s) return;
-                set("schemeShort", s.name); set("program", s.name); set("plan", s.focus); set("department", s.department);
-              }}>
-                <SelectTrigger className="text-[15px] w-full"><SelectValue placeholder="Select Scheme" /></SelectTrigger>
-                <SelectContent className="w-[min(640px,90vw)] max-w-[90vw]">
-                  <SelectGroup><SelectLabel>Central Government</SelectLabel>{SCHEME_MASTER.filter((s) => s.level === "Central").map((s) => (<SelectItem key={s.id} value={s.name} className="whitespace-normal">{s.name}</SelectItem>))}</SelectGroup>
-                  <SelectGroup><SelectLabel>Rajasthan State</SelectLabel>{SCHEME_MASTER.filter((s) => s.level === "State").map((s) => (<SelectItem key={s.id} value={s.name} className="whitespace-normal">{s.name}</SelectItem>))}</SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="md:col-span-2"><Field required label="Scheme Line (Cover Title)" value={form.schemeShort} onChange={(v) => set("schemeShort", v)} /></div>
-            <Field required label="Programme" value={form.program} onChange={(v) => set("program", v)} />
-            <Field required label="Plan / Details" value={form.plan} onChange={(v) => set("plan", v)} />
-            <div className="md:col-span-2"><Field required label="Department" value={form.department} onChange={(v) => set("department", v)} /></div>
           </CardContent>
         </Card>
       )}
