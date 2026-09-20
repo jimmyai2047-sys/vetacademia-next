@@ -23,6 +23,7 @@ const ANIMAL_OPTIONS: Array<{ value: AnimalType; label: string; hindi: string; i
   { value: "PIG", label: "Pig", hindi: "सूअर", icon: "🐖", desc: "Breeder 10 sows +1 boar, fattener sale" },
   { value: "POULTRY", label: "Poultry", hindi: "मुर्गी", icon: "🐓", desc: "Broiler 1000/batch or Layer 500 birds" },
   { value: "DAIRY", label: "Dairy (Cattle/Buffalo)", hindi: "डेयरी", icon: "🐄", desc: "Milk 10 animals, cattle or buffalo" },
+  { value: "PROCESSING", label: "Processing", hindi: "प्रसंस्करण", icon: "🏭", desc: "Milk/Meat/Feed processing 500 kg/day" },
 ];
 
 function speciesForAnimal(a: AnimalType): string {
@@ -198,6 +199,24 @@ function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies
     { key: "manureRatePerTonne", label: "Manure", unit: "Rs/Tonne" },
     { key: "gunnyRatePerBag", label: "Gunny Bag", unit: "Rs/Bag" },
   ];
+  if (animalType === "PROCESSING") return [
+    { key: "capacityKgPerDay", label: "Processing Capacity", unit: "Kg/day" },
+    { key: "rawMaterialRatePerKg", label: "Raw Material Rate", unit: "Rs/Kg" },
+    { key: "productRatePerKg", label: "Product Sale Rate", unit: "Rs/Kg" },
+    { key: "yieldPct", label: "Processing Yield", unit: "%" },
+    { key: "plantCost", label: "Plant Cost", unit: "Rs" },
+    { key: "equipmentCost", label: "Equipment Cost", unit: "Rs" },
+    { key: "constructionRate", label: "Shed Construction", unit: "Rs/Sq.ft" },
+    { key: "shedArea", label: "Shed Area", unit: "Sq.ft" },
+    { key: "labourCount", label: "Labour", unit: "Persons" },
+    { key: "labourWagePerMonth", label: "Wage / Labour / Month", unit: "Rs/Month" },
+    { key: "utilityPerMonth", label: "Utility / Month", unit: "Rs/Month" },
+    { key: "miscPerMonth", label: "Misc / Month", unit: "Rs/Month" },
+    { key: "insurancePct", label: "Insurance", unit: "%" },
+    { key: "interestPct", label: "Bank Interest", unit: "%" },
+    { key: "ownPct", label: "Own Contribution", unit: "%" },
+    { key: "subsidyPct", label: "Subsidy", unit: "%" },
+  ];
   return [];
 }
 
@@ -207,6 +226,7 @@ function animalCountKey(animalType: AnimalType, poultryType: string): string {
   if (animalType === "PIG") return "sows";
   if (animalType === "POULTRY") return "batchSize";
   if (animalType === "DAIRY") return "animals";
+  if (animalType === "PROCESSING") return "capacityKgPerDay";
   return "animals";
 }
 function animalCountLabel(animalType: AnimalType, poultryType: string): string {
@@ -215,6 +235,7 @@ function animalCountLabel(animalType: AnimalType, poultryType: string): string {
   if (animalType === "PIG") return "Number of Sows";
   if (animalType === "POULTRY") return poultryType === "LAYER" ? "Number of Birds (Layer)" : "Batch Size (Birds per batch)";
   if (animalType === "DAIRY") return "Number of Animals (Cows/Buffaloes)";
+  if (animalType === "PROCESSING") return "Processing Capacity (Kg/day)";
   return "Number of Animals";
 }
 function animalCountDefault(animalType: AnimalType, poultryType: string): string {
@@ -223,6 +244,7 @@ function animalCountDefault(animalType: AnimalType, poultryType: string): string
   if (animalType === "PIG") return "10";
   if (animalType === "POULTRY") return poultryType === "LAYER" ? "500" : "1000";
   if (animalType === "DAIRY") return "10";
+  if (animalType === "PROCESSING") return "500";
   return "10";
 }
 

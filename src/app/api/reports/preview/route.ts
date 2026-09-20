@@ -10,6 +10,7 @@ import { buildSheepReport } from "@/lib/sheep-report-pdf";
 import { buildPigReport } from "@/lib/pig-report-pdf";
 import { buildPoultryReport } from "@/lib/poultry-report-pdf";
 import { buildDairyReport } from "@/lib/dairy-report-pdf";
+import { buildProcessingReport } from "@/lib/processing-report-pdf";
 
 // Creates/updates the DRAFT row and returns the watermarked draft PDF bytes.
 // The draft is preview-only (served inline, no download) until payment.
@@ -132,6 +133,22 @@ export async function POST(req: NextRequest) {
           reportTitle: title,
           verifyByVetCA: input.verifyByVetCA,
           dairySpecies: input.dairySpecies,
+        } as any);
+        break;
+      case "PROCESSING":
+        bytes = await buildProcessingReport({
+          cover: input.cover,
+          location: input.location,
+          program: input.program,
+          plan: input.plan,
+          department: input.department,
+          schemeShort: input.schemeShort,
+          breedName: input.breedName,
+          rates: input.rates,
+          language: input.language,
+          mode: "draft",
+          reportTitle: title,
+          verifyByVetCA: input.verifyByVetCA,
         } as any);
         break;
       default:

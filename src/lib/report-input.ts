@@ -5,10 +5,11 @@ import { GOAT_DEFAULTS } from "./goat-engine";
 import { SHEEP_DEFAULTS } from "./sheep-engine";
 import { PIG_DEFAULTS } from "./pig-engine";
 import { POULTRY_BROILER_DEFAULTS, POULTRY_LAYER_DEFAULTS } from "./poultry-engine";
+import { PROCESSING_DEFAULTS } from "./processing-engine";
 
 export const REPORT_PRICE = 2500;
 
-export const ANIMAL_TYPES = ["GOAT", "SHEEP", "PIG", "POULTRY", "DAIRY"] as const;
+export const ANIMAL_TYPES = ["GOAT", "SHEEP", "PIG", "POULTRY", "DAIRY", "PROCESSING"] as const;
 export type AnimalType = (typeof ANIMAL_TYPES)[number];
 
 export function isAnimalType(v: string): v is AnimalType {
@@ -244,6 +245,31 @@ export const dairyReportInputSchema = z.object({
     }),
 });
 
+// Processing (Milk/Meat/Feed processing) — pilot
+export const processingReportInputSchema = z.object({
+  animalType: z.literal("PROCESSING"),
+  breedName: z.string().min(1).max(60).default("Processing"),
+  ...baseCommon,
+  rates: z.object({
+    capacityKgPerDay: num(10, 10000),
+    rawMaterialRatePerKg: num(1, 500),
+    productRatePerKg: num(1, 500),
+    yieldPct: num(50, 100),
+    plantCost: num(10000, 10000000),
+    equipmentCost: num(10000, 10000000),
+    constructionRate: num(50, 5000),
+    shedArea: num(100, 10000),
+    labourCount: num(0, 100),
+    labourWagePerMonth: num(0, 100000),
+    utilityPerMonth: num(0, 1000000),
+    miscPerMonth: num(0, 1000000),
+    insurancePct: num(0, 20),
+    interestPct: num(0, 30),
+    ownPct: num(0, 100),
+    subsidyPct: num(0, 100),
+  }),
+});
+
 // Discriminated union for API validation
 export const reportInputSchema = z.discriminatedUnion("animalType", [
   goatReportInputSchema,
@@ -251,6 +277,7 @@ export const reportInputSchema = z.discriminatedUnion("animalType", [
   pigReportInputSchema,
   poultryReportInputSchema,
   dairyReportInputSchema,
+  processingReportInputSchema,
 ]);
 
 export type GoatReportFormInput = z.infer<typeof goatReportInputSchema>;
@@ -258,6 +285,7 @@ export type SheepReportFormInput = z.infer<typeof sheepReportInputSchema>;
 export type PigReportFormInput = z.infer<typeof pigReportInputSchema>;
 export type PoultryReportFormInput = z.infer<typeof poultryReportInputSchema>;
 export type DairyReportFormInput = z.infer<typeof dairyReportInputSchema>;
+export type ProcessingReportFormInput = z.infer<typeof processingReportInputSchema>;
 export type AnyReportFormInput = z.infer<typeof reportInputSchema>;
 
 export function reportDefaults(animalType: AnimalType = "GOAT"): AnyReportFormInput {
@@ -418,6 +446,31 @@ export function reportDefaults(animalType: AnimalType = "GOAT"): AnyReportFormIn
       },
     };
   }
+  if (animalType === "PROCESSING") {
+    return {
+      animalType: "PROCESSING",
+      breedName: "Processing",
+      ...base,
+      rates: {
+        capacityKgPerDay: PROCESSING_DEFAULTS.capacityKgPerDay,
+        rawMaterialRatePerKg: PROCESSING_DEFAULTS.rawMaterialRatePerKg,
+        productRatePerKg: PROCESSING_DEFAULTS.productRatePerKg,
+        yieldPct: PROCESSING_DEFAULTS.yieldPct,
+        plantCost: PROCESSING_DEFAULTS.plantCost,
+        equipmentCost: PROCESSING_DEFAULTS.equipmentCost,
+        constructionRate: PROCESSING_DEFAULTS.constructionRate,
+        shedArea: PROCESSING_DEFAULTS.shedArea,
+        labourCount: PROCESSING_DEFAULTS.labourCount,
+        labourWagePerMonth: PROCESSING_DEFAULTS.labourWagePerMonth,
+        utilityPerMonth: PROCESSING_DEFAULTS.utilityPerMonth,
+        miscPerMonth: PROCESSING_DEFAULTS.miscPerMonth,
+        insurancePct: PROCESSING_DEFAULTS.insurancePct,
+        interestPct: PROCESSING_DEFAULTS.interestPct,
+        ownPct: PROCESSING_DEFAULTS.ownPct,
+        subsidyPct: PROCESSING_DEFAULTS.subsidyPct,
+      },
+    };
+  }
   // GOAT default
   return {
     animalType: "GOAT",
@@ -476,6 +529,10 @@ export function reportTitle(input: { animalType?: string; rates?: Record<string,
     const n = (input.rates?.animals as number) ?? 10;
     const sp = (input as { dairySpecies?: string }).dairySpecies ?? "CATTLE";
     return (sp === "BUFFALO" ? "Buffalo" : "Dairy Cattle") + " Unit Project Report (" + n + " animals)";
+  }
+  if (t === "PROCESSING") {
+    const cap = (input.rates?.capacityKgPerDay as number) ?? PROCESSING_DEFAULTS.capacityKgPerDay;
+    return "Processing Unit Project Report (" + cap + " kg/day)";
   }
   return "Livestock Project Report";
 }
