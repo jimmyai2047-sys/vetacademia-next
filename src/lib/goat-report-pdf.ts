@@ -1059,7 +1059,7 @@ export async function buildGoatReport(input: GoatReportInput): Promise<Uint8Arra
   const dWDscr = [195, 52, 52, 52, 52, 52, 52];
   ctx.subTitleWithTable(ctx.t('dscrTitle'), dH, dRowsDscr, dWDscr, 8);
   ctx.table(dH, dRowsDscr, dWDscr, 8);
-  ctx.para('Note: Year-1 DSCR is low because the first-year kid crop is sold in Year-2; the loan includes a moratorium for the first year.');
+  ctx.para('Note: Year-1 DSCR is low — first-year kid crop sold in Year-2 (moratorium for first year).', 9);
   ctx.land = false;
   if (ctx.curW !== A4W) ctx.newPage();
   ctx.subTitle(ctx.t('breakEvenTitle'));

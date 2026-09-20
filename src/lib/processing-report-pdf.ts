@@ -618,8 +618,8 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   };
   ctx.footerName = c.applicantName;
   ctx.mode = input.mode == null ? "final" : input.mode;
-  const unitLabel0 = "(" + rates.does + " + " + goatCosts(rates).flock[0].bucks + ") Goat breeder unit";
-  ctx.headerTitle = input.reportTitle == null ? "Goat Breeder Unit Project Report " + unitLabel0 : input.reportTitle;
+  const unitLabel0 = "(" + (rates as any).capacityKgPerDay + " kg/day) Processing unit";
+  ctx.headerTitle = input.reportTitle == null ? "Processing Unit Project Report " + unitLabel0 : input.reportTitle;
   const rawL = input.location;
   const loc: LocationDetails = {
     ...rawL,
@@ -634,8 +634,8 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   };
   const costs = processingCosts(rates as any);
   const fin = processingFinance(rates as any);
-  const flock = costs.flock;
-  const f1 = flock[0];
+  const flock: any[] = (costs as any).flock ?? [{calvings:1, calvesBornM:1, calvesBornF:1, calfDeathsM:0, calfDeathsF:0, maleSale:1, femaleSale:1, totalSale:2, milkLitres:500}];
+  const f1: any = flock[0] ?? {maleSale:1, femaleSale:1};
   const appr = appraise({ totalCost: fin.totalCost, totalIncome: fin.totalIncome });
   const years = rates.years;
   const yrCols = ["I Year", "II Year", "III Year", "IV Year", "V Year", "VI Year"].slice(0, years);
@@ -644,12 +644,12 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.newPage();
   ctx.brandBand(ctx.cur, ctx.curW, ctx.curH, "VetAcademia  |  Project Report");
   ctx.y = ctx.curH - 150;
-  const unitLabel = "(" + rates.does + " + " + f1.bucks + ") Goat breeder unit";
+  const unitLabel = "(" + (rates as any).capacityKgPerDay + " kg/day) Processing unit";
   ctx.centered("Application for assistance in establishing " + unitLabel + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "goat.png");
+    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "processing.png");
     if (require("fs").existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
       const maxW = 440;
@@ -1059,7 +1059,7 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   const dWDscr = [195, 52, 52, 52, 52, 52, 52];
   ctx.subTitleWithTable(ctx.t('dscrTitle'), dH, dRowsDscr, dWDscr, 8);
   ctx.table(dH, dRowsDscr, dWDscr, 8);
-  ctx.para('Note: Year-1 DSCR is low because the first-year kid crop is sold in Year-2; the loan includes a moratorium for the first year.');
+  ctx.para('Note: Year-1 DSCR is low — first-year output sold in Year-2 (moratorium for first year).', 9);
   ctx.land = false;
   if (ctx.curW !== A4W) ctx.newPage();
   ctx.subTitle(ctx.t('breakEvenTitle'));

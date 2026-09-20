@@ -623,8 +623,8 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   };
   ctx.footerName = c.applicantName;
   ctx.mode = input.mode == null ? "final" : input.mode;
-  const unitLabel0 = "(" + rates.does + " + " + goatCosts(rates).flock[0].bucks + ") Goat breeder unit";
-  ctx.headerTitle = input.reportTitle == null ? "Goat Breeder Unit Project Report " + unitLabel0 : input.reportTitle;
+  const unitLabel0 = "(" + (rates as any).animals + " animals) Dairy unit";
+  ctx.headerTitle = input.reportTitle == null ? "Dairy Unit Project Report " + unitLabel0 : input.reportTitle;
   const rawL = input.location;
   const loc: LocationDetails = {
     ...rawL,
@@ -649,12 +649,12 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.newPage();
   ctx.brandBand(ctx.cur, ctx.curW, ctx.curH, "VetAcademia  |  Project Report");
   ctx.y = ctx.curH - 150;
-  const unitLabel = "(" + rates.does + " + " + f1.bucks + ") Goat breeder unit";
+  const unitLabel = "(" + (rates as any).animals + " animals) Dairy unit";
   ctx.centered("Application for assistance in establishing " + unitLabel + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "goat.png");
+    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "dairy.png");
     if (require("fs").existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
       const maxW = 440;
@@ -825,57 +825,43 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ], [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
-  const doesN = rates.does;
-  const bucksN = f1.bucks;
-  const totA = costs.totalAnimals;
-  const kidN = f1.aliveKidsM + f1.aliveKidsF;
-  const sickN = Math.round(totA * 0.1);
+  // dairy has no does/bucks - using animals
 
-  // DPR details — give Details column more width to avoid point-18 overlap
+  // DPR details — Dairy: give Details column more width
   ctx.table(['S. No.', 'Parameter', 'Details'], [
-    ['1', 'Animal Type', 'Goat (Small ruminant)'],
+    ['1', 'Animal Type', (rates as any).dairySpecies === "BUFFALO" ? 'Buffalo (Bovine)' : 'Cattle (Bovine)'],
     ['2', 'Breed', breedName],
-    ['3', 'Unit type', 'Breeder unit'],
-    ['4', 'System of rearing', 'Semi-intensive'],
-    ['5', 'Purpose', 'Meat Production and Germplasm Improvement'],
-    ['6', 'Breeder (Sex ratio) F:M', '20:01'],
-    ['7', 'Age of procurement', 'Male 18-24 months (2-4 teeth); Female 12-18 months (2 teeth)'],
-    ['8', 'Kidding Interval', String(rates.kiddingIntervalMonths) + ' months'],
-    ['9', 'Type of farming', 'Stall feeding and Open Grazing for 4-6 Hours'],
-    ['10', 'Type of housing', 'Pucca and Ground level'],
-    ['11', 'Feeding system', 'Stall feeding (cut and carry); Open grazing (natural habit)'],
-    ['12', 'Feed and Fodder', 'Own cultivation (Silvi-pastoral)'],
-    ['13', 'Floor Space (Covered)', 'Does (' + doesN + '): 10 Sq. ft = ' + fmt(costs.coveredDoe) + '; Kids (' + kidN + '): 4 Sq. ft = ' + fmt(costs.coveredKids) + '; Buck (' + bucksN + '): 20 Sq. ft = ' + fmt(costs.coveredBuck) + '; Sick (' + sickN + '): 20 Sq. ft = ' + fmt(costs.coveredSick) + '; Total ' + fmt(costs.coveredTotal) + ' Sq. ft'],
-    ['14', 'Open paddock', 'Double the shaded area (' + fmt(costs.coveredTotal*1.5) + ' Sq. ft.)'],
-    ['15', 'Land requirement', 'Shed 0.5 Acre (Own); Feed and Fodder ' + rates.fodderAcres + ' Acre (Own); Total ' + (0.5 + rates.fodderAcres) + ' Acre'],
-    ['16', 'Employment generation', rates.labourCount + ' semi-skilled person(s)'],
-    ['17', 'Technician cum supervisor', 'A qualified livestock assistant for timely visit'],
-    ['18', 'Veterinarian / Expert / Consultant', loc.vetOfficer + '; ' + loc.pvk],
-    ['19', 'Geographical Co-ordinates', c.latLong == null ? '' : c.latLong],
+    ['3', 'Unit size', String((rates as any).animals ?? 10) + ' animals (' + ((rates as any).dairySpecies ?? "CATTLE") + ')'],
+    ['4', 'System of rearing', 'Intensive (Stall feeding)'],
+    ['5', 'Purpose', 'Milk + Calf + Manure'],
+    ['6', 'Covered area per animal', String((rates as any).spacePerAnimal ?? 40) + ' Sq.ft = ' + fmt(costs.coveredAnimal) + ' Sq.ft total'],
+    ['7', 'Calf shed', String((rates as any).spacePerCalf ?? 20) + ' Sq.ft × ' + ((costs.coveredCalves/( (rates as any).spacePerCalf ?? 20)).toFixed(1)) + ' calves = ' + fmt(costs.coveredCalves) + ' Sq.ft'],
+    ['8', 'Milk yield', String((rates as any).avgMilkPerDayLitres ?? (rates as any).milkPerAnimalPerDayKg ?? 8) + ' L/day × ' + String((rates as any).lactationDays ?? 210) + ' days = ' + fmt(costs.totalMilkLitresFull) + ' L/year'],
+    ['9', 'Technician cum supervisor', 'A qualified livestock assistant for timely visit'],
+    ['10', 'Veterinarian / Expert / Consultant', loc.vetOfficer + '; ' + loc.pvk],
+    ['11', 'Geographical Co-ordinates', c.latLong == null ? '' : c.latLong],
   ], [38, 125, 342], 9);
   // Keep A. Assumptions and I. Techno together on same page
   {
     const techHeadersKeep = ['S.No', 'Particulars', 'Unit', 'Quantity'];
     const techWidthsKeep = [40, 250, 90, 125];
     const techRowsKeep: string[][] = [
-    ['1', 'Breed of Goat', '', 'Recognised Indian Breed (' + breedName + ')'],
-    ['2', 'System of rearing', '', 'Semi-intensive'],
-    ['3', 'Number of does', 'Number', String(doesN)],
-    ['4', 'Number of Bucks', 'Number', String(bucksN)],
-    ['5', 'Total goats (Buck+Doe)', 'Number', String((rates as any).animals)],
-    ['6', 'Age at maturity', 'Months', '11'],
-    ['7', 'Kidding interval', 'Months', String(rates.kiddingIntervalMonths)],
-    ['8', 'Number of kidding', 'Per Year', String(Math.round((12 / rates.kiddingIntervalMonths) * 10) / 10)],
-    ['9', 'Kidding Percentage', '%', String(rates.kiddingPct)],
-    ['10', 'Average litter size', 'Number', String(rates.litterSize)],
-    ['11', 'Sex Ratio', 'Ratio', '01:01'],
-    ['12', 'Mortality Rate of kids', '%', String(rates.kidMortalityPct)],
-    ['13', 'Alive kids in a Year', 'Number', String(kidN)],
-    ['14', 'Saleable age of kids', 'Months', '12'],
-    ['15', 'Fodder cultivation per acre/season', 'Area', String((rates as any).fodderAcres ?? 1)],
-    ['16', 'Project Period', 'Years', String(years)],
-    ['17', 'Days in year', 'Days', '365'],
-    ['18', 'Payback Period', 'Years', String(years) + ' (including moratorium, first year)'],
+    ['1', 'Breed', '', String(breedName) + ' (' + ((rates as any).dairySpecies ?? "CATTLE") + ')'],
+    ['2', 'Animals', 'Number', String((rates as any).animals ?? 10)],
+    ['3', 'System of rearing', '', 'Intensive'],
+    ['4', 'Lactation days', 'Days', String((rates as any).lactationDays ?? 210)],
+    ['5', 'Dry days', 'Days', String((rates as any).dryDays ?? 85)],
+    ['6', 'Avg milk per day', 'L', String((rates as any).avgMilkPerDayLitres ?? (rates as any).milkPerAnimalPerDayKg ?? 8)],
+    ['7', 'Calving %', '%', String((rates as any).calvingPct ?? 80)],
+    ['8', 'Milk rate', 'Rs/L', String((rates as any).milkRatePerLitre ?? (rates as any).milkRatePerKg ?? 50)],
+    ['9', 'Concentrate lactation', 'Kg/day', String((rates as any).concentrateLactationKgPerDay ?? 6)],
+    ['10', 'Concentrate dry', 'Kg/day', String((rates as any).concentrateDryKgPerDay ?? 1)],
+    ['11', 'Concentrate calf', 'Kg/day', String((rates as any).concentrateCalfKgPerDay ?? 0.5)],
+    ['12', 'Interest', '%', String((rates as any).interestPct ?? 12)],
+    ['13', 'Insurance', '%', String((rates as any).insurancePct ?? 5)],
+    ['14', 'Project Period', 'Years', String(years)],
+    ['15', 'Days in year', 'Days', '365'],
+    ['16', 'Payback', 'Years', String(years) + ' (including moratorium)'],
   ];
     const needKeep = 32 + 26 + ctx.estimateTableH(techHeadersKeep, techRowsKeep, 10, CONTENT_W, techWidthsKeep);
     if (ctx.y - needKeep < MARGIN_BOTTOM + 12) ctx.newPage();
@@ -887,27 +873,23 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('expenditureNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity'], [
-    ['1', 'Space per buck', 'Sq.ft', '20'],
-    ['2', 'Space per doe', 'Sq.ft', '10'],
-    ['3', 'Space for kids', 'Sq.ft', '4'],
-    ['4', 'Space for sick animals', 'Sq.ft', '20'],
-    ['5', 'Construction of shed', 'Rs./Sq. ft.', String(rates.constructionRate)],
-    ['6', 'Cost of each doe with transport', 'Rs./Doe', String(rates.doeCost)],
-    ['7', 'Cost of each buck with transport', 'Rs./Buck', String(rates.buckCost)],
-    ['8', 'Semi-skilled labour', 'Numbers', String((rates as any).labourCount ?? 1)],
-    ['9', 'Wages per labour per month', 'Rs.', String(rates.labourWagePerMonth)],
-    ['10', 'Feeding Equipments', 'Rs./Equipment', String(rates.feedingEquipmentRate)],
-    ['11', 'Chaff cutter', 'Rs./machine', String(rates.chaffCutterCost)],
-    ['12', 'Concentrate adult per month', 'Kg (@250g/day)', '7.5'],
-    ['13', 'Concentrate kids per month', 'Kg (@150g/day)', '4.5'],
-    ['14', 'Concentrate rate per Kg', 'Rs.', String(rates.concentrateRate)],
-    ['15', 'Health expenditure per animal/year', 'Rs.', String(rates.vetRatePerAnimal)],
-    ['16', 'Electric and Water per head/year', 'Rs.', String((rates as any).utilityPerAnimal)],
-    ['17', 'Fodder cultivation per acre/season', 'Rs./Acre/Season', String(rates.fodderCostPerAcre)],
-    ['18', 'Misc Expenditure', 'Rs/Animal/Year', String(rates.miscRatePerAnimal)],
-    ['19', 'Insurance of animals', '%', String(rates.insurancePct)],
-    ['20', 'Interest for bank loan', '%', String(rates.interestPct)],
-    ['21', 'Margin Money (own share)', '%', String(rates.ownPct)],
+    ['1', 'Space per animal', 'Sq.ft', String((rates as any).spacePerAnimal ?? 40)],
+    ['2', 'Space per calf', 'Sq.ft', String((rates as any).spacePerCalf ?? 20)],
+    ['3', 'Sick/office/labour/feed godown', 'Sq.ft', '100/100/100/200'],
+    ['4', 'Construction shed', 'Rs/Sq.ft', String((rates as any).costShed ?? 350)],
+    ['5', 'Animal cost', 'Rs/head', String((rates as any).animalCost ?? 60000)],
+    ['6', 'Labour', 'Numbers', String((rates as any).labourCount ?? 1)],
+    ['7', 'Wages per labour', 'Rs/month', String((rates as any).labourWagePerMonth ?? 9000)],
+    ['8', 'Concentrate lactation', 'Kg/day', String((rates as any).concentrateLactationKgPerDay ?? 6)],
+    ['9', 'Concentrate dry', 'Kg/day', String((rates as any).concentrateDryKgPerDay ?? 1)],
+    ['10', 'Concentrate calf', 'Kg/day', String((rates as any).concentrateCalfKgPerDay ?? 0.5)],
+    ['11', 'Concentrate rate', 'Rs/Kg', String((rates as any).concentrateRate ?? 28)],
+    ['12', 'Vet aid', 'Rs/year', String((rates as any).vetRatePerAnimal ?? 1000)],
+    ['13', 'Electric/water', 'Rs/year', String((rates as any).utilityPerAnimal ?? 500)],
+    ['14', 'Fodder', 'Rs/acre', String((rates as any).fodderCostPerAcre ?? 12000)],
+    ['15', 'Insurance', '%', String((rates as any).insurancePct ?? 5)],
+    ['16', 'Interest', '%', String((rates as any).interestPct ?? 12)],
+    ['17', 'Own share', '%', String((rates as any).ownPct ?? 20)],
   ], [40, 250, 100, 115], 9);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('incomeNorms'));
@@ -1064,7 +1046,7 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   const dWDscr = [195, 52, 52, 52, 52, 52, 52];
   ctx.subTitleWithTable(ctx.t('dscrTitle'), dH, dRowsDscr, dWDscr, 8);
   ctx.table(dH, dRowsDscr, dWDscr, 8);
-  ctx.para('Note: Year-1 DSCR is low because the first-year kid crop is sold in Year-2; the loan includes a moratorium for the first year.');
+  ctx.para('Note: Year-1 DSCR is low — first-year calf crop sold in Year-2 (moratorium for first year).', 9);
   ctx.land = false;
   if (ctx.curW !== A4W) ctx.newPage();
   ctx.subTitle(ctx.t('breakEvenTitle'));
@@ -1190,7 +1172,7 @@ function drawBreakEvenChart(ctx: Ctx, P: number, FC: number, VC1: number, VC2: n
     const q = Math.round((Qmax * tk) / 4);
     page.drawText(String(q), { x: X(q) - 8, y: y0 - 14, size: 7, font: f, color: rgb(0.3, 0.3, 0.3) });
   }
-  page.drawText(species === "BUFFALO" || species === "CATTLE" ? 'Milk litres per year (Q)' : 'Kids per year (Q)', { x: x0 + plotW / 2 - 40, y: y0 - 26, size: 8, font: f, color: rgb(0, 0, 0) });
+  page.drawText('Milk litres per year (Q)', { x: x0 + plotW / 2 - 40, y: y0 - 26, size: 8, font: f, color: rgb(0, 0, 0) });
   page.drawLine({ start: { x: X(0), y: Y(0) }, end: { x: X(Qmax), y: Y(TR(Qmax)) }, thickness: 2.2, color: rgb(0.1, 0.45, 0.75) });
   let px = X(0);
   let py = Y(TC(0));
@@ -1289,7 +1271,7 @@ export function sampleDairyInput(): DairyReportInput {
     rates: {},
   };
 }
-export async function buildSampleGoatPdf(outPath: string): Promise<{ pages: number; bytes: number }> {
+export async function buildSampleDairyPdf(outPath: string): Promise<{ pages: number; bytes: number }> {
   const bytes = await buildDairyReport(sampleDairyInput() as any);
   fs.writeFileSync(outPath, bytes);
   const doc = await PDFDocument.load(bytes);
