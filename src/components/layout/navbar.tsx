@@ -209,15 +209,15 @@ export default function Navbar() {
       <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary va-gradient-animate" />
       <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(0,95,72,0.07)]">
         <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
-        <div className="container relative mx-auto flex h-[68px] items-center justify-between px-3 sm:px-4">
+        <div className="container relative mx-auto flex h-[68px] items-center justify-between gap-2 px-3 sm:px-4">
           {/* Logo - Left most corner attached */}
           <Link href="/" className="relative flex items-center h-full ml-0 shrink-0 group">
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-primary/5 to-blue-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
             <Image
               src={logoSrc}
               alt="VetAcademia - Veterinary Education Platform"
-              className="relative h-12 sm:h-14 w-auto object-contain object-left"
-              width={180}
+              className="relative h-10 xl:h-12 w-auto object-contain object-left"
+              width={160}
               height={56}
               priority
               onError={() => {
@@ -227,16 +227,16 @@ export default function Navbar() {
           </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
+        <nav className="hidden xl:flex items-center gap-0 min-w-0">
           <Link href="/">
-            <Button variant="ghost" className="gap-1.5"><Home className="h-4 w-4" />Home</Button>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><Home className="h-4 w-4" />Home</Button>
           </Link>
 
           <Link href="/farmers">
-            <Button variant="ghost" className="gap-1.5"><Tractor className="h-4 w-4" />Animal Owner</Button>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><Tractor className="h-4 w-4" />Animal Owner</Button>
           </Link>
           <Link href="/vets">
-            <Button variant="ghost" className="gap-1.5"><HeartPulse className="h-4 w-4" />Vets</Button>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
           </Link>
 
           {/* Programmes */}
@@ -249,7 +249,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("programmes", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
               <GraduationCap className="h-4 w-4" />
               Student Corner
             </Button>
@@ -321,7 +321,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prepare", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]} title="Prepare — practice, mocks & PYQs">
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]} title="Prepare — practice, mocks & PYQs">
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
@@ -398,7 +398,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("exams", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["exams"]} title="Exams — info, syllabus & eligibility">
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["exams"]} title="Exams — info, syllabus & eligibility">
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
@@ -465,7 +465,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("resources", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["resources"]}>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["resources"]}>
               <Users className="h-4 w-4" />
               Resources
             </Button>
@@ -540,7 +540,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("about", false);
             }}
           >
-            <Button variant="ghost" className="gap-2" aria-haspopup="true" aria-expanded={!!openMenus["about"]}>
+            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["about"]}>
               <Info className="h-4 w-4" />
               About
             </Button>
@@ -599,20 +599,20 @@ export default function Navbar() {
         {/* Global Search */}
         <form
           onSubmit={handleSearch}
-          className="hidden xl:flex items-center relative"
+          className="hidden shrink-0 xl:flex items-center relative"
         >
           <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search subjects..."
+            placeholder="Search..."
             aria-label="Search subjects"
-            className="pl-9 pr-3 h-9 w-64 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="pl-9 pr-3 h-9 w-36 2xl:w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </form>
 
         {/* Auth Buttons / User Menu */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-1.5 shrink-0">
           {isAuthed ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent outline-none">
@@ -655,7 +655,7 @@ export default function Navbar() {
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost">Login</Button>
+                <Button variant="ghost" className="px-2 text-sm">Login</Button>
               </Link>
               <Link href="/signup">
                 <Button>Sign Up</Button>
@@ -667,7 +667,7 @@ export default function Navbar() {
         {/* Mobile Menu - Enhanced for Mobile */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger
-            className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md hover:shadow-lg active:scale-95 transition-all"
+            className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md hover:shadow-lg active:scale-95 transition-all"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
