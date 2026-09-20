@@ -139,10 +139,10 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
   {const vetText=loc.vetHospital+" of the Department of Animal Husbandry. Technical guidance: "+loc.vetOfficer+"; "+loc.pvk+"."; const vetLines=ctx.wrap(vetText,ctx.fonts.reg,11.5,CONTENT_W); const vetNeed=34+vetLines.length*(11.5+4.5)+6; if(ctx.y-vetNeed<MARGIN_BOTTOM+12) ctx.newPage(); ctx.subTitle(ctx.t("vetAid")); ctx.para(vetText)}
    ctx.sectionTitle("dpr",16); ctx.newPage();
   // DPR quick table
-  ctx.table(["S. No.","Parameter","Details"],[["1","Animal Type",input.dairySpecies==="BUFFALO"?"Buffalo (Bovine)":"Cattle (Bovine)"],["2","Breed",breedName],["3","Unit size",String(rates.animals)+" animals"],["4","System","Semi-intensive / Stall feeding"],["5","Purpose","Milk Production"],["6","Covered area per animal","60 Sq.ft = "+fmt(costs.coveredTotal)+" Sq.ft"],["7","Open paddock","1.5 × covered = "+fmt(costs.openTotal)+" Sq.ft"],["8","Milk yield",""+rates.milkPerAnimalPerDayKg+" kg/day × "+rates.lactationDays+" days"],["9","Technician","Livestock assistant for timely visit"],["10","Vet/Expert",loc.vetOfficer+"; "+loc.pvk],["11","Co-ordinates",c.latLong??""]],[38,125,342],9);
+  ctx.table(["S. No.","Parameter","Details"],[["1","Animal Type",input.dairySpecies==="BUFFALO"?"Buffalo (Bovine)":"Cattle (Bovine)"],["2","Breed",breedName],["3","Unit size",String(rates.animals)+" animals"],["4","System","Semi-intensive / Stall feeding"],["5","Purpose","Milk Production"],["6","Covered area per animal","60 Sq.ft = "+fmt(costs.coveredTotal)+" Sq.ft"],["7","Open paddock","1.5 × covered = "+fmt(costs.coveredTotal*1.5)+" Sq.ft"],["8","Milk yield",""+rates.avgMilkPerDayLitres+" kg/day × "+rates.lactationDays+" days"],["9","Technician","Livestock assistant for timely visit"],["10","Vet/Expert",loc.vetOfficer+"; "+loc.pvk],["11","Co-ordinates",c.latLong??""]],[38,125,342],9);
   {
     const techH=["S.No","Particulars","Unit","Quantity"]; const techW=[40,250,90,125]; const techR:string[][]=[
-      ["1","Breed","",breedName],["2","Animals","Number",String(rates.animals)],["3","Covered area","Sq.ft",fmt(costs.coveredTotal)],["4","Milk per animal per day","kg",String(rates.milkPerAnimalPerDayKg)],["5","Lactation days","Days",String(rates.lactationDays)],["6","Milk rate","Rs/kg",String(rates.milkRatePerKg)],["7","Insurance","%",String(rates.insurancePct)],["8","Interest","%",String(rates.interestPct)],["9","Own share","%",String(rates.ownPct)],["10","Project period","Years",String(years)],
+      ["1","Breed","",breedName],["2","Animals","Number",String(rates.animals)],["3","Covered area","Sq.ft",fmt(costs.coveredTotal)],["4","Milk per animal per day","kg",String(rates.avgMilkPerDayLitres)],["5","Lactation days","Days",String(rates.lactationDays)],["6","Milk rate","Rs/kg",String(rates.milkRatePerLitre)],["7","Insurance","%",String(rates.insurancePct)],["8","Interest","%",String(rates.interestPct)],["9","Own share","%",String(rates.ownPct)],["10","Project period","Years",String(years)],
     ]; const need=32+26+ctx.estimateTableH(techH,techR,10,CONTENT_W,techW); if(ctx.y-need<MARGIN_BOTTOM+12) ctx.newPage(); ctx.sectionTitle("assumptions",16); ctx.subTitle(ctx.t("technoParams")); ctx.table(techH,techR,techW,9)
   }
   // Costs
@@ -150,13 +150,13 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
   if(ctx.y<180) ctx.newPage(); ctx.subTitle(ctx.t("workingCapital")); {const wRows=costs.workingLines.map((l,idx)=>[String(idx+1),l.label,fmt(l.rate),fmt(l.qty),fmt(l.amount)]); wRows.push(["","Total Cost","","",fmt(costs.workingTotal)]); wRows.push(["","Total (Capital+Working)","","",fmt(costs.capitalTotal+costs.workingTotal)]); ctx.table(["S.No","Particulars","Rate","Quantity","Amount"],wRows,[35,205,70,70,80],8.5)}
   ctx.sectionTitle("meansOfFinance",16); {const bankPct=100-rates.ownPct-rates.subsidyPct; ctx.table(["S.No","Particulars","Share (%)","Amount (Rs.)"],[["1","Bank Loan",String(bankPct),fmt(fin.meanBank)],["2","Own Contribution",String(rates.ownPct),fmt(fin.meanOwn)],["3","Subsidy",String(rates.subsidyPct),fmt(fin.meanSubsidy)],["","Grand Total","",fmt(costs.capitalTotal)]],[40,220,100,145]); ctx.para("Note: The working capital will be managed by the farmers.")}
   // Milk yield chart
-  const milkIncomeYear = costs.milkKgPerYear * rates.milkRatePerKg; const yrInc:number[] = fin.totalIncome; const yrExp:number[] = fin.expenditure;
+  const milkIncomeYear = costs.totalMilkLitresFull * rates.milkRatePerLitre; const yrInc:number[] = fin.totalIncome; const yrExp:number[] = fin.expenditure;
   // Flock/milk chart
   ctx.sectionTitle("flockChart",13);
   // Build flock table with milk
   {
     const fh=["S.No","Particular"].concat(yrCols); const fw=[35,200,45,45,45,45,45,45];
-    const flockRows=[["1","Milk production (kg)"].concat(yrCols.map((_,i)=>String(Math.round(i===0?costs.milkKgPerYear*0.8:costs.milkKgPerYear)))),["2","Gross milk income (Rs.)"].concat(yrCols.map((_,i)=>fmt(i===0?milkIncomeYear*0.8:milkIncomeYear)))];
+    const flockRows=[["1","Milk production (kg)"].concat(yrCols.map((_,i)=>String(Math.round(i===0?costs.totalMilkLitresFull*0.8:costs.totalMilkLitresFull)))),["2","Gross milk income (Rs.)"].concat(yrCols.map((_,i)=>fmt(i===0?milkIncomeYear*0.8:milkIncomeYear)))];
     ctx.table(fh,flockRows,fw,8.5)
   }
   if(ctx.y<320) ctx.newPage(); ctx.subTitle(ctx.t("profitability"));
@@ -164,7 +164,7 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
     const manureAmt=costs.manureTonnes*rates.manureRatePerTonne; const gunnyAmt=costs.gunnyBags*rates.gunnyRatePerBag;
     const incY=(v:number,skipFirst:boolean)=>{const a:string[]=[]; for(let i=0;i<years;i++) a.push(i===0&&skipFirst?"":fmt(v)); return a}
     const incRows=[
-      ["1","Sale of milk","kg",fmt(rates.milkRatePerKg),fmt(costs.milkKgPerYear)].concat(incY(milkIncomeYear,true)),
+      ["1","Sale of milk","kg",fmt(rates.milkRatePerLitre),fmt(costs.totalMilkLitresFull)].concat(incY(milkIncomeYear,true)),
       ["2","Manure sale","Tonnes",fmt(rates.manureRatePerTonne),fmt(costs.manureTonnes)].concat(incY(manureAmt,false)),
       ["3","Gunny sale","Numbers",fmt(rates.gunnyRatePerBag),fmt(costs.gunnyBags)].concat(incY(gunnyAmt,false)),
     ];
@@ -176,11 +176,11 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
     const w=costs.workingLines; const expY=(v:number)=>{const a:string[]=[]; for(let i=0;i<years;i++) a.push(fmt(v)); return a};
     const expRows=[
       ["1",w[0].label,"Rs/Acre/Season",fmt(rates.fodderCostPerAcre),String(rates.fodderAcres)].concat(expY(w[0].amount)),
-      ["2",w[1].label,"kg/day",""+rates.concentrateRate,fmt(costs.milkKgPerYear)].concat(expY(w[1].amount)),
+      ["2",w[1].label,"kg/day",""+rates.concentrateRate,fmt(costs.totalMilkLitresFull)].concat(expY(w[1].amount)),
       ["3",w[2].label,"Wages/Month/Labour",fmt(rates.labourWagePerMonth),String(rates.labourCount)].concat(expY(w[2].amount)),
       ["4","Insurance","%",String(rates.insurancePct),String(costs.animals)].concat(expY(costs.insuranceAmount)),
       ["5","Veterinary aid","/Animal/Year",fmt(rates.vetRatePerAnimal),String(costs.animals)].concat(expY(w[3].amount)),
-      ["6","Electricity & water","/Animal/Year",fmt(rates.utilityRatePerAnimal),String(costs.animals)].concat(expY(w[4].amount)),
+      ["6","Electricity & water","/Animal/Year",fmt(rates.utilityPerAnimal),String(costs.animals)].concat(expY(w[4].amount)),
       ["7","Interest on Bank loan","%",String(rates.interestPct),fmt(fin.meanBank)].concat(expY(fin.interestPerYear)),
     ];
     const expTot:string[]=[]; for(let te=0;te<years;te++) expTot.push(fmt(fin.expenditure[te])); expRows.push(["","Total expenditure","","",""].concat(expTot)); const netDE:string[]=[]; for(let ne=0;ne<years;ne++) netDE.push(fmt(fin.totalIncome[ne]-fin.expenditure[ne])); expRows.push(["","Net Income","","",""].concat(netDE));
@@ -196,7 +196,7 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
     // DSCR
     const netIncomes=fin.totalIncome.map((v,i)=>v-fin.expenditure[i]); const sched=loanSchedule(fin.meanBank,years,0.14,netIncomes);
     ctx.subTitle(ctx.t("dscrTitle")); ctx.table(["Year","Opening","Principal","Interest","Debt Service","Net Income","DSCR"], sched.map((r)=>[String(r.year),fmt(r.opening),fmt(r.principal),fmt(r.interest),fmt(r.debtService),fmt(r.netIncome),r.dscr===null?"—":r.dscr.toFixed(2)]),[35,85,75,75,85,85,55],8);
-    ctx.subTitle(ctx.t("breakEvenTitle")); const be=breakEven({price:rates.milkRatePerKg,fixedCost:costs.capitalTotal,vc1:(costs.workingTotal/costs.milkKgPerYear),vc2:0.001}); ctx.para("Break-even Q1: "+(be.q1??"—")+" kg | Q2: "+(be.q2??"—")+" kg | Sales1: Rs."+fmt(be.sales1??0)+" | Sales2: Rs."+fmt(be.sales2??0));
+    ctx.subTitle(ctx.t("breakEvenTitle")); const be=breakEven({price:rates.milkRatePerLitre,fixedCost:costs.capitalTotal,vc1:(costs.workingTotal/costs.totalMilkLitresFull),vc2:0.001}); ctx.para("Break-even Q1: "+(be.q1??"—")+" kg | Q2: "+(be.q2??"—")+" kg | Sales1: Rs."+fmt(be.sales1??0)+" | Sales2: Rs."+fmt(be.sales2??0));
   }
   if(input.verifyByVetCA){ctx.newPage(); ctx.subTitle("Verification"); ctx.para("☐ Verified by Veterinarian / CA (Sign & Seal): ________________________          Date: __________");}
   // Index and footer
