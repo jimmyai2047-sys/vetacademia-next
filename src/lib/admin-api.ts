@@ -83,6 +83,7 @@ export const ALLOWED_SETTING_KEYS = new Set([
   "notifyPayment",
   "notifyBooking",
   "maintenanceMode",
+  "reportPrice",
 ]);
 
 export function validateSettingKey(key: string): boolean {

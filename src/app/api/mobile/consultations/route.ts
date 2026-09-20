@@ -3,44 +3,57 @@ import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const userId = verifyToken(req);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const userId = verifyToken(req);
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = (await req.json().catch(() => ({}))) as {
-    expertId?: string;
-    slot?: string;
-    duration?: number;
-    notes?: string;
-  };
-  if (!body.expertId || !body.slot) {
-    return NextResponse.json({ error: "expertId and slot required" }, { status: 400 });
+    const body = (await req.json().catch(() => ({}))) as {
+      expertId?: string;
+      slot?: string;
+      duration?: number;
+      notes?: string;
+    };
+    if (!body.expertId || !body.slot) {
+      return NextResponse.json({ error: "expertId and slot required" }, { status: 400 });
+    }
+    if (!body.slot || isNaN(new Date(body.slot).getTime())) {
+      return NextResponse.json({ error: "Valid slot required" }, { status: 400 });
+    }
+
+    const expert = await prisma.expert.findUnique({ where: { id: body.expertId } });
+    if (!expert || !expert.isAvailable) {
+      return NextResponse.json({ error: "Expert not available" }, { status: 404 });
+    }
+
+    const consultation = await prisma.consultation.create({
+      data: {
+        studentId: userId,
+        expertId: body.expertId,
+        slot: new Date(body.slot),
+        duration: body.duration || 30,
+        notes: body.notes || null,
+        status: "PENDING",
+      },
+    });
+    return NextResponse.json({ consultation }, { status: 201 });
+  } catch (error) {
+    console.error("Mobile consultations POST error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  const expert = await prisma.expert.findUnique({ where: { id: body.expertId } });
-  if (!expert || !expert.isAvailable) {
-    return NextResponse.json({ error: "Expert not available" }, { status: 404 });
-  }
-
-  const consultation = await prisma.consultation.create({
-    data: {
-      studentId: userId,
-      expertId: body.expertId,
-      slot: new Date(body.slot),
-      duration: body.duration || 30,
-      notes: body.notes || null,
-      status: "PENDING",
-    },
-  });
-  return NextResponse.json({ consultation }, { status: 201 });
 }
 
 export async function GET(req: Request) {
-  const userId = verifyToken(req);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const consultations = await prisma.consultation.findMany({
-    where: { studentId: userId },
-    orderBy: { createdAt: "desc" },
-    include: { expert: { include: { user: { select: { name: true } } } } },
-  });
-  return NextResponse.json({ consultations });
+  try {
+    const userId = verifyToken(req);
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const consultations = await prisma.consultation.findMany({
+      where: { studentId: userId },
+      orderBy: { createdAt: "desc" },
+      include: { expert: { include: { user: { select: { name: true } } } } },
+    });
+    return NextResponse.json({ consultations });
+  } catch (error) {
+    console.error("Mobile consultations GET error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

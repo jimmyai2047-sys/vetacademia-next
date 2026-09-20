@@ -11,14 +11,10 @@ export default function CheckoutButton({
   planSlug,
   amount,
   alreadyEnrolled,
-  reportId,
-  alreadyUnlocked,
 }: {
   planSlug?: string;
   amount: number;
   alreadyEnrolled?: boolean;
-  reportId?: string;
-  alreadyUnlocked?: boolean;
 }) {
   const router = useRouter();
   const { status } = useSession();
@@ -49,7 +45,7 @@ export default function CheckoutButton({
       currency: order.currency,
       order_id: order.orderId,
       name: "VetAcademia",
-      description: reportId ? "Unlock report" : `Plan: ${planSlug || ""}`,
+      description: `Plan: ${planSlug || ""}`,
       handler: async (response: any) => {
         try {
           const vRes = await csrfFetch("/api/payments/verify", {
@@ -67,11 +63,9 @@ export default function CheckoutButton({
             setLoading(false);
             return;
           }
-          if (reportId) router.push("/farmers?unlocked=1");
-          else
-            router.push(
-              `/pricing?success=1&plan=${encodeURIComponent(planSlug || "")}`
-            );
+          router.push(
+            `/pricing?success=1&plan=${encodeURIComponent(planSlug || "")}`
+          );
           router.refresh();
         } catch {
           setError("Payment verification failed");
@@ -90,15 +84,11 @@ export default function CheckoutButton({
       const res = await csrfFetch("/api/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          reportId ? { projectReportId: reportId } : { planSlug }
-        ),
+        body: JSON.stringify({ planSlug }),
       });
 
       if (res.status === 401) {
-        const redirectTo = reportId
-          ? `/checkout?report=${reportId}`
-          : `/checkout?plan=${planSlug}`;
+        const redirectTo = `/checkout?plan=${planSlug}`;
         router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
         return;
       }
@@ -115,11 +105,9 @@ export default function CheckoutButton({
         method: "POST",
       });
       if (payRes.ok) {
-        if (reportId) router.push("/farmers?unlocked=1");
-        else
-          router.push(
-            `/pricing?success=1&plan=${encodeURIComponent(planSlug || "")}`
-          );
+        router.push(
+          `/pricing?success=1&plan=${encodeURIComponent(planSlug || "")}`
+        );
         router.refresh();
         return;
       }
@@ -135,9 +123,7 @@ export default function CheckoutButton({
       const orderRes = await csrfFetch("/api/payments/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          reportId ? { projectReportId: reportId } : { planSlug }
-        ),
+        body: JSON.stringify({ planSlug }),
       });
       const orderData = await orderRes.json().catch(() => ({}));
       if (!orderRes.ok) {
@@ -152,12 +138,10 @@ export default function CheckoutButton({
     }
   }
 
-  if (alreadyEnrolled || alreadyUnlocked) {
+  if (alreadyEnrolled) {
     return (
       <p className="text-sm text-emerald-600 font-medium">
-        {alreadyUnlocked
-          ? "You have already unlocked this report."
-          : "You are already enrolled in this plan."}
+        You are already enrolled in this plan.
       </p>
     );
   }

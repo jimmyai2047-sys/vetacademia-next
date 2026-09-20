@@ -42,10 +42,7 @@ function matches(item: FarmItem, q: string): boolean {
     item.title,
     item.summary,
     item.content,
-    item.demoContent,
-    item.fullContent,
     item.category,
-    item.farmType,
   ]
     .filter(Boolean)
     .join(" ")
@@ -82,14 +79,10 @@ const FARM_TYPE_DICT_KEY: Record<string, "ftScientific" | "ftDairy" | "ftGoat" |
 
 export default function FarmersExplorer({
   guides,
-  reports,
-  purchasedIds,
   vaccination,
   deworming,
 }: {
   guides: FarmItem[];
-  reports: FarmItem[];
-  purchasedIds: string[];
   vaccination: VaccinationItem[];
   deworming: DewormingItem[];
 }) {
@@ -114,10 +107,6 @@ export default function FarmersExplorer({
     (g) =>
       (filter === "ALL" || g.category === filter) && matches(g, q)
   );
-  const filteredReports = reports.filter(
-    (r) =>
-      (filter === "ALL" || r.farmType === filter) && matches(r, q)
-  );
   const filteredVaccination = q
     ? vaccination.filter((v) => matchesVaccination(v, q))
     : vaccination;
@@ -127,7 +116,6 @@ export default function FarmersExplorer({
 
   const hasResults =
     filteredGuides.length > 0 ||
-    filteredReports.length > 0 ||
     filteredVaccination.length > 0 ||
     filteredDeworming.length > 0;
 
@@ -182,7 +170,7 @@ export default function FarmersExplorer({
 
       {!hasResults && (
         <div className="mb-10 rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center">
-          <p className="font-medium">{t.noResults}</p>
+          <p className="text-sm font-medium">{t.noResults}</p>
           <p className="mt-1 text-sm text-muted-foreground">
             {t.noResultsHint}
           </p>
@@ -259,85 +247,7 @@ export default function FarmersExplorer({
         </>
       )}
 
-      {/* Project Reports */}
-      {filteredReports.length > 0 && (
-        <>
-          <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-2xl font-bold">
-              {filter === "ALL" ? t.reportsTitle : fill(t.reportsFor, { type: activeType?.label ?? filter })}
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {fill(t.reportsCount, { n: filteredReports.length })}
-            </span>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4 mb-8">
-            {filteredReports.map((r) => {
-              const unlocked = purchasedIds.includes(r.id);
-              const price = number(r.price);
-              return (
-                <Card
-                  key={r.id}
-                  className={`overflow-hidden ${unlocked ? "border-emerald-500/40" : ""}`}
-                >
-                  <div className="relative h-40 w-full overflow-hidden">
-                    <Image
-                      src={getFarmTypeImage(String(r.farmType))}
-                      alt={String(r.title || r.farmType || "Project Report")}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 400px"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  </div>
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-3">
-                      <CardTitle className="text-lg"><FarmText text={String(r.title)} lang={lang} /></CardTitle>
-                      {unlocked ? (
-                        <Badge className="bg-emerald-600 shrink-0">{t.unlocked}</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="shrink-0">
-                          Rs.{price}
-                        </Badge>
-                      )}
-                    </div>
-                    {r.summary && (
-                      <p className="text-sm text-muted-foreground"><FarmText text={String(r.summary)} lang={lang} /></p>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    {unlocked ? (
-                      <>
-                        {r.fullContent ? (
-                          <FarmHtml html={String(r.fullContent)} lang={lang} />
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            {t.fullMissing}
-                          </p>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {r.demoContent ? (
-                          <FarmHtml html={String(r.demoContent)} lang={lang} />
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            {t.samplePreview}
-                          </p>
-                        )}
-                        <Link href={`/checkout?report=${r.id}`} className="block mt-4">
-                          <Button className="w-full">
-                            {fill(t.unlockReport, { n: price })}
-                          </Button>
-                        </Link>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </>
-      )}
+
 
       {/* Vaccination Schedule (searchable) */}
       {q && filteredVaccination.length > 0 && (

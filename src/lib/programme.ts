@@ -13,6 +13,8 @@ export const SLUG_TO_PROGRAMME_NAME: Record<string, string> = {
 
 const PROGRAMME_NAME_TO_SLUG: Record<string, string> = {
   AHDP: "ahdp",
+  "A.H.D.P.": "ahdp",
+  "A.H.D.P": "ahdp",
   BVSC: "bvsc",
   "B.V.Sc & A.H.": "bvsc",
   "B.V.Sc & A.H": "bvsc",

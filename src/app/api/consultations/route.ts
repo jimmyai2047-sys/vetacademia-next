@@ -17,20 +17,25 @@ const bookingSchema = z.object({
 });
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const consultations = await prisma.consultation.findMany({
+      where: { studentId: session.user.id },
+      include: {
+        expert: { include: { user: { select: { name: true } } } },
+      },
+      orderBy: { slot: "desc" },
+    });
+
+    return NextResponse.json(consultations);
+  } catch (error) {
+    console.error("Consultation GET error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  const consultations = await prisma.consultation.findMany({
-    where: { studentId: session.user.id },
-    include: {
-      expert: { include: { user: { select: { name: true } } } },
-    },
-    orderBy: { slot: "desc" },
-  });
-
-  return NextResponse.json(consultations);
 }
 
 export async function POST(req: NextRequest) {

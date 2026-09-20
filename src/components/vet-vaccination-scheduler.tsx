@@ -88,7 +88,7 @@ export default function VetVaccinationScheduler() {
                   <td className="p-2.5 text-muted-foreground">
                     <div className="flex flex-wrap gap-1.5">
                       {r.vaccines.map((v) => (
-                        <Badge key={v} variant="outline" className="rounded-full text-[11px] bg-white">
+                        <Badge key={v} variant="outline" className="rounded-full text-xs bg-white">
                           {v}
                         </Badge>
                       ))}
@@ -99,7 +99,7 @@ export default function VetVaccinationScheduler() {
             </tbody>
           </table>
         </div>
-        <p className="text-[10px] text-muted-foreground">Follow state AH dept schedule. Booster intervals may vary.</p>
+        <p className="text-xs text-muted-foreground">Follow state AH dept schedule. Booster intervals may vary.</p>
       </CardContent>
     </Card>
   );

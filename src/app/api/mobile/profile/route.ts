@@ -3,37 +3,42 @@ import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const userId = verifyToken(req);
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const userId = verifyToken(req);
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = (await req.json().catch(() => ({}))) as {
-    name?: string;
-    email?: string;
-  };
-  const name = typeof body.name === "string" ? body.name.trim() : "";
-  const email =
-    typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const body = (await req.json().catch(() => ({}))) as {
+      name?: string;
+      email?: string;
+    };
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const email =
+      typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
 
-  if (!name || !email)
-    return NextResponse.json(
-      { error: "Name and email are required" },
-      { status: 400 }
-    );
+    if (!name || !email)
+      return NextResponse.json(
+        { error: "Name and email are required" },
+        { status: 400 }
+      );
 
-  const clash = await prisma.user.findFirst({
-    where: { email, NOT: { id: userId } },
-  });
-  if (clash)
-    return NextResponse.json(
-      { error: "Email already in use" },
-      { status: 409 }
-    );
+    const clash = await prisma.user.findFirst({
+      where: { email, NOT: { id: userId } },
+    });
+    if (clash)
+      return NextResponse.json(
+        { error: "Email already in use" },
+        { status: 409 }
+      );
 
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { name, email },
-    select: { id: true, name: true, email: true, role: true },
-  });
-  return NextResponse.json({ user });
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { name, email },
+      select: { id: true, name: true, email: true, role: true },
+    });
+    return NextResponse.json({ user });
+  } catch (error) {
+    console.error("Mobile profile POST error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

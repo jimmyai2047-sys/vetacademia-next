@@ -1,9 +1,10 @@
 import { put } from "@vercel/blob";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { detectFileType } from "@/lib/file-type";
+import { validateCsrf } from "@/lib/csrf";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 
@@ -47,8 +48,11 @@ async function putWithFallback(
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
     const session = await getAdminSession();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -43,7 +43,7 @@ export default async function ExpertsPage() {
       const photo = e.photoUrl ? proxyUrl(e.photoUrl) : null;
       return {
         id: e.id,
-        name: e.user.name,
+        name: e.user?.name ?? "Expert",
         specialization: e.specialization,
         bio: e.bio,
         photoUrl: photo,
@@ -132,7 +132,7 @@ export default async function ExpertsPage() {
                     />
                   ) : (
                     <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-md ring-2 ring-white">
-                      {expert.name
+                      {(expert.name ?? "")
                         .split(" ")
                         .map((n: string) => n[0])
                         .slice(0, 2)
@@ -152,7 +152,7 @@ export default async function ExpertsPage() {
                           <div className="flex items-center gap-1 rounded-full bg-yellow-400/15 border border-yellow-400/20 px-2 py-0.5">
                             <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                             <span className="text-xs font-bold text-yellow-700">
-                              {expert.rating.toFixed(1)}
+                              {(expert.rating ?? 0).toFixed(1)}
                             </span>
                           </div>
                           <span className="text-xs text-muted-foreground">

@@ -27,6 +27,7 @@ export default function VetProformaManager() {
   const [title, setTitle] = useState(""); const [type, setType] = useState("POST_MORTEM");
   const [desc, setDesc] = useState(""); const [word, setWord] = useState<any>(null); const [pdf, setPdf] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     const r = await fetch("/api/admin/vet-proformas"); const j = await r.json();
@@ -36,11 +37,21 @@ export default function VetProformaManager() {
 
   async function onWord(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]; if (!f) return;
-    const u = await uploadFile(f); setWord(u);
+    setError(null);
+    try {
+      const u = await uploadFile(f); setWord(u);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Word upload failed");
+    }
   }
   async function onPdf(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]; if (!f) return;
-    const u = await uploadFile(f); setPdf(u);
+    setError(null);
+    try {
+      const u = await uploadFile(f); setPdf(u);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "PDF upload failed");
+    }
   }
 
   async function create() {
@@ -53,7 +64,18 @@ export default function VetProformaManager() {
   }
   async function del(id: string) {
     if (!confirm("Delete this proforma?")) return;
-    await fetch(`/api/admin/vet-proformas/${id}`, { method: "DELETE" }); load();
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/vet-proformas/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setError(j.error || "Delete failed");
+        return;
+      }
+      load();
+    } catch {
+      setError("Network error. Please try again.");
+    }
   }
 
   return (
@@ -73,6 +95,7 @@ export default function VetProformaManager() {
             <div><Label className="flex items-center gap-1"><File className="h-3 w-3"/> PDF file</Label><Input type="file" accept=".pdf" onChange={onPdf} />{pdf && <p className="text-xs text-emerald-600 mt-1">{pdf.fileName} ✓</p>}</div>
           </div>
           <Button onClick={create} disabled={busy} className="rounded-full">{busy ? "Saving..." : "Add Proforma"}</Button>
+          {error && <p className="text-xs text-red-600">{error}</p>}
         </CardContent>
       </Card>
 

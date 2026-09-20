@@ -18,6 +18,7 @@ import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
+import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
 
 
@@ -52,6 +53,8 @@ export default async function CoursePage({
   if (!course) notFound();
 
   if (course.subject.id !== subjectId) notFound();
+
+  if (programmeNameToSlug(course.subject.programme.name) !== progSlug) notFound();
 
   const access = await getAccess();
   const programmeOwned = access.programmeSlugs.has(progSlug);

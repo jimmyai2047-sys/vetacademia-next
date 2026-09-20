@@ -34,28 +34,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { planSlug, projectReportId } = await req.json();
-    if (!planSlug && !projectReportId) {
+    const { planSlug, generatedReportId } = await req.json();
+    if (!planSlug && !generatedReportId) {
       return NextResponse.json(
-        { error: "planSlug or projectReportId required" },
+        { error: "planSlug or generatedReportId required" },
         { status: 400 }
       );
     }
 
     let amount: number;
     let payment: Awaited<ReturnType<typeof prisma.payment.create>>;
+    let generatedNote: Record<string, string> = {};
 
-    if (projectReportId) {
-      const report = await prisma.projectReport.findUnique({
-        where: { id: projectReportId },
+    if (generatedReportId) {
+      const gen = await prisma.generatedReport.findFirst({
+        where: { id: generatedReportId, userId: session.user.id },
       });
-      if (!report) {
+      if (!gen) {
         return NextResponse.json({ error: "Report not found" }, { status: 404 });
       }
-      amount = report.price;
+      if (gen.status === "PAID") {
+        return NextResponse.json({ error: "Report already paid" }, { status: 400 });
+      }
+      amount = gen.amount;
+      generatedNote = { generatedReportId };
       payment =
         (await prisma.payment.findFirst({
-          where: { userId: session.user.id, projectReportId, status: "PENDING" },
+          where: {
+            userId: session.user.id,
+            status: "PENDING",
+            metadata: { contains: generatedReportId },
+          },
           orderBy: { createdAt: "desc" },
         })) ??
         (await prisma.payment.create({
@@ -64,8 +73,8 @@ export async function POST(req: NextRequest) {
             amount,
             currency: "INR",
             status: "PENDING",
-            projectReportId,
             method: "RAZORPAY",
+            metadata: JSON.stringify({ generatedReportId }),
           },
         }));
     } else {
@@ -99,7 +108,7 @@ export async function POST(req: NextRequest) {
       notes: {
         paymentId: payment.id,
         ...(planSlug ? { planSlug } : {}),
-        ...(projectReportId ? { projectReportId } : {}),
+        ...generatedNote,
       },
     });
 

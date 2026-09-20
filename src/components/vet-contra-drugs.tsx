@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -117,6 +117,69 @@ export default function VetContraDrugs() {
   const totalCount = contraData.reduce((sum, r) => sum + r.drugs.length, 0);
   const filteredCount = filtered.reduce((sum, r) => sum + r.drugs.length, 0);
 
+  // Split species groups into two halves so the long table renders as
+  // two compact side-by-side tables (stacked on mobile).
+  const halves = useMemo(() => {
+    const mid = Math.ceil(filtered.length / 2);
+    return [filtered.slice(0, mid), filtered.slice(mid)].filter((h) => h.length > 0);
+  }, [filtered]);
+
+  function renderRows(rows: typeof filtered) {
+    return rows.map((row) =>
+      row.drugs.map((d) => {
+        const key = `${row.species}-${d.name}`;
+        const isExpanded = expanded === key;
+        return (
+          <Fragment key={key}>
+            <tr
+              onClick={() => setExpanded(isExpanded ? null : key)}
+              className={`border-t hover:bg-red-50/50 cursor-pointer ${isExpanded ? "bg-amber-50" : ""}`}
+            >
+              <td className="p-2.5 font-medium bg-muted/20 align-top">
+                <span className="flex items-center gap-1.5">
+                  <span>{row.icon}</span> {row.species}
+                </span>
+              </td>
+              <td className="p-2.5">
+                <span className="inline-flex items-center gap-1 font-medium">
+                  <Pill className="h-3 w-3 text-red-500" /> {d.name}
+                  <ChevronDown className={`h-3 w-3 ml-1 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                </span>
+              </td>
+              <td className="p-2.5 text-muted-foreground">{d.reason}</td>
+            </tr>
+            {isExpanded && (
+              <tr className="border-t bg-amber-50/50">
+                <td colSpan={3} className="p-3">
+                  <div className="grid md:grid-cols-3 gap-3 text-xs">
+                    <div className="rounded-lg bg-white p-2.5 border">
+                      <div className="flex items-center gap-1 font-semibold text-red-700 mb-1">
+                        <FlaskConical className="h-3.5 w-3.5" /> Mechanism
+                      </div>
+                      <p className="text-muted-foreground">{d.mechanism}</p>
+                    </div>
+                    <div className="rounded-lg bg-white p-2.5 border">
+                      <div className="flex items-center gap-1 font-semibold text-amber-700 mb-1">
+                        <HeartPulse className="h-3.5 w-3.5" /> Symptoms
+                      </div>
+                      <p className="text-muted-foreground">{d.symptoms}</p>
+                    </div>
+                    <div className="rounded-lg bg-white p-2.5 border">
+                      <div className="flex items-center gap-1 font-semibold text-emerald-700 mb-1">
+                        <Lightbulb className="h-3.5 w-3.5" /> Alternative
+                      </div>
+                      <p className="text-muted-foreground">{d.alternative}</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </Fragment>
+        );
+      })
+    );
+  }
+
   return (
     <Card className="rounded-[1.25rem] border-red-200 shadow-sm overflow-hidden">
       <div className="h-1 bg-gradient-to-r from-red-600 via-amber-500 to-red-600" />
@@ -126,7 +189,7 @@ export default function VetContraDrugs() {
             <AlertTriangle className="h-4 w-4" />
           </span>
           Contradictory Drugs — Species-wise
-          <Badge variant="outline" className="rounded-full text-[10px] ml-auto">Safety First • {totalCount} drugs</Badge>
+          <Badge variant="outline" className="rounded-full text-xs ml-auto">Safety First • {totalCount} drugs</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">Click any drug row to see why contradictory — mechanism, symptoms, alternative. Search & filter.</p>
         <div className="flex flex-col sm:flex-row gap-2 mt-3">
@@ -161,77 +224,26 @@ export default function VetContraDrugs() {
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-red-50">
-                <th className="text-left p-2.5 font-semibold">Species</th>
-                <th className="text-left p-2.5 font-semibold">Contraindicated Drugs</th>
-                <th className="text-left p-2.5 font-semibold">Why contradictory?</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((row) =>
-                row.drugs.map((d) => {
-                  const key = `${row.species}-${d.name}`;
-                  const isExpanded = expanded === key;
-                  return (
-                    <>
-                      <tr
-                        key={key}
-                        onClick={() => setExpanded(isExpanded ? null : key)}
-                        className={`border-t hover:bg-red-50/50 cursor-pointer ${isExpanded ? "bg-amber-50" : ""}`}
-                      >
-                        <td rowSpan={isExpanded ? 1 : undefined} className="p-2.5 font-medium bg-muted/20 align-top">
-                          <span className="flex items-center gap-1.5">
-                            <span>{row.icon}</span> {row.species}
-                          </span>
-                        </td>
-                        <td className="p-2.5">
-                          <span className="inline-flex items-center gap-1 font-medium">
-                            <Pill className="h-3 w-3 text-red-500" /> {d.name}
-                            <ChevronDown className={`h-3 w-3 ml-1 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                          </span>
-                        </td>
-                        <td className="p-2.5 text-muted-foreground">{d.reason}</td>
-                      </tr>
-                      {isExpanded && (
-                        <tr key={`${key}-detail`} className="border-t bg-amber-50/50">
-                          <td colSpan={3} className="p-3">
-                            <div className="grid md:grid-cols-3 gap-3 text-xs">
-                              <div className="rounded-lg bg-white p-2.5 border">
-                                <div className="flex items-center gap-1 font-semibold text-red-700 mb-1">
-                                  <FlaskConical className="h-3.5 w-3.5" /> Mechanism
-                                </div>
-                                <p className="text-muted-foreground">{d.mechanism}</p>
-                              </div>
-                              <div className="rounded-lg bg-white p-2.5 border">
-                                <div className="flex items-center gap-1 font-semibold text-amber-700 mb-1">
-                                  <HeartPulse className="h-3.5 w-3.5" /> Symptoms
-                                </div>
-                                <p className="text-muted-foreground">{d.symptoms}</p>
-                              </div>
-                              <div className="rounded-lg bg-white p-2.5 border">
-                                <div className="flex items-center gap-1 font-semibold text-emerald-700 mb-1">
-                                  <Lightbulb className="h-3.5 w-3.5" /> Alternative
-                                </div>
-                                <p className="text-muted-foreground">{d.alternative}</p>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+        <div className={`grid gap-4 ${halves.length > 1 ? "lg:grid-cols-2" : ""}`}>
+          {halves.map((rows, hi) => (
+            <div key={hi} className="overflow-x-auto rounded-xl border self-start">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-red-50">
+                    <th className="text-left p-2.5 font-semibold">Species</th>
+                    <th className="text-left p-2.5 font-semibold">Contraindicated Drugs</th>
+                    <th className="text-left p-2.5 font-semibold">Why contradictory?</th>
+                  </tr>
+                </thead>
+                <tbody>{renderRows(rows)}</tbody>
+              </table>
+            </div>
+          ))}
         </div>
         {filtered.length === 0 && (
           <div className="text-center py-6 text-sm text-muted-foreground">No matching drugs found.</div>
         )}
-        <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+        <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
           <AlertTriangle className="h-3 w-3 text-amber-500" /> Click row for detailed explanation. Always confirm with formulary / senior vet before use.
         </p>
       </CardContent>

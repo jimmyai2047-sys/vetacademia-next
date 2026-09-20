@@ -130,7 +130,7 @@ export default async function VetsPage() {
           <Badge className="rounded-full bg-emerald-600 gap-1.5"><FileText className="h-3 w-3" /> Proformas</Badge>
           <span className="text-xs text-muted-foreground">Post Mortem • Health Certificates • Valuation • Insurance — Word & PDF</span>
         </div>
-        <h2 className="text-xl font-bold">Proformas for <span className="va-gradient-text">Veterinarians</span></h2>
+        <h2 className="text-2xl font-bold tracking-tight">Proformas for <span className="va-gradient-text">Veterinarians</span></h2>
         <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-emerald-600 to-[#d4a843]" />
         <p className="mt-2 text-sm text-muted-foreground">Download official field proformas — editable Word and print-ready PDF. Managed by admin.</p>
         <div className="mt-4">
@@ -165,7 +165,7 @@ export default async function VetsPage() {
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
                 <BookOpen className="h-6 w-6" />
               </div>
-              <p className="mt-3 font-medium">No articles published yet</p>
+              <p className="mt-3 text-sm font-medium">No articles published yet</p>
               <p className="text-sm text-muted-foreground">Check back soon for new resources.</p>
             </CardContent>
           </Card>

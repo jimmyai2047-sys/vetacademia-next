@@ -136,7 +136,7 @@ export default async function MockTestsPage() {
       createdAt: true,
       _count: { select: { questions: true } },
     },
-  });
+  }).catch(() => []);
 
   // Download links go through the /api/blob proxy (which signs server-side on
   // demand) instead of pre-signing 200 URLs at render time — keeps the HTML

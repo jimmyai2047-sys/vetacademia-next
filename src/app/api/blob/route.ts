@@ -10,25 +10,25 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const target = req.nextUrl.searchParams.get("url");
   if (!target) {
-    return new NextResponse("Missing url", { status: 400 });
+    return NextResponse.json({ error: "Missing url" }, { status: 400 });
   }
 
   let parsed: URL;
   try {
     parsed = new URL(target);
   } catch {
-    return new NextResponse("Invalid url", { status: 400 });
+    return NextResponse.json({ error: "Invalid url" }, { status: 400 });
   }
 
   if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) {
-    return new NextResponse("Forbidden", { status: 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
     const signed = await getSignedUrl(target);
     const upstream = await fetch(signed);
     if (!upstream.ok) {
-      return new NextResponse("Upstream error", { status: 502 });
+      return NextResponse.json({ error: "Upstream error" }, { status: 502 });
     }
     const buf = Buffer.from(await upstream.arrayBuffer());
     // Vercel Blob often returns application/octet-stream for Office files,
@@ -77,6 +77,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error("Blob proxy error:", err);
-    return new NextResponse("Error", { status: 500 });
+    return NextResponse.json({ error: "Error" }, { status: 500 });
   }
 }

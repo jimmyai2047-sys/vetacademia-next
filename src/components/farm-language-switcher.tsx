@@ -51,7 +51,7 @@ export default function FarmLanguageSwitcher({
           {FARMER_LANGS.map((l) => (
             <SelectItem key={l.code} value={l.code}>
               <span className="flex items-center gap-2">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-50 text-[11px] font-bold text-emerald-700">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-50 text-xs font-bold text-emerald-700">
                   {l.short}
                 </span>
                 {l.label}

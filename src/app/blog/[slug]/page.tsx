@@ -96,7 +96,7 @@ export default async function BlogPostPage({
           </span>
           <span className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
-            {formatDate(post.publishedAt)}
+            {post.publishedAt ? formatDate(post.publishedAt) : "—"}
           </span>
         </div>
 

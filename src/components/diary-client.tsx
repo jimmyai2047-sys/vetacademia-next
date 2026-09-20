@@ -241,7 +241,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
           {showForm && (
             <Card className="mb-4 rounded-[1.25rem] border-primary/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">{editing ? t.diEdit : t.diAddAnimal}</CardTitle>
+                <CardTitle className="text-sm">{editing ? t.diEdit : t.diAddAnimal}</CardTitle>
               </CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-3">
                 <div>
@@ -289,7 +289,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
 
           {animals.length === 0 && !showForm ? (
             <Card className="rounded-[1.25rem] border-dashed"><CardContent className="p-8 text-center">
-              <p className="font-medium">{t.diNoAnimals}</p>
+              <p className="text-sm font-medium">{t.diNoAnimals}</p>
               <p className="mt-1 text-sm text-muted-foreground">{t.diNoAnimalsHint}</p>
             </CardContent></Card>
           ) : (
@@ -431,7 +431,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
               {upcoming.map((e) => (
                 <div key={e.id} className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
                   <span className="font-medium">{e.title}</span>
-                  <Badge variant="outline" className="rounded-full text-[10px]"><FarmText text={e.type} lang={lang} /></Badge>
+                  <Badge variant="outline" className="rounded-full text-xs"><FarmText text={e.type} lang={lang} /></Badge>
                   <span className="ml-auto font-bold">{fmtDate(String(e.nextDue))}</span>
                 </div>
               ))}

@@ -11,13 +11,19 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}));
     const mockTestId = typeof body.mockTestId === "string" ? body.mockTestId : "";
-    const score = Number(body.score) || 0;
-    const totalMarks = Number(body.totalMarks) || 0;
     const timeTaken = Number(body.timeTaken) || 0;
+    let rawAnswers: unknown = body.answers;
+    if (typeof rawAnswers === "string") {
+      try {
+        rawAnswers = JSON.parse(rawAnswers);
+      } catch {
+        rawAnswers = {};
+      }
+    }
     const answers =
-      typeof body.answers === "string"
-        ? body.answers
-        : JSON.stringify(body.answers ?? {});
+      rawAnswers && typeof rawAnswers === "object" && !Array.isArray(rawAnswers)
+        ? (rawAnswers as Record<string, number>)
+        : ({} as Record<string, number>);
 
     if (!mockTestId) {
       return NextResponse.json(
@@ -26,6 +32,28 @@ export async function POST(req: Request) {
       );
     }
 
+    const test = await prisma.mockTest.findUnique({
+      where: { id: mockTestId },
+      include: { questions: true },
+    });
+    if (!test) {
+      return NextResponse.json({ error: "Test not found" }, { status: 404 });
+    }
+
+    // Recompute the score server-side from stored correct answers so the
+    // client cannot tamper with the result (mirrors web attempt route).
+    let score = 0;
+    let totalMarks = 0;
+    for (const q of test.questions) {
+      const marks = typeof q.marks === "number" ? q.marks : 1;
+      totalMarks += marks;
+      const chosen = answers[q.id];
+      if (typeof chosen === "number" && chosen === q.correctAnswer) {
+        score += marks;
+      }
+    }
+    if (!totalMarks) totalMarks = test.totalMarks;
+
     const attempt = await prisma.mockTestAttempt.create({
       data: {
         userId,
@@ -33,7 +61,7 @@ export async function POST(req: Request) {
         score,
         totalMarks,
         timeTaken,
-        answers,
+        answers: JSON.stringify(answers),
         completed: true,
       },
     });

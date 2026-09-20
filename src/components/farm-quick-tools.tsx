@@ -155,12 +155,12 @@ export default function FarmQuickTools() {
                   <span className="flex items-center gap-1.5 font-medium">
                     <AlertCircle className="h-3.5 w-3.5 text-red-600" /> {d}
                   </span>
-                  <Badge variant="outline" className="rounded-full text-[10px]">
+                  <Badge variant="outline" className="rounded-full text-xs">
                     {c} {t.matchUnit}
                   </Badge>
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground">{t.firstAid}</p>
+              <p className="text-xs text-muted-foreground">{t.firstAid}</p>
             </div>
           )}
         </CardContent>

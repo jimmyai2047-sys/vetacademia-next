@@ -5,8 +5,6 @@
 
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
@@ -53,7 +51,6 @@ export default async function FarmersPage({
   searchParams: Promise<{ unlocked?: string }>;
 }) {
   const { unlocked } = await searchParams;
-  const session = await getServerSession(authOptions);
   const cookieStore = await cookies();
   const lang = normalizeFarmerLang(cookieStore.get(FARMER_LANG_COOKIE)?.value);
   const t = { ...getFarmerDict(lang), ...getFarmerDict2(lang), ...getFarmerDict3(lang) };
@@ -75,12 +72,11 @@ export default async function FarmersPage({
   let guides: Awaited<ReturnType<typeof prisma.farmGuide.findMany>> = [];
   let vaccination: Awaited<ReturnType<typeof prisma.vaccinationSchedule.findMany>> = [];
   let deworming: Awaited<ReturnType<typeof prisma.dewormingSchedule.findMany>> = [];
-  let reports: Awaited<ReturnType<typeof prisma.projectReport.findMany>> = [];
   let schemes: Awaited<ReturnType<typeof prisma.govtScheme.findMany>> = [];
   let farmerPostsRaw: Awaited<ReturnType<typeof getPublishedPosts>> = [];
   let advisoryPosts: Awaited<ReturnType<typeof getPublishedPosts>> = [];
   try {
-    [guides, vaccination, deworming, reports, schemes, farmerPostsRaw, advisoryPosts] =
+    [guides, vaccination, deworming, schemes, farmerPostsRaw, advisoryPosts] =
       await Promise.all([
         prisma.farmGuide.findMany({
           where: { published: true },
@@ -93,11 +89,6 @@ export default async function FarmersPage({
         }),
         prisma.dewormingSchedule.findMany({
           orderBy: [{ order: "asc" }, { animal: "asc" }],
-          take: 100,
-        }),
-        prisma.projectReport.findMany({
-          where: { published: true },
-          orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
           take: 100,
         }),
         prisma.govtScheme.findMany({
@@ -118,28 +109,12 @@ export default async function FarmersPage({
     guides = [];
     vaccination = [];
     deworming = [];
-    reports = [];
     schemes = [];
     farmerPostsRaw = [];
     advisoryPosts = [];
   }
   // Keep for template (renamed variable)
   const farmerPosts = farmerPostsRaw;
-
-  let purchasedIds: string[] = [];
-  if (session?.user?.id && reports.length > 0) {
-    const paid = await prisma.payment.findMany({
-      where: {
-        userId: session.user.id,
-        projectReportId: { in: reports.map((r) => r.id) },
-        status: "PAID",
-      },
-      select: { projectReportId: true },
-    });
-    purchasedIds = paid
-      .map((p) => p.projectReportId)
-      .filter((x): x is string => !!x);
-  }
 
   return (
     <FarmLanguageProvider initialLang={lang}>
@@ -162,7 +137,7 @@ export default async function FarmersPage({
           actions={
             <>
               <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
-                <Wheat className="h-3.5 w-3.5" /> {fill(t.guidesReportsCount, { g: guides.length, r: reports.length })}
+                <Wheat className="h-3.5 w-3.5" /> {fill(t.guidesReportsCount, { g: guides.length, r: 0 })}
               </Badge>
               <FarmLanguageSwitcher />
               <Link href="#helpline">
@@ -174,15 +149,15 @@ export default async function FarmersPage({
           }
         />
 
-        {/* Quick Stats */}
+        {/* Quick Stats - Legacy static reports removed; Generated Reports are on-demand via builder */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <Stat icon={Wheat} color="text-blue-600" bg="bg-blue-50" value={String(guides.length)} label={t.statGuides} />
           <Stat icon={Syringe} color="text-emerald-600" bg="bg-emerald-50" value={String(vaccination.length)} label={t.statVaccines} />
           <Stat icon={FileBarChart} color="text-orange-600" bg="bg-orange-50" value={String(deworming.length)} label={t.statDeworming} />
-          <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value={String(reports.length)} label={t.statReports} />
+          <Stat icon={Stethoscope} color="text-purple-600" bg="bg-purple-50" value="∞" label={t.statReports} />
         </div>
 
-        {/* Project Report Builder CTA */}
+        {/* New Generated Project Report - replaces legacy static ProjectReport */}
         <div className="mt-6">
           <Link href="/farmers/project-report">
             <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-emerald-500/20 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm">
@@ -190,10 +165,11 @@ export default async function FarmersPage({
                 <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
                   <FileBarChart className="h-5 w-5" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-bold">Bank-format Project Report — Rs.2500</p>
-                  <p className="text-xs text-white/85">Goat unit: auto calculations (NPV, BCR, IRR, DSCR), Hindi/English PDF, saved to dashboard.</p>
+                  <p className="text-xs text-white/85">Build goat/sheep/poultry/pig bank DPR on-demand: auto NPV, BCR, IRR, DSCR • Hindi/English PDF • saved to dashboard.</p>
                 </div>
+                <Button variant="secondary" size="sm" className="shrink-0 rounded-full bg-white text-emerald-700 hover:bg-white/90">Build Now →</Button>
               </CardContent>
             </Card>
           </Link>
@@ -220,7 +196,7 @@ export default async function FarmersPage({
                 <NotebookPen className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="font-bold">{t.diTitle}</h3>
+                <h3 className="text-base font-bold">{t.diTitle}</h3>
                 <p className="truncate text-sm text-white/80">{t.diOpenDesc}</p>
               </div>
               <Button variant="secondary" size="sm" className="shrink-0 rounded-full bg-white text-amber-700 hover:bg-white/90">
@@ -257,7 +233,7 @@ export default async function FarmersPage({
           </div>
         </nav>
 
-        {/* Farm guides + project reports (farm-type filtered) */}
+        {/* Farm guides (filtered) — legacy static project reports removed, use Generated Report builder above */}
         <div id="guides-reports" className="scroll-mt-20">
           <div className="flex items-center gap-2 mb-3">
             <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border-emerald-200 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> {t.curated}</Badge>
@@ -265,8 +241,6 @@ export default async function FarmersPage({
           </div>
           <FarmersExplorer
             guides={guides as unknown as Parameters<typeof FarmersExplorer>[0]["guides"]}
-            reports={reports as unknown as Parameters<typeof FarmersExplorer>[0]["reports"]}
-            purchasedIds={purchasedIds}
             vaccination={vaccination as unknown as Parameters<typeof FarmersExplorer>[0]["vaccination"]}
             deworming={deworming as unknown as Parameters<typeof FarmersExplorer>[0]["deworming"]}
           />
@@ -422,7 +396,7 @@ export default async function FarmersPage({
             <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5"><Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> {t.helpBadge}</Badge>
             <h3 className="mt-3 text-2xl font-bold">{t.helpTitle}</h3>
             <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />
-            <p className="mx-auto mt-3 max-w-xl text-white/85">
+            <p className="mx-auto mt-3 max-w-xl text-sm text-white/85">
               {t.helpDesc}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">

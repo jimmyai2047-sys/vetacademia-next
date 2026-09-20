@@ -18,8 +18,8 @@ export default function VetReferenceCollapsible() {
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="font-bold">Clinical Reference Guide</h2>
-              <Badge variant="outline" className="rounded-full text-[10px] gap-1">
+              <h2 className="text-base font-bold">Clinical Reference Guide</h2>
+              <Badge variant="outline" className="rounded-full text-xs gap-1">
                 <ShieldCheck className="h-3 w-3" /> Verified
               </Badge>
             </div>

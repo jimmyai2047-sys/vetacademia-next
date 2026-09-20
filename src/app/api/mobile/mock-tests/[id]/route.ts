@@ -40,9 +40,7 @@ export async function GET(
       id: q.id,
       text: q.text,
       options: parseOptions(q.options),
-      correctAnswer: q.correctAnswer,
       marks: q.marks,
-      explanation: q.explanation,
     }));
 
     return NextResponse.json({

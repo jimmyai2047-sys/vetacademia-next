@@ -4,9 +4,8 @@
 
 import { prisma } from "@/lib/prisma";
 import PlanEditor from "@/components/admin/plan-editor";
-import ReportPriceEditor from "@/components/admin/report-price-editor";
 import PlanCreateForm from "@/components/admin/plan-create-form";
-import { Crown, Sparkles, Shield, CreditCard } from "lucide-react";
+import { Crown, Shield, CreditCard } from "lucide-react";
 
 
 
@@ -22,9 +21,9 @@ export default async function AdminPricingPage() {
   const subjectPlans = plans.filter((p) => p.type === "COURSE" && !!p.subjectId);
   const exams = plans.filter((p) => p.type === "EXAM");
 
-  const reports = await prisma.projectReport.findMany({
-    orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
-  });
+  // Generated Report price is currently REPORT_PRICE=2500 in src/lib/report-input.ts + Setting key `reportPrice` (if set)
+  const reportPriceSetting = await prisma.setting.findUnique({ where: { key: "reportPrice" } }).catch(() => null);
+  const reportPrice = reportPriceSetting?.value ?? "2500";
 
   return (
       <div className="space-y-8">
@@ -49,6 +48,22 @@ export default async function AdminPricingPage() {
             </div>
           </div>
         </div>
+
+        {/* Re-included for Project Report Development: Generated Report Price (replaces legacy per-farmType editor) */}
+        <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-emerald-500/20 bg-white shadow-sm p-5">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600" />
+          <h2 className="text-lg font-semibold mb-1 flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100"><CreditCard className="h-4 w-4 text-emerald-700" /></span>
+            Bank-Format Project Reports (Generated Reports)
+          </h2>
+          <p className="text-sm text-muted-foreground mb-3">On-demand DPR builder — GOAT / SHEEP / PIG / POULTRY (Broiler/Layer) / DAIRY (Cattle/Buffalo). Preview DRAFT (watermark) → Razorpay → finalize private Blob.</p>
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-emerald-50/60 px-4 py-3">
+            <span className="text-sm font-medium">Current price:</span>
+            <span className="text-lg font-bold text-emerald-700">Rs. {reportPrice}</span>
+            <span className="text-xs text-muted-foreground">/ report ( infirmary 6-yr NPV/BCR/IRR/DSCR ). Change via <code className="bg-white px-1.5 py-0.5 rounded border">Setting</code> key <code className="bg-white px-1.5 py-0.5 rounded border">reportPrice</code> → <code className="bg-white px-1.5 py-0.5 rounded border">REPORT_PRICE</code> in <code className="bg-white px-1.5 py-0.5 rounded border">report-input.ts</code></span>
+            <span className="ml-auto text-xs text-muted-foreground">Builder: <a href="/farmers/project-report" className="underline">/farmers/project-report</a> • Admin view: Animal Owner Content → Generated Reports tab</span>
+          </div>
+        </section>
 
         <PlanCreateForm />
 
@@ -140,40 +155,7 @@ export default async function AdminPricingPage() {
         </div>
       </section>
 
-      <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4a843] via-primary to-[#003d2e]" />
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#d4a843]/15 border border-[#d4a843]/20">
-            <Sparkles className="h-4 w-4 text-[#9a7b2e]" />
-          </span>
-          Animal Owner Project Reports
-        </h2>
-        <p className="text-sm text-muted-foreground mb-3">
-          Set the unlock price (INR) for each project report shown on the Animal
-          Owner page. Saving updates the price immediately.
-        </p>
-        {reports.length === 0 ? (
-          <p className="text-sm text-muted-foreground rounded-xl border border-dashed border-primary/10 bg-muted/20 px-4 py-6 text-center">
-            No project reports yet. Add them from the Animal Owner Content page.
-          </p>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {reports.map((r) => (
-              <ReportPriceEditor
-                key={r.id}
-                report={{
-                  id: r.id,
-                  title: r.title,
-                  farmType: r.farmType,
-                  price: r.price,
-                  published: r.published,
-                  order: r.order,
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+
     </div>
   );
 }

@@ -11,7 +11,7 @@ import FarmersAdminClient, { type FarmItem } from "@/components/admin/farmers-ad
 export const dynamic = "force-dynamic";
 
 export default async function AdminFarmersPage() {
-  const [guides, vaccination, deworming, reports, schemes] = await Promise.all([
+  const [guides, vaccination, deworming, schemes, generatedReports] = await Promise.all([
     prisma.farmGuide.findMany({
       orderBy: [{ category: "asc" }, { order: "asc" }, { createdAt: "desc" }],
     }),
@@ -21,11 +21,14 @@ export default async function AdminFarmersPage() {
     prisma.dewormingSchedule.findMany({
       orderBy: [{ order: "asc" }, { animal: "asc" }],
     }),
-    prisma.projectReport.findMany({
-      orderBy: [{ farmType: "asc" }, { order: "asc" }, { createdAt: "desc" }],
-    }),
     prisma.govtScheme.findMany({
       orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+    }),
+    // New GeneratedReport system — replaces legacy ProjectReport. Admin overview of bank-format DPRs.
+    prisma.generatedReport.findMany({
+      orderBy: [{ createdAt: "desc" }],
+      take: 100,
+      include: { user: { select: { email: true, name: true } } },
     }),
   ]);
 
@@ -52,7 +55,7 @@ export default async function AdminFarmersPage() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Animal Owner Content</h1>
             <p className="text-white/70 text-sm flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage farm guides, vaccination & deworming schedules, paid project reports and govt schemes
+              <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> Manage farm guides, vaccination & deworming schedules and govt schemes — project reports are now bank-format Generated Reports
             </p>
           </div>
         </div>
@@ -62,8 +65,8 @@ export default async function AdminFarmersPage() {
         guides={guides as unknown as FarmItem[]}
         vaccination={vaccination as unknown as FarmItem[]}
         deworming={deworming as unknown as FarmItem[]}
-        reports={reports as unknown as FarmItem[]}
         schemes={schemes as unknown as FarmItem[]}
+        generatedReports={generatedReports as unknown as FarmItem[]}
       />
     </div>
   );

@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: "Which payment methods are supported?",
-    a: "We support secure online payments. Subscriptions can be purchased for a full programme, a single year, or an individual subject.",
+    a: "We support secure online payments (UPI, Card, NetBanking via Razorpay). Subscriptions can be purchased for a full programme, a single year, or an individual subject.",
   },
   {
     q: "How do I reset my password?",
@@ -37,6 +37,34 @@ const faqs = [
   {
     q: "Is there content in Hindi?",
     a: "The A.H.D.P. syllabus and Livestock Assistant exam preparation are available bilingually (Hindi with English). Other programmes are in English.",
+  },
+  {
+    q: "Is VetAcademia free to use?",
+    a: "Yes, you can explore free demo content — sample notes, mock tests, PYQs and flashcards. Full access requires a paid subscription (programme/year/subject wise). Visit /pricing for plans.",
+  },
+  {
+    q: "How do I prepare for RUVAS / RAJUVAS / ICAR exams?",
+    a: "Go to Examinations → select your exam (e.g. Livestock Assistant, Veterinary Officer, ICAR AIEEA) → get syllabus, PYQs, mock tests and live classes mapped to that exam.",
+  },
+  {
+    q: "Can I access content on mobile?",
+    a: "Yes, VetAcademia is fully responsive — mobile, tablet and desktop. You can study 24/7, download PDFs, and attempt tests on any device.",
+  },
+  {
+    q: "What is the refund / cancellation policy?",
+    a: "Subscriptions are non-refundable once activated, but if you face a technical issue, contact support within 7 days at Contact Us — we will review and resolve quickly. See Terms for details.",
+  },
+  {
+    q: "How do I get my certificate after completing a course?",
+    a: "Certificates are auto-generated after you complete the required modules/tests. Download them from Dashboard → My Certificates.",
+  },
+  {
+    q: "I am a farmer — is there content for me?",
+    a: "Yes! Visit the Farmers section for animal health, breeding, nutrition and disease management guides in simple language — plus direct expert consultation.",
+  },
+  {
+    q: "How do I contact support quickly?",
+    a: "Use Contact Us, WhatsApp/Telegram links in the footer, or email us. We typically reply within 24 hours on working days.",
   },
 ];
 

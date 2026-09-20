@@ -364,25 +364,6 @@ model DewormingSchedule {
   updatedAt DateTime @updatedAt
 }
 
-// Paid project reports. A teaser/demo is visible to everyone; the full
-// report is unlocked after the farmer pays (test mode until Razorpay live).
-model ProjectReport {
-  id          String   @id @default(cuid())
-  title       String
-  farmType    String // SCIENTIFIC | DAIRY | GOAT | SHEEP | POULTRY | PIG
-  summary     String? // short teaser shown to all
-  demoContent String? // visible free (sample section)
-  fullContent String? // unlocked after payment
-  price       Int      @default(99) // INR
-  published   Boolean  @default(true)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([farmType])
-  @@index([published])
-}
-
 // ==================== VISITOR STATS ====================
 
 model SiteVisit {
@@ -688,19 +669,18 @@ model Plan {
 // ==================== PAYMENTS ====================
 
 model Payment {
-  id          String    @id @default(cuid())
-  userId      String
-  amount      Int
-  currency    String    @default("INR")
-  status      String    @default("PENDING") // PENDING | PAID | FAILED | CANCELLED
-  method      String?   // TEST | RAZORPAY
-  orderId     String?
-  paymentId   String?
-  planSlug    String?
-  projectReportId String?
-  metadata    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  currency  String   @default("INR")
+  status    String   @default("PENDING") // PENDING | PAID | FAILED | CANCELLED
+  method    String? // TEST | RAZORPAY
+  orderId   String?
+  paymentId String?
+  planSlug  String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan Plan? @relation(fields: [planSlug], references: [slug], onDelete: SetNull)
@@ -708,7 +688,6 @@ model Payment {
   @@index([userId])
   @@index([orderId])
   @@index([planSlug])
-  @@index([projectReportId])
 }
 
 // ==================== GENERATED PROJECT REPORTS (farmer report builder) ====================

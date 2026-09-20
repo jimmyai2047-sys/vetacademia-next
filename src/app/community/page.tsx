@@ -26,21 +26,36 @@ function refLabel(category: string, ref: string) {
 export const dynamic = "force-dynamic";
 
 export default async function CommunityPage() {
-  const links = await prisma.communityLink.findMany({
-    where: { active: true },
-    orderBy: [{ category: "asc" }, { ref: "asc" }, { platform: "asc" }],
-  });
+  let links: Awaited<ReturnType<typeof prisma.communityLink.findMany>> = [];
+  let doubts: Awaited<ReturnType<typeof prisma.doubt.findMany>> = [];
+  let doubtCount = 0;
+  let answeredCount = 0;
+  try {
+    links = await prisma.communityLink.findMany({
+      where: { active: true },
+      orderBy: [{ category: "asc" }, { ref: "asc" }, { platform: "asc" }],
+    });
 
-  const session = await getServerSession(authOptions);
-  const [doubts, doubtCount, answeredCount] = await Promise.all([
-    prisma.doubt.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 30,
-      include: { user: { select: { name: true } } },
-    }),
-    prisma.doubt.count(),
-    prisma.doubt.count({ where: { status: "ANSWERED" } }),
-  ]);
+    const [doubtsRes, doubtCountRes, answeredCountRes] = await Promise.all([
+      prisma.doubt.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 30,
+        include: { user: { select: { name: true } } },
+      }),
+      prisma.doubt.count(),
+      prisma.doubt.count({ where: { status: "ANSWERED" } }),
+    ]);
+    doubts = doubtsRes;
+    doubtCount = doubtCountRes;
+    answeredCount = answeredCountRes;
+  } catch {
+    links = [];
+    doubts = [];
+    doubtCount = 0;
+    answeredCount = 0;
+  }
+
+  const session = await getServerSession(authOptions).catch(() => null);
   const solvedPct = doubtCount > 0 ? Math.round((answeredCount / doubtCount) * 100) : 0;
 
   // Group by category -> (title+ref) to handle duplicate refs like PSC with two titles

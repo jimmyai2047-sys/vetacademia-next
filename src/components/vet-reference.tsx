@@ -62,7 +62,7 @@ export default function VetReference() {
             <Stethoscope className="h-8 w-8" />
             <h1 className="text-3xl font-bold">Veterinary Reference Guide</h1>
           </div>
-          <p className="text-white/90 max-w-2xl">
+          <p className="text-sm text-white/90 max-w-2xl">
             Quick reference for normal physiological parameters and blood profiles of domestic animals.
             Essential for clinical diagnosis and health assessment.
           </p>
@@ -107,7 +107,7 @@ export default function VetReference() {
             <span className="text-5xl">{animal.icon}</span>
             <div>
               <h2 className="text-2xl font-bold">{animal.name}</h2>
-              <p className="text-muted-foreground">{animal.hindiName} | {animal.scientificName}</p>
+              <p className="text-sm text-muted-foreground">{animal.hindiName} | {animal.scientificName}</p>
               <div className="flex flex-wrap gap-4 mt-2 text-sm">
                 <Badge variant="outline">Body Weight: {animal.bodyWeight}</Badge>
                 <Badge variant="outline">Lifespan: {animal.lifespan}</Badge>
@@ -205,11 +205,11 @@ export default function VetReference() {
         {/* Hematology */}
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-[15px]">Hematology Parameters</CardTitle>
+            <CardTitle className="text-base">Hematology Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-[13px]">
+              <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left px-2.5 py-2 font-medium">Parameter</th>
@@ -241,11 +241,11 @@ export default function VetReference() {
         {/* Differential Count */}
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-[15px]">Differential Leukocyte Count</CardTitle>
+            <CardTitle className="text-base">Differential Leukocyte Count</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-[13px]">
+              <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left px-2.5 py-2 font-medium">Cell Type</th>
@@ -274,11 +274,11 @@ export default function VetReference() {
         {/* Biochemistry */}
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-[15px]">Biochemistry Parameters</CardTitle>
+            <CardTitle className="text-base">Biochemistry Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-[13px]">
+              <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left px-2.5 py-2 font-medium">Parameter</th>

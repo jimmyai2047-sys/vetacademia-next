@@ -123,24 +123,17 @@ export default async function BlogPage() {
                     <Card className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl hover:border-primary/10 transition-all">
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div
-                        className={`relative h-32 bg-gradient-to-br ${
+                        className={`relative h-44 overflow-hidden bg-gradient-to-br ${
                           gradients[i % gradients.length]
                         }`}
                       >
-                        {p.coverImageUrl ? (
-                          <Image
-                            src={p.coverImageUrl}
-                            alt={p.title}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover group-hover:scale-[1.04] transition-transform duration-700"
-                            unoptimized
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center">
-                            <Newspaper className="h-10 w-10 text-white/80" />
-                          </div>
-                        )}
+                        <Image
+                          src={p.coverImageUrl || "/images/bvsc.webp"}
+                          alt={p.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-[1.04] transition-transform duration-700"
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                         {tags[0] && (
                           <Badge className="absolute top-3 left-3 rounded-full bg-white/95 backdrop-blur text-primary hover:bg-white border-0 shadow-md">

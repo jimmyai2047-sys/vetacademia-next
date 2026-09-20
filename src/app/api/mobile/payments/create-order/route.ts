@@ -3,6 +3,7 @@ import Razorpay from "razorpay";
 import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 import { isRazorpayLive } from "@/lib/razorpay-config";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const keyId = process.env.RAZORPAY_KEY_ID;
 const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -12,6 +13,13 @@ export async function POST(req: Request) {
     const userId = verifyToken(req);
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await rateLimit(`mobile-pay:${clientIp(req)}`, 20, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
     if (!isRazorpayLive())
       return NextResponse.json(
         { error: "Online payments are not configured" },

@@ -20,59 +20,64 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!validateCsrf(req)) {
-    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
-  }
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const body = await req.json().catch(() => ({}));
-  const subjectId = String(body.subjectId || "");
-  const progress = Number(body.progress ?? 0);
-  if (!subjectId) {
-    return NextResponse.json({ error: "subjectId required" }, { status: 400 });
-  }
-  // "flashcards" is a synthetic subjectId for the flashcards deck — it has no
-  // Subject row, so the FK would fail. Auto-create a placeholder Subject once.
-  if (subjectId === "flashcards") {
-    const existing = await prisma.subject.findUnique({ where: { id: "flashcards" } });
-    if (!existing) {
-      const prog = await prisma.programme.findFirst({ select: { id: true } });
-      if (prog) {
-        try {
-          await prisma.subject.create({
-            data: {
-              id: "flashcards",
-              name: "Flashcards",
-              code: "FLASH-001",
-              programmeId: prog.id,
-            },
-          });
-        } catch (e: unknown) {
-          // P2002 race: another request created it concurrently — ignore
-          if (
-            typeof e === "object" &&
-            e !== null &&
-            "code" in e &&
-            (e as { code?: string }).code !== "P2002"
-          ) {
-            throw e;
+  try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const body = await req.json().catch(() => ({}));
+    const subjectId = String(body.subjectId || "");
+    const progress = Number(body.progress ?? 0);
+    if (!subjectId) {
+      return NextResponse.json({ error: "subjectId required" }, { status: 400 });
+    }
+    // "flashcards" is a synthetic subjectId for the flashcards deck — it has no
+    // Subject row, so the FK would fail. Auto-create a placeholder Subject once.
+    if (subjectId === "flashcards") {
+      const existing = await prisma.subject.findUnique({ where: { id: "flashcards" } });
+      if (!existing) {
+        const prog = await prisma.programme.findFirst({ select: { id: true } });
+        if (prog) {
+          try {
+            await prisma.subject.create({
+              data: {
+                id: "flashcards",
+                name: "Flashcards",
+                code: "FLASH-001",
+                programmeId: prog.id,
+              },
+            });
+          } catch (e: unknown) {
+            // P2002 race: another request created it concurrently — ignore
+            if (
+              typeof e === "object" &&
+              e !== null &&
+              "code" in e &&
+              (e as { code?: string }).code !== "P2002"
+            ) {
+              throw e;
+            }
           }
         }
       }
     }
-  }
 
-  await prisma.userProgress.upsert({
-    where: { userId_subjectId: { userId: session.user.id, subjectId } },
-    create: {
-      userId: session.user.id,
-      subjectId,
-      progress,
-      lastAccessed: new Date(),
-    },
-    update: { progress, lastAccessed: new Date() },
-  });
-  return NextResponse.json({ ok: true });
+    await prisma.userProgress.upsert({
+      where: { userId_subjectId: { userId: session.user.id, subjectId } },
+      create: {
+        userId: session.user.id,
+        subjectId,
+        progress,
+        lastAccessed: new Date(),
+      },
+      update: { progress, lastAccessed: new Date() },
+    });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Progress POST error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

@@ -84,7 +84,7 @@ export default function VetInteractionChecker() {
             <CheckCircle className="h-5 w-5 text-emerald-600" /> No major interaction on record — still verify with formulary.
           </div>
         )}
-        <p className="text-[10px] text-muted-foreground">8 major interactions indexed. More added weekly.</p>
+        <p className="text-xs text-muted-foreground">8 major interactions indexed. More added weekly.</p>
       </CardContent>
     </Card>
   );

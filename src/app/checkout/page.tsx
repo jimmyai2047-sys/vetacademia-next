@@ -18,89 +18,21 @@ export const dynamic = "force-dynamic";
 export default async function CheckoutPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string; report?: string }>;
+  searchParams: Promise<{ plan?: string }>;
 }) {
-  const { plan: slug, report: reportId } = await searchParams;
+  const { plan: slug } = await searchParams;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     redirect(
       `/login?redirect=${encodeURIComponent(
-        slug
-          ? `/checkout?plan=${slug}`
-          : reportId
-          ? `/checkout?report=${reportId}`
-          : "/checkout"
+        slug ? `/checkout?plan=${slug}` : "/checkout"
       )}`
     );
   }
-  if (!slug && !reportId) notFound();
+  if (!slug) notFound();
 
-  // --- Project report checkout ---
-  if (reportId) {
-    const report = await prisma.projectReport.findUnique({
-      where: { id: reportId },
-    });
-    if (!report || !report.published) notFound();
-
-    const existing = await prisma.payment.findFirst({
-      where: {
-        userId: session.user.id,
-        projectReportId: reportId,
-        status: "PAID",
-      },
-    });
-
-    return (
-      <div className="container mx-auto px-4 py-10 max-w-lg">
-        <Link
-          href="/farmers"
-          className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1 mb-6"
-        >
-          &larr; Back to Farmers
-        </Link>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Unlock Project Report</CardTitle>
-            <CardDescription>
-              You are purchasing the report below.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/40">
-              <div>
-                <div className="font-semibold">{report.title}</div>
-                <div className="text-sm text-muted-foreground">
-                  Project Report
-                </div>
-              </div>
-              <Badge variant="secondary">
-                Rs.{report.price.toLocaleString("en-IN")}
-              </Badge>
-            </div>
-
-            {existing ? (
-              <p className="text-sm text-emerald-600 font-medium text-center">
-                You have already unlocked this report.
-              </p>
-            ) : (
-              <CheckoutButton
-                reportId={report.id}
-                amount={report.price}
-                alreadyUnlocked={false}
-              />
-            )}
-
-            <p className="text-xs text-muted-foreground text-center">
-              By purchasing you agree to the terms of use. The full report
-              unlocks on your account immediately.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Legacy static ProjectReport checkout removed — new GeneratedReport lives at /farmers/project-report
 
   // --- Plan checkout ---
   const plan = await prisma.plan.findUnique({ where: { slug } });

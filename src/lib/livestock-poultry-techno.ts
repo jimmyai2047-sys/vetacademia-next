@@ -1,0 +1,11 @@
+// Auto-generated from Livestock_Breed_Master 01.xlsx (Poultry Techno-Defaults).
+export interface PoultryTechno {
+  category: string; breedStrain: string; pointOfLayMarketAge: string; marketWeight: string; fcr: string; feedStarter: string; feedGrower: string; feedFinisher: string; eggsPerYear: string; eggWeight: string; peakPct: string; layingCycle: string; hatchability: string; mortBrooding: string; mortGrower: string; spaceBrooding: string; spaceGrower: string; waterMl: string; manureG: string;
+}
+export const POULTRY_TECHNO: PoultryTechno[] = [
+  { category: 'Broiler', breedStrain: 'Commercial Broiler (Cobb 400/Vencobb, Hubbard type)', pointOfLayMarketAge: '35-42 days (market age)', marketWeight: '1.8-2.2 kg', fcr: '1.6-1.8', feedStarter: '15-40 g (0-10 days, rising)', feedGrower: '60-90 g (11-24 days)', feedFinisher: '110-150 g (25-42 days)', eggsPerYear: 'Not applicable', eggWeight: 'Not applicable', peakPct: 'Not applicable', layingCycle: 'Not applicable', hatchability: 'Not applicable', mortBrooding: '3-5% (0-2 weeks)', mortGrower: '2-4% (grower-finisher)', spaceBrooding: '0.5 sq.ft/bird (0-2 weeks)', spaceGrower: '1.0-1.2 sq.ft/bird', waterMl: '150-300 ml (rising with age)', manureG: '60-80 g' },
+  { category: 'Layer', breedStrain: 'White Leghorn / commercial layer hybrid (e.g., BV-300 type)', pointOfLayMarketAge: '140-150 days (~20-22 weeks, point of lay)', marketWeight: '1.4-1.6 kg', fcr: '2.0-2.2 (kg feed/kg egg mass)', feedStarter: '25-40 g (0-8 weeks)', feedGrower: '60-80 g (9-20 weeks)', feedFinisher: '110-120 g (post 20 weeks, layer ration)', eggsPerYear: '280-300+ eggs/year', eggWeight: '55-60 g', peakPct: '90-95% (at 28-32 weeks)', layingCycle: '72-80 weeks total (52-72 weeks laying)', hatchability: '80-85%', mortBrooding: '3-5% (chick/grower)', mortGrower: '5-8% (annual, laying period)', spaceBrooding: '0.3-0.4 sq.ft/bird', spaceGrower: '0.8-1.0 sq.ft/bird (cage); 2.0-2.5 sq.ft/bird (deep litter)', waterMl: '200-250 ml', manureG: '120-150 g' },
+ ];
+export function poultryTechnoOf(category: string): PoultryTechno | undefined {
+  return POULTRY_TECHNO.find(function (t) { return t.category === category; });
+}

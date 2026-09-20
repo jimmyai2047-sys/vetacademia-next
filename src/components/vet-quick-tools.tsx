@@ -110,11 +110,11 @@ export default function VetQuickTools() {
                 <div className="text-lg font-extrabold text-emerald-900">
                   {wt ? `${totalMg.toFixed(1)} mg` : "—"} <span className="text-sm font-normal text-emerald-700">/ {totalMl.toFixed(2)} mL</span>
                 </div>
-                <div className="text-[10px] text-emerald-600">{selectedDrug.conc} • {selectedDrug.dose} {selectedDrug.unit}</div>
+                <div className="text-xs text-emerald-600">{selectedDrug.conc} • {selectedDrug.dose} {selectedDrug.unit}</div>
               </div>
               <Syringe className="h-8 w-8 text-emerald-300" />
             </div>
-            <p className="text-[10px] text-muted-foreground">* Verify with formulary. Adjust for species & condition.</p>
+            <p className="text-xs text-muted-foreground">* Verify with formulary. Adjust for species & condition.</p>
           </CardContent>
         </Card>
 
@@ -133,7 +133,7 @@ export default function VetQuickTools() {
                     <li key={i}>{s}</li>
                   ))}
                 </ol>
-                <Badge variant="outline" className="mt-2 w-full justify-center rounded-full text-[10px] gap-1">
+                <Badge variant="outline" className="mt-2 w-full justify-center rounded-full text-xs gap-1">
                   <Clock className="h-3 w-3" /> 1-min protocol
                 </Badge>
               </CardContent>
@@ -184,7 +184,7 @@ export default function VetQuickTools() {
                 </tbody>
               </table>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
               <Droplets className="h-3 w-3" /> Full reference in Clinical Guide below
             </p>
           </CardContent>

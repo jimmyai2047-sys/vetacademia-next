@@ -1,13 +1,17 @@
 import { del } from "@vercel/blob";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { validateCsrf } from "@/lib/csrf";
 
 export async function DELETE(
-  _req: Request,
+  req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
     const session = await getAdminSession();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

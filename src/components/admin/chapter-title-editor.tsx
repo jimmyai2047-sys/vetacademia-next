@@ -18,6 +18,7 @@ export default function ChapterTitleEditor({
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function save() {
     const trimmed = title.trim();
@@ -27,6 +28,7 @@ export default function ChapterTitleEditor({
     }
     setSaving(true);
     setSaved(false);
+    setError(null);
     try {
       const res = await fetch(`/api/admin/chapter/${chapterId}`, {
         method: "PATCH",
@@ -37,7 +39,12 @@ export default function ChapterTitleEditor({
         setSaved(true);
         setEditing(false);
         setTimeout(() => setSaved(false), 2000);
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Failed to save");
       }
+    } catch {
+      setError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -103,6 +110,7 @@ export default function ChapterTitleEditor({
       >
         Cancel
       </Button>
+      {error && <span className="text-xs text-red-600">{error}</span>}
     </div>
   );
 }

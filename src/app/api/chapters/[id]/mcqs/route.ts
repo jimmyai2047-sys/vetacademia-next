@@ -24,8 +24,6 @@ export async function GET(
         id: true,
         question: true,
         options: true,
-        correctIndex: true,
-        explanation: true,
         marks: true,
         difficulty: true,
       },
@@ -34,8 +32,6 @@ export async function GET(
       id: m.id,
       question: m.question,
       options: parseOptions(m.options),
-      correctIndex: m.correctIndex,
-      explanation: m.explanation,
       marks: m.marks,
       difficulty: m.difficulty,
     }));

@@ -898,7 +898,7 @@ export default async function HomePage() {
                         {p.title}
                       </h3>
                       <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold">{p.author.slice(0,2).toUpperCase()}</span>
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold">{(p.author ?? "?").slice(0,2).toUpperCase()}</span>
                         <span className="truncate font-medium">{p.author}</span>
                         <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                         <span>{new Date(p.publishedAt).toLocaleDateString("en-IN", { dateStyle: "medium" })}</span>

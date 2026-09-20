@@ -24,7 +24,7 @@ export async function getPublishedPosts(
       ...(subjectSlug ? { examSubjectSlug: subjectSlug } : {}),
     },
     orderBy: { createdAt: "desc" },
-  });
+  }).catch(() => []);
   return Promise.all(
     posts.map(async (p) => ({
       id: p.id,

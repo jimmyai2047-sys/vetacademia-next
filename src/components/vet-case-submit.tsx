@@ -28,7 +28,7 @@ export default function VetCaseSubmit() {
       <Card className="rounded-[1.25rem] border-emerald-200 bg-emerald-50">
         <CardContent className="p-6 text-center">
           <CheckCircle className="h-10 w-10 text-emerald-600 mx-auto" />
-          <p className="font-semibold mt-2">Case submitted!</p>
+          <p className="text-sm font-semibold mt-2">Case submitted!</p>
           <p className="text-sm text-muted-foreground">Expert 24h me review karke aapko reply karega. Email pe notification aayega.</p>
         </CardContent>
       </Card>
@@ -79,7 +79,7 @@ export default function VetCaseSubmit() {
               <Upload className="h-3.5 w-3.5" /> Photos (optional)
             </Label>
             <Input type="file" accept="image/*" multiple className="rounded-xl" />
-            <p className="text-[10px] text-muted-foreground">Max 3 photos, 5MB each</p>
+            <p className="text-xs text-muted-foreground">Max 3 photos, 5MB each</p>
           </div>
           <Button type="submit" disabled={loading} className="w-full rounded-xl gap-2">
             {loading ? "Submitting..." : "Submit Case"}

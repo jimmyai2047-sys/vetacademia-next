@@ -14,7 +14,7 @@ export default function FarmStickyHelpline() {
           <Phone className="h-4 w-4" />
           <div>
             <div className="text-sm font-bold">{t.stickyTitle}</div>
-            <div className="text-[11px] text-white/80">{t.stickySub}</div>
+            <div className="text-xs text-white/80">{t.stickySub}</div>
           </div>
         </div>
         <div className="flex gap-2">
