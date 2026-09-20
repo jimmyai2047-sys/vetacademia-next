@@ -58,7 +58,7 @@ export function processingCosts(input: ProcessingProjectInput) {
   ];
   return {
     annualCapacityKg,
-    productKg,
+    productKg: Math.round(productKg),
     capitalTotal: Math.round(capitalTotal),
     workingTotal: Math.round(workingTotal),
     insuranceAmount: Math.round(insuranceAmount),
@@ -66,7 +66,6 @@ export function processingCosts(input: ProcessingProjectInput) {
     workingLines,
     rawMaterialCost: Math.round(rawMaterialCost),
     productIncome: Math.round(productIncome),
-    productKg: Math.round(productKg),
   };
 }
 

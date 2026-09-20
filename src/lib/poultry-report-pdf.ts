@@ -639,8 +639,10 @@ export async function buildPoultryReport(input: PoultryReportInput): Promise<Uin
   };
   const costs = poultryCosts(rates);
   const fin = poultryFinance(rates);
+  const flock = costs.flock;
+  const f1 = flock[0];
   const appr = appraise({ totalCost: fin.totalCost, totalIncome: fin.totalIncome });
-  const years = rates.years;
+  const years = (rates as any).years ?? 6;
   const yrCols = ["I Year", "II Year", "III Year", "IV Year", "V Year", "VI Year"].slice(0, years);
 
   // ---------- COVER ----------
@@ -810,11 +812,7 @@ export async function buildPoultryReport(input: PoultryReportInput): Promise<Uin
   ], [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
-  const ewesN = (rates as any).batchSize;
-  const ramsN = (rates as any).batchesPerYear || 1;
-  const totA = costs.totalAnimals;
-  const lambN = f1.aliveLambsM + f1.aliveLambsF;
-  const sickN = Math.round(totA * 0.1);
+  // poultry vars
 
   // DPR details — poultry broiler/layer
   const isBroilerDPR = (rates as any).poultryType === 'BROILER' || (rates as any).poultryType == null;
@@ -871,57 +869,52 @@ const techRowsKeep: string[][] = [
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('expenditureNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity'], [
-    ['1', 'Space per ram', 'Sq.ft', '20'],
-    ['2', 'Space per ewe', 'Sq.ft', '10'],
-    ['3', 'Space for lambs', 'Sq.ft', '4'],
-    ['4', 'Space for sick animals', 'Sq.ft', '20'],
-    ['5', 'Construction of shed', 'Rs./Sq. ft.', String(rates.constructionRate)],
-    ['6', 'Cost of each ewe with transport', 'Rs./Ewe', String(rates.eweCost)],
-    ['7', 'Cost of each ram with transport', 'Rs./Ram', String(rates.ramCost)],
-    ['8', 'Semi-skilled labour', 'Numbers', String(rates.labourCount)],
-    ['9', 'Wages per labour per month', 'Rs.', String(rates.labourWagePerMonth)],
-    ['10', 'Feeding Equipments', 'Rs./Equipment', String(rates.feedingEquipmentRate)],
-    ['11', 'Chaff cutter', 'Rs./machine', String(rates.chaffCutterCost)],
-    ['12', 'Concentrate adult per month', 'Kg (@250g/day)', '7.5'],
-    ['13', 'Concentrate lambs per month', 'Kg (@150g/day)', '4.5'],
-    ['14', 'Concentrate rate per Kg', 'Rs.', String(rates.concentrateRate)],
-    ['15', 'Health expenditure per animal/year', 'Rs.', String(rates.vetRatePerAnimal)],
-    ['16', 'Electric and Water per head/year', 'Rs.', String(rates.utilityRatePerAnimal)],
-    ['17', 'Fodder cultivation per acre/season', 'Rs./Acre/Season', String(rates.fodderCostPerAcre)],
-    ['18', 'Misc Expenditure', 'Rs/Animal/Year', String(rates.miscRatePerAnimal)],
-    ['19', 'Insurance of animals', '%', String(rates.insurancePct)],
-    ['20', 'Interest for bank loan', '%', String(rates.interestPct)],
-    ['21', 'Margin Money (own share)', '%', String(rates.ownPct)],
+    ['1', 'Shed area per bird (Broiler/Layer)', 'Sq.ft', (rates as any).poultryType === 'LAYER' ? '2.0' : '1.0'],
+    ['2', 'Construction of shed', 'Rs./Sq. ft.', String((rates as any).constructionRate)],
+    ['3', 'Day-old chick / pullet cost', 'Rs/Bird', String((rates as any).poultryType === 'LAYER' ? (rates as any).pulletCost : (rates as any).chickCost)],
+    ['4', 'Feed per bird (Broiler/Layer)', 'Kg', String((rates as any).feedPerBirdKg)],
+    ['5', 'Feed cost', 'Rs/Kg', String((rates as any).feedCostPerKg)],
+    ['6', 'Semi-skilled labour', 'Numbers', String((rates as any).labourCount)],
+    ['7', 'Wages per labour per month', 'Rs.', String((rates as any).labourWagePerMonth)],
+    ['8', 'Vet aid per bird', 'Rs.', String((rates as any).vetRatePerBird)],
+    ['9', 'Electricity/water per bird', 'Rs.', String((rates as any).utilityPerBird)],
+    ['10', 'Misc per bird', 'Rs.', String((rates as any).miscPerBird)],
+    ['11', 'Batch size', 'Birds', String((rates as any).batchSize)],
+    ['12', 'Batches per year', 'Numbers', String((rates as any).batchesPerYear)],
+    ['13', 'Mortality', '%', String((rates as any).mortalityPct)],
+    ['14', 'Sale weight per bird', 'Kg', String((rates as any).saleWeightKg)],
+    ['15', 'Sale rate', 'Rs/Kg', String((rates as any).saleRatePerKg)],
+    ['16', 'Insurance', '%', String((rates as any).insurancePct)],
+    ['17', 'Interest for bank loan', '%', String((rates as any).interestPct)],
+    ['18', 'Margin Money (own share)', '%', String((rates as any).ownPct)],
   ], [40, 250, 100, 115], 9);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('incomeNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity', 'Rs./Unit'], [
-    ['1', 'Sale price of Rams (12 month)', 'Rs./Ram', '1', String(rates.maleLambPrice)],
-    ['2', 'Sale price of Ewes (12 month)', 'Rs./Ewe', '1', String(rates.femaleLambPrice)],
-    ['3', 'Sale price of manure', 'Rs./tonne', String(Math.round(costs.manureTonnes * 1000) / 1000), String(rates.manureRatePerTonne)],
-    ['4', 'Gunny Bags (50 Kg Concentrate)', 'Rs./Bag', '50', String(rates.gunnyRatePerBag)],
+    ['1', 'Sale of broiler (per bird)', 'Rs/bird', '1', String(Math.round(((rates as any).saleWeightKg * (rates as any).saleRatePerKg)))],
+    ['2', 'Sale of eggs (per egg)', 'Rs/egg', '1', String((rates as any).eggRate ?? 0)],
+    ['3', 'Spent hen sale', 'Rs/bird', '1', String(Math.round(((rates as any).spentHenWeightKg * (rates as any).spentHenRatePerKg)))],
+    ['4', 'Manure (poultry litter)', 'Rs./tonne', '1', '1500'],
   ], [40, 220, 80, 80, 85], 9);
   ctx.sectionTitle('totalCostTitle', 16);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('capitalCost'));
-  const capUnits = ['Rs./Ewe', 'Rs./Ram', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Rs./Equipment', 'Rs./machine', '% of animal cost', 'Rs./Animal'];
-  const capRows = costs.capitalLines.map(function (l, idx) {
-    return [String(idx + 1), l.label, capUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
+  const capRowsP = costs.capitalLines.map(function (l, idx) {
+    return [String(idx + 1), l.label, idx === 0 ? 'Rs/Bird' : idx === 1 ? 'Rs/Sq.ft' : 'Rs/Bird', fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });
-  capRows.push(['', 'Total of capital cost', '', '', '', fmt(costs.capitalTotal)]);
-  ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], capRows, [35, 205, 75, 60, 60, 70], 8.5);
+  capRowsP.push(['', 'Total of capital cost', '', '', '', fmt(costs.capitalTotal)]);
+  ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], capRowsP, [35, 205, 75, 60, 60, 70], 8.5);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('workingCapital'));
-  const workUnits = ['Rs./Acre/Season', 'Kg (@250g/day)', 'Kg (@150g/day)', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year'];
-  const workRows = costs.workingLines.map(function (l, idx) {
-    return [String(idx + 1), l.label, workUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
+  const workRowsP = costs.workingLines.map(function (l, idx) {
+    return [String(idx + 1), l.label, idx === 0 ? 'Rs/Bird' : idx === 1 ? 'Rs/Kg' : 'Rs/Month', fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });
-  workRows.push(['', 'Total Cost', '', '', '', fmt(costs.workingTotal)]);
-  workRows.push(['', 'Total Cost of the project (Capital + Working)', '', '', '', fmt(costs.capitalTotal + costs.workingTotal)]);
-  ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], workRows, [35, 205, 75, 60, 60, 70], 8.5);
+  workRowsP.push(['', 'Total Cost', '', '', '', fmt(costs.workingTotal)]);
+  workRowsP.push(['', 'Total Cost of the project (Capital + Working)', '', '', '', fmt(costs.capitalTotal + costs.workingTotal)]);
+  ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], workRowsP, [35, 205, 75, 60, 60, 70], 8.5);
 
   ctx.sectionTitle('meansOfFinance', 16);
-  const bankPct = 100 - rates.ownPct - rates.subsidyPct;
+  const bankPct = 100 - ((rates as any).ownPct ?? 10) - ((rates as any).subsidyPct ?? 50);
   ctx.table(['S.No', 'Particulars', 'Share (%)', 'Amount (Rs.)'], [
     ['1', 'Bank Loan', String(bankPct), fmt(fin.meanBank)],
     ['2', 'Own Contribution', String(rates.ownPct), fmt(fin.meanOwn)],
@@ -930,39 +923,35 @@ const techRowsKeep: string[][] = [
   ], [40, 220, 100, 145]);
   ctx.para('Note: The working capital will be managed by the farmers.');
   const fy = flock.map(function (f) { return f; });
-  const ycols = function (fn: (f: SheepFlockYear) => string) { return fy.map(function (f) { return fn(f); }); };
+  const ycols = function (fn: (f: any) => string) { return fy.map(function (f) { return fn(f); }); };
   const flockHeaders = ['S.No', 'Particular'].concat(yrCols);
   const flockWidths = [35, 200, 45, 45, 45, 45, 45, 45];
   const flockRows = [
-    ['1', 'Numbers of lambing per year'].concat(ycols(function (f) { return String(f.lambings); })),
-    ['2', 'Lambs born (Male)'].concat(ycols(function (f) { return String(f.lambsBornM); })),
-    ['3', 'Lambs born (Female)'].concat(ycols(function (f) { return String(f.lambsBornF); })),
-    ['4', 'Mortality of male lambs'].concat(ycols(function (f) { return String(Math.round(f.lambsBornM * rates.lambMortalityPct / 100)); })),
-    ['5', 'Mortality of female lambs'].concat(ycols(function (f) { return String(Math.round(f.lambsBornF * rates.lambMortalityPct / 100)); })),
-    ['6', 'Male lambs for sale'].concat(ycols(function (f) { return String(f.saleM); })),
-    ['7', 'Female lambs for sale'].concat(ycols(function (f) { return String(f.saleF); })),
-    ['8', 'Total lambs for sale'].concat(ycols(function (f) { return String(f.saleM + f.saleF); })),
+    ['1', 'Birds placed per year'].concat(ycols(function (f) { return String((f as any).birdsPlaced); })),
+    ['2', 'Mortality per year'].concat(ycols(function (f) { return String((f as any).mortality); })),
+    ['3', 'Birds sold per year'].concat(ycols(function (f) { return String((f as any).birdsSold); })),
+    ['4', 'Eggs per year (layer)'].concat(ycols(function (f) { return String((f as any).eggs); })),
   ];
   ctx.sectionTitleWithTable('flockChart', 13, flockHeaders, flockRows, flockWidths, 8.5);
   ctx.table(flockHeaders, flockRows, flockWidths, 8.5);
-  ctx.para('(Lambs born in I year will be sold in II Year and so on)');
+  ctx.para('(Broiler 5 batches/year; layer 280 eggs/bird/year, 90% effective)');
   // keep profitability heading with income table
   if (ctx.y < 320) ctx.newPage();
   ctx.subTitle(ctx.t('profitability'));
-  const maleAmt = f1.saleM * rates.maleLambPrice;
-  const femaleAmt = f1.saleF * rates.femaleLambPrice;
-  const manureAmt = costs.manureTonnes * rates.manureRatePerTonne;
-  const gunnyAmt = costs.gunnyBags * rates.gunnyRatePerBag;
+  const isBroilerFlock = (rates as any).poultryType === 'BROILER';
+  const broilerAmt = isBroilerFlock ? f1.birdsSold * (rates as any).saleWeightKg * (rates as any).saleRatePerKg : 0;
+  const eggAmt = !isBroilerFlock ? f1.eggs * (rates as any).eggRate : 0;
+  const spentAmt = !isBroilerFlock ? f1.birdsSold * (rates as any).spentHenWeightKg * (rates as any).spentHenRatePerKg / 6 : 0;
   const incY = function (v: number, skipFirst: boolean) {
     const a = [];
     for (let i = 0; i < years; i++) a.push(i === 0 && skipFirst ? '' : fmt(v));
     return a;
   };
-  const incRows = [
-    ['1', 'Sale of male sheep', 'Ramling', fmt(rates.maleLambPrice), String(f1.saleM)].concat(incY(maleAmt, true)),
-    ['2', 'Sale of female sheep', 'Eweling', fmt(rates.femaleLambPrice), String(f1.saleF)].concat(incY(femaleAmt, true)),
-    ['3', 'Sale of sheep manure', 'Tonnes', fmt(rates.manureRatePerTonne), String(Math.round(costs.manureTonnes * 1000) / 1000)].concat(incY(manureAmt, false)),
-    ['4', 'Sale of gunny bags', 'Numbers', fmt(rates.gunnyRatePerBag), String(Math.round(costs.gunnyBags * 100) / 100)].concat(incY(gunnyAmt, false)),
+  const incRows = isBroilerFlock ? [
+    ['1', 'Sale of broiler birds', 'Birds', fmt(Math.round((rates as any).saleWeightKg * (rates as any).saleRatePerKg)), String(f1.birdsSold)].concat(incY(broilerAmt, false)),
+  ] : [
+    ['1', 'Sale of eggs', 'Eggs', fmt((rates as any).eggRate), String(f1.eggs)].concat(incY(eggAmt, false)),
+    ['2', 'Sale of spent hens', 'Birds', fmt((rates as any).spentHenRatePerKg), String(f1.birdsSold)].concat(incY(spentAmt, false)),
   ];
   const incTot = [];
   for (let ti = 0; ti < years; ti++) incTot.push(fmt(fin.totalIncome[ti]));
@@ -979,14 +968,13 @@ const techRowsKeep: string[][] = [
     return a;
   };
   const expRows = [
-    ['1', w[0].label, 'Rs./Acre/Season', fmt(rates.fodderCostPerAcre), String(rates.fodderAcres)].concat(expY(w[0].amount)),
-    ['2', w[1].label, 'Kg (@250g/day)', fmt(rates.concentrateRate), fmt(costs.adultConcentrateKg)].concat(expY(w[1].amount)),
-    ['3', w[2].label, 'Kg (@150g/day)', fmt(rates.concentrateRate), fmt(costs.lambConcentrateKg)].concat(expY(w[2].amount)),
-    ['4', w[3].label, 'Wages/ Month/ Labour', fmt(rates.labourWagePerMonth), String(rates.labourCount)].concat(expY(w[3].amount)),
-    ['5', 'Insurance', '%', String(rates.insurancePct), String(totA)].concat(expY(costs.insuranceAmount)),
-    ['6', 'Health expenses (Veterinary Aid)', '/Animal/Year', fmt(rates.vetRatePerAnimal), String(totA)].concat(expY(w[4].amount)),
-    ['7', 'Electricity and Water', '/Animal/Year', fmt(rates.utilityRatePerAnimal), String(totA)].concat(expY(w[5].amount)),
-    ['8', 'Interest on Bank loan', '%', String(rates.interestPct), fmt(fin.meanBank)].concat(expY(fin.interestPerYear)),
+    ['1', w[0].label, 'Rs/Batch', fmt((rates as any).chickCost ?? (rates as any).pulletCost), String(f1.birdsPlaced)].concat(expY(w[0].amount)),
+    ['2', w[1].label, 'Rs/Kg', fmt((rates as any).feedCostPerKg), fmt(costs.totalFeedKg)].concat(expY(w[1].amount)),
+    ['3', w[2].label, 'Wages/Month/Labour', fmt((rates as any).labourWagePerMonth), String((rates as any).labourCount)].concat(expY(w[2].amount)),
+    ['4', w[3].label, 'Rs/Bird', fmt((rates as any).vetRatePerBird), String((rates as any).batchSize)].concat(expY(w[3].amount)),
+    ['5', w[4].label, 'Rs/Bird', fmt((rates as any).utilityPerBird), String((rates as any).batchSize)].concat(expY(w[4].amount)),
+    ['6', w[5].label, 'Rs/Bird', fmt((rates as any).miscPerBird), String((rates as any).batchSize)].concat(expY(w[5].amount)),
+    ['7', 'Interest on Bank loan', '%', String((rates as any).interestPct), fmt(fin.meanBank)].concat(expY(fin.interestPerYear)),
   ];
   const expTot = [];
   for (let te = 0; te < years; te++) expTot.push(fmt(fin.expenditure[te]));

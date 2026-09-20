@@ -137,7 +137,7 @@ export async function buildDairyReport(input:DairyReportInput):Promise<Uint8Arra
   const byCat=diseasesByCategory(input.dairySpecies==="BUFFALO"?"Buffalo":"Cattle"); ctx.subTitle(ctx.t("diseases")); ctx.para("Vaccination and deworming calendar will be followed as per vet guidance."); for(const cat of Object.keys(byCat)){ctx.categoryLabel(cat+":"); const catRows=byCat[cat].map((d)=>[d.disease,d.symptoms,d.prevention]); ctx.table(["Disease","Symptoms","Prevention"],catRows,[110,190,200],8)}
   ctx.subTitle(ctx.t("labour")); ctx.para("Honest labour available locally.");
   {const vetText=loc.vetHospital+" of the Department of Animal Husbandry. Technical guidance: "+loc.vetOfficer+"; "+loc.pvk+"."; const vetLines=ctx.wrap(vetText,ctx.fonts.reg,11.5,CONTENT_W); const vetNeed=34+vetLines.length*(11.5+4.5)+6; if(ctx.y-vetNeed<MARGIN_BOTTOM+12) ctx.newPage(); ctx.subTitle(ctx.t("vetAid")); ctx.para(vetText)}
-  ctx.subTitle(ctx.t("dpr"),16); ctx.newPage();
+   ctx.sectionTitle("dpr",16); ctx.newPage();
   // DPR quick table
   ctx.table(["S. No.","Parameter","Details"],[["1","Animal Type",input.dairySpecies==="BUFFALO"?"Buffalo (Bovine)":"Cattle (Bovine)"],["2","Breed",breedName],["3","Unit size",String(rates.animals)+" animals"],["4","System","Semi-intensive / Stall feeding"],["5","Purpose","Milk Production"],["6","Covered area per animal","60 Sq.ft = "+fmt(costs.coveredTotal)+" Sq.ft"],["7","Open paddock","1.5 × covered = "+fmt(costs.openTotal)+" Sq.ft"],["8","Milk yield",""+rates.milkPerAnimalPerDayKg+" kg/day × "+rates.lactationDays+" days"],["9","Technician","Livestock assistant for timely visit"],["10","Vet/Expert",loc.vetOfficer+"; "+loc.pvk],["11","Co-ordinates",c.latLong??""]],[38,125,342],9);
   {
