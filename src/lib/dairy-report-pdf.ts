@@ -655,9 +655,9 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   // Pencil sketch - cattle vs buffalo (shared Livestock_Pencil_Sketches artwork)
   const sketchFile = species === "BUFFALO" ? "buffalo.png" : "cattle.png";
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", sketchFile);
-    if (require("fs").existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
+    const sketchPath = path.join(process.cwd(), "public", "sketches", sketchFile);
+    if (fs.existsSync(sketchPath)) {
+      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
@@ -1090,12 +1090,24 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   const beQ1 = be.q1 == null ? 0 : be.q1;
   const beQ2 = be.q2 == null ? 0 : be.q2;
   ctx.para('TC = FC + VC1 x Q + VC2 x Q x Q, where Q is saleable milk in litres per year. P = Rs. ' + fmt(Math.round(P * 100) / 100) + ' per litre, FC = Rs. ' + fmt(Math.round(FC)) + ' (capital / ' + years + ' years), VC1 = Rs. ' + fmt(Math.round(VC1 * 100) / 100) + ' per litre, VC2 = 0.0002.');
+  // Linear fallback: thin margins give no curvilinear roots (discriminant < 0).
+  const linQ = P > VC1 ? Math.round(FC / (P - VC1)) : 0;
+  if (beQ1 === 0 && beQ2 === 0 && linQ > 0) {
+    ctx.para('Break-even (linear) Q = ' + linQ + ' litres (Rs. ' + fmt(Math.round(linQ * P)) + '). Farm capacity is ' + saleQty + ' litres per year.');
+    drawBreakEvenChart(ctx, P, FC, VC1, 0.0002, linQ, saleQty);
+    if (linQ > saleQty) {
+      ctx.para('Note: Break-even Q (' + linQ + ') is beyond farm capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger herd or lower costs.');
+    } else {
+      ctx.para('Break-even Q lies within farm capacity, so output above ' + linQ + ' litres per year is the profit zone.');
+    }
+  } else {
   ctx.para('Lower break-even Q1 = ' + beQ1 + ' litres (Rs. ' + fmt(be.sales1 == null ? 0 : be.sales1) + '). Upper break-even Q2 = ' + fmt(Math.round(beQ2)) + ' litres. Farm capacity is ' + saleQty + ' litres per year.');
   drawBreakEvenChart(ctx, P, FC, VC1, 0.0002, beQ1, saleQty);
   if (beQ1 > saleQty) {
     ctx.para('Note: Break-even Q1 (' + beQ1 + ') is beyond farm capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger flock or lower costs.');
   } else {
     ctx.para('Q1 lies within farm capacity, so the zone between Q1 and full capacity is the profit zone. Q2 is theoretical and far beyond practical scale.');
+  }
   }
   ctx.land = false;
   ctx.newPage();

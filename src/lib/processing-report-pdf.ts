@@ -1,6 +1,6 @@
 // @ts-nocheck
 // Processing unit bank-format PDF generator (pdf-lib, server-side only).
-// Mirrors the approved NLM-EDP Goat PDF: cover, auto index, introduction,
+// Bank format: cover, auto index, introduction,
 // DPR tables, assumptions, costs, finance, break-even chart, submitted-by page.
 // Language: 'en' | 'hi' (headings/labels/cover bilingual; body prose EN in pilot).
 import "regenerator-runtime/runtime";
@@ -10,9 +10,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { PROCESSING_DEFAULTS, ProcessingProjectInput, processingCosts, processingFinance } from "./processing-engine";
 import { appraise, breakEven, loanSchedule, LoanScheduleRow, LOAN_INTEREST_RATE } from "./project-finance";
-import { findBreed } from "./livestock-breeds";
-import { purposesOf } from "./livestock-purposes";
-import { diseasesOf, diseasesByCategory } from "./livestock-diseases";
 
 export interface ReportAddress {
   villagePost: string;
@@ -64,15 +61,15 @@ export interface ProcessingReportInput {
   verifyByVetCA?: boolean;
 }
 
-const A4W = 595.28;
-const A4H = 841.89;
-const MARGIN_LEFT = 56.69; // 2cm
-const MARGIN_RIGHT = 42.52; // 1.5cm
-const MARGIN_TOP = 56.69; // 2cm
-const MARGIN_BOTTOM = 42.52; // 1.5cm
+export const A4W = 595.28;
+export const A4H = 841.89;
+export const MARGIN_LEFT = 56.69; // 2cm
+export const MARGIN_RIGHT = 42.52; // 1.5cm
+export const MARGIN_TOP = 56.69; // 2cm
+export const MARGIN_BOTTOM = 42.52; // 1.5cm
 const MARGIN = MARGIN_LEFT;
-const CONTENT_W = A4W - MARGIN_LEFT - MARGIN_RIGHT;
-const LAND_W = A4H - MARGIN_LEFT - MARGIN_RIGHT;
+export const CONTENT_W = A4W - MARGIN_LEFT - MARGIN_RIGHT;
+export const LAND_W = A4H - MARGIN_LEFT - MARGIN_RIGHT;
 const CONTENT_H = A4H - MARGIN_TOP - MARGIN_BOTTOM;
 const LAND_H = A4W - MARGIN_TOP - MARGIN_BOTTOM;
 const BRAND_GREEN = { r: 0.06, g: 0.35, b: 0.27 };
@@ -87,16 +84,16 @@ const LBL: Record<string, { en: string; hi: string }> = {
   introduction: { en: "Introduction", hi: "परिचय" },
   projectDescription: { en: "1. Project description", hi: "1. परियोजना विवरण" },
   projectLocation: { en: "2. Project Location", hi: "2. परियोजना स्थल" },
-  breed: { en: "3. Breed", hi: "3. नस्ल" },
+  breed: { en: "3. Raw Material (Milk)", hi: "3. कच्चा माल (दूध)" },
   rearingSystem: { en: "4. Processing system: Pasteurization + Packing", hi: "4. प्रसंस्करण प्रणाली: पाश्चुरीकरण" },
-  housing: { en: "5. Housing of Goats", hi: "5. बकरियों का आवास" },
+  housing: { en: "5. Plant Building and Layout", hi: "5. संयंत्र भवन एवं अभिन्यास" },
   manger: { en: "6. Raw Material Handling", hi: "6. कच्चा माल प्रबंधन" },
   feedFodder: { en: "7. Utilities (Power/Water)", hi: "7. उपयोगिताएँ" },
-  dietary: { en: "8. Dietary Management of Goats", hi: "8. बकरियों का आहार प्रबंधन" },
+  dietary: { en: "8. Process Flow", hi: "8. प्रसंस्करण प्रवाह" },
   water: { en: "9. Water", hi: "9. पानी" },
-  diseases: { en: "10. Diseases of goats and their prevention", hi: "10. बकरियों के रोग एवं रोकथाम" },
+  diseases: { en: "10. Food Safety and Hygiene", hi: "10. खाद्य सुरक्षा एवं स्वच्छता" },
   labour: { en: "11. Labour", hi: "11. श्रम" },
-  vetAid: { en: "12. Veterinary aid", hi: "12. पशु चिकित्सा सहायता" },
+  vetAid: { en: "12. Technical Supervision", hi: "12. तकनीकी पर्यवेक्षण" },
   market: { en: "13. Market potential", hi: "13. बाजार संभावना" },
   export: { en: "14. Export Potential", hi: "14. निर्यात संभावना" },
   swot: { en: "SWOT Analysis", hi: "SWOT विश्लेषण" },
@@ -110,7 +107,7 @@ const LBL: Record<string, { en: string; hi: string }> = {
   capitalCost: { en: "I. Capital Cost", hi: "I. पूंजीगत लागत" },
   workingCapital: { en: "II. Working Capital", hi: "II. कार्यशील पूंजी" },
   meansOfFinance: { en: "C. Means of Finance (For Capital Cost)", hi: "ग. वित्त के स्रोत (पूंजीगत लागत हेतु)" },
-  flockChart: { en: "D. Projected Performance and Profitability — I. Flock Projection Chart", hi: "घ. अनुमानित प्रदर्शन एवं लाभप्रदता — I. पशु-समूह प्रक्षेपण चार्ट" },
+  flockChart: { en: "D. Projected Performance and Profitability — I. Production Capacity Chart", hi: "घ. अनुमानित प्रदर्शन एवं लाभप्रदता — I. उत्पादन क्षमता चार्ट" },
   profitability: { en: "II. Projected Profitability", hi: "II. अनुमानित लाभप्रदता" },
   incomeTbl: { en: "Income", hi: "आय" },
   expenditureTbl: { en: "Expenditure", hi: "व्यय" },
@@ -119,16 +116,16 @@ const LBL: Record<string, { en: string; hi: string }> = {
   breakEvenTitle: { en: "Break-even Analysis (Curvilinear)", hi: "ब्रेक-ईवन विश्लेषण" },
 };
 
-function fmt(n: number): string {
+export function fmt(n: number): string {
   const r = Math.round(n * 100) / 100;
   return r.toLocaleString("en-IN", { maximumFractionDigits: 2 });
 }
 
-function capWords(s: string): string {
+export function capWords(s: string): string {
   return s.replace(/\b[a-z]/g, (ch) => ch.toUpperCase());
 }
 
-function capAddr(a: ReportAddress): ReportAddress {
+export function capAddr(a: ReportAddress): ReportAddress {
   return {
     villagePost: capWords(a.villagePost),
     houseFlat: a.houseFlat ? capWords(a.houseFlat) : a.houseFlat,
@@ -150,7 +147,7 @@ interface Fonts {
   hasHindi: boolean;
 }
 
-class Ctx {
+export class Ctx {
   doc!: PDFDocument;
   fonts!: Fonts;
   lang: "en" | "hi" = "en";
@@ -160,6 +157,7 @@ class Ctx {
   index: Array<{ title: string; page: number }> = [];
   footerName = "";
   headerTitle = "";
+  labels: Record<string, { en: string; hi: string }> | null = null;
   mode: "draft" | "final" = "final";
   land = false;
   curW = A4W;
@@ -218,7 +216,8 @@ class Ctx {
   }
 
   t(key: string): string {
-    const e = LBL[key];
+    const table = this.labels ?? LBL;
+    const e = table[key];
     if (!e) return key;
     return this.lang === "hi" ? e.hi : e.en;
   }
@@ -595,7 +594,7 @@ class Ctx {
   }
 }
 
-function addr(a: ReportAddress): string {
+export function addr(a: ReportAddress): string {
   const tail = a.country ? ", " + a.country : "";
   const pin = a.pin ? " PIN: " + a.pin : "";
   const detail = [a.houseFlat, a.street, a.landmark].filter((v) => v && v.trim().length > 0).join(", ");
@@ -634,8 +633,6 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   };
   const costs = processingCosts(rates as any);
   const fin = processingFinance(rates as any);
-  const flock: any[] = (costs as any).flock ?? [{calvings:1, calvesBornM:1, calvesBornF:1, calfDeathsM:0, calfDeathsF:0, maleSale:1, femaleSale:1, totalSale:2, milkLitres:500}];
-  const f1: any = flock[0] ?? {maleSale:1, femaleSale:1};
   const appr = appraise({ totalCost: fin.totalCost, totalIncome: fin.totalIncome });
   const years = rates.years;
   const yrCols = ["I Year", "II Year", "III Year", "IV Year", "V Year", "VI Year"].slice(0, years);
@@ -649,9 +646,9 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "processing.png");
-    if (require("fs").existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
+    const sketchPath = path.join(process.cwd(), "public", "sketches", "processing.png");
+    if (fs.existsSync(sketchPath)) {
+      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
@@ -698,31 +695,25 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   // ---------- INTRODUCTION ----------
   ctx.newPage();
   ctx.sectionTitle("introduction", 16);
-  const breed = null;
-  const purpose = purposesOf("Goat").filter(function (p) {
-    return p.purpose.indexOf("Dual") >= 0;
-  })[0] || purposesOf("Goat")[0];
 
   ctx.subTitle(ctx.t("projectDescription"));
-  ctx.para("Goat is a multi-functional animal and plays a significant role in the economy and nutrition of landless, small and marginal farmers in the country. Goat rearing is an enterprise practised by a large section of the rural population. Goats are among the main meat-producing animals in India and have a huge domestic demand.");
-  ctx.para("Benefits of commercial goat farming:");
-  const benList = purpose ? purpose.benefits.slice(0, 12) : [];
+  ctx.para("Milk processing adds value to raw milk by converting it into safe, packed milk and milk products such as ghee, paneer, khoya, curd and flavoured milk. A village-level processing unit of " + fmt(rates.capacityKgPerDay) + " kg per day collects milk from surrounding dairy farmers, chills it immediately, and processes it under hygienic conditions. Processed products fetch a higher and more stable price than raw milk and have a longer shelf life through the cold chain.");
+  ctx.para("Benefits of a milk processing unit:");
+  const benList = ["Higher realisation per litre through value-added products (ghee, paneer, khoya).", "Assured daily outlet for milk of nearby dairy farmers at fair price.", "Longer shelf life and wider market reach through chilling and cold chain.", "Year-round business independent of seasonal flush/lean milk cycles.", "Rural employment in collection, processing, packing and marketing.", "Scope for branding and retail sale in nearby towns."];
   for (let bi = 0; bi < benList.length; bi++) ctx.bullet(benList[bi], ">");
-  ctx.para("At present, goat rearing under intensive and semi-intensive systems for commercial production is gaining momentum. A number of commercial goat farms have been established in different regions of the country and state.");
+  ctx.para("At present, organised milk processing under cooperative and private dairies is gaining momentum. A number of mini processing and chilling units have been established in different regions of the country and state.");
   ctx.para("Disadvantages: There are some disadvantages as well:");
-  const disList = purpose ? purpose.disadvantages.slice(0, 4) : [];
+  const disList = ["High initial investment in plant, machinery and cold chain.", "Raw milk supply fluctuates between flush and lean seasons.", "Strict FSSAI hygiene and quality compliance needed at every stage.", "Working capital locked in daily milk purchase and product stocks."];
   for (let di = 0; di < disList.length; di++) ctx.bullet(disList[di], ">");
 
   ctx.subTitle(ctx.t("projectLocation"));
   const townStr = loc.towns.map(function (t) {
     return t.km + " km from " + t.name + " town";
   }).join(", ");
-  ctx.para("The Goat Farm will be constructed in the village of " + loc.farmVillage + ", Tehsil: " + loc.tehsil + ", District: " + loc.district + ". The given location is " + loc.highwayDistKm + " from the " + loc.highway + " and " + townStr + ", where an assured year-round market is available. It is easily accessible from the main road due to the availability of a good paved road.");
+  ctx.para("The Milk Processing Unit will be set up in the village of " + loc.farmVillage + ", Tehsil: " + loc.tehsil + ", District: " + loc.district + ". The given location is " + loc.highwayDistKm + " from the " + loc.highway + " and " + townStr + ", where an assured year-round supply of raw milk and market are available. It is easily accessible from the main road due to the availability of a good paved road.");
 
   {
-    const breedPara = breed
-      ? "For this project site, the " + breed.breed + " goat breed will be reared and improved for germplasm development. " + breed.note + " Origin: " + breed.origin + ". Male body weight " + breed.maleWtKg + " kg and female " + breed.femaleWtKg + " kg."
-      : "For this project site, the " + breedName + " goat breed will be reared and improved for germplasm development.";
+    const breedPara = "For this project site, raw milk (" + fmt(rates.capacityKgPerDay) + " kg per day) will be collected from dairy farmers of nearby villages through village collection centres, chilled in a bulk milk cooler and processed into pasteurized packed milk, ghee, paneer and khoya. Surplus lean-season milk will be converted into ghee and skimmed milk powder for stable year-round income.";
     const needBreed = 34 + ctx.wrap(breedPara, ctx.fonts.reg, 11.5, CONTENT_W).length * (11.5 + 4.5) + 8;
     if (ctx.y - needBreed < MARGIN_BOTTOM + 12) ctx.newPage();
     ctx.subTitle(ctx.t("breed"));
@@ -730,53 +721,54 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   }
 
   ctx.subTitle(ctx.t("rearingSystem"));
-  ctx.para("A semi-intensive system of rearing will be adopted for this project, as it is an intermediate compromise between the extensive and intensive systems used in some herds with limited grazing. It involves providing stall feeding, shelter at night under a shed, and grazing for 3 to 5 hours per day, with browsing on pasture and range.");
+  ctx.para("A continuous chilling-to-packing system will be adopted: raw milk is received at the collection dock, tested on the platform (organoleptic, alcohol, clot-on-boiling, lactometer), weighed, chilled below 4C in the bulk milk cooler, then pasteurized, homogenized, standardized and packed; surplus milk is diverted to ghee, paneer and khoya sections. The cold chain is maintained from collection to retail sale.");
   ctx.para("The advantage of this system is that:");
-  const advs = ["Meeting nutrient requirements from both pasture and stall feeding.", "Managing medium to large herds of 100 to 500 heads and above.", "Utilising cultivated fodder during a short grazing period.", "Harvesting a good crop of kids for both meat and milk.", "Earning profitable returns due to low labour input."];
+  const advs = ["Meeting exact daily demand of packed milk, ghee, paneer and khoya.", "Handling the full " + fmt(rates.capacityKgPerDay) + " kg per day with platform testing of every lot.", "Utilising flush-season surplus through ghee and powder conversion.", "Harvesting full value of every litre with minimal spoilage.", "Earning daily cash income with low raw-material wastage."];
   for (let ai = 0; ai < advs.length; ai++) ctx.bullet(advs[ai], ">");
 
   ctx.subTitle(ctx.t("housing"));
-  ctx.para("Providing simple sheds made with low-cost housing materials for goats is sufficient to achieve their optimal production capacity. The houses will be semi-closed type with North-South orientation and a long axis in East-West direction. There will be separate houses for dry, pregnant, lactating, sick, bucks and kids. The shed will be built on an elevated area on a raised platform (about 1 meter high) to prevent water stagnation. Clean drinking water, asbestos roof, concrete floor with drainage, proper ventilation with concrete and wire-mesh side walls, and separate feeders and water troughs will be provided.");
-  ctx.para("Recommended floor space requirements for Indian conditions:");
-  ctx.table(["Age groups", "Covered space (Sq. m)", "Open space (Sq. m)"], [
-    ["Up to 3 months", "0.2-0.25", "0.4-0.5"],
-    ["3 months to 6 months", "0.5-0.75", "1.0-1.5"],
-    ["6 months to 12 months", "0.75-1.0", "1.5-2.0"],
-    ["Adult animal", "1.5", "3.0"],
-    ["Male, pregnant, or lactating doe", "1.5-2.0", "3.0-4.0"],
+  ctx.para("The processing plant will be housed in a purpose-built RCC building on an elevated, well-drained site with North-South orientation. It will have separate halls for reception and testing, chilling, pasteurization, product manufacture (ghee/paneer/khoya), packing and cold store, plus office, laboratory, feed-stock store, boiler/generator room and staff amenities. Floors will be food-grade, non-slippery with drainage slope; walls tiled up to 5 feet; with fly-proof ventilation and potable bore-well water with rainwater harvesting.");
+  ctx.para("Recommended built-up areas for this unit:");
+  ctx.table(["Section", "Area (Sq. ft)", "Remarks"], [
+    ["Reception + testing lab", "300", "Platform tests, weighing"],
+    ["Chilling (BMC room)", "400", "Bulk milk cooler"],
+    ["Pasteurization hall", "600", "Pasteurizer, homogenizer"],
+    ["Product section", "500", "Ghee/paneer/khoya"],
+    ["Packing + cold store", "400", "4C storage"],
+    ["Office + utilities", "300", "Boiler, generator"],
   ], [220, 140, 140]);
 
   ctx.subTitle(ctx.t("manger"));
-  ctx.para("A concrete/brick partition with GI pipe at a distance of 30 cm will be constructed. Space required for food and water:");
-  ctx.table(["Type of animal", "Space/animal (cm)", "Width of manger (cm)", "Depth (cm)", "Height of inner wall (cm)"], [
-    ["Sheep and goats", "40 - 50", "50", "30", "35"],
-    ["Kid/lamb", "30 - 35", "50", "20", "25"],
+  ctx.para("Raw milk is received twice daily at the collection dock, platform-tested, weighed and transferred to the bulk milk cooler within the shortest time. Cans and tankers are washed and sanitized after every use; the cooler keeps milk below 4C until processing.");
+  ctx.table(["Handling step", "Equipment", "Capacity", "Time limit", "Temperature"], [
+    ["Reception + testing", "Weighing scale, lactometer", "Per lot", "Immediate", "Ambient"],
+    ["Chilling", "Bulk milk cooler", "Full day collection", "Within 2 hours", "Below 4C"],
   ], [120, 110, 110, 80, 80], 8);
 
   ctx.subTitle(ctx.t("feedFodder"));
-  ctx.para("The land at the project site is fertile; bore-well and water harvesting will assure irrigation so that fodder crops are raised successfully and abundant good-quality green fodder is available throughout the year.");
+  ctx.para("The unit needs reliable three-phase power with generator backup for the cooler and cold store, a bore-well with potable water treatment for processing and cleaning, and steam from a small boiler for pasteurization and ghee/khoya making. Rainwater harvesting will supplement the water supply.");
 
   ctx.subTitle(ctx.t("dietary"));
-  ctx.para("Scientific feeding schedules will be followed for different categories. Breeding goats: 150-350 g concentrate/animal/day under poor grazing (12% DCP). Pregnant females: 4-5 hours grazing plus 5 kg green fodder/day, rising to 250-350 g concentrate plus 7 kg green fodder in the last month. At delivery: light fodder with plenty of clean cool water; ration built up gradually in 6-7 divided doses. Lactating females: 6-8 hours grazing plus 10 kg green fodder or 400 g concentrate or 800 g leguminous hay per day. Breeding males: same as females on shared grazing, or 300 g concentrate (oats/barley:maize:wheat) under separate feeding. Kids: colostrum at 100 ml/kg body weight for 3-4 days, creep feed (22% protein) from one month at 50-100 g/day.");
+  ctx.para("Process flow: reception and platform testing, weighing, chilling below 4C, clarification, pasteurization (63C for 30 minutes or 72C for 15 seconds), homogenization, standardization of fat/SNF, packing of liquid milk, and conversion of surplus into ghee, paneer and khoya. Every batch is recorded with time, temperature and test results; CIP (clean-in-place) washing follows each run.");
 
   ctx.subTitle(ctx.t("water"));
-  ctx.para("Good-quality clean fresh water for drinking, cleaning and washing will be made available from a bore well and a rainwater-harvesting tank.");
+  ctx.para("Good-quality clean fresh water for processing, cleaning and washing will be made available from a bore well and a rainwater-harvesting tank.");
 
-  const byCatGoat = diseasesByCategory("Goat");
   ctx.subTitle(ctx.t("diseases"));
-  ctx.para("Normally goats resist many diseases, but intensive rearing of large numbers at one place can spread disease, lowering production and raising mortality. Kids will be dewormed from 1 month of age monthly up to 6 months; ecto-parasites treated carefully; proper vaccination against viral and bacterial diseases practised.");
-  for (const cat of Object.keys(byCatGoat)) {
-    ctx.categoryLabel(cat + ":");
-    const catRows = byCatGoat[cat].map(function (d) { return [d.disease, d.symptoms, d.prevention]; });
-    ctx.table(["Disease", "Symptoms", "Prevention"], catRows, [110, 190, 200], 8);
-  }
+  ctx.para("Milk is perishable: without chilling, bacterial load doubles within hours. The unit will enforce platform testing of every lot, pasteurization of all liquid milk, daily MBRT and adulteration checks, CIP cleaning of all contact surfaces, pest control, staff hygiene with medical checks, and unbroken cold chain up to retail. FSSAI licence and standards will be followed for all products.");
+  ctx.categoryLabel("Key controls:");
+  ctx.table(["Control", "What is checked", "How"], [
+    ["Platform tests", "Sour milk, added water", "Organoleptic, alcohol, clot-on-boiling, lactometer"],
+    ["MBRT", "Bacterial load", "Methylene blue reduction time"],
+    ["Pasteurization", "Pathogens destroyed", "Time-temperature record of every batch"],
+  ], [110, 190, 200], 8);
 
   ctx.subTitle(ctx.t("labour"));
   ctx.para("Honest, economic and regular supplies of labourers are available in the project area.");
 
   // keep vet heading with its paragraph
   {
-    const vetText = loc.vetHospital + " of the Department of Animal Husbandry is available near the proposed goat farm. Technical guidance: " + loc.vetOfficer + "; " + loc.pvk + ".";
+    const vetText = loc.vetHospital + " and the District Dairy/Animal Husbandry office are available near the proposed processing unit. Technical guidance: " + loc.vetOfficer + "; " + loc.pvk + "; plus a qualified dairy technologist for plant operation and quality control.";
     const vetLines = ctx.wrap(vetText, ctx.fonts.reg, 11.5, CONTENT_W);
     const vetNeed = 34 + vetLines.length * (11.5 + 4.5) + 6;
     if (ctx.y - vetNeed < MARGIN_BOTTOM + 12) ctx.newPage();
@@ -784,10 +776,10 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
     ctx.para(vetText);
   }
 
-  ctx.subTitleWithPara("market", "People in and around the project area prefer goat meat (chevon) to any other meat or chicken; it is on the menu at all ceremonies, so market demand is high. Purchasing power is rising and non-vegetarian food is now almost essential in the diet. Chevon availability is less than demand; investment is smaller and risk lower than dairy. The state leads in goat population and the demand for goat meat is rising faster than the goat population.");
+  ctx.subTitleWithPara("market", "People in and around the project area buy packed milk, ghee, paneer and curd daily; demand rises with urbanisation and purchasing power. The unit will sell pasteurized milk through retail booths and shops, and ghee, paneer and khoya to households, sweet shops and hotels. Value addition roughly doubles realisation per litre over raw-milk sale, and the cold chain keeps supply regular in both flush and lean seasons.");
 
   {
-    const exportPara = "The scope for exports too is huge; however, for selling goat meat abroad, one has to adhere to strict phytosanitary conditions and standards of the respective nation.";
+    const exportPara = "The scope for wider marketing is good; ghee and skimmed milk powder can be sold to institutional buyers in other states. Export of dairy products is possible only under strict FSSAI and importing-country quality standards with regular laboratory testing.";
     const needExport = 34 + ctx.wrap(exportPara, ctx.fonts.reg, 11.5, CONTENT_W).length * (11.5 + 4.5) + 8;
     if (ctx.y - needExport < MARGIN_BOTTOM + 12) ctx.newPage();
     ctx.subTitle(ctx.t("export"));
@@ -797,20 +789,21 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
 
   ctx.subTitle(ctx.t('swot'));
   ctx.para('Strengths:');
-  ctx.bullet('Low labour requirement.');
-  ctx.bullet('Multi-functional animal supporting landless, small and marginal farmers.');
-  ctx.bullet('Survives on shrubs and trees in harsh low-fertility lands.');
-  ctx.bullet('Low initial investment; no religious taboo on meat consumption.');
-  ctx.bullet('Easily digestible milk; rural employment with family labour.');
-  ctx.bullet('High fertility with twinning; lower drought risk.');
+  ctx.bullet('Value addition near the milk production area; low transport loss.');
+  ctx.bullet('Daily cash flow from milk and product sales.');
+  ctx.bullet('Cold chain and chilling cut spoilage sharply.');
+  ctx.bullet('Moderate investment with bank loan and subsidy support.');
+  ctx.bullet('Rural employment with family labour; assured outlet for farmers milk.');
+  ctx.bullet('Branded ghee/paneer/khoya fetch premium prices.');
   ctx.para('Opportunities:');
-  ctx.bullet('High and ready market for goat meat.');
-  ctx.bullet('Confirmed ever-increasing market price.');
+  ctx.bullet('High and ready market for packed milk and milk products.');
+  ctx.bullet('Confirmed ever-increasing demand with urbanisation.');
   ctx.para('Weakness:');
-  ctx.bullet('Organised large-scale goat farming is not yet fully established.');
-  ctx.bullet('High kid mortality if poorly maintained.');
+  ctx.bullet('Organised mini processing units are not yet fully established.');
+  ctx.bullet('High spoilage risk if cold chain breaks down.');
   ctx.para('Threats:');
-  ctx.bullet('Rising goat population with declining grazing land.');
+  ctx.bullet('Flush-season milk glut with falling raw-milk prices.');
+  ctx.bullet('Power cuts without generator backup spoil chilled stocks.');
   const termRows: string[][] = [
     ['Pasteurization', 'The controlled heat treatment of milk to destroy pathogenic micro-organisms while retaining nutritional quality.'],
     ['Homogenization', 'The mechanical process of breaking down fat globules in milk to prevent cream separation and give a uniform texture.'],
@@ -836,58 +829,56 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
-  const doesN = rates.does;
-  const bucksN = f1.bucks;
-  const totA = costs.totalAnimals;
-  const kidN = f1.aliveKidsM + f1.aliveKidsF;
-  const sickN = Math.round(totA * 0.1);
+  const capKgDay = rates.capacityKgPerDay;
+  const annualMilkKg = costs.annualCapacityKg;
+  const annualProductKg = costs.productKg;
 
   // DPR details — give Details column more width to avoid point-18 overlap
   ctx.table(['S. No.', 'Parameter', 'Details'], [
-    ['1', 'Animal Type', 'Goat (Small ruminant)'],
-    ['2', 'Breed', breedName],
-    ['3', 'Unit type', 'Breeder unit'],
-    ['4', 'System of rearing', 'Semi-intensive'],
-    ['5', 'Purpose', 'Meat Production and Germplasm Improvement'],
-    ['6', 'Breeder (Sex ratio) F:M', '20:01'],
-    ['7', 'Age of procurement', 'Male 18-24 months (2-4 teeth); Female 12-18 months (2 teeth)'],
-    ['8', 'Kidding Interval', String(rates.kiddingIntervalMonths) + ' months'],
-    ['9', 'Type of farming', 'Stall feeding and Open Grazing for 4-6 Hours'],
-    ['10', 'Type of housing', 'Pucca and Ground level'],
-    ['11', 'Feeding system', 'Stall feeding (cut and carry); Open grazing (natural habit)'],
-    ['12', 'Feed and Fodder', 'Own cultivation (Silvi-pastoral)'],
-    ['13', 'Floor Space (Covered)', 'Does (' + doesN + '): 10 Sq. ft = ' + fmt(costs.coveredDoe) + '; Kids (' + kidN + '): 4 Sq. ft = ' + fmt(costs.coveredKids) + '; Buck (' + bucksN + '): 20 Sq. ft = ' + fmt(costs.coveredBuck) + '; Sick (' + sickN + '): 20 Sq. ft = ' + fmt(costs.coveredSick) + '; Total ' + fmt(costs.coveredTotal) + ' Sq. ft'],
-    ['14', 'Open paddock', 'Double the shaded area (' + fmt(costs.openTotal) + ' Sq. ft.)'],
-    ['15', 'Land requirement', 'Shed 0.5 Acre (Own); Feed and Fodder ' + rates.fodderAcres + ' Acre (Own); Total ' + (0.5 + rates.fodderAcres) + ' Acre'],
-    ['16', 'Employment generation', rates.labourCount + ' semi-skilled person(s)'],
-    ['17', 'Technician cum supervisor', 'A qualified livestock assistant for timely visit'],
-    ['18', 'Veterinarian / Expert / Consultant', loc.vetOfficer + '; ' + loc.pvk],
-    ['19', 'Geographical Co-ordinates', c.latLong == null ? '' : c.latLong],
+    ['1', 'Project Type', 'Milk Processing Unit (' + fmt(capKgDay) + ' kg/day)'],
+    ['2', 'Products', 'Pasteurized milk, Ghee, Paneer, Khoya'],
+    ['3', 'Unit type', 'Processing + Cold chain'],
+    ['4', 'System', 'Chilling-Pasteurization-Packing'],
+    ['5', 'Purpose', 'Value Addition and Stable Milk Marketing'],
+    ['6', 'Raw milk requirement', fmt(capKgDay) + ' kg/day (' + fmt(annualMilkKg) + ' kg/year)'],
+    ['7', 'Operating days', String(rates.workingDaysPerYear) + ' days/year'],
+    ['8', 'Product recovery (yield)', String(rates.yieldPct) + '% of raw milk'],
+    ['9', 'Annual product output', fmt(Math.round(annualProductKg * 100) / 100) + ' kg/year'],
+    ['10', 'Type of building', 'RCC plant building with cold store'],
+    ['11', 'Utilities', 'Three-phase power + generator, bore-well, boiler'],
+    ['12', 'Cold chain', 'Bulk milk cooler + refrigerated transport'],
+    ['13', 'Land requirement', 'Plant 0.25 Acre (Own); Total 0.25 Acre'],
+    ['14', 'Employment generation', rates.labourCount + ' semi-skilled person(s)'],
+    ['15', 'Technician cum supervisor', 'A qualified dairy technologist for plant operation'],
+    ['16', 'Veterinarian / Expert / Consultant', loc.vetOfficer + '; ' + loc.pvk],
+    ['17', 'Geographical Co-ordinates', c.latLong == null ? '' : c.latLong],
   ], [38, 125, 342], 9);
   // Keep A. Assumptions and I. Techno together on same page
   {
     const techHeadersKeep = ['S.No', 'Particulars', 'Unit', 'Quantity'];
     const techWidthsKeep = [40, 250, 90, 125];
     const techRowsKeep: string[][] = [
-    ['1', 'Breed of Goat', '', 'Recognised Indian Breed (' + breedName + ')'],
-    ['2', 'System of rearing', '', 'Semi-intensive'],
-    ['3', 'Number of does', 'Number', String(doesN)],
-    ['4', 'Number of Bucks', 'Number', String(bucksN)],
-    ['5', 'Total goats (Buck+Doe)', 'Number', String(totA)],
-    ['6', 'Age at maturity', 'Months', '11'],
-    ['7', 'Kidding interval', 'Months', String(rates.kiddingIntervalMonths)],
-    ['8', 'Number of kidding', 'Per Year', String(Math.round((12 / rates.kiddingIntervalMonths) * 10) / 10)],
-    ['9', 'Kidding Percentage', '%', String(rates.kiddingPct)],
-    ['10', 'Average litter size', 'Number', String(rates.litterSize)],
-    ['11', 'Sex Ratio', 'Ratio', '01:01'],
-    ['12', 'Mortality Rate of kids', '%', String(rates.kidMortalityPct)],
-    ['13', 'Alive kids in a Year', 'Number', String(kidN)],
-    ['14', 'Saleable age of kids', 'Months', '12'],
-    ['15', 'Fodder cultivation per acre/season', 'Area', String(rates.fodderAcres)],
+    ['1', 'Processing capacity', 'Kg/day', String(fmt(capKgDay))],
+    ['2', 'Operating days', 'Days/year', String(rates.workingDaysPerYear)],
+    ['3', 'Annual raw milk', 'Kg/year', String(fmt(annualMilkKg))],
+    ['4', 'Product recovery (yield)', '%', String(rates.yieldPct)],
+    ['5', 'Annual product output', 'Kg/year', String(fmt(Math.round(annualProductKg * 100) / 100))],
+    ['6', 'Raw milk rate', 'Rs./Kg', String(rates.rawMaterialRatePerKg)],
+    ['7', 'Product sale rate', 'Rs./Kg', String(rates.productRatePerKg)],
+    ['8', 'Labour', 'Numbers', String(rates.labourCount)],
+    ['9', 'Wages per labour per month', 'Rs.', String(rates.labourWagePerMonth)],
+    ['10', 'Utility charges', 'Rs./month', String(rates.utilityPerMonth)],
+    ['11', 'Miscellaneous', 'Rs./month', String(rates.miscPerMonth)],
+    ['12', 'Plant cost', 'Rs.', String(rates.plantCost)],
+    ['13', 'Equipment cost', 'Rs.', String(rates.equipmentCost)],
+    ['14', 'Shed area', 'Sq.ft', String(rates.shedArea)],
+    ['15', 'Construction rate', 'Rs./Sq.ft', String(rates.constructionRate)],
     ['16', 'Project Period', 'Years', String(years)],
-    ['17', 'Days in year', 'Days', '365'],
-    ['18', 'Payback Period', 'Years', String(years) + ' (including moratorium, first year)'],
-  ];
+    ['17', 'Payback Period', 'Years', String(years) + ' (including moratorium, first year)'],
+    ['18', 'Interest for bank loan', '%', String(rates.interestPct)],
+    ['19', 'Margin Money (own share)', '%', String(rates.ownPct)],
+    ['20', 'Subsidy', '%', String(rates.subsidyPct)],
+    ];
     const needKeep = 32 + 26 + ctx.estimateTableH(techHeadersKeep, techRowsKeep, 10, CONTENT_W, techWidthsKeep);
     if (ctx.y - needKeep < MARGIN_BOTTOM + 12) ctx.newPage();
     ctx.sectionTitle('assumptions', 16);
@@ -898,35 +889,29 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('expenditureNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity'], [
-    ['1', 'Space per buck', 'Sq.ft', '20'],
-    ['2', 'Space per doe', 'Sq.ft', '10'],
-    ['3', 'Space for kids', 'Sq.ft', '4'],
-    ['4', 'Space for sick animals', 'Sq.ft', '20'],
-    ['5', 'Construction of shed', 'Rs./Sq. ft.', String(rates.constructionRate)],
-    ['6', 'Cost of each doe with transport', 'Rs./Doe', String(rates.doeCost)],
-    ['7', 'Cost of each buck with transport', 'Rs./Buck', String(rates.buckCost)],
-    ['8', 'Semi-skilled labour', 'Numbers', String(rates.labourCount)],
-    ['9', 'Wages per labour per month', 'Rs.', String(rates.labourWagePerMonth)],
-    ['10', 'Feeding Equipments', 'Rs./Equipment', String(rates.feedingEquipmentRate)],
-    ['11', 'Chaff cutter', 'Rs./machine', String(rates.chaffCutterCost)],
-    ['12', 'Concentrate adult per month', 'Kg (@250g/day)', '7.5'],
-    ['13', 'Concentrate kids per month', 'Kg (@150g/day)', '4.5'],
-    ['14', 'Concentrate rate per Kg', 'Rs.', String(rates.concentrateRate)],
-    ['15', 'Health expenditure per animal/year', 'Rs.', String(rates.vetRatePerAnimal)],
-    ['16', 'Electric and Water per head/year', 'Rs.', String(rates.utilityRatePerAnimal)],
-    ['17', 'Fodder cultivation per acre/season', 'Rs./Acre/Season', String(rates.fodderCostPerAcre)],
-    ['18', 'Misc Expenditure', 'Rs/Animal/Year', String(rates.miscRatePerAnimal)],
-    ['19', 'Insurance of animals', '%', String(rates.insurancePct)],
-    ['20', 'Interest for bank loan', '%', String(rates.interestPct)],
-    ['21', 'Margin Money (own share)', '%', String(rates.ownPct)],
+    ['1', 'Processing capacity', 'Kg/day', String(fmt(capKgDay))],
+    ['2', 'Operating days per year', 'Days', '300'],
+    ['3', 'Plant cost', 'Rs.', String(rates.plantCost)],
+    ['4', 'Equipment cost', 'Rs.', String(rates.equipmentCost)],
+    ['5', 'Shed area', 'Sq.ft', String(rates.shedArea)],
+    ['6', 'Construction rate', 'Rs./Sq.ft', String(rates.constructionRate)],
+    ['7', 'Raw milk rate', 'Rs./Kg', String(rates.rawMaterialRatePerKg)],
+    ['8', 'Product sale rate', 'Rs./Kg', String(rates.productRatePerKg)],
+    ['9', 'Product recovery (yield)', '%', String(rates.yieldPct)],
+    ['10', 'Semi-skilled labour', 'Numbers', String(rates.labourCount)],
+    ['11', 'Wages per labour per month', 'Rs.', String(rates.labourWagePerMonth)],
+    ['12', 'Utility charges per month', 'Rs.', String(rates.utilityPerMonth)],
+    ['13', 'Miscellaneous per month', 'Rs.', String(rates.miscPerMonth)],
+    ['14', 'Insurance of plant', '%', String(rates.insurancePct)],
+    ['15', 'Interest for bank loan', '%', String(rates.interestPct)],
+    ['16', 'Margin Money (own share)', '%', String(rates.ownPct)],
+    ['17', 'Subsidy', '%', String(rates.subsidyPct)],
   ], [40, 250, 100, 115], 9);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('incomeNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity', 'Rs./Unit'], [
-    ['1', 'Sale price of Bucks (12 month)', 'Rs./Buck', '1', String(rates.maleSalePrice)],
-    ['2', 'Sale price of Does (12 month)', 'Rs./Doe', '1', String(rates.femaleSalePrice)],
-    ['3', 'Sale price of manure', 'Rs./tonne', String(Math.round(costs.manureTonnes * 1000) / 1000), String(rates.manureRatePerTonne)],
-    ['4', 'Gunny Bags (50 Kg Concentrate)', 'Rs./Bag', '50', String(rates.gunnyRatePerBag)],
+    ['1', 'Sale of processed products', 'Kg', String(fmt(Math.round(annualProductKg * 100) / 100)), String(rates.productRatePerKg)],
+    ['2', 'Annual raw milk processed', 'Kg', String(fmt(annualMilkKg)), String(rates.rawMaterialRatePerKg)],
   ], [40, 220, 80, 80, 85], 9);
   ctx.sectionTitle('totalCostTitle', 16);
   if (ctx.y < 180) ctx.newPage();
@@ -956,40 +941,28 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
     ['', 'Grand Total', '', fmt(costs.capitalTotal)],
   ], [40, 220, 100, 145]);
   ctx.para('Note: The working capital will be managed by the farmers.');
-  const fy = flock.map(function (f) { return f; });
-  const ycols = function (fn: (f: any) => string) { return fy.map(function (f) { return fn(f); }); };
+  const capUse = [70, 80, 85, 90, 95, 100].slice(0, years);
   const flockHeaders = ['S.No', 'Particular'].concat(yrCols);
   const flockWidths = [35, 200, 45, 45, 45, 45, 45, 45];
   const flockRows = [
-    ['1', 'Numbers of kidding per year'].concat(ycols(function (f) { return String(f.kiddings); })),
-    ['2', 'Kids born (Male)'].concat(ycols(function (f) { return String(f.kidsBornM); })),
-    ['3', 'Kids born (Female)'].concat(ycols(function (f) { return String(f.kidsBornF); })),
-    ['4', 'Mortality of male kids'].concat(ycols(function (f) { return String(Math.round(f.kidsBornM * rates.kidMortalityPct / 100)); })),
-    ['5', 'Mortality of female kids'].concat(ycols(function (f) { return String(Math.round(f.kidsBornF * rates.kidMortalityPct / 100)); })),
-    ['6', 'Male kids for sale'].concat(ycols(function (f) { return String(f.saleM); })),
-    ['7', 'Female kids for sale'].concat(ycols(function (f) { return String(f.saleF); })),
-    ['8', 'Total kids for sale'].concat(ycols(function (f) { return String(f.saleM + f.saleF); })),
+    ['1', 'Raw milk processed (kg)'].concat(capUse.map(function (u) { return String(Math.round(annualMilkKg * u / 100)); })),
+    ['2', 'Capacity utilization (%)'].concat(capUse.map(function (u) { return String(u); })),
+    ['3', 'Product output (kg)'].concat(capUse.map(function (u) { return String(Math.round(annualProductKg * u / 100)); })),
   ];
   ctx.sectionTitleWithTable('flockChart', 13, flockHeaders, flockRows, flockWidths, 8.5);
   ctx.table(flockHeaders, flockRows, flockWidths, 8.5);
-  ctx.para('(Kids born in I year will be sold in II Year and so on)');
+  ctx.para('(Capacity utilization rises from 70% in I year to full capacity by VI year)');
   // keep profitability heading with income table
   if (ctx.y < 320) ctx.newPage();
   ctx.subTitle(ctx.t('profitability'));
-  const maleAmt = f1.saleM * rates.maleSalePrice;
-  const femaleAmt = f1.saleF * rates.femaleSalePrice;
-  const manureAmt = costs.manureTonnes * rates.manureRatePerTonne;
-  const gunnyAmt = costs.gunnyBags * rates.gunnyRatePerBag;
+  const prodAmt = costs.productIncome;
   const incY = function (v: number, skipFirst: boolean) {
     const a = [];
     for (let i = 0; i < years; i++) a.push(i === 0 && skipFirst ? '' : fmt(v));
     return a;
   };
   const incRows = [
-    ['1', 'Sale of male goat', 'Buckling', fmt(rates.maleSalePrice), String(f1.saleM)].concat(incY(maleAmt, true)),
-    ['2', 'Sale of female goat', 'Doeling', fmt(rates.femaleSalePrice), String(f1.saleF)].concat(incY(femaleAmt, true)),
-    ['3', 'Sale of goat manure', 'Tonnes', fmt(rates.manureRatePerTonne), String(Math.round(costs.manureTonnes * 1000) / 1000)].concat(incY(manureAmt, false)),
-    ['4', 'Sale of gunny bags', 'Numbers', fmt(rates.gunnyRatePerBag), String(Math.round(costs.gunnyBags * 100) / 100)].concat(incY(gunnyAmt, false)),
+    ['1', 'Sale of processed products', 'Kg', fmt(rates.productRatePerKg), String(fmt(Math.round(annualProductKg * 100) / 100))].concat(incY(prodAmt, false)),
   ];
   const incTot = [];
   for (let ti = 0; ti < years; ti++) incTot.push(fmt(fin.totalIncome[ti]));
@@ -1006,14 +979,11 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
     return a;
   };
   const expRows = [
-    ['1', w[0].label, 'Rs./Acre/Season', fmt(rates.fodderCostPerAcre), String(rates.fodderAcres)].concat(expY(w[0].amount)),
-    ['2', w[1].label, 'Kg (@250g/day)', fmt(rates.concentrateRate), fmt(costs.adultConcentrateKg)].concat(expY(w[1].amount)),
-    ['3', w[2].label, 'Kg (@150g/day)', fmt(rates.concentrateRate), fmt(costs.kidConcentrateKg)].concat(expY(w[2].amount)),
-    ['4', w[3].label, 'Wages/ Month/ Labour', fmt(rates.labourWagePerMonth), String(rates.labourCount)].concat(expY(w[3].amount)),
-    ['5', 'Insurance', '%', String(rates.insurancePct), String(totA)].concat(expY(costs.insuranceAmount)),
-    ['6', 'Health expenses (Veterinary Aid)', '/Animal/Year', fmt(rates.vetRatePerAnimal), String(totA)].concat(expY(w[4].amount)),
-    ['7', 'Electricity and Water', '/Animal/Year', fmt(rates.utilityRatePerAnimal), String(totA)].concat(expY(w[5].amount)),
-    ['8', 'Interest on Bank loan', '%', String(rates.interestPct), fmt(fin.meanBank)].concat(expY(fin.interestPerYear)),
+    ['1', w[0].label, 'Rs./Kg', fmt(rates.rawMaterialRatePerKg), fmt(costs.rawMaterialCost / rates.rawMaterialRatePerKg)].concat(expY(w[0].amount)),
+    ['2', w[1].label, 'Wages/ Month/ Labour', fmt(rates.labourWagePerMonth), String(rates.labourCount)].concat(expY(w[1].amount)),
+    ['3', w[2].label, 'Rs./Month', fmt(rates.utilityPerMonth), '12'].concat(expY(w[2].amount)),
+    ['4', w[3].label, 'Rs./Month', fmt(rates.miscPerMonth), '12'].concat(expY(w[3].amount)),
+    ['5', 'Interest on Bank loan', '%', String(rates.interestPct), fmt(fin.meanBank)].concat(expY(fin.interestPerYear)),
   ];
   const expTot = [];
   for (let te = 0; te < years; te++) expTot.push(fmt(fin.expenditure[te]));
@@ -1073,24 +1043,36 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   const dWDscr = [195, 52, 52, 52, 52, 52, 52];
   ctx.subTitleWithTable(ctx.t('dscrTitle'), dH, dRowsDscr, dWDscr, 8);
   ctx.table(dH, dRowsDscr, dWDscr, 8);
-  ctx.para('Note: Year-1 DSCR is low — first-year output sold in Year-2 (moratorium for first year).', 9);
+  ctx.para('Note: Year-1 DSCR ramps with capacity utilization (70% in first year).', 9);
   ctx.land = false;
   if (ctx.curW !== A4W) ctx.newPage();
   ctx.subTitle(ctx.t('breakEvenTitle'));
-  const saleQty = f1.saleM + f1.saleF;
+  const saleQty = Math.round(annualProductKg * 100) / 100;
   const P = fin.totalIncome[1] / saleQty;
   const VC1 = fin.expenditure[1] / saleQty;
   const FC = costs.capitalTotal / years;
   const be = breakEven({ price: P, fixedCost: FC, vc1: VC1, vc2: 0.0002 });
   const beQ1 = be.q1 == null ? 0 : be.q1;
   const beQ2 = be.q2 == null ? 0 : be.q2;
-  ctx.para('TC = FC + VC1 x Q + VC2 x Q x Q, where Q is saleable kids per year. P = Rs. ' + fmt(Math.round(P * 100) / 100) + ' per kid, FC = Rs. ' + fmt(Math.round(FC)) + ' (capital / ' + years + ' years), VC1 = Rs. ' + fmt(Math.round(VC1 * 100) / 100) + ' per kid, VC2 = 0.0002.');
-  ctx.para('Lower break-even Q1 = ' + beQ1 + ' kids (Rs. ' + fmt(be.sales1 == null ? 0 : be.sales1) + '). Upper break-even Q2 = ' + fmt(Math.round(beQ2)) + ' kids. Farm capacity is ' + saleQty + ' kids per year.');
+  ctx.para('TC = FC + VC1 x Q + VC2 x Q x Q, where Q is saleable product in kg per year. P = Rs. ' + fmt(Math.round(P * 100) / 100) + ' per kg, FC = Rs. ' + fmt(Math.round(FC)) + ' (capital / ' + years + ' years), VC1 = Rs. ' + fmt(Math.round(VC1 * 100) / 100) + ' per kg, VC2 = 0.0002.');
+  // Linear fallback: thin margins give no curvilinear roots (discriminant < 0).
+  const linQ = P > VC1 ? Math.round(FC / (P - VC1)) : 0;
+  if (beQ1 === 0 && beQ2 === 0 && linQ > 0) {
+    ctx.para('Break-even (linear) Q = ' + linQ + ' kg (Rs. ' + fmt(Math.round(linQ * P)) + '). Plant capacity is ' + saleQty + ' kg per year.');
+    drawBreakEvenChart(ctx, P, FC, VC1, 0.0002, linQ, saleQty);
+    if (linQ > saleQty) {
+      ctx.para('Note: Break-even Q (' + linQ + ') is beyond plant capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger capacity or lower costs.');
+    } else {
+      ctx.para('Break-even Q lies within plant capacity, so output above ' + linQ + ' kg per year is the profit zone.');
+    }
+  } else {
+  ctx.para('Lower break-even Q1 = ' + beQ1 + ' kg (Rs. ' + fmt(be.sales1 == null ? 0 : be.sales1) + '). Upper break-even Q2 = ' + fmt(Math.round(beQ2)) + ' kg. Plant capacity is ' + saleQty + ' kg per year.');
   drawBreakEvenChart(ctx, P, FC, VC1, 0.0002, beQ1, saleQty);
   if (beQ1 > saleQty) {
-    ctx.para('Note: Break-even Q1 (' + beQ1 + ') is beyond farm capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger flock or lower costs.');
+    ctx.para('Note: Break-even Q1 (' + beQ1 + ') is beyond plant capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger capacity or lower costs.');
   } else {
     ctx.para('Q1 lies within farm capacity, so the zone between Q1 and full capacity is the profit zone. Q2 is theoretical and far beyond practical scale.');
+  }
   }
   ctx.land = false;
   ctx.newPage();
@@ -1164,7 +1146,7 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.finishPages();
   return ctx.doc.save();
 }
-function sumArr(a: number[]): number {
+export function sumArr(a: number[]): number {
   let s = 0;
   for (let i = 0; i < a.length; i++) s += a[i];
   return s;
@@ -1173,7 +1155,7 @@ function fmtLakh(v: number): string {
   if (v >= 100000) return 'Rs ' + (Math.round(v / 10000) / 10) + ' L';
   return 'Rs ' + fmt(Math.round(v));
 }
-function drawBreakEvenChart(ctx: Ctx, P: number, FC: number, VC1: number, VC2: number, Q1: number, capacity: number): void {
+export function drawBreakEvenChart(ctx: Ctx, P: number, FC: number, VC1: number, VC2: number, Q1: number, capacity: number): void {
   ctx.ensure(300);
   const plotW = CONTENT_W - 55;
   const plotH = 200;
@@ -1199,7 +1181,7 @@ function drawBreakEvenChart(ctx: Ctx, P: number, FC: number, VC1: number, VC2: n
     const q = Math.round((Qmax * tk) / 4);
     page.drawText(String(q), { x: X(q) - 8, y: y0 - 14, size: 7, font: f, color: rgb(0.3, 0.3, 0.3) });
   }
-  page.drawText('Kids per year (Q)', { x: x0 + plotW / 2 - 40, y: y0 - 26, size: 8, font: f, color: rgb(0, 0, 0) });
+  page.drawText('Product kg per year (Q)', { x: x0 + plotW / 2 - 40, y: y0 - 26, size: 8, font: f, color: rgb(0, 0, 0) });
   page.drawLine({ start: { x: X(0), y: Y(0) }, end: { x: X(Qmax), y: Y(TR(Qmax)) }, thickness: 2.2, color: rgb(0.1, 0.45, 0.75) });
   let px = X(0);
   let py = Y(TC(0));
@@ -1241,23 +1223,17 @@ function drawProcessingSketch(ctx: Ctx, cx: number, cy: number, size: number): v
   const page = ctx.cur;
   const s = size / 100;
   const g = rgb(0.14, 0.14, 0.14);
-  // Simple goat head silhouette using lines/curves approximation
-  // Head oval
-  page.drawEllipse({ x: cx, y: cy, xScale: 28*s, yScale: 36*s, borderColor: g, borderWidth: 1.9, color: rgb(1,1,1), opacity: 0 });
-  // Ears
-  page.drawEllipse({ x: cx - 26*s, y: cy + 12*s, xScale: 16*s, yScale: 9*s, rotate: degrees(-18), borderColor: g, borderWidth: 1.6 });
-  page.drawEllipse({ x: cx + 26*s, y: cy + 12*s, xScale: 16*s, yScale: 9*s, rotate: degrees(18), borderColor: g, borderWidth: 1.6 });
-  // Horns
-  page.drawSvgPath('M -14 -18 C -22 -30 -18 -44 -6 -46', { x: cx - 8*s, y: cy + 22*s, scale: s, borderColor: g, borderWidth: 1.7 });
-  page.drawSvgPath('M 14 -18 C 22 -30 18 -44 6 -46', { x: cx + 8*s, y: cy + 22*s, scale: s, borderColor: g, borderWidth: 1.7 });
-  // Eyes
-  page.drawCircle({ x: cx - 10*s, y: cy + 6*s, size: 2.2*s, color: g });
-  page.drawCircle({ x: cx + 10*s, y: cy + 6*s, size: 2.2*s, color: g });
-  // Nose
-  page.drawEllipse({ x: cx, y: cy - 16*s, xScale: 7*s, yScale: 4.5*s, borderColor: g, borderWidth: 1.2 });
-  page.drawLine({ start: { x: cx, y: cy - 12*s }, end: { x: cx, y: cy - 4*s }, thickness: 1.1, color: g });
-  // Beard tuft
-  page.drawSvgPath('M 0 0 C -3 7 -1 12 0 14 C 1 12 3 7 0 0', { x: cx, y: cy - 28*s, scale: s, borderColor: g, borderWidth: 1.1 });
+  // Simple milk-can outline (fallback only - processing sketch PNG is used when present)
+  // Can body
+  page.drawRectangle({ x: cx - 22*s, y: cy - 30*s, width: 44*s, height: 56*s, borderColor: g, borderWidth: 1.9 });
+  // Neck + lid
+  page.drawRectangle({ x: cx - 10*s, y: cy + 26*s, width: 20*s, height: 8*s, borderColor: g, borderWidth: 1.6 });
+  page.drawLine({ start: { x: cx - 14*s, y: cy + 34*s }, end: { x: cx + 14*s, y: cy + 34*s }, thickness: 1.6, color: g });
+  // Side handles
+  page.drawEllipse({ x: cx - 28*s, y: cy + 8*s, xScale: 7*s, yScale: 10*s, borderColor: g, borderWidth: 1.5 });
+  page.drawEllipse({ x: cx + 28*s, y: cy + 8*s, xScale: 7*s, yScale: 10*s, borderColor: g, borderWidth: 1.5 });
+  // Milk level line
+  page.drawLine({ start: { x: cx - 22*s, y: cy + 10*s }, end: { x: cx + 22*s, y: cy + 10*s }, thickness: 1.1, color: g });
 }
 export function sampleProcessingInput(): ProcessingReportInput {
   return {
