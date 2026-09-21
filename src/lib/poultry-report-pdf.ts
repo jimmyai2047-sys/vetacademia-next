@@ -801,15 +801,26 @@ export async function buildPoultryReport(input: PoultryReportInput): Promise<Uin
   ctx.bullet('Feed price volatility.');
   ctx.para('Threats:');
   ctx.bullet('Market price fluctuation and input cost rise.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Broiler', 'Meat-type bird, 35-42 days'], ['Layer', 'Egg-type bird, 280+ eggs/year'], ['Chick', 'Young bird 0-8 weeks'], ['Grower', '9-20 weeks'], ['Point of lay', '140-150 days'], ['Spent hen', 'Culled layer at end of cycle']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Broiler', 'Meat-type bird, 35-42 days'],
-    ['Layer', 'Egg-type bird, 280+ eggs/year'],
-    ['Chick', 'Young bird 0-8 weeks'],
-    ['Grower', '9-20 weeks'],
-    ['Point of lay', '140-150 days'],
-    ['Spent hen', 'Culled layer at end of cycle'],
-  ], [150, 355]);
+  const termRows: string[][] = [
+    ['Cock (Rooster)', 'An adult male chicken.'],
+    ['Hen', 'An adult female chicken, generally one that has started laying eggs.'],
+    ['Chick', 'A young, newly hatched bird.'],
+    ['Pullet', 'A young female chicken that has not yet started laying eggs.'],
+    ['Cockerel', 'A young male chicken that has not yet reached full maturity.'],
+    ['Capon', 'A castrated male chicken, reared for improved meat quality.'],
+    ['Broody Hen', 'A hen that instinctively wants to sit on and incubate eggs.'],
+    ['Brooding', 'The process of providing warmth and care to young chicks, naturally or artificially.'],
+    ['Incubation', 'The process of maintaining suitable temperature/humidity for an egg to hatch, taking about 21 days in chicken.'],
+    ['Hatching', 'The emergence of a chick from the egg at the end of incubation.'],
+    ['Layer', 'A hen kept and managed specifically for commercial egg production.'],
+    ['Broiler', 'A chicken bred and reared specifically for meat production.'],
+    ['Molting', 'The periodic shedding and replacement of feathers, usually accompanied by a temporary drop in egg production.'],
+    ['Debeaking', 'The partial trimming of a bird beak to reduce injury from pecking in flocks.'],
+    ['Litter', 'The bedding material (for example rice husk, wood shavings) spread on the floor of a poultry house.'],
+    ['Culling', 'Removal of unproductive, sick or inferior birds from the flock.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   // poultry vars

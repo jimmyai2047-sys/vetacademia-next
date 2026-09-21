@@ -811,15 +811,24 @@ export async function buildGoatReport(input: GoatReportInput): Promise<Uint8Arra
   ctx.bullet('High kid mortality if poorly maintained.');
   ctx.para('Threats:');
   ctx.bullet('Rising goat population with declining grazing land.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Buck', 'An adult, male goat'], ['Doe', 'An adult, female goat'], ['Kid', 'A young goat'], ['Kidding', 'A process of giving birth in a goat'], ['Lactation', 'Milk-yielding period'], ['Market animal', 'Livestock bred and produced for food consumption']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Buck', 'An adult, male goat'],
-    ['Doe', 'An adult, female goat'],
-    ['Kid', 'A young goat'],
-    ['Kidding', 'A process of giving birth in a goat'],
-    ['Lactation', 'Milk-yielding period'],
-    ['Market animal', 'Livestock bred and produced for food consumption'],
-  ], [150, 355]);
+  const termRows: string[][] = [
+    ['Buck (Billy)', 'An adult, sexually mature male goat used for breeding.'],
+    ['Doe (Nanny)', 'An adult female goat.'],
+    ['Kid', 'A young goat of either sex, generally up to weaning age.'],
+    ['Buckling', 'A young male goat that has not yet reached breeding maturity.'],
+    ['Doeling', 'A young female goat that has not yet reached breeding maturity.'],
+    ['Wether', 'A castrated male goat.'],
+    ['Herd', 'A group of goats kept and managed together.'],
+    ['Kidding', 'The act of a doe giving birth.'],
+    ['Gestation Period', 'The duration of pregnancy, averaging about 148-150 days in goats.'],
+    ['Browsing', 'The natural feeding behaviour of goats on shrubs, leaves and tree foliage rather than grass alone.'],
+    ['Disbudding', 'Removal of horn buds in a young goat to prevent horn growth.'],
+    ['Weaning', 'Separation of the kid from doe milk and shift to independent feeding.'],
+    ['Estrus (Heat)', 'The period during which a doe is sexually receptive.'],
+    ['Culling', 'Removal of unproductive or unhealthy goats from the herd.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   const doesN = rates.does;

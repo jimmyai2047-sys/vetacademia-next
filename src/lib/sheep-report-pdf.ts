@@ -88,7 +88,7 @@ const LBL: Record<string, { en: string; hi: string }> = {
   projectDescription: { en: "1. Project description", hi: "1. परियोजना विवरण" },
   projectLocation: { en: "2. Project Location", hi: "2. परियोजना स्थल" },
   breed: { en: "3. Breed", hi: "3. नस्ल" },
-  rearingSystem: { en: "4. Preferred sheep rearing system: Semi-Intensive System", hi: "4. बकरी पालन प्रणाली: अर्ध-सघन प्रणाली" },
+  rearingSystem: { en: "4. Preferred sheep rearing system: Semi-Intensive System", hi: "4. भेड़ पालन प्रणाली: अर्ध-सघन प्रणाली" },
   housing: { en: "5. Housing of Sheep", hi: "5. बकरियों का आवास" },
   manger: { en: "6. Feeding and Watering Mangers", hi: "6. चारा-पानी की नांद" },
   feedFodder: { en: "7. Feed & Fodder cultivation", hi: "7. चारा उत्पादन" },
@@ -802,15 +802,26 @@ export async function buildSheepReport(input: SheepReportInput): Promise<Uint8Ar
   ctx.bullet('High lamb mortality if poorly maintained.');
   ctx.para('Threats:');
   ctx.bullet('Rising sheep population with declining grazing land.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Ram', 'An adult, male sheep'], ['Ewe', 'An adult, female sheep'], ['Lamb', 'A young sheep'], ['Lambing', 'A process of giving birth in a sheep'], ['Lactation', 'Milk-yielding period'], ['Market animal', 'Livestock bred and produced for food consumption']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Ram', 'An adult, male sheep'],
-    ['Ewe', 'An adult, female sheep'],
-    ['Lamb', 'A young sheep'],
-    ['Lambing', 'A process of giving birth in a sheep'],
-    ['Lactation', 'Milk-yielding period'],
-    ['Market animal', 'Livestock bred and produced for food consumption'],
-  ], [150, 355]);
+  const termRows: string[][] = [
+    ['Ram', 'An adult, sexually mature male sheep used for breeding.'],
+    ['Ewe', 'An adult female sheep.'],
+    ['Lamb', 'A young sheep of either sex, generally up to weaning age.'],
+    ['Hogget / Yearling', 'A sheep between approximately one and two years of age.'],
+    ['Wether', 'A castrated male sheep.'],
+    ['Flock', 'A group of sheep kept and managed together.'],
+    ['Tupping', 'The breeding season/act of mating rams with ewes.'],
+    ['Lambing', 'The act of a ewe giving birth.'],
+    ['Gestation Period', 'The duration of pregnancy, averaging about 147-150 days in sheep.'],
+    ['Fleece', 'The wool coat shorn from a sheep in one piece.'],
+    ['Shearing', 'The process of removing sheep wool/fleece.'],
+    ['Crutching', 'Removal of wool from around the tail and breech area for hygiene.'],
+    ['Docking', 'The removal or shortening of a lamb tail for health and hygiene reasons.'],
+    ['Drenching', 'Administration of liquid medicine (commonly dewormers) orally to sheep.'],
+    ['Weaning', 'Separation of the lamb from ewe milk and shift to independent feeding.'],
+    ['Culling', 'Removal of unproductive or unhealthy sheep from the flock.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   const ewesN = rates.ewes;

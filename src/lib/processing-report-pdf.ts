@@ -811,15 +811,29 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.bullet('High kid mortality if poorly maintained.');
   ctx.para('Threats:');
   ctx.bullet('Rising goat population with declining grazing land.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Buck', 'An adult, male goat'], ['Doe', 'An adult, female goat'], ['Kid', 'A young goat'], ['Kidding', 'A process of giving birth in a goat'], ['Lactation', 'Milk-yielding period'], ['Market animal', 'Livestock bred and produced for food consumption']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Buck', 'An adult, male goat'],
-    ['Doe', 'An adult, female goat'],
-    ['Kid', 'A young goat'],
-    ['Kidding', 'A process of giving birth in a goat'],
-    ['Lactation', 'Milk-yielding period'],
-    ['Market animal', 'Livestock bred and produced for food consumption'],
-  ], [150, 355]);
+  const termRows: string[][] = [
+    ['Pasteurization', 'The controlled heat treatment of milk to destroy pathogenic micro-organisms while retaining nutritional quality.'],
+    ['Homogenization', 'The mechanical process of breaking down fat globules in milk to prevent cream separation and give a uniform texture.'],
+    ['Standardization', 'Adjusting the fat and Solids-Not-Fat (SNF) content of milk to a defined, uniform level.'],
+    ['Chilling', 'The rapid cooling of raw milk soon after collection to slow bacterial growth and preserve quality.'],
+    ['Clarification', 'The removal of physical impurities such as dust, dirt and extraneous matter from raw milk.'],
+    ['SNF (Solids-Not-Fat)', 'The total milk solids (proteins, lactose, minerals) present in milk excluding the fat content.'],
+    ['Bulk Milk Cooler (BMC)', 'A refrigerated tank at a village-level collection centre used to chill and store milk before transport.'],
+    ['Cream Separation', 'The mechanical process of separating cream (fat) from skim milk using a cream separator.'],
+    ['Curdling (Coagulation)', 'The formation of curd/clot in milk due to acid, rennet or heat action on milk proteins.'],
+    ['Souring / Fermentation', 'The natural or induced acidification of milk by micro-organisms, as in the making of curd/yoghurt.'],
+    ['Adulteration', 'The addition of foreign or unauthorised substances (for example water, starch, detergent) to milk to alter its volume or properties.'],
+    ['Ghee', 'Clarified butterfat obtained by heating butter/cream and removing the milk solids and moisture.'],
+    ['Khoya / Khoa', 'A concentrated milk solid obtained by continuously heating and evaporating milk, used in Indian sweets.'],
+    ['Paneer', 'A fresh, non-melting cheese made by coagulating hot milk with an acid (for example lemon juice/citric acid) and draining the whey.'],
+    ['Cold Chain', 'The unbroken sequence of refrigerated collection, transport, storage and processing that preserves milk quality.'],
+    ['Platform Tests', 'Basic quality tests (for example organoleptic, alcohol, clot-on-boiling) performed on milk at the collection centre before acceptance.'],
+    ['Lactometer', 'An instrument used to measure the specific gravity/density of milk as an indicator of its purity.'],
+    ['MBRT (Methylene Blue Reduction Test)', 'A test that estimates the bacterial load of milk by measuring the time taken to decolourise added methylene blue dye.'],
+    ['UHT (Ultra High Temperature) Treatment', 'A processing method that heats milk to a very high temperature for a few seconds to give it a long shelf life without refrigeration.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   const doesN = rates.does;

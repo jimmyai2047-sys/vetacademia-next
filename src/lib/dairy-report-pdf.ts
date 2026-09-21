@@ -1,6 +1,6 @@
 // @ts-nocheck
-// Dairy breeder-unit bank-format PDF generator (pdf-lib, server-side only).
-// Mirrors the approved NLM-EDP Goat PDF: cover, auto index, introduction,
+// Dairy (cattle/buffalo) bank-format PDF generator (pdf-lib, server-side only).
+// Mirrors the approved NLM-EDP bank PDF: cover, auto index, introduction,
 // DPR tables, assumptions, costs, finance, break-even chart, submitted-by page.
 // Language: 'en' | 'hi' (headings/labels/cover bilingual; body prose EN in pilot).
 import "regenerator-runtime/runtime";
@@ -91,12 +91,12 @@ const LBL: Record<string, { en: string; hi: string }> = {
   projectLocation: { en: "2. Project Location", hi: "2. परियोजना स्थल" },
   breed: { en: "3. Breed", hi: "3. नस्ल" },
   rearingSystem: { en: "4. Preferred dairy rearing system: Intensive System", hi: "4. डेयरी पालन प्रणाली: गहन प्रणाली" },
-  housing: { en: "5. Housing of Goats", hi: "5. बकरियों का आवास" },
+  housing: { en: "5. Housing of Dairy Animals", hi: "5. दुधारू पशुओं का आवास" },
   manger: { en: "6. Feeding and Watering System", hi: "6. चारा-पानी प्रणाली" },
   feedFodder: { en: "7. Feed & Fodder", hi: "7. चारा एवं पोषण" },
-  dietary: { en: "8. Dietary Management of Goats", hi: "8. बकरियों का आहार प्रबंधन" },
+  dietary: { en: "8. Dietary Management of Dairy Animals", hi: "8. दुधारू पशुओं का आहार प्रबंधन" },
   water: { en: "9. Water", hi: "9. पानी" },
-  diseases: { en: "10. Diseases of goats and their prevention", hi: "10. बकरियों के रोग एवं रोकथाम" },
+  diseases: { en: "10. Diseases of cattle/buffalo and their prevention", hi: "10. गाय/भैंस के रोग एवं रोकथाम" },
   labour: { en: "11. Labour", hi: "11. श्रम" },
   vetAid: { en: "12. Veterinary aid", hi: "12. पशु चिकित्सा सहायता" },
   market: { en: "13. Market potential (Milk)", hi: "13. बाजार संभावना (दूध)" },
@@ -652,9 +652,10 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   const unitLabel = "(" + (rates as any).animals + " animals) Dairy unit";
   ctx.centered("Application for assistance in establishing " + unitLabel + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
-  // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
+  // Pencil sketch - cattle vs buffalo (shared Livestock_Pencil_Sketches artwork)
+  const sketchFile = species === "BUFFALO" ? "buffalo.png" : "cattle.png";
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "dairy.png");
+    const sketchPath = require("path").join(process.cwd(), "public", "sketches", sketchFile);
     if (require("fs").existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
       const maxW = 440;
@@ -704,16 +705,17 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.newPage();
   ctx.sectionTitle("introduction", 16);
   const breed = findBreed(species === "BUFFALO" ? "Buffalo" : "Cattle", breedName) || findBreed(species === "BUFFALO" ? "Buffalo" : "Cattle", breedName);
-  const purpose = purposesOf("Goat").filter(function (p) {
-    return p.purpose.indexOf("Dual") >= 0;
-  })[0] || purposesOf("Goat")[0];
+  const purpose = purposesOf(species === "BUFFALO" ? "Buffalo" : "Cattle").filter(function (p) {
+    return p.purpose.indexOf("Milk") >= 0;
+  })[0] || purposesOf(species === "BUFFALO" ? "Buffalo" : "Cattle")[0];
+  const animalWord = species === "BUFFALO" ? "buffalo" : "cattle";
 
   ctx.subTitle(ctx.t("projectDescription"));
-  ctx.para("Goat is a multi-functional animal and plays a significant role in the economy and nutrition of landless, small and marginal farmers in the country. Goat rearing is an enterprise practised by a large section of the rural population. Goats are among the main meat-producing animals in India and have a huge domestic demand.");
-  ctx.para("Benefits of commercial goat farming:");
+  ctx.para("Dairy farming with " + breedName + " " + animalWord + " plays a significant role in the economy and nutrition of small, marginal and landless farmers in the country. Milk provides daily cash income through village collection centres and dairy cooperatives, and the " + animalWord + " unit also yields calves and manure as secondary income. There is a huge year-round domestic demand for milk and milk products.");
+  ctx.para("Benefits of commercial dairy farming:");
   const benList = purpose ? purpose.benefits.slice(0, 12) : [];
   for (let bi = 0; bi < benList.length; bi++) ctx.bullet(benList[bi], ">");
-  ctx.para("At present, goat rearing under intensive and semi-intensive systems for commercial production is gaining momentum. A number of commercial goat farms have been established in different regions of the country and state.");
+  ctx.para("At present, organised dairy farming under intensive stall-feeding is gaining momentum. A number of commercial dairy farms have been established in different regions of the country and state.");
   ctx.para("Disadvantages: There are some disadvantages as well:");
   const disList = purpose ? purpose.disadvantages.slice(0, 4) : [];
   for (let di = 0; di < disList.length; di++) ctx.bullet(disList[di], ">");
@@ -722,12 +724,12 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   const townStr = loc.towns.map(function (t) {
     return t.km + " km from " + t.name + " town";
   }).join(", ");
-  ctx.para("The Goat Farm will be constructed in the village of " + loc.farmVillage + ", Tehsil: " + loc.tehsil + ", District: " + loc.district + ". The given location is " + loc.highwayDistKm + " from the " + loc.highway + " and " + townStr + ", where an assured year-round market is available. It is easily accessible from the main road due to the availability of a good paved road.");
+  ctx.para("The Dairy Farm will be constructed in the village of " + loc.farmVillage + ", Tehsil: " + loc.tehsil + ", District: " + loc.district + ". The given location is " + loc.highwayDistKm + " from the " + loc.highway + " and " + townStr + ", where an assured year-round market is available. It is easily accessible from the main road due to the availability of a good paved road.");
 
   {
     const breedPara = breed
-      ? "For this project site, the " + breed.breed + " goat breed will be reared and improved for germplasm development. " + breed.note + " Origin: " + breed.origin + ". Male body weight " + breed.maleWtKg + " kg and female " + breed.femaleWtKg + " kg."
-      : "For this project site, the " + breedName + " goat breed will be reared and improved for germplasm development.";
+      ? "For this project site, the " + breed.breed + " dairy breed will be maintained for clean milk production and herd improvement. " + breed.note + " Origin: " + breed.origin + ". Male body weight " + breed.maleWtKg + " kg and female " + breed.femaleWtKg + " kg."
+      : "For this project site, the " + breedName + " dairy breed will be maintained for clean milk production and herd improvement.";
     const needBreed = 34 + ctx.wrap(breedPara, ctx.fonts.reg, 11.5, CONTENT_W).length * (11.5 + 4.5) + 8;
     if (ctx.y - needBreed < MARGIN_BOTTOM + 12) ctx.newPage();
     ctx.subTitle(ctx.t("breed"));
@@ -735,27 +737,26 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   }
 
   ctx.subTitle(ctx.t("rearingSystem"));
-  ctx.para("A semi-intensive system of rearing will be adopted for this project, as it is an intermediate compromise between the extensive and intensive systems used in some herds with limited grazing. It involves providing stall feeding, shelter at night under a shed, and grazing for 3 to 5 hours per day, with browsing on pasture and range.");
+  ctx.para("An intensive (stall-feeding) system of rearing will be adopted for this project. Animals will be housed in covered sheds round the clock and fed weighed quantities of green fodder, dry fodder and concentrate in the manger with clean drinking water always available; milking will be done twice daily at fixed hours. " + (species === "BUFFALO" ? "Buffaloes will be provided a wallow/cooling arrangement in summer, as heat stress sharply reduces milk yield." : "Cows will be let into an open paddock for exercise for a few hours daily."));
   ctx.para("The advantage of this system is that:");
-  const advs = ["Meeting nutrient requirements from both pasture and stall feeding.", "Managing medium to large herds of 100 to 500 heads and above.", "Utilising cultivated fodder during a short grazing period.", "Harvesting a good crop of kids for both meat and milk.", "Earning profitable returns due to low labour input."];
+  const advs = ["Meeting exact nutrient requirements of lactating, dry and growing stock through stall feeding.", "Managing a compact high-yielding herd with twice-daily supervised milking and health checks.", "Utilising cultivated green fodder, crop residues and purchased concentrate efficiently.", "Harvesting a full lactation of clean milk plus a healthy calf crop every year.", "Earning daily cash income with low grazing-land dependence."];
   for (let ai = 0; ai < advs.length; ai++) ctx.bullet(advs[ai], ">");
 
   ctx.subTitle(ctx.t("housing"));
-  ctx.para("Providing simple sheds made with low-cost housing materials for goats is sufficient to achieve their optimal production capacity. The houses will be semi-closed type with North-South orientation and a long axis in East-West direction. There will be separate houses for dry, pregnant, lactating, sick, bucks and kids. The shed will be built on an elevated area on a raised platform (about 1 meter high) to prevent water stagnation. Clean drinking water, asbestos roof, concrete floor with drainage, proper ventilation with concrete and wire-mesh side walls, and separate feeders and water troughs will be provided.");
+  ctx.para("A comfortable, well-drained house is essential for high milk yield. The dairy shed will be built on an elevated site with North-South orientation and long axis East-West, with asbestos roofing, non-slippery concrete flooring with proper drainage slope, and good ventilation. There will be separate standing space for milch, dry, pregnant and sick animals and calves, a milking bail/parlour, feed store and a wallow/cooling area" + (species === "BUFFALO" ? " (essential for buffaloes)" : "") + ". Feed mangers and water troughs will run along the standing line with round-the-clock clean drinking water.");
   ctx.para("Recommended floor space requirements for Indian conditions:");
   ctx.table(["Age groups", "Covered space (Sq. m)", "Open space (Sq. m)"], [
-    ["Up to 3 months", "0.2-0.25", "0.4-0.5"],
-    ["3 months to 6 months", "0.5-0.75", "1.0-1.5"],
-    ["6 months to 12 months", "0.75-1.0", "1.5-2.0"],
-    ["Adult animal", "1.5", "3.0"],
-    ["Male, pregnant, or lactating doe", "1.5-2.0", "3.0-4.0"],
+    ["Calf (0-6 months)", "1.0-1.5", "2.0-3.0"],
+    ["Young stock (6-24 months)", "2.0-2.5", "4.0-5.0"],
+    ["Adult " + animalWord, "3.5", "7.0"],
+    ["Pregnant / sick animal", "4.0-5.0", "8.0-10.0"],
   ], [220, 140, 140]);
 
   ctx.subTitle(ctx.t("manger"));
   ctx.para("A concrete/brick partition with GI pipe at a distance of 30 cm will be constructed. Space required for food and water:");
   ctx.table(["Type of animal", "Space/animal (cm)", "Width of manger (cm)", "Depth (cm)", "Height of inner wall (cm)"], [
-    ["Sheep and goats", "40 - 50", "50", "30", "35"],
-    ["Kid/lamb", "30 - 35", "50", "20", "25"],
+    ["Adult " + animalWord, "60 - 75", "60", "40", "45"],
+    ["Calf", "40 - 50", "50", "25", "30"],
   ], [120, 110, 110, 80, 80], 8);
 
   ctx.subTitle(ctx.t("feedFodder"));
@@ -767,12 +768,12 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.subTitle(ctx.t("water"));
   ctx.para("Good-quality clean fresh water for drinking, cleaning and washing will be made available from a bore well and a rainwater-harvesting tank.");
 
-  const byCatGoat = diseasesByCategory(species === "BUFFALO" ? "Buffalo" : "Cattle");
+  const byCat = diseasesByCategory(species === "BUFFALO" ? "Buffalo" : "Cattle");
   ctx.subTitle(ctx.t("diseases"));
   ctx.para("Dairy animals need FMD (twice year), HS, BQ, Brucellosis vaccination and deworming every 3 months; calves dewormed monthly 1-6 months; ecto-parasite control and clean shed prevent disease.");
-  for (const cat of Object.keys(byCatGoat)) {
+  for (const cat of Object.keys(byCat)) {
     ctx.categoryLabel(cat + ":");
-    const catRows = byCatGoat[cat].map(function (d) { return [d.disease, d.symptoms, d.prevention]; });
+    const catRows = byCat[cat].map(function (d) { return [d.disease, d.symptoms, d.prevention]; });
     ctx.table(["Disease", "Symptoms", "Prevention"], catRows, [110, 190, 200], 8);
   }
 
@@ -789,10 +790,10 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
     ctx.para(vetText);
   }
 
-  ctx.subTitleWithPara("market", "People in and around the project area prefer goat meat (chevon) to any other meat or chicken; it is on the menu at all ceremonies, so market demand is high. Purchasing power is rising and non-vegetarian food is now almost essential in the diet. Chevon availability is less than demand; investment is smaller and risk lower than dairy. The state leads in goat population and the demand for goat meat is rising faster than the goat population.");
+  ctx.subTitleWithPara("market", "Milk is sold daily through village collection centres, dairy cooperatives and private dairies, so payment is assured and regular. Demand for fresh milk, ghee, paneer, curd and khoya is rising with urbanisation and purchasing power; " + (species === "BUFFALO" ? "buffalo milk with high fat fetches a premium price" : "cow milk, including A2 milk, commands growing niche demand") + ". Surplus male calves, heifers, manure and gunny bags add secondary income, and the investment is safer than seasonal crops because cash flow is daily.");
 
   {
-    const exportPara = "The scope for exports too is huge; however, for selling goat meat abroad, one has to adhere to strict phytosanitary conditions and standards of the respective nation.";
+    const exportPara = "There is good scope for value addition — ghee, paneer, khoya, flavoured milk and skimmed milk powder — sold through cooperative and private brands; export of dairy products is possible only under strict FSSAI and importing-country quality standards.";
     const needExport = 34 + ctx.wrap(exportPara, ctx.fonts.reg, 11.5, CONTENT_W).length * (11.5 + 4.5) + 8;
     if (ctx.y - needExport < MARGIN_BOTTOM + 12) ctx.newPage();
     ctx.subTitle(ctx.t("export"));
@@ -814,15 +815,45 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.bullet('First year milk half, calves sale from year 2.');
   ctx.para('Threats:');
   ctx.bullet('Feed price and milk price fluctuation; disease FMD.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Bull', 'Adult male cattle/buffalo'], ['Cow/Buffalo', 'Adult female'], ['Calf', 'Young 0-12 months'], ['Calving', 'Giving birth'], ['Lactation', 'Milk-yielding period 210-280 days'], ['Dry period', 'Non-milking 85-155 days']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Bull', 'Adult male cattle/buffalo'],
-    ['Cow/Buffalo', 'Adult female'],
-    ['Calf', 'Young 0-12 months'],
-    ['Calving', 'Giving birth'],
-    ['Lactation', 'Milk-yielding period 210-280 days'],
-    ['Dry period', 'Non-milking 85-155 days'],
-  ], [150, 355]);
+  const termRows: string[][] = species === "BUFFALO" ? [
+    ['Buffalo Bull', 'An adult, sexually mature male buffalo used for breeding.'],
+    ['She-buffalo (Cow)', 'An adult female buffalo that has calved at least once.'],
+    ['Heifer', 'A young female buffalo that has not yet calved.'],
+    ['Calf', 'A young buffalo of either sex, from birth up to about one year of age.'],
+    ['Dam', 'The mother of a buffalo calf.'],
+    ['Sire', 'The father of a buffalo calf.'],
+    ['Parturition (Calving)', 'The act of giving birth to a buffalo calf.'],
+    ['Gestation Period', 'The duration of pregnancy, averaging about 300-310 days in buffalo.'],
+    ['Lactation', 'The milk-producing period following calving.'],
+    ['Dry Period', 'The rest period between drying-off and the next calving.'],
+    ['Colostrum', 'The antibody-rich first milk secreted immediately after calving.'],
+    ['Silent Heat', 'A condition, common in buffalo, where ovulation occurs without visible signs of estrus.'],
+    ['Wallowing', 'The natural behaviour of buffalo submerging themselves in water or mud to cool the body.'],
+    ['Weaning', 'The process of shifting a calf away from dependence on milk to solid feed.'],
+    ['Service / Breeding', 'The act of mating, whether natural service or artificial insemination.'],
+    ['Culling', 'Removal of unproductive or diseased animals from the herd.'],
+  ] : [
+    ['Bull', 'An adult, sexually mature male of the cattle species, used for breeding.'],
+    ['Cow', 'An adult female bovine that has calved at least once.'],
+    ['Heifer', 'A young female bovine that has not yet calved.'],
+    ['Calf', 'A young cattle of either sex, from birth up to about one year of age.'],
+    ['Bullock / Ox', 'A castrated male bovine, generally used for draught and agricultural work.'],
+    ['Steer', 'A castrated male bovine reared mainly for beef/meat production.'],
+    ['Dam', 'The mother of a calf.'],
+    ['Sire', 'The father of a calf.'],
+    ['Parturition (Calving)', 'The act or process of giving birth to a calf.'],
+    ['Gestation Period', 'The duration of pregnancy, averaging about 280-285 days in cattle.'],
+    ['Lactation', 'The period during which a cow produces and yields milk after calving.'],
+    ['Dry Period', 'The resting period between drying-off of a cow and her next calving, usually 45-60 days.'],
+    ['Colostrum', 'The thick, nutrient- and antibody-rich first milk secreted immediately after calving.'],
+    ['Weaning', 'The process of gradually stopping calf dependence on milk and shifting it to solid feed.'],
+    ['Estrus (Heat)', 'The recurring period during which a female is sexually receptive and can conceive.'],
+    ['Service / Breeding', 'The act of mating, whether natural service or artificial insemination.'],
+    ['Milk Let-down', 'The reflex release of milk from the udder in response to suckling/milking stimuli.'],
+    ['Culling', 'The systematic removal of unproductive, diseased or genetically inferior animals from the herd.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   // dairy has no does/bucks - using animals
@@ -894,8 +925,8 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('incomeNorms'));
   ctx.table(['S.No', 'Particulars', 'Unit', 'Quantity', 'Rs./Unit'], [
-    ['1', 'Sale price of Bucks (12 month)', 'Rs./Buck', '1', String((rates as any).maleCalfPrice)],
-    ['2', 'Sale price of Does (12 month)', 'Rs./Doe', '1', String((rates as any).heiferPrice)],
+    ['1', 'Sale price of Male calf (15 month)', 'Rs./Male calf', '1', String((rates as any).maleCalfPrice)],
+    ['2', 'Sale price of Heifer (15 month)', 'Rs./Heifer', '1', String((rates as any).heiferPrice)],
     ['3', 'Sale price of manure', 'Rs./tonne', String(Math.round(costs.manureTonnes * 1000) / 1000), String(rates.manureRatePerTonne)],
     ['4', 'Gunny Bags (50 Kg Concentrate)', 'Rs./Bag', '50', String(rates.gunnyRatePerBag)],
   ], [40, 220, 80, 80, 85], 9);
@@ -944,7 +975,7 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ];
   ctx.sectionTitleWithTable('flockChart', 13, flockHeaders, flockRows, flockWidths, 8.5);
   ctx.table(flockHeaders, flockRows, flockWidths, 8.5);
-  ctx.para('(Kids born in I year will be sold in II Year and so on)');
+  ctx.para('(Calves born in I year will be sold in II Year and so on)');
   // keep profitability heading with income table
   if (ctx.y < 320) ctx.newPage();
   ctx.subTitle(ctx.t('profitability'));
@@ -958,8 +989,8 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
     return a;
   };
   const incRows = [
-    ['1', 'Sale of male goat', 'Buckling', fmt((rates as any).maleCalfPrice), String((f1 as any).maleSale)].concat(incY(maleAmt, true)),
-    ['2', 'Sale of female goat', 'Doeling', fmt((rates as any).heiferPrice), String((f1 as any).femaleSale)].concat(incY(femaleAmt, true)),
+    ['1', 'Sale of male calf', 'Male calf', fmt((rates as any).maleCalfPrice), String((f1 as any).maleSale)].concat(incY(maleAmt, true)),
+    ['2', 'Sale of female calf (heifer)', 'Heifer', fmt((rates as any).heiferPrice), String((f1 as any).femaleSale)].concat(incY(femaleAmt, true)),
     ['3', 'Sale of manure', 'Tonnes', fmt((rates as any).manureRatePerTonne), String(Math.round(costs.manureTonnes * 1000) / 1000)].concat(incY(manureAmt, false)),
     ['4', 'Sale of gunny bags', 'Numbers', fmt((rates as any).gunnyRatePerBag), String(Math.round(costs.gunnyBags * 100) / 100)].concat(incY(gunnyAmt, false)),
     ['5', 'Sale of milk', 'Litres', fmt((rates as any).milkRatePerLitre), String(costs.totalMilkLitresFull)].concat(incY(costs.totalMilkLitresFull * (rates as any).milkRatePerLitre, false)),
@@ -1215,7 +1246,7 @@ function drawDairySketch(ctx: Ctx, cx: number, cy: number, size: number): void {
   const page = ctx.cur;
   const s = size / 100;
   const g = rgb(0.14, 0.14, 0.14);
-  // Simple goat head silhouette using lines/curves approximation
+  // Simple bovine head outline (fallback only - species sketch PNG is used when present)
   // Head oval
   page.drawEllipse({ x: cx, y: cy, xScale: 28*s, yScale: 36*s, borderColor: g, borderWidth: 1.9, color: rgb(1,1,1), opacity: 0 });
   // Ears
@@ -1230,8 +1261,6 @@ function drawDairySketch(ctx: Ctx, cx: number, cy: number, size: number): void {
   // Nose
   page.drawEllipse({ x: cx, y: cy - 16*s, xScale: 7*s, yScale: 4.5*s, borderColor: g, borderWidth: 1.2 });
   page.drawLine({ start: { x: cx, y: cy - 12*s }, end: { x: cx, y: cy - 4*s }, thickness: 1.1, color: g });
-  // Beard tuft
-  page.drawSvgPath('M 0 0 C -3 7 -1 12 0 14 C 1 12 3 7 0 0', { x: cx, y: cy - 28*s, scale: s, borderColor: g, borderWidth: 1.1 });
 }
 export function sampleDairyInput(): DairyReportInput {
   return {

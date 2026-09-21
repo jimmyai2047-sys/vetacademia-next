@@ -88,7 +88,7 @@ const LBL: Record<string, { en: string; hi: string }> = {
   projectDescription: { en: "1. Project description", hi: "1. परियोजना विवरण" },
   projectLocation: { en: "2. Project Location", hi: "2. परियोजना स्थल" },
   breed: { en: "3. Breed", hi: "3. नस्ल" },
-  rearingSystem: { en: "4. Preferred pig rearing system: Semi-Intensive System", hi: "4. सूअर पालन प्रणाली: अर्ध-सघन प्रणाली" },
+  rearingSystem: { en: "4. Preferred pig rearing system: Intensive System", hi: "4. सूअर पालन प्रणाली: गहन प्रणाली" },
   housing: { en: "5. Housing of Pig", hi: "5. सूअरों का आवास" },
   manger: { en: "6. Feeding and Watering System", hi: "6. चारा-पानी प्रणाली" },
   feedFodder: { en: "7. Feed & Fodder cultivation", hi: "7. चारा उत्पादन" },
@@ -727,20 +727,20 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
   }
 
   ctx.subTitle(ctx.t("rearingSystem"));
-  ctx.para("A semi-intensive system of rearing will be adopted for this project, as it is an intermediate compromise between the extensive and intensive systems used in some herds with limited grazing. It involves providing stall feeding, shelter at night under a shed, and grazing for 3 to 5 hours per day, with browsing on pasture and range.");
+  ctx.para("An intensive system of rearing will be adopted for this project. Pigs will be housed permanently in concrete-floored pens with covered shelter and open run, fed a weighed balanced concentrate ration with clean drinking water always available; no grazing will be practised. Sows, boars, weaners and fatteners will be kept in separate pens on an all-in-all-out batch system with strict hygiene and footbaths at entry.");
   ctx.para("The advantage of this system is that:");
-  const advs = ["Meeting nutrient requirements from both pasture and stall feeding.", "Managing medium to large herds of 100 to 500 heads and above.", "Utilising cultivated fodder during a short grazing period.", "Harvesting a good crop of piglets for both meat and milk.", "Earning profitable returns due to low labour input."];
+  const advs = ["Meeting exact nutrient requirements of sows, piglets and fatteners through stall feeding.", "Achieving fast growth and 8-10 month market age with high feed efficiency.", "Full control over breeding, farrowing, health cover and record keeping.", "Harvesting large litters (6-12 piglets) with low mortality under supervision.", "Earning quick, high returns per unit area with year-round production."];
   for (let ai = 0; ai < advs.length; ai++) ctx.bullet(advs[ai], ">");
 
   ctx.subTitle(ctx.t("housing"));
-  ctx.para("Providing simple sheds made with low-cost housing materials for pig is sufficient to achieve their optimal production capacity. The houses will be semi-closed type with North-South orientation and a long axis in East-West direction. There will be separate houses for dry, pregnant, lactating, sick, boars and piglets. The shed will be built on an elevated area on a raised platform (about 1 meter high) to prevent water stagnation. Clean drinking water, asbestos roof, concrete floor with drainage, proper ventilation with concrete and wire-mesh side walls, and separate feeders and water troughs will be provided.");
+  ctx.para("Pigs will be housed in pucca pens with rough concrete floors (for grip), open run, asbestos roofing and good drainage. There will be separate pens for dry sows and gilts, farrowing sows with creep area, weaners, fatteners, boars and sick animals, each with feeding trough and nipple/bowl drinkers. Footbaths at entry, daily cleaning and dry bedding in farrowing pens will keep the herd healthy.");
   ctx.para("Recommended floor space requirements for Indian conditions:");
   ctx.table(["Age groups", "Covered space (Sq. m)", "Open space (Sq. m)"], [
-    ["Up to 3 months", "0.2-0.25", "0.4-0.5"],
-    ["3 months to 6 months", "0.5-0.75", "1.0-1.5"],
-    ["6 months to 12 months", "0.75-1.0", "1.5-2.0"],
-    ["Adult animal", "1.5", "3.0"],
-    ["Male, pregnant, or lactating sow", "1.5-2.0", "3.0-4.0"],
+    ["Farrowing sow with litter", "7.0-9.0", "8.0-12.0"],
+    ["Weaner (up to 3 months)", "0.3-0.5", "0.5-1.0"],
+    ["Fattener (3-8 months)", "0.9-1.2", "1.2-1.5"],
+    ["Dry sow / gilt", "1.8-2.7", "2.5-3.0"],
+    ["Boar", "6.0-7.0", "8.0-12.0"],
   ], [220, 140, 140]);
 
   ctx.subTitle(ctx.t("manger"));
@@ -754,7 +754,7 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
   ctx.para("The land at the project site is fertile; bore-well and water harvesting will assure irrigation so that fodder crops are raised successfully and abundant good-quality green fodder is available throughout the year.");
 
   ctx.subTitle(ctx.t("dietary"));
-  ctx.para("Scientific feeding schedules will be followed for different categories. Breeding pig: 150-350 g concentrate/animal/day under poor grazing (12% DCP). Pregnant females: 4-5 hours grazing plus 5 kg green fodder/day, rising to 250-350 g concentrate plus 7 kg green fodder in the last month. At delivery: light fodder with plenty of clean cool water; ration built up gradually in 6-7 divided doses. Lactating females: 6-8 hours grazing plus 10 kg green fodder or 400 g concentrate or 800 g leguminous hay per day. Breeding males: same as females on shared grazing, or 300 g concentrate (oats/barley:maize:wheat) under separate feeding. Piglets: colostrum at 100 ml/kg body weight for 3-4 days, creep feed (22% protein) from one month at 50-100 g/day.");
+  ctx.para("Scientific feeding schedules will be followed for different categories. Dry/gestating sow: 2-2.5 kg concentrate/day; lactating sow: 2 kg + 0.4 kg per piglet (up to 5 kg) with plenty of clean water; weaner: creep feed (20-22% protein) from 10 days, 0.3-0.5 kg/day after weaning; fattener: 2.5-3 kg balanced ration/day to 8-10 months market age; boar: 2.5 kg/day. Piglets get colostrum within the first hours of birth; kitchen waste and agricultural by-products may replace part of the ration after proper cooking.");
 
   ctx.subTitle(ctx.t("water"));
   ctx.para("Good-quality clean fresh water for drinking, cleaning and washing will be made available from a bore well and a rainwater-harvesting tank.");
@@ -781,7 +781,7 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
     ctx.para(vetText);
   }
 
-  ctx.subTitleWithPara("market", "People in and around the project area prefer pig meat (chevon) to any other meat or chicken; it is on the menu at all ceremonies, so market demand is high. Purchasing power is rising and non-vegetarian food is now almost essential in the diet. Chevon availability is less than demand; investment is smaller and risk lower than dairy. The state leads in pig population and the demand for pig meat is rising faster than the pig population.");
+  ctx.subTitleWithPara("market", "Pork demand is strong and growing in North-East India and in hotels, restaurants and urban retail elsewhere; pigs reach market age in 8-10 months so cash flow is quick. Purchasing power is rising and dressed pork, sausages and value-added products widen the market. Local supply is less than demand; the unit will sell fatteners at the farm gate and in nearby mandis, with culled sows also realising meat value.");
 
   ctx.subTitleWithPara("export", "The scope for exports too is huge; however, for selling pig meat abroad, one has to adhere to strict phytosanitary conditions and standards of the respective nation.");
 
@@ -790,10 +790,10 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
   ctx.para('Strengths:');
   ctx.bullet('Low labour requirement.');
   ctx.bullet('Multi-functional animal supporting landless, small and marginal farmers.');
-  ctx.bullet('Survives on shrubs and trees in harsh low-fertility lands.');
-  ctx.bullet('Low initial investment; no religious taboo on meat consumption.');
-  ctx.bullet('Easily digestible milk; rural employment with family labour.');
-  ctx.bullet('High fertility with twinning; lower drought risk.');
+  ctx.bullet('Utilises kitchen waste and farm by-products, lowering feed cost.');
+  ctx.bullet('Low initial investment per unit of meat produced.');
+  ctx.bullet('Manure supports crops and biogas; rural employment with family labour.');
+  ctx.bullet('High fertility with large litters (6-12 piglets); lower drought risk.');
   ctx.para('Opportunities:');
   ctx.bullet('High and ready market for pig meat.');
   ctx.bullet('Confirmed ever-increasing market price.');
@@ -801,16 +801,25 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
   ctx.bullet('Organised large-scale pig farming is not yet fully established.');
   ctx.bullet('High piglet mortality if poorly maintained.');
   ctx.para('Threats:');
-  ctx.bullet('Rising pig population with declining grazing land.');
-  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], [['Boar', 'An adult, male pig'], ['Sow', 'An adult, female pig'], ['Piglet', 'A young pig'], ['Farrowing', 'A process of giving birth in a pig'], ['Lactation', 'Milk-yielding period'], ['Market animal', 'Livestock bred and produced for food consumption']], [150, 355]);
-  ctx.table(['Term', 'Meaning'], [
-    ['Boar', 'An adult, male pig'],
-    ['Sow', 'An adult, female pig'],
-    ['Piglet', 'A young pig'],
-    ['Farrowing', 'A process of giving birth in a pig'],
-    ['Lactation', 'Milk-yielding period'],
-    ['Market animal', 'Livestock bred and produced for food consumption'],
-  ], [150, 355]);
+  ctx.bullet('Rising concentrate feed cost squeezes margins.');
+  ctx.bullet('Classical swine fever and other epidemics without vaccination.');
+  const termRows: string[][] = [
+    ['Boar', 'An adult, sexually mature male pig used for breeding.'],
+    ['Sow', 'An adult female pig that has farrowed at least once.'],
+    ['Gilt', 'A young female pig that has not yet farrowed.'],
+    ['Piglet', 'A young pig from birth up to weaning.'],
+    ['Weaner', 'A piglet immediately after weaning, before it reaches grower stage.'],
+    ['Barrow', 'A castrated male pig.'],
+    ['Litter', 'The group of piglets born to a sow in a single farrowing.'],
+    ['Farrowing', 'The act of a sow giving birth.'],
+    ['Gestation Period', 'The duration of pregnancy, averaging about 114 days (three months, three weeks, three days) in pigs.'],
+    ['Creep Feeding', 'Supplementary solid feed offered to piglets before weaning, inaccessible to the sow.'],
+    ['Weaning', 'Separation of piglets from sow milk, typically at 3-6 weeks of age.'],
+    ['Estrus (Heat)', 'The period during which a sow/gilt is sexually receptive.'],
+    ['Culling', 'Removal of unproductive or unhealthy pigs from the herd.'],
+  ];
+  ctx.subTitleWithTable(ctx.t('terminology'), ['Term', 'Meaning'], termRows, [150, 355]);
+  ctx.table(['Term', 'Meaning'], termRows, [150, 355]);
   ctx.newPage();
   ctx.sectionTitle('dpr', 16);
   const sowsN = rates.sows;
@@ -821,17 +830,17 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
 
   // DPR details — give Details column more width to avoid point-18 overlap
   ctx.table(['S. No.', 'Parameter', 'Details'], [
-    ['1', 'Animal Type', 'Pig (Small ruminant)'],
+    ['1', 'Animal Type', 'Pig (Monogastric)'],
     ['2', 'Breed', breedName],
     ['3', 'Unit type', 'Breeder unit'],
-    ['4', 'System of rearing', 'Semi-intensive'],
-    ['5', 'Purpose', 'Meat Production and Germplasm Improvement'],
-    ['6', 'Breeder (Sex ratio) F:M', '20:01'],
-    ['7', 'Age of procurement', 'Male 18-24 months (2-4 teeth); Female 12-18 months (2 teeth)'],
+    ['4', 'System of rearing', 'Intensive'],
+    ['5', 'Purpose', 'Meat (Pork) Production and Germplasm Improvement'],
+    ['6', 'Breeder (Sex ratio) F:M', '10:01'],
+    ['7', 'Age of procurement', 'Gilt 8-9 months; Boar 9-10 months'],
     ['8', 'Farrowing Interval', String(rates.farrowingIntervalMonths) + ' months'],
-    ['9', 'Type of farming', 'Stall feeding and Open Grazing for 4-6 Hours'],
-    ['10', 'Type of housing', 'Pucca and Ground level'],
-    ['11', 'Feeding system', 'Stall feeding (cut and carry); Open grazing (natural habit)'],
+    ['9', 'Type of farming', 'Complete stall feeding (intensive, no grazing)'],
+    ['10', 'Type of housing', 'Pucca pens with concrete floor and open run'],
+    ['11', 'Feeding system', 'Balanced concentrate + kitchen/agri by-products, stall-fed'],
     ['12', 'Feed and Fodder', 'Own cultivation (Silvi-pastoral)'],
     ['13', 'Floor Space (Covered)', 'Sows (' + sowsN + '): 10 Sq. ft = ' + fmt(costs.coveredSow) + '; Piglets (' + pigletN + '): 4 Sq. ft = ' + fmt(costs.coveredPiglets) + '; Boar (' + boarsN + '): 20 Sq. ft = ' + fmt(costs.coveredBoar) + '; Sick (' + sickN + '): 20 Sq. ft = ' + fmt(costs.coveredSick) + '; Total ' + fmt(costs.coveredTotal) + ' Sq. ft'],
     ['14', 'Open paddock', 'Double the shaded area (' + fmt(costs.openTotal) + ' Sq. ft.)'],
@@ -847,7 +856,7 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
     const techWidthsKeep = [40, 250, 90, 125];
     const techRowsKeep: string[][] = [
     ['1', 'Breed of Pig', '', 'Recognised Indian Breed (' + breedName + ')'],
-    ['2', 'System of rearing', '', 'Semi-intensive'],
+    ['2', 'System of rearing', '', 'Intensive'],
     ['3', 'Number of sows', 'Number', String(sowsN)],
     ['4', 'Number of Boars', 'Number', String(boarsN)],
     ['5', 'Total pig (Boar+Sow)', 'Number', String(totA)],
