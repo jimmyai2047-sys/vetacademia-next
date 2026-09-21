@@ -917,7 +917,7 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.sectionTitle('totalCostTitle', 16);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('capitalCost'));
-  const capUnits = ['Rs./Doe', 'Rs./Buck', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Rs./Equipment', 'Rs./machine', '% of animal cost', 'Rs./Animal'];
+  const capUnits = ['Lump sum', 'Lump sum', 'Sq.ft', 'Rs.'];
   const capRows = costs.capitalLines.map(function (l, idx) {
     return [String(idx + 1), l.label, capUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });
@@ -925,7 +925,7 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], capRows, [35, 205, 75, 60, 60, 70], 8.5);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('workingCapital'));
-  const workUnits = ['Rs./Acre/Season', 'Kg (@250g/day)', 'Kg (@150g/day)', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year'];
+  const workUnits = ['Kg', 'Wages/ Month/ Labour', '/Month', '/Month'];
   const workRows = costs.workingLines.map(function (l, idx) {
     return [String(idx + 1), l.label, workUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });

@@ -916,7 +916,7 @@ export async function buildPigReport(input: PigReportInput): Promise<Uint8Array>
   ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], capRows, [35, 205, 75, 60, 60, 70], 8.5);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('workingCapital'));
-  const workUnits = ['Rs./Acre/Season', 'Kg (@250g/day)', 'Kg (@150g/day)', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year'];
+  const workUnits = ['Rs./Acre/Season', 'Kg (@250g/day)', 'Kg (@150g/day)', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year', '/Animal/Year'];
   const workRows = costs.workingLines.map(function (l, idx) {
     return [String(idx + 1), l.label, workUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });

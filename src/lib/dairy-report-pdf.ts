@@ -902,7 +902,7 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.sectionTitle('totalCostTitle', 16);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('capitalCost'));
-  const capUnits = ['Rs./Doe', 'Rs./Buck', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Rs./Equipment', 'Rs./machine', '% of animal cost', 'Rs./Animal'];
+  const capUnits = ['Rs./Animal', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Sq.ft', 'Rs./Equipment', 'Rs./machine', 'Rs./machine', '% of animal cost', 'Rs./Animal'];
   const capRows = costs.capitalLines.map(function (l, idx) {
     return [String(idx + 1), l.label, capUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });
@@ -910,7 +910,7 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.table(['S.No', 'Particulars', 'Unit', 'Rs./Unit', 'Quantity', 'Amount'], capRows, [35, 205, 75, 60, 60, 70], 8.5);
   if (ctx.y < 180) ctx.newPage();
   ctx.subTitle(ctx.t('workingCapital'));
-  const workUnits = ['Rs./Acre/Season', 'Kg (@250g/day)', 'Kg (@150g/day)', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year'];
+  const workUnits = ['Rs./Acre/Season', 'Rs./Kg', 'Rs./Kg', 'Rs./Kg', 'Wages/ Month/ Labour', '/Animal/Year', '/Animal/Year'];
   const workRows = costs.workingLines.map(function (l, idx) {
     return [String(idx + 1), l.label, workUnits[idx], fmt(l.rate), fmt(l.qty), fmt(l.amount)];
   });
@@ -1050,15 +1050,16 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.land = false;
   if (ctx.curW !== A4W) ctx.newPage();
   ctx.subTitle(ctx.t('breakEvenTitle'));
-  const saleQty = (f1 as any).maleSale + (f1 as any).femaleSale;
+  const milkYr = ((flock[1] ?? f1) as any);
+  const saleQty = (milkYr.milkLitres || (f1 as any).milkLitres || 1);
   const P = fin.totalIncome[1] / saleQty;
   const VC1 = fin.expenditure[1] / saleQty;
   const FC = costs.capitalTotal / years;
   const be = breakEven({ price: P, fixedCost: FC, vc1: VC1, vc2: 0.0002 });
   const beQ1 = be.q1 == null ? 0 : be.q1;
   const beQ2 = be.q2 == null ? 0 : be.q2;
-  ctx.para('TC = FC + VC1 x Q + VC2 x Q x Q, where Q is saleable kids per year. P = Rs. ' + fmt(Math.round(P * 100) / 100) + ' per kid, FC = Rs. ' + fmt(Math.round(FC)) + ' (capital / ' + years + ' years), VC1 = Rs. ' + fmt(Math.round(VC1 * 100) / 100) + ' per kid, VC2 = 0.0002.');
-  ctx.para('Lower break-even Q1 = ' + beQ1 + ' kids (Rs. ' + fmt(be.sales1 == null ? 0 : be.sales1) + '). Upper break-even Q2 = ' + fmt(Math.round(beQ2)) + ' kids. Farm capacity is ' + saleQty + ' kids per year.');
+  ctx.para('TC = FC + VC1 x Q + VC2 x Q x Q, where Q is saleable milk in litres per year. P = Rs. ' + fmt(Math.round(P * 100) / 100) + ' per litre, FC = Rs. ' + fmt(Math.round(FC)) + ' (capital / ' + years + ' years), VC1 = Rs. ' + fmt(Math.round(VC1 * 100) / 100) + ' per litre, VC2 = 0.0002.');
+  ctx.para('Lower break-even Q1 = ' + beQ1 + ' litres (Rs. ' + fmt(be.sales1 == null ? 0 : be.sales1) + '). Upper break-even Q2 = ' + fmt(Math.round(beQ2)) + ' litres. Farm capacity is ' + saleQty + ' litres per year.');
   drawBreakEvenChart(ctx, P, FC, VC1, 0.0002, beQ1, saleQty);
   if (beQ1 > saleQty) {
     ctx.para('Note: Break-even Q1 (' + beQ1 + ') is beyond farm capacity (' + saleQty + '), indicating the current scale is not viable at prevailing rates. Consider larger flock or lower costs.');
