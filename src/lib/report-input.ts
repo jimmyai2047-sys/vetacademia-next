@@ -280,30 +280,81 @@ export const dairyReportInputSchema = z.object({
     }),
 });
 
-// Processing (Milk/Meat/Feed processing) — pilot
-export const processingReportInputSchema = z.object({
+// Processing — MILK vs MEAT sub-types per Milk_Meat_Processing_Project_Report_Guide.
+// Milk: LPD-equivalent kg/day; Meat: animals/day + species + mass balance.
+export const MEAT_SPECIES = ["SHEEP_GOAT", "BUFFALO", "PIG", "POULTRY"] as const;
+export type MeatSpecies = (typeof MEAT_SPECIES)[number];
+
+const processingMilkRates = z.object({
+  capacityKgPerDay: num(10, 10000),
+  workingDaysPerYear: num(100, 365),
+  rawMaterialRatePerKg: num(1, 500),
+  productRatePerKg: num(1, 500),
+  yieldPct: num(50, 100),
+  plantCost: num(10000, 10000000),
+  equipmentCost: num(10000, 10000000),
+  constructionRate: num(50, 5000),
+  shedArea: num(100, 10000),
+  labourCount: num(0, 100),
+  labourWagePerMonth: num(0, 100000),
+  utilityPerMonth: num(0, 1000000),
+  miscPerMonth: num(0, 1000000),
+  insurancePct: num(0, 20),
+  interestPct: num(0, 30),
+  ownPct: num(0, 100),
+  subsidyPct: num(0, 100),
+});
+
+const processingMeatRates = z.object({
+  species: z.enum(MEAT_SPECIES),
+  animalsPerDay: num(1, 5000),
+  workingDaysPerYear: num(100, 365),
+  avgLiveWeightKg: num(0.5, 1000),
+  purchaseRatePerKgLive: num(10, 2000),
+  dressingPct: num(30, 80),
+  chillingLossPct: num(0, 10),
+  meatRatePerKg: num(50, 5000),
+  byProductIncomePct: num(0, 30),
+  packagingRatePerKg: num(0, 200),
+  inspectionPerAnimal: num(0, 5000),
+  plantCost: num(10000, 50000000),
+  equipmentCost: num(10000, 50000000),
+  coldStoreCost: num(10000, 20000000),
+  etpCost: num(10000, 20000000),
+  constructionRate: num(50, 5000),
+  shedArea: num(100, 20000),
+  labourCount: num(0, 100),
+  labourWagePerMonth: num(0, 100000),
+  utilityPerMonth: num(0, 1000000),
+  miscPerMonth: num(0, 1000000),
+  insurancePct: num(0, 20),
+  interestPct: num(0, 30),
+  ownPct: num(0, 100),
+  subsidyPct: num(0, 100),
+});
+
+const processingBase = {
   animalType: z.literal("PROCESSING"),
   breedName: z.string().min(1).max(60).default("Processing"),
   ...baseCommon,
-  rates: z.object({
-    capacityKgPerDay: num(10, 10000),
-    rawMaterialRatePerKg: num(1, 500),
-    productRatePerKg: num(1, 500),
-    yieldPct: num(50, 100),
-    plantCost: num(10000, 10000000),
-    equipmentCost: num(10000, 10000000),
-    constructionRate: num(50, 5000),
-    shedArea: num(100, 10000),
-    labourCount: num(0, 100),
-    labourWagePerMonth: num(0, 100000),
-    utilityPerMonth: num(0, 1000000),
-    miscPerMonth: num(0, 1000000),
-    insurancePct: num(0, 20),
-    interestPct: num(0, 30),
-    ownPct: num(0, 100),
-    subsidyPct: num(0, 100),
-  }),
+};
+
+export const processingMilkReportInputSchema = z.object({
+  ...processingBase,
+  processingType: z.literal("MILK"),
+  rates: processingMilkRates,
 });
+
+export const processingMeatReportInputSchema = z.object({
+  ...processingBase,
+  processingType: z.literal("MEAT"),
+  rates: processingMeatRates,
+});
+
+export const processingReportInputSchema = z.discriminatedUnion("processingType", [
+  processingMilkReportInputSchema,
+  processingMeatReportInputSchema,
+]);
 
 // Discriminated union for API validation
 export const reportInputSchema = z.discriminatedUnion("animalType", [
@@ -485,9 +536,11 @@ export function reportDefaults(animalType: AnimalType = "GOAT"): AnyReportFormIn
     return {
       animalType: "PROCESSING",
       breedName: "Processing",
+      processingType: "MILK" as const,
       ...base,
       rates: {
         capacityKgPerDay: PROCESSING_DEFAULTS.capacityKgPerDay,
+        workingDaysPerYear: PROCESSING_DEFAULTS.workingDaysPerYear,
         rawMaterialRatePerKg: PROCESSING_DEFAULTS.rawMaterialRatePerKg,
         productRatePerKg: PROCESSING_DEFAULTS.productRatePerKg,
         yieldPct: PROCESSING_DEFAULTS.yieldPct,
@@ -566,8 +619,14 @@ export function reportTitle(input: { animalType?: string; rates?: Record<string,
     return (sp === "BUFFALO" ? "Buffalo" : "Dairy Cattle") + " Unit Project Report (" + n + " animals)";
   }
   if (t === "PROCESSING") {
+    const pt = (input as { processingType?: string }).processingType ?? "MILK";
+    if (pt === "MEAT") {
+      const sp = (input.rates as any)?.species ?? "SHEEP_GOAT";
+      const apd = (input.rates as any)?.animalsPerDay ?? 20;
+      return "Meat Processing Unit Project Report (" + sp + ", " + apd + "/day)";
+    }
     const cap = (input.rates?.capacityKgPerDay as number) ?? PROCESSING_DEFAULTS.capacityKgPerDay;
-    return "Processing Unit Project Report (" + cap + " kg/day)";
+    return "Milk Processing Unit Project Report (" + cap + " kg/day)";
   }
   return "Livestock Project Report";
 }

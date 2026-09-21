@@ -1,9 +1,7 @@
-// Processing unit engine (milk/meat/feed processing) — pilot generic model.
-// Simple: fixed capital (plant + equipment) + working (raw material + labour).
-// Locked: 6 years, 14% discount/interest, own 10% subsidy 25% (processing higher subsidy).
-
+// Processing unit engine (MILK processing) — see meat-engine.ts for MEAT.
+// Milk basis: capacity in LPD-equivalent kg/day, working days/year, yield%.
 export interface ProcessingProjectInput {
-  capacityKgPerDay?: number; rawMaterialRatePerKg?: number; productRatePerKg?: number; yieldPct?: number;
+  capacityKgPerDay?: number; workingDaysPerYear?: number; rawMaterialRatePerKg?: number; productRatePerKg?: number; yieldPct?: number;
   plantCost?: number; equipmentCost?: number; constructionRate?: number; shedArea?: number;
   labourCount?: number; labourWagePerMonth?: number; utilityPerMonth?: number; miscPerMonth?: number;
   insurancePct?: number; interestPct?: number; ownPct?: number; subsidyPct?: number;
@@ -11,8 +9,9 @@ export interface ProcessingProjectInput {
 }
 
 export const PROCESSING_DEFAULTS: Required<ProcessingProjectInput> = {
-  capacityKgPerDay: 500, // processing capacity per day (milk/meat)
-  rawMaterialRatePerKg: 45, // purchase of raw milk/meat etc
+  capacityKgPerDay: 500, // processing capacity per day (milk, LPD-equivalent)
+  workingDaysPerYear: 300, // operating days (flush + lean season)
+  rawMaterialRatePerKg: 45, // purchase of raw milk
   productRatePerKg: 65, // sale of processed product
   yieldPct: 95, // processing yield
   plantCost: 800000,
@@ -32,7 +31,7 @@ export const PROCESSING_DEFAULTS: Required<ProcessingProjectInput> = {
 
 export function processingCosts(input: ProcessingProjectInput) {
   const d = { ...PROCESSING_DEFAULTS, ...input };
-  const annualCapacityKg = d.capacityKgPerDay * 300; // 300 working days
+  const annualCapacityKg = d.capacityKgPerDay * d.workingDaysPerYear;
   const rawMaterialKg = annualCapacityKg;
   const productKg = rawMaterialKg * (d.yieldPct / 100);
   const rawMaterialCost = rawMaterialKg * d.rawMaterialRatePerKg;

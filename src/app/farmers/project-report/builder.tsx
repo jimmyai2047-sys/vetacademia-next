@@ -60,7 +60,7 @@ interface SavedReport {
   downloadUrl: string | null;
 }
 
-function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies: string): Array<{ key: string; label: string; unit: string }> {
+function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies: string, processingType: string = "MILK"): Array<{ key: string; label: string; unit: string }> {
   if (animalType === "GOAT") return [
     { key: "does", label: "Does (Females)", unit: "Numbers" },
     { key: "doeCost", label: "Cost / Doe", unit: "Rs/Doe" },
@@ -199,8 +199,36 @@ function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies
     { key: "manureRatePerTonne", label: "Manure", unit: "Rs/Tonne" },
     { key: "gunnyRatePerBag", label: "Gunny Bag", unit: "Rs/Bag" },
   ];
-  if (animalType === "PROCESSING") return [
+  if (animalType === "PROCESSING") {
+    if (processingType === "MEAT") return [
+      { key: "animalsPerDay", label: "Animals per Day", unit: "Numbers" },
+      { key: "workingDaysPerYear", label: "Working Days / Year", unit: "Days" },
+      { key: "avgLiveWeightKg", label: "Avg Live Weight", unit: "Kg" },
+      { key: "purchaseRatePerKgLive", label: "Purchase Rate (Live Wt)", unit: "Rs/Kg" },
+      { key: "dressingPct", label: "Dressing %", unit: "%" },
+      { key: "chillingLossPct", label: "Chilling Loss", unit: "%" },
+      { key: "meatRatePerKg", label: "Meat Sale Rate", unit: "Rs/Kg" },
+      { key: "byProductIncomePct", label: "By-product Income", unit: "% of meat" },
+      { key: "packagingRatePerKg", label: "Packaging", unit: "Rs/Kg" },
+      { key: "inspectionPerAnimal", label: "Vet Inspection / Animal", unit: "Rs" },
+      { key: "plantCost", label: "Plant Cost", unit: "Rs" },
+      { key: "equipmentCost", label: "Equipment Cost", unit: "Rs" },
+      { key: "coldStoreCost", label: "Cold Store Cost", unit: "Rs" },
+      { key: "etpCost", label: "ETP Cost", unit: "Rs" },
+      { key: "constructionRate", label: "Shed Construction", unit: "Rs/Sq.ft" },
+      { key: "shedArea", label: "Shed Area", unit: "Sq.ft" },
+      { key: "labourCount", label: "Labour", unit: "Persons" },
+      { key: "labourWagePerMonth", label: "Wage / Labour / Month", unit: "Rs/Month" },
+      { key: "utilityPerMonth", label: "Utility / Month", unit: "Rs/Month" },
+      { key: "miscPerMonth", label: "Misc / Month", unit: "Rs/Month" },
+      { key: "insurancePct", label: "Insurance", unit: "%" },
+      { key: "interestPct", label: "Bank Interest", unit: "%" },
+      { key: "ownPct", label: "Own Contribution", unit: "%" },
+      { key: "subsidyPct", label: "Subsidy", unit: "%" },
+    ];
+    return [
     { key: "capacityKgPerDay", label: "Processing Capacity", unit: "Kg/day" },
+    { key: "workingDaysPerYear", label: "Working Days / Year", unit: "Days" },
     { key: "rawMaterialRatePerKg", label: "Raw Material Rate", unit: "Rs/Kg" },
     { key: "productRatePerKg", label: "Product Sale Rate", unit: "Rs/Kg" },
     { key: "yieldPct", label: "Processing Yield", unit: "%" },
@@ -217,43 +245,44 @@ function getRateFields(animalType: AnimalType, poultryType: string, dairySpecies
     { key: "ownPct", label: "Own Contribution", unit: "%" },
     { key: "subsidyPct", label: "Subsidy", unit: "%" },
   ];
+  }
   return [];
 }
 
-function animalCountKey(animalType: AnimalType, poultryType: string): string {
+function animalCountKey(animalType: AnimalType, poultryType: string, processingType: string = "MILK"): string {
   if (animalType === "GOAT") return "does";
   if (animalType === "SHEEP") return "ewes";
   if (animalType === "PIG") return "sows";
   if (animalType === "POULTRY") return "batchSize";
   if (animalType === "DAIRY") return "animals";
-  if (animalType === "PROCESSING") return "capacityKgPerDay";
+  if (animalType === "PROCESSING") return processingType === "MEAT" ? "animalsPerDay" : "capacityKgPerDay";
   return "animals";
 }
-function animalCountLabel(animalType: AnimalType, poultryType: string): string {
+function animalCountLabel(animalType: AnimalType, poultryType: string, processingType: string = "MILK"): string {
   if (animalType === "GOAT") return "Number of Does (Females)";
   if (animalType === "SHEEP") return "Number of Ewes (Females)";
   if (animalType === "PIG") return "Number of Sows";
   if (animalType === "POULTRY") return poultryType === "LAYER" ? "Number of Birds (Layer)" : "Batch Size (Birds per batch)";
   if (animalType === "DAIRY") return "Number of Animals (Cows/Buffaloes)";
-  if (animalType === "PROCESSING") return "Processing Capacity (Kg/day)";
+  if (animalType === "PROCESSING") return processingType === "MEAT" ? "Animals per Day (Meat plant)" : "Processing Capacity (Kg/day)";
   return "Number of Animals";
 }
-function animalCountDefault(animalType: AnimalType, poultryType: string): string {
+function animalCountDefault(animalType: AnimalType, poultryType: string, processingType: string = "MILK"): string {
   if (animalType === "GOAT") return "20";
   if (animalType === "SHEEP") return "20";
   if (animalType === "PIG") return "10";
   if (animalType === "POULTRY") return poultryType === "LAYER" ? "500" : "1000";
   if (animalType === "DAIRY") return "10";
-  if (animalType === "PROCESSING") return "500";
+  if (animalType === "PROCESSING") return processingType === "MEAT" ? "20" : "500";
   return "10";
 }
 
 // Herd size from the count field (or its default), used for the labour slab.
-function herdSizeOf(rates: Record<string, string>, animalType: AnimalType, poultryType: string): number {
-  const key = animalCountKey(animalType, poultryType);
+function herdSizeOf(rates: Record<string, string>, animalType: AnimalType, poultryType: string, processingType: string = "MILK"): number {
+  const key = animalCountKey(animalType, poultryType, processingType);
   const n = parseInt((rates[key] ?? "").trim(), 10);
   if (!isNaN(n) && n > 0) return n;
-  const d = parseInt(animalCountDefault(animalType, poultryType), 10);
+  const d = parseInt(animalCountDefault(animalType, poultryType, processingType), 10);
   return isNaN(d) ? 0 : d;
 }
 
@@ -261,6 +290,8 @@ interface FormDraft {
   animalType: AnimalType;
   poultryType: "BROILER" | "LAYER";
   dairySpecies: "CATTLE" | "BUFFALO";
+  processingType: "MILK" | "MEAT";
+  meatSpecies: string;
   breedName: string;
   language: "en" | "hi";
   program: string;
@@ -299,13 +330,16 @@ function draftDefaults(animalType: AnimalType = "GOAT"): FormDraft {
   const base: any = reportDefaults(animalType);
   const pt = animalType === "POULTRY" ? (base.poultryType ?? "BROILER") : "BROILER";
   const ds = animalType === "DAIRY" ? (base.dairySpecies ?? "CATTLE") : "CATTLE";
-  const fields = getRateFields(animalType, pt, ds);
+  const prt = animalType === "PROCESSING" ? (base.processingType ?? "MILK") : "MILK";
+  const fields = getRateFields(animalType, pt, ds, prt);
   const rates: Record<string, string> = {};
   for (const f of fields) rates[f.key] = "";
   return {
     animalType,
     poultryType: pt,
     dairySpecies: ds,
+    processingType: prt,
+    meatSpecies: "SHEEP_GOAT",
     breedName: base.breedName ?? "",
     language: base.language ?? "en",
     program: base.program,
@@ -376,9 +410,9 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
   const [saved, setSaved] = useState<SavedReport[]>(initialSaved);
   // True once the user picks labour manually — auto slab then stops overwriting.
   const [labourManual, setLabourManual] = useState(false);
-  const slabLabour = defaultLabourCount(form.animalType, herdSizeOf(form.rates, form.animalType, form.poultryType));
+  const slabLabour = form.processingType === "MEAT" && form.animalType === "PROCESSING" ? 10 : defaultLabourCount(form.animalType, herdSizeOf(form.rates, form.animalType, form.poultryType, form.processingType));
 
-  const rateFields = getRateFields(form.animalType, form.poultryType, form.dairySpecies);
+  const rateFields = getRateFields(form.animalType, form.poultryType, form.dairySpecies, form.processingType);
   const breedOptions = breedsForAnimal(form.animalType, form.dairySpecies);
 
   const handleAnimalChange = (v: AnimalType) => {
@@ -413,11 +447,25 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
 
   const handleDairySpecies = (v: "CATTLE" | "BUFFALO") => {
     if (v === form.dairySpecies) return;
-    const fields = getRateFields("DAIRY", form.poultryType, v);
+    const fields = getRateFields("DAIRY", form.poultryType, v, form.processingType);
     const rates: Record<string, string> = {};
     for (const f of fields) rates[f.key] = "";
     setLabourManual(false);
     setForm((f) => ({ ...f, dairySpecies: v, breedName: v === "BUFFALO" ? "Murrah" : "Gir", rates }));
+  };
+
+  const handleProcessingType = (v: "MILK" | "MEAT") => {
+    if (v === form.processingType) return;
+    const fields = getRateFields("PROCESSING", form.poultryType, form.dairySpecies, v);
+    const rates: Record<string, string> = {};
+    for (const f of fields) rates[f.key] = "";
+    setLabourManual(false);
+    setForm((f) => ({ ...f, processingType: v, meatSpecies: "SHEEP_GOAT", rates }));
+  };
+
+  const handleMeatSpecies = (v: string) => {
+    setLabourManual(false);
+    setForm((f) => ({ ...f, meatSpecies: v }));
   };
 
   const set = useCallback((path: string, value: string) => {
@@ -483,6 +531,10 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
       };
       if (form.animalType === "POULTRY") payload.poultryType = form.poultryType;
       if (form.animalType === "DAIRY") payload.dairySpecies = form.dairySpecies;
+      if (form.animalType === "PROCESSING") {
+        payload.processingType = form.processingType;
+        if (form.processingType === "MEAT") (cleanedRates as Record<string, unknown>).species = form.meatSpecies;
+      }
       const res = await csrfFetch("/api/reports/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -690,6 +742,19 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                 <p className="text-xs text-muted-foreground mt-1">Broiler: 5-6 batches/year fast cash; Layer: daily egg income 72-80 weeks.</p>
               </div>
             )}
+            {form.animalType === "PROCESSING" && (
+              <div className="rounded-lg border p-3 bg-muted/30">
+                <Label className="mb-1.5 block text-[15px] font-medium">Processing Type<ReqMark /></Label>
+                <div className="flex gap-2">
+                  {(["MILK", "MEAT"] as const).map((t) => (
+                    <Button key={t} size="sm" variant={form.processingType === t ? "default" : "outline"} onClick={() => handleProcessingType(t)}>
+                      {t === "MILK" ? "Milk Processing" : "Meat Processing"}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Milk: LPD-based chilling + products. Meat: animals/day + species + carcass balance.</p>
+              </div>
+            )}
             {form.animalType === "DAIRY" && (
               <div className="rounded-lg border p-3 bg-muted/30">
                 <Label className="mb-1.5 block text-[15px] font-medium">Dairy Species<ReqMark /></Label>
@@ -705,22 +770,23 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
 
             {/* Number of Animals — same page as Animal Type */}
             <div className="rounded-xl border-2 border-emerald-100 bg-emerald-50/40 p-3">
-              <Label className="mb-1.5 block text-[15px] font-medium">{animalCountLabel(form.animalType, form.poultryType)}<ReqMark /></Label>
+              <Label className="mb-1.5 block text-[15px] font-medium">{animalCountLabel(form.animalType, form.poultryType, form.processingType)}<ReqMark /></Label>
               <div className="flex items-stretch max-w-xs">
                 <Input
                   inputMode="numeric"
-                  value={form.rates[animalCountKey(form.animalType, form.poultryType)] ?? ""}
+                  value={form.rates[animalCountKey(form.animalType, form.poultryType, form.processingType)] ?? ""}
                   onChange={(e) => {
                     const v = e.target.value;
-                    const key = animalCountKey(form.animalType, form.poultryType);
+                    const key = animalCountKey(form.animalType, form.poultryType, form.processingType);
                     set(`rates.${key}`, v);
                     if (!labourManual) {
                       const n = parseInt(v.trim(), 10);
-                      const size = !isNaN(n) && n > 0 ? n : parseInt(animalCountDefault(form.animalType, form.poultryType), 10);
-                      set("rates.labourCount", String(defaultLabourCount(form.animalType, size)));
+                      const size = !isNaN(n) && n > 0 ? n : parseInt(animalCountDefault(form.animalType, form.poultryType, form.processingType), 10);
+                      const slab = form.animalType === "PROCESSING" && form.processingType === "MEAT" ? 10 : defaultLabourCount(form.animalType, size);
+                      set("rates.labourCount", String(slab));
                     }
                   }}
-                  placeholder={animalCountDefault(form.animalType, form.poultryType)}
+                  placeholder={animalCountDefault(form.animalType, form.poultryType, form.processingType)}
                   className="text-[15px] rounded-r-none bg-white"
                 />
                 <span className="inline-flex items-center whitespace-nowrap rounded-r-md border border-l-0 bg-white px-3 text-[13px] font-medium text-muted-foreground">
@@ -803,6 +869,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
               <Badge variant="outline">{form.animalType}</Badge>
               {form.animalType === "POULTRY" && <Badge variant="secondary">{form.poultryType}</Badge>}
               {form.animalType === "DAIRY" && <Badge variant="secondary">{form.dairySpecies}</Badge>}
+              {form.animalType === "PROCESSING" && <Badge variant="secondary">{form.processingType}</Badge>}
               <span className="text-muted-foreground ml-auto">Leave blank to use default rate; defaults from {animalLabel} engine</span>
             </div>
             <div>
@@ -828,6 +895,29 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                   <Button size="sm" variant={form.dairySpecies === "CATTLE" ? "default" : "outline"} onClick={() => handleDairySpecies("CATTLE")}>Cattle</Button>
                   <Button size="sm" variant={form.dairySpecies === "BUFFALO" ? "default" : "outline"} onClick={() => handleDairySpecies("BUFFALO")}>Buffalo</Button>
                 </div>
+              </div>
+            )}
+            {form.animalType === "PROCESSING" && (
+              <div>
+                <Label className="mb-1.5 block text-[15px] font-medium">Processing Type<ReqMark /></Label>
+                <div className="flex gap-2">
+                  <Button size="sm" variant={form.processingType === "MILK" ? "default" : "outline"} onClick={() => handleProcessingType("MILK")}>Milk</Button>
+                  <Button size="sm" variant={form.processingType === "MEAT" ? "default" : "outline"} onClick={() => handleProcessingType("MEAT")}>Meat</Button>
+                </div>
+              </div>
+            )}
+            {form.animalType === "PROCESSING" && form.processingType === "MEAT" && (
+              <div>
+                <Label className="mb-1.5 block text-[15px] font-medium">Meat Species<ReqMark /></Label>
+                <Select value={form.meatSpecies} onValueChange={(v: string | null) => { if (v) handleMeatSpecies(v); }}>
+                  <SelectTrigger className="text-[15px]"><SelectValue placeholder="Select Species" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SHEEP_GOAT">Sheep / Goat</SelectItem>
+                    <SelectItem value="BUFFALO">Buffalo</SelectItem>
+                    <SelectItem value="PIG">Pig</SelectItem>
+                    <SelectItem value="POULTRY">Poultry</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
             {rateFields.map((r) => (

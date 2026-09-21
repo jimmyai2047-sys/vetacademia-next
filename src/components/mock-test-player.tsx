@@ -27,8 +27,8 @@ function QuestionText({ text }: { text: string }) {
   const hasHindi = (s: string) => DEVA.test(s);
   // Split Hindi / English if both present (stored as "Hindi\nEnglish")
   const rawLines = text.split("\n");
-  let hiLines: string[] = [];
-  let enLines: string[] = [];
+  const hiLines: string[] = [];
+  const enLines: string[] = [];
   let seenDevanagari = false;
   let seenLatinAfterHindi = false;
   for (const l of rawLines) {

@@ -227,16 +227,16 @@ export default function Navbar() {
           </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-0 min-w-0">
+        <nav className="hidden xl:flex items-center gap-1 min-w-0">
           <Link href="/">
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><Home className="h-4 w-4" />Home</Button>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><Home className="h-4 w-4" />Home</Button>
           </Link>
 
           <Link href="/farmers">
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><Tractor className="h-4 w-4" />Animal Owner</Button>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><Tractor className="h-4 w-4" />Animal Owner</Button>
           </Link>
           <Link href="/vets">
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
           </Link>
 
           {/* Programmes */}
@@ -249,7 +249,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("programmes", false);
             }}
           >
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["programmes"]}>
               <GraduationCap className="h-4 w-4" />
               Student Corner
             </Button>
@@ -321,7 +321,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("prepare", false);
             }}
           >
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]} title="Prepare — practice, mocks & PYQs">
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["prepare"]} title="Prepare — practice, mocks & PYQs">
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
@@ -398,7 +398,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("exams", false);
             }}
           >
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["exams"]} title="Exams — info, syllabus & eligibility">
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["exams"]} title="Exams — info, syllabus & eligibility">
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
@@ -465,7 +465,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("resources", false);
             }}
           >
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["resources"]}>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["resources"]}>
               <Users className="h-4 w-4" />
               Resources
             </Button>
@@ -540,7 +540,7 @@ export default function Navbar() {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("about", false);
             }}
           >
-            <Button variant="ghost" className="gap-1.5 px-2 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["about"]}>
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["about"]}>
               <Info className="h-4 w-4" />
               About
             </Button>

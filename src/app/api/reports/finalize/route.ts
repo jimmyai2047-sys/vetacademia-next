@@ -13,6 +13,7 @@ import { buildPigReport } from "@/lib/pig-report-pdf";
 import { buildPoultryReport } from "@/lib/poultry-report-pdf";
 import { buildDairyReport } from "@/lib/dairy-report-pdf";
 import { buildProcessingReport } from "@/lib/processing-report-pdf";
+import { buildMeatReport } from "@/lib/meat-report-pdf";
 
 // After a PAID payment: rebuild the final PDF, store on private Blob,
 // mark the report PAID, and return a signed download URL.
@@ -137,7 +138,25 @@ export async function POST(req: NextRequest) {
           dairySpecies: input.dairySpecies,
         } as any);
         break;
-      case "PROCESSING":
+      case "PROCESSING": {
+        if ((input as any).processingType === "MEAT") {
+          bytes = await buildMeatReport({
+            cover: input.cover,
+            location: input.location,
+            program: input.program,
+            plan: input.plan,
+            department: input.department,
+            schemeShort: input.schemeShort,
+            breedName: input.breedName,
+            species: (input.rates as any)?.species,
+            rates: input.rates,
+            language: input.language,
+            mode: "final",
+            reportTitle: report.title,
+            verifyByVetCA: input.verifyByVetCA,
+          } as any);
+          break;
+        }
         bytes = await buildProcessingReport({
           cover: input.cover,
           location: input.location,
@@ -153,6 +172,7 @@ export async function POST(req: NextRequest) {
           verifyByVetCA: input.verifyByVetCA,
         } as any);
         break;
+      }
       default:
         return NextResponse.json({ error: "Unsupported animalType" }, { status: 400 });
     }

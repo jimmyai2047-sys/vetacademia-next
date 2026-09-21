@@ -3,6 +3,7 @@
 };
 
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import PlanEditor from "@/components/admin/plan-editor";
 import PlanCreateForm from "@/components/admin/plan-create-form";
 import { Crown, Shield, CreditCard } from "lucide-react";
@@ -61,7 +62,7 @@ export default async function AdminPricingPage() {
             <span className="text-sm font-medium">Current price:</span>
             <span className="text-lg font-bold text-emerald-700">Rs. {reportPrice}</span>
             <span className="text-xs text-muted-foreground">/ report ( infirmary 6-yr NPV/BCR/IRR/DSCR ). Change via <code className="bg-white px-1.5 py-0.5 rounded border">Setting</code> key <code className="bg-white px-1.5 py-0.5 rounded border">reportPrice</code> → <code className="bg-white px-1.5 py-0.5 rounded border">REPORT_PRICE</code> in <code className="bg-white px-1.5 py-0.5 rounded border">report-input.ts</code></span>
-            <span className="ml-auto text-xs text-muted-foreground">Builder: <a href="/farmers/project-report" className="underline">/farmers/project-report</a> • Admin view: Animal Owner Content → Generated Reports tab</span>
+            <span className="ml-auto text-xs text-muted-foreground">Builder: <Link href="/farmers/project-report" className="underline">/farmers/project-report</Link> • Admin view: Animal Owner Content → Generated Reports tab</span>
           </div>
         </section>
 

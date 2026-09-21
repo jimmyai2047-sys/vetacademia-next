@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Repo-local noise: old code copies and shipped static assets are not linted.
+    "backups/**",
+    "public/**",
   ]),
 ]);
 

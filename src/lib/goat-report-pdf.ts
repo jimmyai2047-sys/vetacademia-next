@@ -649,9 +649,9 @@ export async function buildGoatReport(input: GoatReportInput): Promise<Uint8Arra
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = require("path").join(process.cwd(), "public", "sketches", "goat.png");
-    if (require("fs").existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(require("fs").readFileSync(sketchPath));
+    const sketchPath = path.join(process.cwd(), "public", "sketches", "goat.png");
+    if (fs.existsSync(sketchPath)) {
+      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
