@@ -530,7 +530,7 @@ class Ctx {
       minW.push(Math.min(hw, scaled));
       maxW.push(Math.max(mw, scaled * 0.55));
     }
-    let W = maxW.slice();
+    const W = maxW.slice();
     let tot = W.reduce((a, b) => a + b, 0);
     if (tot <= cw) {
       const extra = cw - tot;
@@ -543,7 +543,7 @@ class Ctx {
     for (let iter = 0; iter < 5; iter++) {
       tot = W.reduce((a, b) => a + b, 0);
       if (tot <= cw + 0.5) break;
-      let over = tot - cw;
+      const over = tot - cw;
       for (let i = 0; i < n; i++) {
         if (W[i] <= minW[i] + 0.5) continue;
         const share = (W[i] - minW[i]) / (tot - minW.reduce((a, b) => a + b, 0) || 1);
