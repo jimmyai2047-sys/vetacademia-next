@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Loader2, FileText, Lock, Download, Languages, IndianRupee, Tractor, Bird, Wheat } from "lucide-react";
 import { csrfFetch } from "@/lib/csrf-client";
 import dynamic from "next/dynamic";
-import { reportDefaults, REPORT_PRICE, INDIAN_STATES, ANIMAL_TYPES, type AnimalType } from "@/lib/report-input";
+import { reportDefaults, REPORT_PRICE, INDIAN_STATES, ANIMAL_TYPES, defaultLabourCount, type AnimalType } from "@/lib/report-input";
 import { breedsOf } from "@/lib/livestock-breeds";
 import { COUNTRIES, districtsOf, tehsilsOf } from "@/lib/india-locations";
 import { SCHEME_MASTER } from "@/lib/livestock-schemes";
@@ -248,6 +248,15 @@ function animalCountDefault(animalType: AnimalType, poultryType: string): string
   return "10";
 }
 
+// Herd size from the count field (or its default), used for the labour slab.
+function herdSizeOf(rates: Record<string, string>, animalType: AnimalType, poultryType: string): number {
+  const key = animalCountKey(animalType, poultryType);
+  const n = parseInt((rates[key] ?? "").trim(), 10);
+  if (!isNaN(n) && n > 0) return n;
+  const d = parseInt(animalCountDefault(animalType, poultryType), 10);
+  return isNaN(d) ? 0 : d;
+}
+
 interface FormDraft {
   animalType: AnimalType;
   poultryType: "BROILER" | "LAYER";
@@ -365,6 +374,9 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [saved, setSaved] = useState<SavedReport[]>(initialSaved);
+  // True once the user picks labour manually — auto slab then stops overwriting.
+  const [labourManual, setLabourManual] = useState(false);
+  const slabLabour = defaultLabourCount(form.animalType, herdSizeOf(form.rates, form.animalType, form.poultryType));
 
   const rateFields = getRateFields(form.animalType, form.poultryType, form.dairySpecies);
   const breedOptions = breedsForAnimal(form.animalType, form.dairySpecies);
@@ -384,6 +396,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
     next.cover.longitude = form.cover.longitude;
     next.location = form.location;
     setForm(next);
+    setLabourManual(false);
     setPreviewUrl(null);
     setReportId(null);
     setDownloadUrl(null);
@@ -394,6 +407,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
     const fields = getRateFields("POULTRY", v, form.dairySpecies);
     const rates: Record<string, string> = {};
     for (const f of fields) rates[f.key] = "";
+    setLabourManual(false);
     setForm((f) => ({ ...f, poultryType: v, rates, breedName: v === "LAYER" ? "White Leghorn" : "Cobb 400" }));
   };
 
@@ -402,6 +416,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
     const fields = getRateFields("DAIRY", form.poultryType, v);
     const rates: Record<string, string> = {};
     for (const f of fields) rates[f.key] = "";
+    setLabourManual(false);
     setForm((f) => ({ ...f, dairySpecies: v, breedName: v === "BUFFALO" ? "Murrah" : "Gir", rates }));
   };
 
@@ -446,6 +461,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
       const cleanedRates: Record<string, unknown> = {};
       for (const r of rateFields) {
         const v = (form.rates[r.key] ?? "").trim();
+        if (v === "" && r.key === "labourCount") { cleanedRates[r.key] = slabLabour; continue; }
         cleanedRates[r.key] = v === "" ? undefined : v;
       }
       const lat = form.cover.latitude.trim();
@@ -694,7 +710,16 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                 <Input
                   inputMode="numeric"
                   value={form.rates[animalCountKey(form.animalType, form.poultryType)] ?? ""}
-                  onChange={(e) => set(`rates.${animalCountKey(form.animalType, form.poultryType)}`, e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    const key = animalCountKey(form.animalType, form.poultryType);
+                    set(`rates.${key}`, v);
+                    if (!labourManual) {
+                      const n = parseInt(v.trim(), 10);
+                      const size = !isNaN(n) && n > 0 ? n : parseInt(animalCountDefault(form.animalType, form.poultryType), 10);
+                      set("rates.labourCount", String(defaultLabourCount(form.animalType, size)));
+                    }
+                  }}
                   placeholder={animalCountDefault(form.animalType, form.poultryType)}
                   className="text-[15px] rounded-r-none bg-white"
                 />
@@ -806,6 +831,26 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
               </div>
             )}
             {rateFields.map((r) => (
+              r.key === "labourCount" ? (
+                <div key={r.key}>
+                  <Label className="mb-1.5 block text-[15px] font-medium">{r.label}<ReqMark /></Label>
+                  <div className="flex items-stretch">
+                    <Select
+                      value={(form.rates.labourCount ?? "").trim() !== "" ? form.rates.labourCount : String(slabLabour)}
+                      onValueChange={(v: string | null) => { if (v) { set("rates.labourCount", v); setLabourManual(true); } }}
+                    >
+                      <SelectTrigger className="text-[15px] rounded-r-none"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 50 }, (_, i) => String(i + 1)).map((n) => (
+                          <SelectItem key={n} value={n}>{n}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="inline-flex items-center whitespace-nowrap rounded-r-md border border-l-0 bg-muted px-2.5 text-[13px] font-medium text-muted-foreground">{r.unit}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Auto: {slabLabour} persons for this unit size — change as needed.</p>
+                </div>
+              ) : (
               <div key={r.key}>
                 <Label className="mb-1.5 block text-[15px] font-medium">{r.label}<ReqMark /></Label>
                 <div className="flex items-stretch">
@@ -813,6 +858,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                   <span className="inline-flex items-center whitespace-nowrap rounded-r-md border border-l-0 bg-muted px-2.5 text-[13px] font-medium text-muted-foreground">{r.unit}</span>
                 </div>
               </div>
+              )
             ))}
           </CardContent>
         </Card>

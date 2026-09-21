@@ -16,6 +16,41 @@ export function isAnimalType(v: string): v is AnimalType {
   return (ANIMAL_TYPES as readonly string[]).includes(v);
 }
 
+// Slab-based default labour (persons) per unit size — owner-locked reference.
+// herdSize = does/ewes/sows/animals, or birds (batchSize) for poultry.
+export function defaultLabourCount(animalType: AnimalType, herdSize?: number): number {
+  const n = herdSize == null || !isFinite(herdSize) || herdSize <= 0 ? 0 : herdSize;
+  switch (animalType) {
+    case "DAIRY":
+      if (n <= 10) return 2;
+      if (n <= 15) return 3;
+      if (n <= 20) return 4;
+      if (n <= 30) return 5;
+      return 6;
+    case "GOAT":
+    case "SHEEP":
+      if (n <= 100) return 2;
+      if (n <= 200) return 3;
+      if (n <= 400) return 4;
+      return 5;
+    case "PIG":
+      if (n <= 20) return 2;
+      if (n <= 40) return 3;
+      if (n <= 60) return 4;
+      if (n <= 100) return 5;
+      return 6;
+    case "POULTRY":
+      if (n <= 2000) return 1;
+      if (n <= 5000) return 2;
+      if (n <= 10000) return 3;
+      if (n <= 20000) return 4;
+      if (n <= 30000) return 5;
+      return 6;
+    case "PROCESSING":
+      return 4;
+  }
+}
+
 export const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
   "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",

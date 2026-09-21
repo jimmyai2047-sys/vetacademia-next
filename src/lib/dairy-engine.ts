@@ -81,7 +81,7 @@ export const DAIRY_CATTLE_DEFAULTS: Required<DairyProjectInput> = {
   costOffice: 450,
   costFeedGodown: 300,
   animalCost: 60000,
-  labourCount: 5,
+  labourCount: 2,
   labourWagePerMonth: 9000,
   feedingEquipmentRate: 1000,
   chaffCutterCost: 40000,
@@ -130,7 +130,7 @@ export const DAIRY_BUFFALO_DEFAULTS: Required<DairyProjectInput> = {
   costOffice: 450,
   costFeedGodown: 300,
   animalCost: 80000,
-  labourCount: 1,
+  labourCount: 2,
   labourWagePerMonth: 9000,
   feedingEquipmentRate: 1000,
   chaffCutterCost: 25000,
@@ -158,22 +158,31 @@ export const DAIRY_BUFFALO_DEFAULTS: Required<DairyProjectInput> = {
 
 export const DAIRY_DEFAULTS = DAIRY_CATTLE_DEFAULTS; // fallback
 
+// Owner-locked labour slabs: 8-10 -> 2, 15 -> 3, 20 -> 4, 30 -> 5, 40+ -> 6.
+function slabDairyLabour(animals: number): number {
+  if (animals <= 10) return 2;
+  if (animals <= 15) return 3;
+  if (animals <= 20) return 4;
+  if (animals <= 30) return 5;
+  return 6;
+}
+
 export function getDairyDefaults(species: DairySpecies, animals?: number): Required<DairyProjectInput> {
   const base = species === "BUFFALO" ? DAIRY_BUFFALO_DEFAULTS : DAIRY_CATTLE_DEFAULTS;
+  const n = animals ?? base.animals;
   if (animals === 15 || animals === 20) {
-    // Scale labour & fodder as per files: buffalo20 labour 3, fodder 2; cattle15 would be similar scaling
-    const scale = animals / base.animals;
+    // Scale labour & fodder as per files: fodder 2 for 20+ animals
     return {
       ...base,
       animals,
-      labourCount: species === "BUFFALO" ? (animals === 20 ? 3 : animals === 15 ? 2 : base.labourCount) : Math.max(1, Math.round(base.labourCount * scale)),
+      labourCount: slabDairyLabour(animals),
       fodderAcres: animals >= 20 ? 2 : base.fodderAcres,
       chaffCutterCost: animals >= 20 ? 40000 : base.chaffCutterCost,
       concentrateLactationKgPerDay: animals >= 20 && species === "BUFFALO" ? 6 : base.concentrateLactationKgPerDay,
       concentrateDryKgPerDay: animals >= 20 && species === "BUFFALO" ? 1.25 : base.concentrateDryKgPerDay,
     };
   }
-  return { ...base, animals: animals ?? base.animals };
+  return { ...base, animals: n, labourCount: slabDairyLabour(n) };
 }
 
 // Flock / lactation derived

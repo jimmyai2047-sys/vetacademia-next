@@ -47,7 +47,7 @@ export const SHEEP_DEFAULTS: Required<SheepProjectInput> = {
   concentrateRate: 16,
   fodderCostPerAcre: 12000,
   fodderAcres: 1,
-  labourCount: 1,
+  labourCount: 2,
   labourWagePerMonth: 9000,
   vetRatePerAnimal: 200,
   utilityRatePerAnimal: 200,
