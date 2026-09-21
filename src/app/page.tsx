@@ -523,6 +523,42 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Project Report Plate - Bank-ready livestock project reports for farmers */}
+      <section className="relative py-6">
+        <div className="container mx-auto px-4">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#d4a843]/30 bg-gradient-to-r from-[#d4a843]/[0.12] via-white to-primary/[0.06] p-[1px] shadow-lg">
+            <div className="rounded-[1.7rem] bg-gradient-to-r from-[#d4a843]/[0.08] via-white to-primary/[0.04]">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-5 px-6 py-6 md:px-8 md:py-7">
+                <div className="flex flex-1 items-start gap-4">
+                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#d4a843] to-[#9a7a2e] text-white shadow-lg">
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <Badge className="rounded-full bg-primary text-white border-0 px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase">For Farmers</Badge>
+                      <span className="text-xs font-medium text-primary/60">Goat • Sheep • Pig • Poultry • Dairy • Processing</span>
+                    </div>
+                    <p className="text-[17px] font-bold leading-tight text-foreground">
+                      Bank-loan ready Project Report banayein — NLM-EDP format, free preview
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Apna farm detail bharein, bank-format PDF preview dekhein, phir final report download karein
+                    </p>
+                  </div>
+                </div>
+                <Link href="/farmers/project-report" className="w-full sm:w-auto shrink-0">
+                  <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-[#d4a843] to-[#9a7a2e] text-white shadow-md hover:shadow-lg sm:w-auto">
+                    Banayein Project Report
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-[#d4a843]/10 blur-2xl" />
+          </div>
+        </div>
+      </section>
+
       {/* Programmes - Highly Decorative */}
       <section className="relative py-8 md:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/[0.02] to-background" />
