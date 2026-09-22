@@ -33,7 +33,7 @@ export default async function PostViewerPage({
       <div className="flex items-center justify-between gap-3 mb-4">
         <Link
           href="/papers"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+          className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </Link>
@@ -41,17 +41,22 @@ export default async function PostViewerPage({
           <a
             href={viewUrl}
             download={post.fileName || "document.pdf"}
-            className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-4 py-2 text-xs font-medium text-white shadow-sm hover:shadow-md transition-all"
           >
             <Download className="h-3.5 w-3.5" /> Download
           </a>
         )}
       </div>
 
-      <h1 className="text-xl font-bold mb-4 flex items-center gap-2">
-        <FileText className="h-5 w-5 text-primary shrink-0" />
-        {post.title}
-      </h1>
+      <div className="mb-4 flex items-start gap-3">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/10 shadow-sm shrink-0">
+          <FileText className="h-5 w-5 text-primary shrink-0" />
+        </span>
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold tracking-tight">{post.title}</h1>
+          <div className="mt-1.5 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
+        </div>
+      </div>
 
       {post.content && (
         <div className="mb-4">
@@ -60,7 +65,8 @@ export default async function PostViewerPage({
       )}
 
       {viewUrl ? (
-        <div className="w-full rounded-lg overflow-hidden border bg-muted h-[80vh]">
+        <div className="w-full rounded-[1.5rem] overflow-hidden border border-primary/10 shadow-xl bg-white h-[80vh] relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary z-10" />
           <iframe
             src={viewUrl}
             className="w-full h-full border-0"

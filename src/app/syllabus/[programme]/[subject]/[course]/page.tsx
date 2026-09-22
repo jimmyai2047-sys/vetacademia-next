@@ -129,7 +129,7 @@ export default async function CoursePage({
         </div>
 
         {/* Hero banner */}
-        <div className="relative h-32 w-full overflow-hidden rounded-xl mb-4">
+        <div className="relative h-32 w-full overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl mb-4">
           <Image
             src={getSubjectImage(course.subject.name)}
             alt={course.subject.name}
@@ -138,19 +138,21 @@ export default async function CoursePage({
             sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-black/30 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
         </div>
 
         {/* Header */}
         <div className="mb-5">
         <Link
           href={`/syllabus/${progSlug}/${subjectId}`}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
+          className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to {course.subject.name}
         </Link>
-        <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+        <h1 className="text-3xl font-bold mb-2 tracking-tight">{course.title}</h1>
+        <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
         <div className="flex items-center gap-3 mt-3 flex-wrap">
           {course.courseCode && (
             <Badge variant="secondary" className="font-mono">{course.courseCode}</Badge>
@@ -171,7 +173,8 @@ export default async function CoursePage({
           <p>Content coming soon</p>
         )}
         {theoryCredits > 0 && (
-          <Card className="border-blue-200">
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
             <CardHeader className="flex flex-row items-center gap-3 space-y-0">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-blue-600" />
@@ -197,7 +200,8 @@ export default async function CoursePage({
         )}
 
         {practicalCredits > 0 && (
-          <Card className="border-emerald-200">
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[#d4a843] to-primary opacity-70" />
             <CardHeader className="flex flex-row items-center gap-3 space-y-0">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                 <FlaskConical className="h-5 w-5 text-emerald-600" />

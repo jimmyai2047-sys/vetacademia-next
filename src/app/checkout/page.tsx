@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CheckoutButton from "@/components/checkout-button";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { ArrowLeft, ShieldCheck, Wallet } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -43,36 +45,66 @@ export default async function CheckoutPage({
   });
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-lg">
+    <div className="flex flex-col">
+      <div className="container mx-auto px-4 pt-8 max-w-lg">
+        <DecorativePageHeader
+          badge="Secure Checkout"
+          title="Complete"
+          titleHighlight="Enrollment"
+          description="You are enrolling in the plan below — one-time payment, instant unlock."
+          variant="primary"
+          actions={
+            <>
+              <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+                <Wallet className="h-3.5 w-3.5" /> One-time payment
+              </Badge>
+              <Badge className="rounded-full bg-white text-primary border-0 px-3 py-1.5 gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5" /> Secure checkout
+              </Badge>
+            </>
+          }
+        />
+      </div>
+
+      <div className="container mx-auto px-4 max-w-lg">
+        <div className="va-divider-dots my-6"><span /></div>
+      </div>
+
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white pointer-events-none" />
+        <div className="container relative mx-auto px-4 pb-10 max-w-lg">
       <Link
         href="/pricing"
         className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1 mb-6"
       >
-        &larr; Back to Plans
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Plans
       </Link>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Complete Enrollment</CardTitle>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-xl">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
+        <CardHeader className="relative">
+          <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+          <CardTitle className="tracking-tight">Complete Enrollment</CardTitle>
           <CardDescription>
             You are enrolling in the plan below.
           </CardDescription>
+          <div className="mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/40">
+        <CardContent className="space-y-6 relative">
+          <div className="flex items-center justify-between p-4 rounded-[1.25rem] border border-primary/10 bg-gradient-to-br from-primary/[0.04] via-white to-blue-50/30">
             <div>
               <div className="font-semibold">{plan.name}</div>
               <div className="text-sm text-muted-foreground">
                 {plan.type === "COURSE" ? "Programme" : "Exam Preparation"}
               </div>
             </div>
-            <Badge variant="secondary">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15">
               Rs.{plan.price.toLocaleString("en-IN")}
             </Badge>
           </div>
 
           {existing ? (
-            <p className="text-sm text-emerald-600 font-medium text-center">
+            <p className="text-sm text-emerald-600 font-medium text-center rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3">
               You are already enrolled in this plan.
             </p>
           ) : (
@@ -83,12 +115,15 @@ export default async function CheckoutPage({
             />
           )}
 
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
           <p className="text-xs text-muted-foreground text-center">
             By enrolling you agree to the terms of use. Enrollment is per account
             and grants full access to the plan&apos;s content.
           </p>
         </CardContent>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

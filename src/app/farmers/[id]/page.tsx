@@ -62,7 +62,7 @@ export default async function FarmGuidePage({
           <FarmLanguageSwitcher compact tone="light" />
         </div>
 
-        <div className="relative h-64 w-full overflow-hidden rounded-2xl mb-6">
+        <div className="relative h-64 w-full overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-6">
           <Image
             src={getFarmTypeImage(String(guide.category))}
             alt={String(guide.title)}
@@ -72,21 +72,27 @@ export default async function FarmGuidePage({
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600 opacity-80" />
           <div className="absolute bottom-0 left-0 p-6 text-white">
-            <Badge variant="secondary" className="mb-2">
+            <Badge variant="secondary" className="mb-2 rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white gap-1.5">
               {String(guide.category)}
             </Badge>
-            <h1 className="text-3xl font-bold"><FarmText as="span" text={String(guide.title)} lang={lang} /></h1>
+            <h1 className="text-3xl font-bold tracking-tight"><FarmText as="span" text={String(guide.title)} lang={lang} /></h1>
+            <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-white to-[#d4a843]" />
           </div>
         </div>
 
         {guide.summary && (
-          <p className="text-lg text-muted-foreground mb-6"><FarmText text={String(guide.summary)} lang={lang} /></p>
+          <div className="va-glass relative overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-sm p-5 mb-6">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600 opacity-60" />
+            <p className="text-lg text-muted-foreground leading-relaxed"><FarmText text={String(guide.summary)} lang={lang} /></p>
+          </div>
         )}
 
         {guide.content ? (
-          <Card>
-            <CardContent className="p-6">
+          <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-sm hover:shadow-xl">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 via-[#d4a843] to-teal-600 opacity-60" />
+            <CardContent className="p-6 relative">
               <FarmHtml html={String(guide.content)} lang={lang} />
             </CardContent>
           </Card>

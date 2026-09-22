@@ -45,7 +45,8 @@ export default async function PracticeRoute({
   if (!access.isAuthed) {
     return (
       <div className="container mx-auto px-4 py-10 max-w-2xl text-center">
-        <h1 className="text-xl font-semibold mb-2">Login required</h1>
+        <h1 className="text-xl font-semibold mb-2 tracking-tight">Login required</h1>
+        <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
         <p className="text-muted-foreground mb-4">
           Sign in to practice MCQs for this chapter.
         </p>
@@ -74,9 +75,12 @@ export default async function PracticeRoute({
   if (chapter.mcqs.length === 0) {
     return (
       <div className="container mx-auto px-4 py-10 max-w-2xl">
-        <p className="text-muted-foreground">
-          No practice questions are available for this chapter yet.
-        </p>
+        <div className="rounded-[1.5rem] border border-primary/10 bg-white shadow-sm p-6 text-center">
+          <div className="va-divider-dots my-2 mx-auto max-w-[120px]"><span /></div>
+          <p className="text-muted-foreground">
+            No practice questions are available for this chapter yet.
+          </p>
+        </div>
       </div>
     );
   }

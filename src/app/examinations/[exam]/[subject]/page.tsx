@@ -125,24 +125,31 @@ export default async function ExamSubjectPage({
     <div className="container mx-auto px-4 py-8">
       <Link
         href={`/examinations/${exam}`}
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to {canonicalExam === "icar-entrance" ? "ICAR Entrance" : canonicalExam.toUpperCase()}
       </Link>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{discipline.name}</h1>
-        <div className="flex items-center gap-2 mt-2 flex-wrap">
-          <Badge variant="secondary">
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-8 md:px-8 text-white">
+        <h1 className="text-3xl font-bold mb-2 tracking-tight">{discipline.name}</h1>
+        <div className="h-1 w-16 rounded-full bg-gradient-to-r from-white to-[#d4a843]" />
+        <div className="flex items-center gap-2 mt-4 flex-wrap">
+          <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white">
             {canonicalExam === "icar-entrance"
               ? exam === "icar-jrf" ? "ICAR-JRF" : exam === "icar-srf" ? "ICAR-SRF" : "ICAR-JRF / SRF"
               : canonicalExam === "net"
                 ? exam === "net-icar" ? "ICAR-NET" : exam === "net-csir" ? "CSIR-NET" : exam === "net-ugc" ? "UGC-NET" : "NET"
                 : exam.toUpperCase()}
           </Badge>
-          {group && <Badge variant="outline">{group.name}</Badge>}
-          {discipline.isGeneral && <Badge variant="outline">Paper</Badge>}
+          {group && <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white">{group.name}</Badge>}
+          {discipline.isGeneral && <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white">Paper</Badge>}
+        </div>
         </div>
       </div>
 
@@ -155,14 +162,15 @@ export default async function ExamSubjectPage({
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {/* Previous Year Papers */}
-          <Card>
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shadow-sm">
                   <FileText className="h-5 w-5 text-red-600" />
                 </div>
                 <div>
-                  <CardTitle>Previous Year Papers</CardTitle>
+                  <CardTitle className="tracking-tight">Previous Year Papers</CardTitle>
                   <CardDescription>Solve actual exam papers</CardDescription>
                 </div>
               </div>
@@ -179,14 +187,15 @@ export default async function ExamSubjectPage({
           </Card>
 
           {/* Mock Tests */}
-          <Card>
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[#d4a843] to-primary opacity-70" />
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shadow-sm">
                   <Brain className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <CardTitle>Mock Tests</CardTitle>
+                  <CardTitle className="tracking-tight">Mock Tests</CardTitle>
                   <CardDescription>Practice with timed mock tests</CardDescription>
                 </div>
               </div>
@@ -198,7 +207,7 @@ export default async function ExamSubjectPage({
                     <Link
                       key={t.id}
                       href={`/mock-tests/${t.id}`}
-                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl border border-primary/10 bg-white hover:border-primary/20 hover:shadow-sm hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-transparent transition-all"
                     >
                       <div>
                         <div className="font-medium text-sm">{t.title}</div>
@@ -220,7 +229,8 @@ export default async function ExamSubjectPage({
 
           {/* Study Material (programme syllabus, merged across years) */}
           {studySections.length > 0 && (
-            <Card className="md:col-span-2">
+            <Card className="md:col-span-2 va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -251,7 +261,7 @@ export default async function ExamSubjectPage({
                         <Link
                           key={c.id}
                           href={`/syllabus/${discipline.programmeSlug}/${sec.subjectId}/${c.id}`}
-                          className="px-3 py-2 rounded-lg border text-sm hover:bg-accent transition-colors"
+                          className="px-3 py-2 rounded-xl border border-primary/10 bg-white text-sm hover:border-primary/20 hover:shadow-sm hover:bg-primary/5 transition-all"
                         >
                           {c.title}
                         </Link>

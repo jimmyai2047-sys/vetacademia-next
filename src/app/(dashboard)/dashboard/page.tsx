@@ -168,55 +168,69 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {currentUser.name}!</h1>
-        <p className="text-muted-foreground">{subtitle}</p>
-        {isExpert && expertProfile && (
-          <Badge
-            variant={expertProfile.isAvailable ? "default" : "secondary"}
-            className="mt-2"
-          >
-            {expertProfile.isAvailable ? "Available for consultation" : "Not available"}
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-8 md:px-8 text-white">
+          <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white gap-1.5">
+            <LayoutDashboard className="h-3.5 w-3.5 text-[#d4a843]" /> Dashboard
           </Badge>
-        )}
+          <h1 className="mt-3 text-3xl font-bold mb-2 tracking-tight">Welcome back, {currentUser.name}!</h1>
+          <div className="h-1 w-16 rounded-full bg-gradient-to-r from-white to-[#d4a843]" />
+          <p className="text-white/80 mt-2">{subtitle}</p>
+          {isExpert && expertProfile && (
+            <Badge
+              variant={expertProfile.isAvailable ? "default" : "secondary"}
+              className="mt-3"
+            >
+              {expertProfile.isAvailable ? "Available for consultation" : "Not available"}
+            </Badge>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl bg-white">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
+                <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
                   <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-2xl font-bold tracking-tight">{stat.value}</div>
                   <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               </div>
+              <div className="mt-3 h-0.5 w-6 rounded-full bg-primary/20 group-hover:w-10 group-hover:bg-primary transition-all" />
             </CardContent>
           </Card>
         ))}
       </div>
 
       {isAdmin ? (
-        <Card>
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.5rem] border-primary/10 shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardHeader>
-            <CardTitle>Admin Panel</CardTitle>
+            <CardTitle className="tracking-tight">Admin Panel</CardTitle>
             <CardDescription>Manage content, users, pricing and more</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/admin">
-              <Button className="w-full sm:w-auto">Go to Admin Panel</Button>
+              <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-sm">Go to Admin Panel</Button>
             </Link>
           </CardContent>
         </Card>
       ) : (
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           {/* Quick Links — role specific */}
-          <Card>
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
             <CardHeader>
-              <CardTitle>Quick Links</CardTitle>
+              <CardTitle className="tracking-tight">Quick Links</CardTitle>
               <CardDescription>Jump to key sections</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -249,9 +263,9 @@ export default async function DashboardPage() {
                   ]
               ).map((link) => (
                 <Link key={link.href} href={link.href}>
-                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                  <div className="flex items-center justify-between p-3 border border-primary/10 rounded-xl hover:border-primary/20 hover:shadow-sm hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-transparent transition-all cursor-pointer bg-white">
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg ${link.bg} flex items-center justify-center`}>
+                      <div className={`w-8 h-8 rounded-xl ${link.bg} flex items-center justify-center shadow-sm`}>
                         <link.icon className={`h-4 w-4 ${link.color}`} />
                       </div>
                       <div>
@@ -268,9 +282,10 @@ export default async function DashboardPage() {
 
           {/* Secondary panel */}
           {isStudent ? (
-            <Card>
+            <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[#d4a843] to-primary opacity-70" />
               <CardHeader>
-                <CardTitle>Recommended Tests</CardTitle>
+                <CardTitle className="tracking-tight">Recommended Tests</CardTitle>
                 <CardDescription>Available mock tests</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -279,7 +294,7 @@ export default async function DashboardPage() {
                 ) : (
                   allTests.map((test) => (
                     <Link key={test.id} href={`/mock-tests/${test.id}`}>
-                      <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between p-3 border border-primary/10 rounded-xl hover:border-primary/20 hover:shadow-sm hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-transparent transition-all cursor-pointer bg-white">
                         <div>
                           <h4 className="font-medium text-sm">{test.title}</h4>
                           <p className="text-xs text-muted-foreground">
@@ -297,9 +312,10 @@ export default async function DashboardPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card>
+            <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
               <CardHeader>
-                <CardTitle>{isAnimalOwner ? "Get Started" : isGuest ? "Explore VetAcademia" : "Expert Tools"}</CardTitle>
+                <CardTitle className="tracking-tight">{isAnimalOwner ? "Get Started" : isGuest ? "Explore VetAcademia" : "Expert Tools"}</CardTitle>
                 <CardDescription>
                   {isAnimalOwner
                     ? "Reach Animal Owner Corner, helpline and experts"
@@ -338,9 +354,10 @@ export default async function DashboardPage() {
       )}
 
       {isStudent && (
-        <Card>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-primary to-[#d4a843] opacity-70" />
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle className="tracking-tight">Recent Activity</CardTitle>
             <CardDescription>Your latest test attempts</CardDescription>
           </CardHeader>
           <CardContent>
@@ -359,7 +376,7 @@ export default async function DashboardPage() {
                     ? Math.round((attempt.score / attempt.totalMarks) * 100)
                     : 0;
                   return (
-                    <div key={attempt.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50">
+                    <div key={attempt.id} className="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-transparent hover:shadow-sm transition-all">
                       <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                         <Brain className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                       </div>

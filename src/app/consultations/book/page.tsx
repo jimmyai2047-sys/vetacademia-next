@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,16 +64,18 @@ function BookForm() {
     const search = params.toString();
     const redirect = `/consultations/book${search ? `?${search}` : ""}`;
     return (
-      <Card>
-        <CardHeader>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+        <CardHeader className="relative">
           <CardTitle>Sign in to book</CardTitle>
           <CardDescription>
             You need an account to book a consultation with an expert.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <Link href={`/login?redirect=${encodeURIComponent(redirect)}`}>
-            <Button>Log in to continue</Button>
+            <Button className="rounded-xl shadow-md">Log in to continue</Button>
           </Link>
         </CardContent>
       </Card>
@@ -81,16 +84,18 @@ function BookForm() {
 
   if (status === "authenticated" && !expertId) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+        <CardHeader className="relative">
           <CardTitle>Choose an expert</CardTitle>
           <CardDescription>
             Select a veterinary expert to book a consultation.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <Link href="/experts">
-            <Button>Browse Experts</Button>
+            <Button className="rounded-xl shadow-md">Browse Experts</Button>
           </Link>
         </CardContent>
       </Card>
@@ -142,7 +147,8 @@ function BookForm() {
 
   if (done) {
     return (
-      <Card>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
         <CardContent className="p-8 text-center text-muted-foreground">
           Redirecting to your consultations…
         </CardContent>
@@ -151,14 +157,17 @@ function BookForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+      <CardHeader className="relative">
         <CardTitle>Book a Consultation</CardTitle>
         <CardDescription>
           {expertName ? `With ${expertName}` : "Choose your expert and time"}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative">
+        <div className="va-divider-dots mb-4 max-w-[120px]"><span /></div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="expert">Expert</Label>
@@ -210,12 +219,12 @@ function BookForm() {
           </div>
 
           {error && (
-            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-xl border border-destructive/10">
               {error}
             </p>
           )}
 
-          <Button type="submit" className="w-full" disabled={submitting}>
+          <Button type="submit" className="w-full rounded-xl shadow-md" disabled={submitting}>
             {submitting ? "Booking…" : "Book Consultation"}
           </Button>
         </form>
@@ -226,7 +235,15 @@ function BookForm() {
 
 export default function BookConsultationPage() {
   return (
-    <div className="container mx-auto px-4 py-10 max-w-xl">
+    <div className="container mx-auto px-4 py-5 max-w-xl">
+      <DecorativePageHeader
+        badge="Video • Chat • Call"
+        title="Book a"
+        titleHighlight="Consultation"
+        description="Choose your expert and time"
+        variant="primary"
+      />
+      <div className="va-divider-dots my-6"><span /></div>
       <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
         <BookForm />
       </Suspense>

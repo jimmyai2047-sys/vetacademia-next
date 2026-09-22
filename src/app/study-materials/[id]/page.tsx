@@ -64,18 +64,20 @@ export default async function StudyMaterialDetailPage({
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <Link
         href="/study-materials"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Study Materials
       </Link>
 
-      <Card>
+      <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
         <CardHeader>
           <div className="flex items-start justify-between gap-3">
-            <CardTitle className="text-2xl">{post.title}</CardTitle>
-            {cat && <Badge className={cat.className}>{cat.label}</Badge>}
+            <CardTitle className="text-2xl tracking-tight">{post.title}</CardTitle>
+            {cat && <Badge className={cat.className + " rounded-full shadow-sm"}>{cat.label}</Badge>}
           </div>
+          <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
           <p className="text-sm text-muted-foreground">
             Published {new Date(post.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
           </p>
@@ -88,16 +90,19 @@ export default async function StudyMaterialDetailPage({
           )}
 
           {downloadUrl && (
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline mt-4"
-            >
-              <FileText className="h-4 w-4" />
-              Download attachment
-              <Download className="h-3.5 w-3.5" />
-            </a>
+            <>
+              <div className="va-divider-dots my-2"><span /></div>
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-4 py-2 text-sm font-medium text-white shadow-sm hover:shadow-md transition-all mt-2"
+              >
+                <FileText className="h-4 w-4" />
+                Download attachment
+                <Download className="h-3.5 w-3.5" />
+              </a>
+            </>
           )}
         </CardContent>
       </Card>

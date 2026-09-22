@@ -82,9 +82,10 @@ export default async function ChapterReaderRoute({
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec]">
-        <div className="text-center p-8">
-          <h1 className="text-2xl font-bold mb-4">Content Locked</h1>
+      <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec] px-4">
+        <div className="va-glass text-center p-8 rounded-[1.5rem] border border-primary/10 shadow-xl max-w-md w-full">
+          <h1 className="text-2xl font-bold mb-4 tracking-tight">Content Locked</h1>
+          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
           <p className="text-muted-foreground mb-6">Enrollment is required to view this chapter.</p>
           <a href={`/syllabus/${programmeSlug}/${chapter.subjectId}`} className="underline text-primary font-medium">
             ← Back to Syllabus

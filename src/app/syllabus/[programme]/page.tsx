@@ -270,9 +270,11 @@ export default async function ProgrammePage({
 
         {/* Syllabus at a Glance */}
         <div className="mb-6 grid md:grid-cols-[1fr_280px] gap-5">
-          <Card>
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
             <CardContent className="p-4">
-              <h2 className="text-lg font-semibold mb-1">Syllabus at a Glance</h2>
+              <h2 className="text-lg font-semibold mb-1 tracking-tight">Syllabus at a <span className="va-gradient-text">Glance</span></h2>
+              <div className="h-1 w-12 rounded-full bg-gradient-to-r from-primary to-[#d4a843] mb-2" />
               <p className="text-sm text-muted-foreground mb-3">
                 {allSubjects.length} subjects · {totalCourses} courses mapped unit-wise
                 across {glanceGroups.size} {isYearProgramme ? "year" : "group"}
@@ -280,8 +282,8 @@ export default async function ProgrammePage({
               </p>
               <div className="space-y-4">
                 {Array.from(glanceGroups.entries()).map(([group, subs]) => (
-                  <div key={group} className="rounded-xl border overflow-hidden">
-                    <div className="bg-primary/5 px-4 py-2.5 border-b">
+                  <div key={group} className="rounded-xl border border-primary/10 overflow-hidden bg-white">
+                    <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-4 py-2.5 border-b border-primary/10">
                       <span className="font-semibold text-sm">{group}</span>
                       <span className="ml-2 text-xs text-muted-foreground">
                         {subs.length} subject{subs.length === 1 ? "" : "s"}
@@ -318,7 +320,8 @@ export default async function ProgrammePage({
 
           <div className="space-y-4">
             <SyllabusProgress total={allSubjects.length} completed={0} lastSubject={null} />
-            <Card className="border-primary/20 bg-primary/5">
+            <Card className="va-card-hover rounded-[1.5rem] border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-sm overflow-hidden relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
               <CardContent className="p-5 space-y-3">
                 <h3 className="font-semibold flex items-center gap-2">
                   <BookOpen className="h-4 w-4 text-primary" /> How to Use

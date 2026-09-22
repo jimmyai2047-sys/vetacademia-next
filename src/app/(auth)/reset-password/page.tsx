@@ -102,7 +102,7 @@ function ResetForm() {
         />
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
-      <Button type="submit" className="w-full gap-2" disabled={loading}>
+      <Button type="submit" className="w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg" disabled={loading}>
         <Lock className="h-4 w-4" />
         {loading ? "Updating..." : "Update password"}
       </Button>
@@ -112,13 +112,18 @@ function ResetForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <GraduationCap className="h-6 w-6 text-primary" />
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-b from-white via-primary/[0.03] to-white">
+      <div className="absolute inset-0 va-pattern-grid opacity-[0.03] pointer-events-none" />
+      <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl pointer-events-none" />
+      <Card className="va-card-hover relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white/90 backdrop-blur-xl shadow-xl">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <CardHeader className="text-center relative">
+          <div className="mx-auto mb-3 w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#005f48] flex items-center justify-center shadow-md">
+            <GraduationCap className="h-6 w-6 text-white" />
           </div>
-          <CardTitle>Reset password</CardTitle>
+          <CardTitle className="tracking-tight">Reset password</CardTitle>
+          <div className="mx-auto mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
           <CardDescription>
             Choose a new password for your account.
           </CardDescription>

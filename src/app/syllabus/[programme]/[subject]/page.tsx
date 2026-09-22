@@ -160,7 +160,7 @@ export default async function SubjectPage({
       <div className="flex-1 min-w-0">
         <div className="container mx-auto px-4 py-4">
           {/* Hero banner */}
-          <div className="relative h-36 w-full overflow-hidden rounded-xl mb-4">
+          <div className="relative h-36 w-full overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl mb-4">
             <Image
               src={getSubjectImage(subject.name)}
               alt={subject.name}
@@ -169,7 +169,8 @@ export default async function SubjectPage({
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-black/30 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
           </div>
 
           {/* Breadcrumb */}
@@ -187,12 +188,13 @@ export default async function SubjectPage({
           <div className="mb-5">
             <Link
               href={`/syllabus/${progSlug}`}
-              className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4"
+              className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-4"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to {subject.programme.name}
             </Link>
-            <h1 className="text-3xl font-bold mb-2">{subject.name}</h1>
+            <h1 className="text-3xl font-bold mb-2 tracking-tight">{subject.name}</h1>
+            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
             {subject.description && (
               <p className="text-muted-foreground max-w-3xl">{subject.description}</p>
             )}
@@ -235,8 +237,8 @@ export default async function SubjectPage({
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {subject.chapters.map((course, index) => (
                 <Link key={course.id} href={`/syllabus/${progSlug}/${subject.id}/${course.id}`}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
-                    <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/80 to-primary/60">
+                  <Card className="va-card-hover overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                    <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Hash className="h-10 w-10 text-white/30" />
                       </div>
@@ -285,8 +287,8 @@ export default async function SubjectPage({
                 </div>
                 {Object.keys(theoryGrouped).length > 0 ? (
                   Object.entries(theoryGrouped).map(([unit, chapters]) => (
-                    <div key={unit} className="border rounded-xl overflow-hidden mb-4 shadow-sm">
-                      <div className="bg-gradient-to-r from-primary/5 to-transparent px-4 py-2.5 border-b">
+                    <div key={unit} className="va-card-hover border border-primary/10 rounded-[1.5rem] overflow-hidden mb-4 shadow-sm bg-white">
+                      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-4 py-2.5 border-b border-primary/10">
                         <h3 className="text-base font-bold flex items-center gap-2.5">
                           <Badge variant="outline" className="text-xs font-bold px-2.5 py-0.5">{unit}</Badge>
                         </h3>
@@ -337,8 +339,8 @@ export default async function SubjectPage({
                   </div>
                   {Object.keys(practicalGrouped).length > 0 ? (
                     Object.entries(practicalGrouped).map(([unit, chapters]) => (
-                      <div key={unit} className="border rounded-lg overflow-hidden mb-4">
-                        <div className="bg-muted/50 px-6 py-3 border-b">
+                      <div key={unit} className="va-card-hover border border-primary/10 rounded-[1.5rem] overflow-hidden mb-4 shadow-sm bg-white">
+                        <div className="bg-gradient-to-r from-emerald-500/10 via-primary/5 to-transparent px-6 py-3 border-b border-primary/10">
                           <h3 className="text-base font-semibold flex items-center gap-2">
                             <Badge variant="outline">{unit}</Badge>
                           </h3>

@@ -81,21 +81,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="w-12 h-12 rounded-lg bg-primary text-primary-foreground font-bold text-xl flex items-center justify-center mx-auto mb-2">
+    <div className="relative min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12 overflow-hidden bg-gradient-to-b from-white via-primary/[0.03] to-white">
+      <div className="absolute inset-0 va-pattern-grid opacity-[0.03] pointer-events-none" />
+      <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl pointer-events-none" />
+      <Card className="va-card-hover relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white/90 backdrop-blur-xl shadow-xl">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <CardHeader className="text-center relative">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white font-bold text-xl flex items-center justify-center mx-auto mb-2 shadow-md">
             VA
           </div>
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">Welcome Back</CardTitle>
+          <div className="mx-auto mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
           <CardDescription>
             Sign in to your VetAcademia account
           </CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 relative">
             {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl">
                 {error}
               </div>
             )}
@@ -127,8 +132,8 @@ export default function LoginPage() {
               </Link>
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={isLoading || guestLoading}>
+          <CardFooter className="flex flex-col gap-4 relative">
+            <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg" disabled={isLoading || guestLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -141,7 +146,7 @@ export default function LoginPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full"
+              className="w-full rounded-xl border-primary/15 bg-white hover:bg-primary/5"
               disabled={isLoading || guestLoading}
               onClick={handleGuest}
             >

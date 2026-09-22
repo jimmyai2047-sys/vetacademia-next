@@ -335,17 +335,24 @@ export default async function ExamPage({
         </Link>
 
         {/* PSC Header */}
-        <div className="flex items-start gap-4 mb-6">
-          <div className={`w-16 h-16 rounded-xl ${meta.lightColor} flex items-center justify-center shrink-0`}>
-            <meta.icon className={`h-8 w-8 ${meta.textColor}`} />
-          </div>
-          <div>
-            <div className="flex items-center gap-3 mb-1 flex-wrap">
-              <h1 className="text-3xl font-bold">{meta.title}</h1>
-              <Badge variant="secondary">{meta.badge}</Badge>
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+          <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
+          <div className="relative px-6 py-8 md:px-8 text-white flex items-start gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg flex items-center justify-center shrink-0">
+              <meta.icon className="h-8 w-8 text-white" />
             </div>
-            <p className="text-muted-foreground">{meta.subtitle}</p>
-            <p className="text-sm text-muted-foreground mt-1 max-w-3xl">{meta.description}</p>
+            <div>
+              <div className="flex items-center gap-3 mb-1 flex-wrap">
+                <h1 className="text-3xl font-bold tracking-tight">{meta.title}</h1>
+                <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white">{meta.badge}</Badge>
+              </div>
+              <div className="h-1 w-16 rounded-full bg-gradient-to-r from-white to-[#d4a843]" />
+              <p className="text-white/80 mt-2">{meta.subtitle}</p>
+              <p className="text-sm text-white/70 mt-1 max-w-3xl">{meta.description}</p>
+            </div>
           </div>
         </div>
 
@@ -815,30 +822,36 @@ export default async function ExamPage({
       {/* Back Button */}
       <Link
         href="/examinations"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Examinations
       </Link>
 
       {/* Header */}
-      <div className="flex items-start gap-4 mb-8">
-        <div
-          className={`w-16 h-16 rounded-xl ${meta.lightColor} flex items-center justify-center shrink-0`}
-        >
-          <meta.icon className={`h-8 w-8 ${meta.textColor}`} />
-        </div>
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl font-bold">{meta.title}</h1>
-            <Badge variant="secondary">{meta.badge}</Badge>
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <div className="relative px-6 py-8 md:px-8 text-white flex items-start gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg flex items-center justify-center shrink-0">
+            <meta.icon className="h-8 w-8 text-white" />
           </div>
-          <p className="text-muted-foreground">{meta.subtitle}</p>
+          <div>
+            <div className="flex items-center gap-3 mb-1 flex-wrap">
+              <h1 className="text-3xl font-bold tracking-tight">{meta.title}</h1>
+              <Badge className="rounded-full bg-white/15 backdrop-blur-md border-white/20 text-white">{meta.badge}</Badge>
+            </div>
+            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-white to-[#d4a843]" />
+            <p className="text-white/80 mt-2">{meta.subtitle}</p>
+          </div>
         </div>
       </div>
 
       {/* Description */}
-      <Card className="mb-8">
+      <Card className="va-card-hover mb-8 rounded-[1.5rem] border-primary/10 shadow-sm bg-gradient-to-br from-white to-primary/[0.02] overflow-hidden relative">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
         <CardContent className="p-6">
           <p className="text-muted-foreground">{meta.description}</p>
         </CardContent>
@@ -847,14 +860,15 @@ export default async function ExamPage({
       {/* Main Sections */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         {/* Previous Year Papers */}
-        <Card>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shadow-sm">
                 <FileText className="h-5 w-5 text-red-600" />
               </div>
               <div>
-                <CardTitle>Previous Year Papers</CardTitle>
+                <CardTitle className="tracking-tight">Previous Year Papers</CardTitle>
                 <CardDescription>Solve actual exam papers</CardDescription>
               </div>
             </div>
@@ -871,14 +885,15 @@ export default async function ExamPage({
         </Card>
 
         {/* Study Material */}
-        <Card>
+        <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shadow-sm">
                 <BookOpen className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <CardTitle>Study Material</CardTitle>
+                <CardTitle className="tracking-tight">Study Material</CardTitle>
                 <CardDescription>Comprehensive study resources</CardDescription>
               </div>
             </div>
@@ -1192,15 +1207,20 @@ export default async function ExamPage({
       )}
 
       {/* CTA */}
-      <Card className="bg-primary text-primary-foreground">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-bold mb-2">Ready to start preparing?</h3>
+      <Card className="relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 h-60 w-60 rounded-full bg-[#d4a843]/15 blur-3xl" />
+        <CardContent className="relative p-8 text-center text-white">
+          <h3 className="text-2xl font-bold mb-2 tracking-tight">Ready to start preparing?</h3>
+          <div className="mx-auto h-1 w-12 rounded-full bg-gradient-to-r from-white to-[#d4a843] mb-3" />
           <p className="opacity-90 mb-4">
             Track your progress, identify weak areas, and improve with our
             intelligent learning system
           </p>
           <Link href="/mock-tests">
-            <Button variant="secondary" size="lg">
+            <Button variant="secondary" size="lg" className="rounded-xl shadow-md">
               Start Preparation
             </Button>
           </Link>

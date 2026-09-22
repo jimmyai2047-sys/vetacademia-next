@@ -103,12 +103,13 @@ export default function ReaderPage({
 
         {/* Title area */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e] ring-2 ring-[#d4a843]/30 flex items-center justify-center shadow-lg">
             <BookOpen className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-2xl font-bold mb-3">
+          <h1 className="text-2xl font-bold mb-3 tracking-tight">
             {isSingleLecture ? sections[activeSectionIndex!].title : title}
           </h1>
+          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
           <p className="text-muted-foreground mb-2">{subjectName}</p>
           {(author || reviewer) && (
             <p className="text-xs text-muted-foreground">
@@ -132,7 +133,7 @@ export default function ReaderPage({
           {!hasSections && (
             <button
               onClick={() => setReaderOpen(true)}
-              className="px-8 py-3.5 rounded-xl bg-amber-700 text-white font-bold text-lg hover:bg-amber-800 transition-all active:scale-95 shadow-lg mt-4"
+              className="px-8 py-3.5 rounded-xl bg-primary text-white font-bold text-lg hover:bg-primary/90 transition-all active:scale-95 shadow-lg mt-4"
             >
               <BookOpen className="h-5 w-5 inline mr-2" />
               Read Chapter
@@ -142,7 +143,7 @@ export default function ReaderPage({
           <div className="mt-4">
             <Link
               href={`/reader/${chapterId}/practice`}
-              className="inline-flex items-center px-8 py-3.5 rounded-xl bg-white border-2 border-amber-700 text-amber-800 font-bold text-lg hover:bg-amber-50 transition-all active:scale-95 shadow-lg"
+              className="inline-flex items-center px-8 py-3.5 rounded-xl bg-white border-2 border-primary text-primary font-bold text-lg hover:bg-primary/5 transition-all active:scale-95 shadow-lg"
             >
               <ListChecks className="h-5 w-5 inline mr-2" />
               Practice MCQs
@@ -163,7 +164,7 @@ export default function ReaderPage({
                   href={`/reader/${chapterId}/${i}`}
                   className="flex items-center gap-4 rounded-xl border border-border bg-background p-4 hover:bg-accent hover:border-primary/40 transition-all group"
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-700 text-white font-bold shrink-0 group-hover:scale-105 transition-transform">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#003d2e] text-white font-bold shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                     {i + 1}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -240,11 +241,11 @@ export default function ReaderPage({
                   <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-primary shrink-0" />
                 </Link>
               ) : (
-                <div className="flex-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 text-white p-5 text-center shadow-lg">
-                  <p className="text-amber-100 text-sm mb-1">
+                <div className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#003d2e] text-white p-5 text-center shadow-lg">
+                  <p className="text-white text-sm mb-1">
                     All Lectures Complete!
                   </p>
-                  <p className="text-xs text-amber-200/80">
+                  <p className="text-xs text-[#d4a843]/90">
                     Chapter khatam hua
                   </p>
                 </div>

@@ -75,8 +75,11 @@ export default async function ExpertDetailPage({
         </Button>
       </Link>
 
-      <Card className="mb-5">
-        <CardHeader>
+      <Card className="va-card-hover group relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm mb-5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
+        <CardHeader className="relative">
           <div className="flex items-start gap-5">
             {photoUrl ? (
               <Image
@@ -84,10 +87,10 @@ export default async function ExpertDetailPage({
                 alt={expert.user.name}
                 width={120}
                 height={120}
-                className="h-28 w-28 rounded-full object-cover border-2 border-primary/20"
+                className="h-28 w-28 rounded-full object-cover border-2 border-white shadow-md ring-2 ring-primary/10"
               />
             ) : (
-              <div className="h-28 w-28 rounded-full bg-primary/10 text-primary flex items-center justify-center text-3xl font-bold">
+              <div className="h-28 w-28 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white flex items-center justify-center text-3xl font-bold shrink-0 shadow-md ring-2 ring-white">
                 {expert.user.name
                   .split(" ")
                   .map((n) => n[0])
@@ -95,60 +98,68 @@ export default async function ExpertDetailPage({
                   .join("")}
               </div>
             )}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <CardTitle className="text-2xl">{expert.user.name}</CardTitle>
+                <div className="min-w-0">
+                  <CardTitle className="text-2xl tracking-tight">{expert.user.name}</CardTitle>
                   <p className="text-muted-foreground mt-1">{expert.specialization}</p>
+                  <div className="mt-2 h-1 w-12 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
                 </div>
                 {expert.isAvailable ? (
-                  <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                  <Badge className="rounded-full bg-emerald-500 text-white border-0 gap-1 shrink-0 shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                     Available
                   </Badge>
                 ) : (
-                  <Badge variant="secondary">Not Available</Badge>
+                  <Badge variant="secondary" className="rounded-full shrink-0">Not Available</Badge>
                 )}
               </div>
-              <div className="flex items-center gap-4 mt-3">
+              <div className="flex flex-wrap items-center gap-4 mt-3">
                 {expert.rating > 0 ? (
-                  <div className="flex items-center gap-1">
-                    <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{expert.rating.toFixed(1)}</span>
-                    <span className="text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5 rounded-full bg-yellow-400/15 border border-yellow-400/20 px-2.5 py-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-semibold text-sm">{expert.rating.toFixed(1)}</span>
+                    <span className="text-xs text-muted-foreground">
                       ({expert.totalReviews} reviews)
                     </span>
                   </div>
                 ) : (
-                  <span className="text-sm text-muted-foreground">No reviews yet</span>
+                  <span className="text-xs rounded-full bg-muted px-2.5 py-1 text-muted-foreground">No reviews yet</span>
                 )}
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <BookOpen className="h-4 w-4" />
+                <div className="flex items-center gap-1.5 rounded-full bg-primary/5 px-2.5 py-1 text-sm text-muted-foreground">
+                  <BookOpen className="h-4 w-4 text-primary" />
                   {expert._count.consultations} consultations
                 </div>
               </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-5 relative">
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
           {expert.bio && (
             <div>
-              <h3 className="font-semibold mb-2">About</h3>
-              <p className="text-muted-foreground">{expert.bio}</p>
+              <h3 className="font-semibold mb-1">About</h3>
+              <div className="mb-2 h-0.5 w-8 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
+              <p className="text-muted-foreground leading-relaxed">{expert.bio}</p>
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <IndianRupee className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Consultation Fee</p>
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                <IndianRupee className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Consultation Fee</p>
                 <p className="font-semibold">Rs.{expert.hourlyRate}/hour</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <Clock className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Total Sessions</p>
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                <Clock className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Total Sessions</p>
                 <p className="font-semibold">{expert._count.consultations}</p>
               </div>
             </div>
@@ -161,26 +172,30 @@ export default async function ExpertDetailPage({
               )}`}
               className="block"
             >
-              <Button className="w-full" size="lg">
+              <Button className="w-full rounded-xl shadow-md bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90" size="lg">
                 Book Consultation
               </Button>
             </Link>
           ) : (
-            <Button className="w-full" size="lg" disabled>
+            <Button className="w-full rounded-xl" size="lg" disabled>
               Currently Not Available
             </Button>
           )}
         </CardContent>
       </Card>
 
+      <div className="va-divider-dots my-6"><span /></div>
+
       {recentConsultations.length > 0 && (
-        <Card>
-          <CardHeader>
+        <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
+          <CardHeader className="relative">
             <CardTitle className="text-lg">Recent Reviews</CardTitle>
+            <div className="mt-2 h-0.5 w-8 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 relative">
             {recentConsultations.map((c) => (
-              <div key={c.id} className="border-b pb-4 last:border-0 last:pb-0">
+              <div key={c.id} className="border-b border-primary/5 pb-4 last:border-0 last:pb-0">
                 <div className="flex items-center gap-2 mb-1">
                   {c.rating && (
                     <div className="flex items-center gap-0.5">

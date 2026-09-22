@@ -25,9 +25,14 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <p className="text-muted-foreground">Please log in to view this material.</p>
-        <Link href="/login" className="mt-4 inline-block text-primary underline">Log In</Link>
+      <div className="container mx-auto px-4 py-8 text-center max-w-xl">
+        <div className="va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-6 md:p-8">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+          <p className="relative text-muted-foreground">Please log in to view this material.</p>
+          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+          <Link href="/login" className="relative mt-4 inline-block text-primary underline">Log In</Link>
+        </div>
       </div>
     );
   }
@@ -46,7 +51,7 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
       </Link>
 
       {/* Header */}
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/10 bg-gradient-to-br from-primary/5 via-white to-blue-50/30 p-6 mb-6">
+      <div className="va-card-hover relative overflow-hidden rounded-[1.5rem] border border-primary/10 bg-gradient-to-br from-primary/5 via-white to-blue-50/30 p-6 mb-6 shadow-sm">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
         <div className="flex items-start gap-4">
           <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-md shrink-0">
@@ -77,7 +82,7 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Content - user friendly reader */}
-      <Card className="rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden">
+      <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden">
         <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
         <CardContent className="p-6 md:p-8 bg-white">
           {signedBody ? (

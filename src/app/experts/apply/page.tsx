@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,23 +53,35 @@ export default function ApplyExpertPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-xl">
-      <Card>
-        <CardHeader>
+    <div className="container mx-auto px-4 py-5 max-w-xl">
+      <DecorativePageHeader
+        badge="Expert Network"
+        title="Apply as an"
+        titleHighlight="Expert"
+        description="Share your details and our team will review your application."
+        variant="blue"
+      />
+      <div className="va-divider-dots my-6"><span /></div>
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-primary/5 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-[#d4a843] to-primary" />
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+        <CardHeader className="relative">
           <CardTitle>Apply as an Expert</CardTitle>
           <CardDescription>
             Share your details and our team will review your application.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
+          <div className="va-divider-dots mb-4 max-w-[120px]"><span /></div>
           {success ? (
             <div className="text-center space-y-4">
+              <div className="mx-auto h-1 w-12 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
               <p className="text-muted-foreground">
                 Thank you! Your application has been received. Our team will get
                 in touch via email.
               </p>
               <Link href="/experts">
-                <Button variant="outline">Back to Experts</Button>
+                <Button variant="outline" className="rounded-xl">Back to Experts</Button>
               </Link>
             </div>
           ) : (
@@ -141,12 +154,12 @@ export default function ApplyExpertPage() {
               </div>
 
               {error && (
-                <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-xl border border-destructive/10">
                   {error}
                 </p>
               )}
 
-              <Button type="submit" className="w-full" disabled={submitting}>
+              <Button type="submit" className="w-full rounded-xl shadow-md" disabled={submitting}>
                 {submitting ? "Submitting…" : "Submit Application"}
               </Button>
             </form>
