@@ -60,7 +60,7 @@ const STEPS = ["Account", "Role & details", "Review"];
 function SignupInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const redirect = getSafeRedirect(params, "/dashboard");
+  const redirect = getSafeRedirect(params, "/");
 
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);

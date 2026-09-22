@@ -41,7 +41,7 @@ function SigninInner() {
     }
   });
 
-  const redirect = getSafeRedirect(params, "/dashboard");
+  const redirect = getSafeRedirect(params, "/");
   const justRegistered = params.get("registered") === "true";
   const resetDone = params.get("reset") === "success";
 
