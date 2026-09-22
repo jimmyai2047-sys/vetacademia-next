@@ -46,6 +46,8 @@ import {
   ExternalLink,
   Newspaper,
   Sparkles,
+  Play,
+  Pill,
 } from "lucide-react";
 
 export const metadata = {
@@ -555,6 +557,35 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-[#d4a843]/10 blur-2xl" />
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Access — Demo, Project Reports, Drug Guide */}
+      <section className="relative py-2">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-3 md:grid-cols-3">
+            <Link href="/demo" className="group rounded-2xl border border-primary/10 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-primary/25 flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#2a8a5b] text-white"><Play className="h-5 w-5" /></span>
+              <span>
+                <span className="block font-bold text-[15px]">Free Demo <ArrowRight className="inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
+                <span className="block text-xs text-muted-foreground">Try a class free before you enrol</span>
+              </span>
+            </Link>
+            <Link href="/farmers/project-report" className="group rounded-2xl border border-[#d4a843]/25 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-[#d4a843]/50 flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#d4a843] to-[#9a7a2e] text-white"><FileText className="h-5 w-5" /></span>
+              <span>
+                <span className="block font-bold text-[15px]">Project Reports <ArrowRight className="inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
+                <span className="block text-xs text-muted-foreground">Bank-ready reports — Goat to Processing</span>
+              </span>
+            </Link>
+            <Link href="/drug-guide" className="group rounded-2xl border border-emerald-600/20 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-emerald-600/40 flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white"><Pill className="h-5 w-5" /></span>
+              <span>
+                <span className="block font-bold text-[15px]">Vet Drug Guide <Badge className="ml-1 bg-emerald-600 text-[10px] px-1.5 py-0">New</Badge> <ArrowRight className="inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
+                <span className="block text-xs text-muted-foreground">170+ drugs • dose, withdrawal, interactions</span>
+              </span>
+            </Link>
           </div>
         </div>
       </section>

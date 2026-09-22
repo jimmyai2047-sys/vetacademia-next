@@ -1,53 +1,81 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, CircleCheck } from "lucide-react";
 import { startGuestSession } from "@/lib/guest";
+import { getSafeRedirect } from "@/lib/auth-redirect";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { PasswordField } from "@/components/auth/password-field";
+import { GoogleButton } from "@/components/auth/google-button";
 
-export default function LoginPage() {
+const REMEMBER_KEY = "va_remember_email";
+
+function LoginInner() {
   const router = useRouter();
+  const params = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
   const [error, setError] = useState("");
+  // P1: remember-me prefill via lazy initializer (no setState-in-effect).
+  const [email, setEmail] = useState(() => {
+    try {
+      if (typeof window === "undefined") return "";
+      return localStorage.getItem(REMEMBER_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(() => {
+    try {
+      if (typeof window === "undefined") return true;
+      return Boolean(localStorage.getItem(REMEMBER_KEY));
+    } catch {
+      return true;
+    }
+  });
+
+  const redirect = getSafeRedirect(params, "/dashboard");
+  const justRegistered = params.get("registered") === "true";
+  const resetDone = params.get("reset") === "success";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const normalizedEmail = email.trim().toLowerCase();
 
     try {
       const res = await signIn("credentials", {
-        email,
+        email: normalizedEmail,
         password,
         redirect: false,
       });
 
       if (res?.error) {
-        setError("Invalid email or password");
+        // P2: surface lockout/rate-limit distinctly, keep invalid generic (anti-enumeration).
+        if (/too many attempts/i.test(res.error)) {
+          setError(res.error);
+        } else {
+          setError("Invalid email or password");
+        }
         return;
       }
 
-      const redirect =
-        new URLSearchParams(window.location.search).get("redirect") ||
-        "/dashboard";
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, normalizedEmail);
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch {
+        // ignore storage errors
+      }
+
       router.push(redirect);
       router.refresh();
     } catch {
@@ -71,7 +99,8 @@ export default function LoginPage() {
         setError("Guest login is unavailable right now.");
         return;
       }
-      router.push("/");
+      // P0: guests respect the original destination instead of hard "/".
+      router.push(redirect);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -81,93 +110,154 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12 overflow-hidden bg-gradient-to-b from-white via-primary/[0.03] to-white">
-      <div className="absolute inset-0 va-pattern-grid opacity-[0.03] pointer-events-none" />
-      <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl pointer-events-none" />
-      <Card className="va-card-hover relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white/90 backdrop-blur-xl shadow-xl">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-        <CardHeader className="text-center relative">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white font-bold text-xl flex items-center justify-center mx-auto mb-2 shadow-md">
-            VA
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to your VetAcademia account"
+      hindiSubtitle="वेटएकाडेमिया में वापस स्वागत है"
+      footer={
+        <p className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link
+            href={`/signup?redirect=${encodeURIComponent(redirect)}`}
+            className="font-medium text-primary hover:underline"
+          >
+            Sign up
+          </Link>
+        </p>
+      }
+    >
+      <div className="mb-5 text-center lg:text-left">
+        <h1 className="text-2xl font-bold tracking-tight">Welcome Back</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sign in to your VetAcademia account
+        </p>
+      </div>
+
+      {justRegistered ? (
+        <p
+          className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+          role="status"
+        >
+          <CircleCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          Account created — please sign in with your new credentials.
+        </p>
+      ) : null}
+      {resetDone ? (
+        <p
+          className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+          role="status"
+        >
+          <CircleCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          Password updated — please sign in again.
+        </p>
+      ) : null}
+
+      <form onSubmit={onSubmit} className="space-y-4" noValidate={false}>
+        {/* P2: honeypot — bots fill it, humans never see it. */}
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          className="hidden"
+          aria-hidden="true"
+        />
+        {error ? (
+          <div
+            className="rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+            role="alert"
+          >
+            {error}
           </div>
-          <CardTitle className="text-2xl tracking-tight">Welcome Back</CardTitle>
-          <div className="mx-auto mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-          <CardDescription>
-            Sign in to your VetAcademia account
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={onSubmit}>
-          <CardContent className="space-y-4 relative">
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl">
-                {error}
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                required
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                required
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex items-center justify-end text-sm">
-              <Link href="/forgot-password" className="text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-4 relative">
-            <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg" disabled={isLoading || guestLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full rounded-xl border-primary/15 bg-white hover:bg-primary/5"
-              disabled={isLoading || guestLoading}
-              onClick={handleGuest}
-            >
-              {guestLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Entering as Guest...
-                </>
-              ) : (
-                "Continue as Guest"
-              )}
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+        ) : null}
+        <div className="space-y-2">
+          <Label htmlFor="login-email">Email</Label>
+          <Input
+            id="login-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            required
+            autoFocus
+            disabled={isLoading || guestLoading}
+            aria-invalid={error ? true : undefined}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <PasswordField
+          id="login-password"
+          name="password"
+          label="Password"
+          autoComplete="current-password"
+          disabled={isLoading || guestLoading}
+          value={password}
+          onChange={setPassword}
+        />
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex cursor-pointer items-center gap-2 text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="h-4 w-4 rounded border-input accent-primary"
+            />
+            Remember me
+          </label>
+          <Link href="/forgot-password" className="font-medium text-primary hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg"
+          disabled={isLoading || guestLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              Signing in...
+            </>
+          ) : (
+            "Sign In"
+          )}
+        </Button>
+
+        <GoogleButton redirect={redirect} disabled={isLoading || guestLoading} />
+
+        {/* P1: guest demoted to a subtle divider + ghost action. */}
+        <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
+          <span className="h-px flex-1 bg-border" />
+          or
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          className="w-full rounded-xl text-muted-foreground hover:text-foreground"
+          disabled={isLoading || guestLoading}
+          onClick={handleGuest}
+        >
+          {guestLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              Entering as Guest...
+            </>
+          ) : (
+            "Continue as Guest"
+          )}
+        </Button>
+      </form>
+    </AuthShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
   );
 }

@@ -8,7 +8,7 @@ import VetsPageNav from "@/components/vets-page-nav";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText } from "lucide-react";
+import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText, Pill, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
@@ -105,6 +105,18 @@ export default async function VetsPage() {
         <div className="mt-4">
           <VetContraDrugs />
         </div>
+        {/* Drug Guide plate */}
+        <Link href="/drug-guide" className="group mt-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-[1.25rem] border border-emerald-600/20 bg-gradient-to-r from-emerald-600/[0.08] via-white to-teal-600/[0.06] p-5 shadow-sm transition hover:shadow-md">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow"><Pill className="h-6 w-6" /></span>
+          <span className="flex-1">
+            <span className="flex flex-wrap items-center gap-2">
+              <Badge className="rounded-full bg-emerald-600 border-0 px-2.5 py-0.5 text-[11px] font-bold uppercase">Vet Drug Guide</Badge>
+              <Badge className="rounded-full bg-amber-100 text-amber-800 border-amber-200 px-2.5 py-0.5 text-[11px]">New</Badge>
+            </span>
+            <span className="mt-1 block font-bold text-[16px]">170+ drugs — dose calculator, withdrawal, interactions <ArrowRight className="inline h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+            <span className="block text-xs text-muted-foreground">Dose rate, route, milk/meat withdrawal, contraindications, drugs-of-choice & banned list</span>
+          </span>
+        </Link>
       </div>
 
       {/* Sticky CTA - Desktop */}
