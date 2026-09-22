@@ -62,11 +62,31 @@ export interface DoseResult {
   unit: string;
   freq: string;
   fixedDose: string | null;
+  lowMl: number | null;
+  highMl: number | null;
   routes: string[];
   warnings: string[];
 }
 
-export function calculateDose(drugName: string, species: string, weightKg: number): DoseResult | { error: string } {
+// Typical adult body weights (kg) for quick presets.
+export const WEIGHT_PRESETS: Record<string, number[]> = {
+  Cattle: [250, 300, 400, 500],
+  Buffalo: [400, 500, 600],
+  Sheep: [25, 35, 45],
+  Goat: [20, 30, 40],
+  Pig: [50, 80, 100],
+  Dog: [10, 20, 30],
+  Cat: [3, 4, 5],
+  Horse: [350, 450, 550],
+  Poultry: [1.5, 2, 2.5],
+};
+
+export function calculateDose(
+  drugName: string,
+  species: string,
+  weightKg: number,
+  concentrationMgPerMl?: number
+): DoseResult | { error: string } {
   const drug = getDrug(drugName);
   if (!drug) return { error: "Drug not found in master" };
   if (!(weightKg > 0) || weightKg > 2000) return { error: "Weight must be 0-2000 kg" };
@@ -89,20 +109,35 @@ export function calculateDose(drugName: string, species: string, weightKg: numbe
       unit: "",
       freq: p.freq,
       fixedDose: drug.dose,
+      lowMl: null,
+      highMl: null,
       routes: drug.routes,
       warnings,
     };
   }
   const factor = /mcg|µg/i.test(p.unit) ? 0.001 : 1;
+  const lowMg = p.lowMgPerKg == null ? null : Math.round(p.lowMgPerKg * weightKg * factor * 100) / 100;
+  const highMg = p.highMgPerKg == null ? null : Math.round(p.highMgPerKg * weightKg * factor * 100) / 100;
+  const dispUnit = /mcg|µg/i.test(p.unit) ? "mg" : p.unit.replace(/\/kg/i, "");
+  // ml volume when vial concentration is known (only for mass units)
+  let lowMl: number | null = null;
+  let highMl: number | null = null;
+  if (concentrationMgPerMl != null && concentrationMgPerMl > 0 && (dispUnit === "mg" || dispUnit === "g")) {
+    const gFactor = dispUnit === "g" ? 1000 : 1;
+    if (lowMg != null) lowMl = Math.round(((lowMg * gFactor) / concentrationMgPerMl) * 100) / 100;
+    if (highMg != null) highMl = Math.round(((highMg * gFactor) / concentrationMgPerMl) * 100) / 100;
+  }
   return {
     drug: drug.name,
     species,
     weightKg,
-    lowMg: p.lowMgPerKg == null ? null : Math.round(p.lowMgPerKg * weightKg * factor * 100) / 100,
-    highMg: p.highMgPerKg == null ? null : Math.round(p.highMgPerKg * weightKg * factor * 100) / 100,
-    unit: /mcg|µg/i.test(p.unit) ? "mg" : p.unit.replace(/\/kg/i, ""),
+    lowMg,
+    highMg,
+    unit: dispUnit,
     freq: p.freq || drug.dose,
     fixedDose: null,
+    lowMl,
+    highMl,
     routes: drug.routes,
     warnings,
   };

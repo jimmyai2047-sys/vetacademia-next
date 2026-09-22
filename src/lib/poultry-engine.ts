@@ -17,8 +17,8 @@ export const POULTRY_BROILER_DEFAULTS: Required<PoultryProjectInput> = {
   insurancePct: 0, interestPct: 14, ownPct: 10, subsidyPct: 50, years: 6,
 };
 export const POULTRY_LAYER_DEFAULTS: Required<PoultryProjectInput> = {
-  poultryType: 'LAYER', batchSize: 500, batchesPerYear: 1, chickCost: 35, feedCostPerKg: 30, feedPerBirdKg: 42, mortalityPct: 5,
-  saleWeightKg: 1.5, saleRatePerKg: 90, eggPerBirdPerYear: 280, eggRate: 3.0, spentHenWeightKg: 1.5, spentHenRatePerKg: 90, pulletCost: 180,
+  poultryType: 'LAYER', batchSize: 500, batchesPerYear: 1, chickCost: 35, feedCostPerKg: 28, feedPerBirdKg: 42, mortalityPct: 5,
+  saleWeightKg: 1.5, saleRatePerKg: 90, eggPerBirdPerYear: 300, eggRate: 6.5, spentHenWeightKg: 1.5, spentHenRatePerKg: 90, pulletCost: 180,
   constructionRate: 350, equipmentRatePerBird: 10, labourCount: 1, labourWagePerMonth: 9000, vetRatePerBird: 5, utilityPerBird: 8, miscPerBird: 10,
   insurancePct: 0, interestPct: 14, ownPct: 10, subsidyPct: 50, years: 6,
 };

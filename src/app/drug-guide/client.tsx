@@ -51,7 +51,9 @@ export default function DrugGuideClient() {
   const [dDrug, setDDrug] = useState("");
   const [dSpecies, setDSpecies] = useState("Cattle");
   const [dWt, setDWt] = useState("300");
+  const [dConc, setDConc] = useState("");
   const [dOut, setDOut] = useState<any>(null);
+  const [presets, setPresets] = useState<Record<string, number[]>>({});
   const [iDrugs, setIDrugs] = useState("");
   const [iOut, setIOut] = useState<any>(null);
   const [cQ, setCQ] = useState("");
@@ -59,7 +61,10 @@ export default function DrugGuideClient() {
   const [banned, setBanned] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/drug-guide/search?meta=1").then((r) => r.json()).then(setMeta).catch(() => {});
+    fetch("/api/drug-guide/search?meta=1").then((r) => r.json()).then((j) => {
+      setMeta({ categories: j.categories ?? [], count: j.count ?? 0 });
+      setPresets(j.presets ?? {});
+    }).catch(() => {});
     fetch("/api/drug-guide/interactions?banned=1").then((r) => r.json()).then((j) => setBanned(j.results ?? [])).catch(() => {});
   }, []);
 
@@ -85,7 +90,7 @@ export default function DrugGuideClient() {
     const r = await fetch("/api/drug-guide/dose", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ drug: dDrug, species: dSpecies, weightKg: Number(dWt) }),
+      body: JSON.stringify({ drug: dDrug, species: dSpecies, weightKg: Number(dWt), concentrationMgPerMl: dConc.trim() ? Number(dConc) : undefined }),
     });
     setDOut(await r.json());
   };
@@ -271,7 +276,7 @@ export default function DrugGuideClient() {
               <h2 className="font-bold">Dose Calculator</h2>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">Weight-based for mg/kg doses; label doses shown as-is. <Syringe className="inline h-3 w-3" /> Always confirm concentration on the vial.</p>
-            <div className="mt-3 grid gap-3 md:grid-cols-4">
+            <div className="mt-3 grid gap-3 md:grid-cols-5">
               <div className="md:col-span-2">
                 <Label className="mb-1.5 block text-sm font-medium">Drug (exact name)</Label>
                 <Input value={dDrug} onChange={(e) => setDDrug(e.target.value)} placeholder="Pick from Browse ↑ or type" className="text-[15px]" />
@@ -283,6 +288,17 @@ export default function DrugGuideClient() {
               <div>
                 <Label className="mb-1.5 block text-sm font-medium">Weight (kg)</Label>
                 <Input inputMode="decimal" value={dWt} onChange={(e) => setDWt(e.target.value)} className="text-[15px]" />
+                {(presets[dSpecies] ?? presets[dSpecies.charAt(0).toUpperCase() + dSpecies.slice(1)] ?? []).length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {(presets[dSpecies] ?? presets[dSpecies.charAt(0).toUpperCase() + dSpecies.slice(1)] ?? []).map((w) => (
+                      <Button key={w} size="sm" variant="outline" className="h-6 rounded-full px-2 text-xs" onClick={() => setDWt(String(w))}>{w}</Button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div>
+                <Label className="mb-1.5 block text-sm font-medium">Vial conc. (mg/ml, optional)</Label>
+                <Input inputMode="decimal" value={dConc} onChange={(e) => setDConc(e.target.value)} placeholder="e.g. 100" className="text-[15px]" />
               </div>
             </div>
             <Button className="mt-3 bg-emerald-600 hover:bg-emerald-700" onClick={calcDose}>Calculate</Button>
@@ -295,6 +311,9 @@ export default function DrugGuideClient() {
                       <p className="mt-1 text-lg">Dose: <b>{dOut.fixedDose}</b> {dOut.freq ? `(${dOut.freq})` : ""}</p>
                     ) : (
                       <p className="mt-1 text-lg">Dose: <b>{dOut.lowMg ?? "?"} – {dOut.highMg ?? "?"} {dOut.unit}</b> {dOut.freq ? `(${dOut.freq})` : ""}</p>
+                    )}
+                    {dOut.lowMl != null && (
+                      <p className="mt-1 text-lg text-emerald-800">Volume: <b>{dOut.lowMl} – {dOut.highMl ?? dOut.lowMl} ml</b></p>
                     )}
                     <Row k="Routes" v={dOut.routes.join(", ")} />
                     {dOut.warnings.map((w: string, i: number) => (
@@ -385,7 +404,8 @@ export default function DrugGuideClient() {
       )}
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        Full drug PDF guide (print-ready) coming soon. {roleInfo.label} ke liye aur kya chahiye? <Link href="/contact" className="underline">Contact</Link>
+        <a href="/samples/sample-drug-guide.pdf" target="_blank" rel="noopener" className="font-semibold text-emerald-700 underline">Download print-ready sample PDF</a>
+        {" "}• Full drug PDF guide (print-ready) coming soon. {roleInfo.label} ke liye aur kya chahiye? <Link href="/contact" className="underline">Contact</Link>
       </p>
       <div className="mt-4 flex justify-center">
         <Link href="/vets">
