@@ -251,7 +251,6 @@ export default function DiplomasPage() {
                     </p>
                     <Link
                       href={stateJobHref(d.state)}
-                      onClick={(e) => e.stopPropagation()}
                       className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:underline"
                     >
                       <Award className="h-3 w-3" /> {d.jobPost} ({d.recruitingBody})
