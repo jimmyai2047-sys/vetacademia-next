@@ -8,7 +8,8 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   token: z.string().min(1),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  // P0: unified with signup (8 chars). Was 6 — inconsistent policy.
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export async function POST(req: NextRequest) {
@@ -47,14 +48,15 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+    } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
-    console.error("Reset password error:", error);
+    console.error("[auth] reset-password failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

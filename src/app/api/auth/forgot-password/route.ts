@@ -17,13 +17,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
     }
 
-    const { email } = await req.json().catch(() => ({}) as { email?: string });
-    if (!email || typeof email !== "string") {
+    const { email: rawEmail } = await req.json().catch(() => ({}) as { email?: string });
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
+    if (!email) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
     });
 
     // Always return the same response to avoid account enumeration.
@@ -41,7 +42,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(base);
   } catch (error) {
-    console.error("Forgot password error:", error);
+    console.error("[auth] forgot-password failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

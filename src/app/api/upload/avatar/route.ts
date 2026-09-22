@@ -94,7 +94,8 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Avatar upload error:", error);
+    console.error("[upload] avatar failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

@@ -1,69 +1,20 @@
-﻿import { NextResponse, NextRequest } from "next/server";
-import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { rateLimit, clientIp } from "@/lib/rate-limit";
-import { validateCsrf } from "@/lib/csrf";
+﻿import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  try {
-    if (!validateCsrf(req)) {
-      return NextResponse.json(
-        { error: "Invalid CSRF token" },
-        { status: 403 }
-      );
-    }
-
-    const rl = await rateLimit(`login:${clientIp(req)}`, 10, 60_000);
-    if (!rl.allowed) {
-      return NextResponse.json(
-        { error: "Too many attempts. Please try again later." },
-        { status: 429, headers: { "Retry-After": "60" } }
-      );
-    }
-
-    const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+/**
+ * DEPRECATED (P0 cleanup): this endpoint was never used by the web client.
+ * Web login goes through NextAuth `signIn("credentials")` -> `src/lib/auth.ts`.
+ * Keeping a second bcrypt-compare path doubles the attack surface and confused
+ * debugging (it returns JSON but never creates a session).
+ *
+ * Returns 410 Gone so any stray caller migrates to NextAuth.
+ * Mobile apps use `/api/mobile/auth/*` (token auth) instead.
+ */
+export async function POST() {
+  return NextResponse.json(
+    {
+      error:
+        "Deprecated: use NextAuth credentials sign-in instead of POST /api/auth/login.",
+    },
+    { status: 410 }
+  );
 }

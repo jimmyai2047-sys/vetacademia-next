@@ -7,8 +7,12 @@ import { SELF_REGISTERABLE_ROLES } from "@/lib/roles";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const schema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().trim().min(2, "Name must be at least 2 characters"),
+  email: z
+    .string()
+    .trim()
+    .transform((v) => v.toLowerCase())
+    .pipe(z.string().email("Invalid email address")),
   password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.string().optional(),
   programme: z.string().optional(),
@@ -22,9 +26,11 @@ export async function POST(req: Request) {
     }
     const body = await req.json();
     const data = schema.parse(body);
-    const email = data.email.toLowerCase();
+    const email = data.email.toLowerCase().trim();
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
+    });
     if (existing) {
       return NextResponse.json(
         { error: "Email already registered" },

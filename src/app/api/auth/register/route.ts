@@ -4,18 +4,26 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
+import { verifyVerificationToken } from "@/lib/otp";
 import {
   SELF_REGISTERABLE_ROLES,
   ANIMAL_OWNER,
   isExpertRole,
 } from "@/lib/roles";
 
+const optionalText = z.string().trim().max(200).optional();
+
 const registerSchema = z
   .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    surname: z.string().optional(),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+    surname: z.string().trim().max(100).optional(),
+    // P0: normalize email (trim + lowercase) so duplicate casing can't create two accounts.
+    email: z
+      .string()
+      .trim()
+      .transform((v) => v.toLowerCase())
+      .pipe(z.string().email("Invalid email address")),
+    password: z.string().min(8, "Password must be at least 8 characters").max(128),
     role: z
       .string()
       .transform((v) => v.toUpperCase())
@@ -31,18 +39,23 @@ const registerSchema = z
           )
       )
       .default("STUDENT"),
-    programme: z.string().optional(),
-    year: z.string().optional(),
-    institution: z.string().optional(),
-    phone: z.string().optional(),
-    college: z.string().optional(),
-    university: z.string().optional(),
-    address: z.string().optional(),
-    highestDegree: z.string().optional(),
-    expertDesignation: z.string().optional(),
-    subjectDepartment: z.string().optional(),
-    specialization: z.string().optional(),
-    avatar: z.string().optional(),
+    programme: optionalText,
+    year: optionalText,
+    institution: optionalText,
+    phone: z.string().trim().max(30).optional(),
+    college: optionalText,
+    university: optionalText,
+    address: z.string().trim().max(500).optional(),
+    highestDegree: optionalText,
+    expertDesignation: optionalText,
+    subjectDepartment: optionalText,
+    specialization: optionalText,
+    avatar: z.string().trim().max(1000).optional(),
+    // P1: optional email-OTP proof (SIGNUP_EMAIL). If present and valid for this
+    // email, the account is marked verified. Absence does NOT block signup.
+    emailVerificationToken: z.string().max(2000).optional(),
+    // P2: honeypot anti-bot field. Real users leave it empty; bots fill it.
+    company: z.string().max(200).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.role === "STUDENT" && !data.programme) {
@@ -127,14 +140,50 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = registerSchema.parse(body);
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: validatedData.email },
+    // P2: honeypot — silently accept but don't create (avoids telling bots).
+    if (validatedData.company && validatedData.company.trim().length > 0) {
+      return NextResponse.json(
+        { message: "User created successfully", userId: "ok" },
+        { status: 201 }
+      );
+    }
+
+    // Check if user already exists (case-insensitive to catch legacy uppercase rows)
+    const existingUser = await prisma.user.findFirst({
+      where: { email: { equals: validatedData.email, mode: "insensitive" } },
     });
 
     if (existingUser) {
       return NextResponse.json(
         { error: "Email already registered" },
+        { status: 400 }
+      );
+    }
+
+    // P1: validate optional OTP proof. Only marks verified when the token's
+    // contact matches this email; never blocks registration on failure.
+    let emailVerified = false;
+    if (validatedData.emailVerificationToken) {
+      const proof = verifyVerificationToken(validatedData.emailVerificationToken);
+      if (proof && proof.contact.toLowerCase() === validatedData.email.toLowerCase()) {
+        emailVerified = true;
+        // Single-use: remove the consumed challenge.
+        await prisma.otpChallenge.deleteMany({
+          where: { id: proof.challengeId },
+        }).catch(() => undefined);
+      }
+    }
+
+    // P0: only accept avatar URLs from our own Blob store (or relative paths).
+    // Prevents SSRF-style profile tricks via arbitrary remote URLs.
+    const avatar = validatedData.avatar?.trim() || undefined;
+    const avatarOk =
+      !avatar ||
+      avatar.startsWith("/") ||
+      avatar.includes("blob.vercel-storage.com");
+    if (!avatarOk) {
+      return NextResponse.json(
+        { error: "Invalid avatar URL" },
         { status: 400 }
       );
     }
@@ -153,7 +202,7 @@ export async function POST(req: NextRequest) {
         programme: validatedData.programme,
         year: validatedData.year,
         institution: validatedData.institution,
-        phone: validatedData.phone,
+        phone: validatedData.phone || undefined,
         college: validatedData.college,
         university: validatedData.university,
         address: validatedData.address,
@@ -161,7 +210,8 @@ export async function POST(req: NextRequest) {
         expertDesignation: validatedData.expertDesignation,
         subjectDepartment: validatedData.subjectDepartment,
         specialization: validatedData.specialization,
-        avatar: validatedData.avatar,
+        avatar,
+        emailVerified,
       },
     });
 
@@ -169,7 +219,7 @@ export async function POST(req: NextRequest) {
       { message: "User created successfully", userId: user.id },
       { status: 201 }
     );
-  } catch (error) {
+    } catch (error) {
     if (error instanceof z.ZodError) {
       const message = error.issues
         .map((i) => i.message)
@@ -180,7 +230,9 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error("Registration error:", error);
+    // P2: don't leak internals/PII in logs or responses.
+    console.error("[auth] registration failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

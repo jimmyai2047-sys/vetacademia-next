@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import { GoogleButton } from "@/components/auth/google-button";
 
 const REMEMBER_KEY = "va_remember_email";
 
-function LoginInner() {
+function SigninInner() {
   const router = useRouter();
   const params = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +51,16 @@ function LoginInner() {
     setError("");
 
     const normalizedEmail = email.trim().toLowerCase();
+    // P2 honeypot value (bots fill the hidden field; humans leave it empty).
+    const company = (
+      new FormData(e.currentTarget).get("company") as string | null
+    )?.trim() ?? "";
 
     try {
       const res = await signIn("credentials", {
         email: normalizedEmail,
         password,
+        company,
         redirect: false,
       });
 
@@ -152,7 +157,7 @@ function LoginInner() {
         </p>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4" noValidate={false}>
+      <form onSubmit={onSubmit} className="space-y-4">
         {/* P2: honeypot — bots fill it, humans never see it. */}
         <input
           type="text"
@@ -191,6 +196,9 @@ function LoginInner() {
           name="password"
           label="Password"
           autoComplete="current-password"
+          // No min-length here: legacy passwords shorter than 8 chars must
+          // still be submittable so the server can validate them.
+          minLength={1}
           disabled={isLoading || guestLoading}
           value={password}
           onChange={setPassword}
@@ -221,7 +229,7 @@ function LoginInner() {
               Signing in...
             </>
           ) : (
-            "Sign In"
+            "Sign in"
           )}
         </Button>
 
@@ -254,10 +262,10 @@ function LoginInner() {
   );
 }
 
-export default function LoginPage() {
+export default function SigninPage() {
   return (
     <Suspense fallback={null}>
-      <LoginInner />
+      <SigninInner />
     </Suspense>
   );
 }

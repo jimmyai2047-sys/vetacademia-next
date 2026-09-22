@@ -6,7 +6,11 @@ import { validateCsrf } from "@/lib/csrf";
 import { createOtpChallenge } from "@/lib/otp";
 
 const schema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z
+    .string()
+    .trim()
+    .transform((v) => v.toLowerCase())
+    .pipe(z.string().email("Invalid email address")),
 });
 
 export async function POST(req: NextRequest) {
@@ -19,8 +23,8 @@ export async function POST(req: NextRequest) {
     const { email } = schema.parse(body);
 
     // Reject if the account already exists — no point sending an OTP.
-    const existing = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
     });
     if (existing) {
       return NextResponse.json(
@@ -43,14 +47,15 @@ export async function POST(req: NextRequest) {
       message: "OTP sent. Check the server console (dev mode).",
       devCode: result.devCode,
     });
-  } catch (error) {
+    } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0]?.message || "Validation failed" },
         { status: 400 }
       );
     }
-    console.error("Request OTP error:", error);
+    console.error("[auth] request-otp failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json({ error: "Failed to send OTP" }, { status: 500 });
   }
 }

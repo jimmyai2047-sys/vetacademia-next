@@ -3,6 +3,8 @@ import type { NextRequest } from "next/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
+  // NOTE: /api/auth/login is deprecated (410, see its route file) — web login
+  // uses NextAuth [...nextauth]. Kept here so stray callers are still throttled.
   "/api/auth/login": { limit: 10, windowMs: 60_000 },
   "/api/auth/register": { limit: 10, windowMs: 60_000 },
   "/api/auth/forgot-password": { limit: 5, windowMs: 60_000 },

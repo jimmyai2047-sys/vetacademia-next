@@ -655,10 +655,10 @@ export default function Navbar() {
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" className="px-2 text-sm">Login</Button>
+                <Button variant="ghost" className="px-2 text-sm">Sign in</Button>
               </Link>
               <Link href="/signup">
-                <Button>Sign Up</Button>
+                <Button>Sign up</Button>
               </Link>
             </>
           )}
@@ -999,11 +999,11 @@ export default function Navbar() {
                     <div className="grid grid-cols-2 gap-3">
                       <Link href="/login" onClick={() => setIsOpen(false)}>
                         <Button variant="outline" className="w-full rounded-xl h-11 border-primary/15">
-                          Login
+                          Sign in
                         </Button>
                       </Link>
                       <Link href="/signup" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full rounded-xl h-11 bg-gradient-to-r from-primary to-[#005f48] shadow-md">Sign Up</Button>
+                        <Button className="w-full rounded-xl h-11 bg-gradient-to-r from-primary to-[#005f48] shadow-md">Sign up</Button>
                       </Link>
                     </div>
                   </>

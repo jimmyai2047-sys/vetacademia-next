@@ -4,7 +4,11 @@ import { validateCsrf } from "@/lib/csrf";
 import { verifyOtpChallenge } from "@/lib/otp";
 
 const schema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z
+    .string()
+    .trim()
+    .transform((v) => v.toLowerCase())
+    .pipe(z.string().email("Invalid email address")),
   code: z
     .string()
     .regex(/^\d{6}$/, "OTP must be 6 digits"),
@@ -29,14 +33,15 @@ export async function POST(req: NextRequest) {
       success: true,
       verificationToken: result.token,
     });
-  } catch (error) {
+    } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0]?.message || "Validation failed" },
         { status: 400 }
       );
     }
-    console.error("Verify OTP error:", error);
+    console.error("[auth] verify-otp failed");
+    if (process.env.NODE_ENV !== "production") console.error(error);
     return NextResponse.json({ error: "Failed to verify OTP" }, { status: 500 });
   }
 }
