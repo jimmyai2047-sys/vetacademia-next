@@ -39,10 +39,10 @@ function Row({ k, v, alert }: { k: string; v: string; alert?: boolean }) {
   );
 }
 
-export default function DrugGuideClient() {
+export default function DrugGuideClient({ initialMeta }: { initialMeta: { categories: string[]; count: number; presets: Record<string, number[]> } }) {
   const [role, setRole] = useState<Role>("vet");
   const [section, setSection] = useState<Section>("browse");
-  const [meta, setMeta] = useState<{ categories: string[]; count: number }>({ categories: [], count: 0 });
+  const [meta, setMeta] = useState<{ categories: string[]; count: number }>({ categories: initialMeta.categories, count: initialMeta.count });
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("__ALL__");
   const [species, setSpecies] = useState("");
@@ -53,7 +53,7 @@ export default function DrugGuideClient() {
   const [dWt, setDWt] = useState("300");
   const [dConc, setDConc] = useState("");
   const [dOut, setDOut] = useState<any>(null);
-  const [presets, setPresets] = useState<Record<string, number[]>>({});
+  const [presets, setPresets] = useState<Record<string, number[]>>(initialMeta.presets);
   const [iDrugs, setIDrugs] = useState("");
   const [iOut, setIOut] = useState<any>(null);
   const [cQ, setCQ] = useState("");
@@ -61,9 +61,10 @@ export default function DrugGuideClient() {
   const [banned, setBanned] = useState<any[]>([]);
 
   useEffect(() => {
+    // Revalidate server-rendered meta in background (keeps data fresh).
     fetch("/api/drug-guide/search?meta=1").then((r) => r.json()).then((j) => {
-      setMeta({ categories: j.categories ?? [], count: j.count ?? 0 });
-      setPresets(j.presets ?? {});
+      if (j.categories && j.count) setMeta({ categories: j.categories, count: j.count });
+      if (j.presets) setPresets(j.presets);
     }).catch(() => {});
     fetch("/api/drug-guide/interactions?banned=1").then((r) => r.json()).then((j) => setBanned(j.results ?? [])).catch(() => {});
   }, []);
