@@ -14,6 +14,7 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, Sparkles
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import { slugToProgrammeName } from "@/lib/programme";
+import { getDiploma } from "@/lib/diplomas";
 import SyllabusProgress from "@/components/syllabus-progress";
 import SyllabusDarkToggle from "@/components/syllabus-dark-toggle";
 import SyllabusBookmarkButton from "@/components/syllabus-bookmark-button";
@@ -43,12 +44,19 @@ export default async function ProgrammePage({
 }) {
   const { programme: slug } = await params;
 
+  // Diploma-basket tracks (dvp, dle, vldd, …) reuse the live AHDP core until
+  // their specialization modules are authored — see src/lib/diplomas.ts.
+  const diplomaTrack = getDiploma(slug);
+  const isDiplomaFallback = !!diplomaTrack && slug.toLowerCase() !== "ahdp";
+  const dbSlug = isDiplomaFallback ? "ahdp" : slug;
+  const dbName = slugToProgrammeName(dbSlug);
+
   const programme = await unstable_cache(
     () =>
       prisma.programme.findFirst({
         where: {
           name: {
-            equals: slugToProgrammeName(slug),
+            equals: dbName,
             mode: "insensitive",
           },
         },
@@ -237,6 +245,25 @@ export default async function ProgrammePage({
           </Link>
           <SyllabusDarkToggle />
         </div>
+        {isDiplomaFallback && diplomaTrack && (
+          <div className="mb-5 rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50/40 p-4 md:p-5 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Badge className="rounded-full bg-primary text-white border-0">{diplomaTrack.short}</Badge>
+                <span className="text-sm font-bold">{diplomaTrack.fullName}</span>
+              </div>
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 w-fit">
+                Core syllabus = AHDP (live) • specialization soon
+              </span>
+              <Link href={`/diplomas#diploma-${diplomaTrack.slug}`} className="sm:ml-auto text-sm font-bold text-primary hover:underline shrink-0">
+                Track details, eligibility & careers →
+              </Link>
+            </div>
+            <p className="mt-2 text-[13px] text-muted-foreground">
+              {diplomaTrack.short} shares ~80% of the AHDP core below. Study it now for {diplomaTrack.examLabel}; {diplomaTrack.short}-specific modules (e.g. {diplomaTrack.focus.slice(0, 2).join(", ")}) unlock next.
+            </p>
+          </div>
+        )}
         <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-5">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />

@@ -57,9 +57,9 @@ type PreparedCategory = {
 export default async function PreparePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; state?: string }>;
 }) {
-  const { tab } = await searchParams;
+  const { tab, state } = await searchParams;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
@@ -82,7 +82,7 @@ export default async function PreparePage({
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
             Structured tracks, previous year papers, and mock tests are available to enrolled members. Highly decorative, highly focused preparation.
           </p>
-          <Link href={`/login?redirect=${encodeURIComponent(tab ? `/prepare?tab=${tab}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
+          <Link href={`/login?redirect=${encodeURIComponent(tab ? `/prepare?tab=${tab}${state ? `&state=${state}` : ""}` : state ? `/prepare?state=${state}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
             <Sparkles className="h-4 w-4" /> Log In
           </Link>
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
@@ -197,9 +197,10 @@ export default async function PreparePage({
 
   return (
     <ExamPrepTabs
-      key={tab || "all"}
+      key={`${tab || "all"}:${state || ""}`}
       categories={categories}
       initialTab={tab || undefined}
+      initialState={state || undefined}
     />
   );
 }

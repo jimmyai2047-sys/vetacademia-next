@@ -50,6 +50,7 @@ import {
   slugify,
 } from "@/lib/exam-subjects";
 import EnrollCta from "@/components/enroll-cta";
+import { STATE_JOBS } from "@/lib/state-jobs";
 
 
 
@@ -325,7 +326,7 @@ export default async function ExamPage({
 
   if (isPSC) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Link
           href="/examinations"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
@@ -621,11 +622,14 @@ export default async function ExamPage({
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h2 className="text-2xl font-extrabold text-teal-900">Livestock Assistant</h2>
-                  <Badge className="bg-teal-600 text-white border-0 rounded-full">L.S.A. — AHDP</Badge>
+                  <Badge className="bg-teal-600 text-white border-0 rounded-full">L.S.A. — Diploma</Badge>
                   <Badge variant="outline" className="rounded-full border-teal-200 text-teal-700">RSSB</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  AHDP syllabus पर आधारित — Rajasthan Staff Selection Board (RSSB) के लिए। सभी 10 veterinary subjects + Rajasthan GK।
+                  Rajasthan LSA — AHDP core (RAJUVAS) + Rajasthan GK, RSSB pattern.{" "}
+                  <Link href="/examinations/paravet-jobs" className="font-bold text-teal-700 hover:underline">
+                    Other states (VLDA • AVFO • Pharmacist • VFA) →
+                  </Link>
                 </p>
               </div>
             </div>
@@ -633,7 +637,7 @@ export default async function ExamPage({
             <div className="grid grid-cols-3 gap-3 mb-6">
               <div className="rounded-xl border bg-white px-3 py-3 text-center">
                 <div className="text-lg font-extrabold text-teal-700">{lsaSubjects.length}</div>
-                <div className="text-xs text-muted-foreground">Subjects (AHDP)</div>
+                <div className="text-xs text-muted-foreground">Subjects (Diploma core)</div>
               </div>
               <div className="rounded-xl border bg-white px-3 py-3 text-center">
                 <div className="text-lg font-extrabold text-teal-700">{lsaPostsStrict.length || lsaPosts.length}</div>
@@ -648,11 +652,33 @@ export default async function ExamPage({
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="rounded-[1.25rem] lg:col-span-2 border-teal-200 bg-gradient-to-r from-teal-50/60 via-white to-emerald-50/40">
+                <CardContent className="p-4 md:p-5">
+                  <p className="text-sm font-bold text-teal-900">
+                    Other states? Same core, different post —{" "}
+                    <Link href="/examinations/paravet-jobs" className="underline hover:text-teal-700">
+                      open the Paravet State Jobs hub →
+                    </Link>
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {STATE_JOBS.filter((j) => j.slug !== "rajasthan").map((j) => (
+                      <Link
+                        key={j.slug}
+                        href={`/examinations/paravet-jobs#${j.slug}`}
+                        className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1.5 text-xs font-bold hover:border-teal-400 hover:bg-teal-600 hover:text-white transition-all"
+                      >
+                        {j.stateCode} • {j.postShort}
+                        <span className="font-normal opacity-70">{j.recruitingBody}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
               <Card className="rounded-[1.25rem]">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center"><FileText className="h-5 w-5 text-teal-600" /></div>
-                    <div><CardTitle className="text-base">Previous Year Papers — L.S.A.</CardTitle><CardDescription>AHDP level actual papers (LSA track)</CardDescription></div>
+                    <div><CardTitle className="text-base">Previous Year Papers — L.S.A.</CardTitle><CardDescription>Diploma level actual papers (LSA track)</CardDescription></div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -689,12 +715,12 @@ export default async function ExamPage({
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center"><BookOpen className="h-5 w-5 text-teal-600" /></div>
-                    <div><CardTitle className="text-base">Study Materials — L.S.A.</CardTitle><CardDescription>PPT • PDF • Video • Audio (LSA / AHDP)</CardDescription></div>
+                    <div><CardTitle className="text-base">Study Materials — L.S.A.</CardTitle><CardDescription>PPT • PDF • Video • Audio (LSA / Diploma)</CardDescription></div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   {!lsaUnlocked ? (
-                    <EnrollCta planSlug="livestock-assistant" title="Enroll — Livestock Assistant" message="L.S.A. track unlock करें — AHDP notes, Rajasthan GK और videos पाएँ।" />
+                    <EnrollCta planSlug="livestock-assistant" title="Enroll — Livestock Assistant" message="L.S.A. track unlock करें — Diploma notes, Rajasthan GK और videos पाएँ।" />
                   ) : lsaMaterials.length === 0 ? (
                     <p className="text-sm text-muted-foreground">No L.S.A. materials uploaded yet.</p>
                   ) : (
@@ -737,7 +763,7 @@ export default async function ExamPage({
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center"><Brain className="h-5 w-5 text-emerald-600" /></div>
-                    <div><CardTitle className="text-base">Mock & Adaptive — L.S.A.</CardTitle><CardDescription>AHDP level timed tests</CardDescription></div>
+                    <div><CardTitle className="text-base">Mock & Adaptive — L.S.A.</CardTitle><CardDescription>Diploma level timed tests</CardDescription></div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -787,7 +813,7 @@ export default async function ExamPage({
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center"><ShieldCheck className="h-5 w-5 text-teal-600" /></div>
-                    <div><CardTitle className="text-base">Subjects — L.S.A. (AHDP)</CardTitle><CardDescription>AHDP programme + Rajasthan GK</CardDescription></div>
+                    <div><CardTitle className="text-base">Subjects — L.S.A. (Diploma)</CardTitle><CardDescription>Diploma programme + Rajasthan GK</CardDescription></div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -818,7 +844,7 @@ export default async function ExamPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       {/* Back Button */}
       <Link
         href="/examinations"

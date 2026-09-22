@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { materialTypeLabel } from "@/lib/exam-prep";
+import { getStateJob } from "@/lib/state-jobs";
 import ProtectedHtml from "@/components/protected-html";
 import {
   FileText,
@@ -24,6 +25,7 @@ import {
   Film,
   File,
   BookOpen,
+  MapPin,
 } from "lucide-react";
 
 type Material = {
@@ -182,9 +184,11 @@ function Section({
 export default function ExamPrepTabs({
   categories,
   initialTab,
+  initialState,
 }: {
   categories: PreparedCategory[];
   initialTab?: string;
+  initialState?: string;
 }) {
   const router = useRouter();
   const initialIndex = initialTab
@@ -197,6 +201,9 @@ export default function ExamPrepTabs({
   const selectTab = (key: string) => {
     router.push(`/prepare?tab=${key}`, { scroll: false });
   };
+  // State context for the LSA tab (?tab=LSA&state=haryana): the core syllabus
+  // is shared, but the post / board / GK paper differ per state.
+  const stateJob = cat.key === "LSA" ? getStateJob(initialState) : null;
 
   if (categories.length === 0) {
     return (
@@ -257,7 +264,41 @@ export default function ExamPrepTabs({
       </div>
 
       {cat.key === "LSA" && cat.lsaSubjects && (
-        <Section title="Subjects (A.H.D.P. — LSA) — Click a plate to see its chapters" icon={BookOpen} empty={cat.lsaSubjects.length === 0}>
+        <>
+          {stateJob ? (
+            <div className="mb-5 rounded-2xl border border-teal-200 bg-gradient-to-r from-teal-50 via-white to-emerald-50/40 p-4">
+              <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-teal-900">
+                <MapPin className="h-4 w-4" /> Preparing for {stateJob.state}: {stateJob.post}
+                <Badge className="rounded-full bg-teal-600 text-white border-0 text-[10px]">{stateJob.recruitingBody}</Badge>
+                <Badge variant="outline" className="rounded-full text-[10px]">{stateJob.gkPaper}</Badge>
+              </p>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Below is the shared core ({stateJob.diplomaShort} syllabus — counts for ~80%). {stateJob.gkPaper} +{" "}
+                {stateJob.postShort} pattern unlock per state.{" "}
+                <Link href={`/examinations/paravet-jobs#${stateJob.slug}`} className="font-bold text-teal-700 hover:underline">
+                  {stateJob.state} job details →
+                </Link>{" "}
+                <Link href={`/diplomas#diploma-${stateJob.diplomaSlug}`} className="font-bold text-teal-700 hover:underline">
+                  {stateJob.diplomaShort} course →
+                </Link>
+              </p>
+              {stateJob.note && (
+                <p className="mt-2 rounded-lg bg-teal-50/70 border border-teal-100 px-2.5 py-1.5 text-[11px] leading-relaxed text-teal-900">
+                  {stateJob.note}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="mb-5 rounded-2xl border border-primary/10 bg-muted/30 p-4">
+              <p className="text-xs text-muted-foreground">
+                <span className="font-bold text-foreground">Common core for all 9 states.</span> Pick your state for post, board & GK details:{" "}
+                <Link href="/examinations/paravet-jobs" className="font-bold text-primary hover:underline">
+                  Paravet State Jobs hub →
+                </Link>
+              </p>
+            </div>
+          )}
+          <Section title="Subjects (Diploma core — LSA) — Click a plate to see its chapters" icon={BookOpen} empty={cat.lsaSubjects.length === 0}>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {cat.lsaSubjects.map((s) => {
               const mats = cat.materials.filter((m) => m.subject === s.name);
@@ -322,6 +363,7 @@ export default function ExamPrepTabs({
             })}
           </div>
         </Section>
+        </>
       )}
 
       <Section

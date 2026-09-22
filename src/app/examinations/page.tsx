@@ -50,6 +50,22 @@ const examinations: Array<{
 }> = [
   // ── PSC ──
   {
+    id: "paravet-jobs",
+    title: "Paravet State Jobs (9 States)",
+    subtitle: "LSA • VLDA • AVFO • Pharmacist • VFA",
+    description:
+      "State-wise government posts for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, UP / Punjab / HP / UK / J&K Pharmacist, Bihar VFA. Common core + state GK.",
+    icon: Tractor,
+    color: "bg-teal-600",
+    lightColor: "bg-teal-50",
+    textColor: "text-teal-600",
+    badge: "9 States • Diploma",
+    papers: 50,
+    mockTests: 20,
+    href: "/examinations/paravet-jobs",
+    group: "PSC",
+  },
+  {
     id: "psc-vo",
     title: "Veterinary Officer / Surgeon",
     subtitle: "V.O. / V.S. — PSC",
@@ -70,12 +86,12 @@ const examinations: Array<{
     title: "Livestock Assistant",
     subtitle: "L.S.A. — PSC",
     description:
-      "AHDP based PSC preparation for Livestock Assistant (L.S.A.) — Rajasthan Staff Selection Board syllabus with Rajasthan GK.",
+      "Rajasthan LSA preparation — AHDP core with Rajasthan GK (RSSB). Other states: see Paravet State Jobs hub (VLDA • AVFO • Pharmacist • VFA).",
     icon: Tractor,
     color: "bg-teal-600",
     lightColor: "bg-teal-50",
     textColor: "text-teal-600",
-    badge: "L.S.A. — AHDP",
+    badge: "L.S.A. — Diploma",
     papers: 50,
     mockTests: 20,
     href: "/examinations/psc#livestock-assistant",
@@ -210,7 +226,7 @@ const groupMeta: Record<string, { label: string; desc: string; color: string }> 
 
 export default function ExaminationsPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
         badge="Examinations"
         title="Exams"
@@ -227,7 +243,7 @@ export default function ExaminationsPage() {
             <div className="mx-auto h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
               <GraduationCap className="h-5 w-5 text-primary" />
             </div>
-            <div className="text-2xl font-extrabold">9</div>
+            <div className="text-2xl font-extrabold">10</div>
             <div className="text-xs text-muted-foreground">Exam Plates</div>
             <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-primary/20" />
           </CardContent>

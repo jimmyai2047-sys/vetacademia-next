@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { isExpertRole } from "@/lib/roles";
+import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
 import {
   Menu,
   GraduationCap,
@@ -56,16 +57,22 @@ import {
 } from "lucide-react";
 
 const programmes = [
-  { name: "A.H.D.P.", href: "/syllabus/ahdp", icon: BookOpen },
   { name: "B.V.Sc & A.H.", href: "/syllabus/bvsc", icon: GraduationCap },
   { name: "M.V.Sc", href: "/syllabus/mvsc", icon: FlaskConical },
   { name: "Ph.D", href: "/syllabus/phd", icon: Stethoscope },
 ];
 
+// Diploma basket lives in src/lib/diplomas.ts — AHDP is live, the rest reuse
+// the AHDP core until their specialization modules are authored.
+const diplomaHrefFor = (slug: string) =>
+  slug === "ahdp" ? "/syllabus/ahdp" : `/diplomas#diploma-${slug}`;
+
 const examCategories = [
+  // Paravet state jobs — 9 states, one hub
+  { name: "Paravet State Jobs (9 States)", href: "/examinations/paravet-jobs", icon: Tractor, desc: "LSA • VLDA • AVFO • Pharmacist • VFA — pick your state" },
   // PSC — अलग-अलग plate
   { name: "V.O. / V.S. (PSC)", href: "/examinations/psc#veterinary-officer", icon: Stethoscope, desc: "PSC — B.V.Sc • V.O. / V.S." },
-  { name: "L.S.A. (PSC)", href: "/examinations/psc#livestock-assistant", icon: Tractor, desc: "PSC — AHDP • RSSB" },
+  { name: "L.S.A. (PSC)", href: "/examinations/psc#livestock-assistant", icon: Tractor, desc: "Rajasthan LSA • AHDP core + Raj. GK • RSSB" },
   // ICAR Entrance — JRF / SRF अलग-अलग plate
   { name: "ICAR-JRF", href: "/examinations/icar-jrf", icon: BookMarked, desc: "ICAR Entrance — JRF" },
   { name: "ICAR-SRF", href: "/examinations/icar-srf", icon: FlaskConical, desc: "ICAR Entrance — SRF" },
@@ -80,7 +87,7 @@ const examCategories = [
 
 const prepCategories = [
   { name: "Veterinary Officer", href: "/prepare?tab=VO", icon: Stethoscope, desc: "VO/VS" },
-  { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA" },
+  { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA • 9 state posts • common core" },
   { name: "ARS / NET", href: "/prepare?tab=ARS", icon: Beaker, desc: "ARS & NET" },
   { name: "ICAR Entrance", href: "/prepare?tab=ICAR_ENTRANCE", icon: BookMarked, desc: "JRF / SRF" },
   { name: "ICAR-NET", href: "/prepare?tab=NET", icon: Microscope, desc: "ICAR-NET" },
@@ -253,44 +260,95 @@ export default function Navbar() {
               <GraduationCap className="h-4 w-4" />
               Student Corner
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[560px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden">
               <div className="absolute top-3 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
               <div className="absolute inset-0 top-3 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
               <div className="relative bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/30 p-4 border-b border-primary/5 mt-3">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
-                    <Crown className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-primary">Academic Programmes <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
-                    <p className="text-xs text-muted-foreground">VCI Approved • 4 Programmes</p>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                      <Crown className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-primary">Academic Programmes <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
+                      <p className="text-xs text-muted-foreground">Diploma basket (9 states) + 3 Degrees</p>
+                    </div>
                   </div>
+                  <Link href={DIPLOMA_UMBRELLA.href} onClick={closeAllMenus} className="hidden sm:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold text-white hover:bg-primary/90 transition-colors">
+                    {DIPLOMA_UMBRELLA.short} <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
               </div>
-              <div className="relative p-2.5 space-y-1">
-                {programmes.map((p) => (
-                  <Link
-                    key={p.name}
-                    href={p.href}
-                    onClick={closeAllMenus}
-                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 hover:shadow-sm transition-all"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/10 text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent group-hover/item:shadow-md transition-all">
-                      <p.icon className="h-4 w-4" />
+              <div className="relative grid sm:grid-cols-[1.2fr_1fr] gap-0 max-h-[420px] overflow-y-auto">
+                {/* Diploma group */}
+                <div className="p-2.5 sm:border-r border-primary/5">
+                  <Link href={DIPLOMA_UMBRELLA.href} onClick={closeAllMenus} className="group/umb flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-primary/[0.08] to-blue-50/40 border border-primary/10 px-3 py-2.5 hover:border-primary/25 transition-all">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                      <BookOpen className="h-4 w-4" />
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
-                        {p.name}
-                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
-                      </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {p.name === "A.H.D.P." ? "Diploma Programme" : p.name === "B.V.Sc & A.H." ? "Undergraduate Degree" : p.name === "M.V.Sc" ? "Postgraduate Specialization" : "Doctoral Research"}
-                      </div>
-                    </div>
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-bold group-hover/umb:text-primary">{DIPLOMA_UMBRELLA.title}</span>
+                      <span className="block text-[11px] text-muted-foreground">9 states • AHDP live • common core + state GK</span>
+                    </span>
+                    <ArrowRight className="h-3.5 w-3.5 text-primary" />
                   </Link>
-                ))}
+                  <div className="mt-2 grid grid-cols-1 gap-1">
+                    {DIPLOMA_TRACKS.map((d) => (
+                      <Link
+                        key={d.slug}
+                        href={diplomaHrefFor(d.slug)}
+                        onClick={closeAllMenus}
+                        title={d.fullName}
+                        className="group/item flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 transition-all"
+                      >
+                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-extrabold border ${d.status === "live" ? "bg-emerald-600 text-white border-emerald-600" : "bg-primary/10 text-primary border-primary/10 group-hover/item:bg-primary group-hover/item:text-white"}`}>
+                          {d.short.slice(0, 2)}
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block truncate text-[13px] font-semibold group-hover/item:text-primary">
+                            {d.short} <span className="font-normal text-muted-foreground">• {d.state}</span>
+                          </span>
+                          <span className="block truncate text-[11px] text-muted-foreground">{d.jobShort} • {d.fullName.length > 30 ? d.fullName.slice(0, 30) + "…" : d.fullName}</span>
+                        </span>
+                        {d.status === "live" ? (
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                        ) : (
+                          <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-px text-[9px] font-bold text-amber-700">soon</span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                {/* Degree group */}
+                <div className="p-2.5 space-y-1">
+                  <p className="px-1 pb-1 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70">Degrees</p>
+                  {programmes.map((p) => (
+                    <Link
+                      key={p.name}
+                      href={p.href}
+                      onClick={closeAllMenus}
+                      className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 hover:shadow-sm transition-all"
+                    >
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/10 text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent group-hover/item:shadow-md transition-all">
+                        <p.icon className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-primary transition-colors">
+                          {p.name}
+                          <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {p.name === "B.V.Sc & A.H." ? "Undergraduate Degree" : p.name === "M.V.Sc" ? "Postgraduate Specialization" : "Doctoral Research"}
+                        </div>
+                      </div>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                    </Link>
+                  ))}
+                  <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors">
+                    <Tractor className="h-3.5 w-3.5" /> Diploma → 9 state posts (LSA • VLDA • AVFO…)
+                  </Link>
+                </div>
               </div>
               <div className="relative p-2.5 pt-0">
                 <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent my-2" />
@@ -440,6 +498,9 @@ export default function Navbar() {
                 ))}
               </div>
               <div className="relative p-2.5 bg-gradient-to-r from-primary/[0.04] via-blue-50/20 to-transparent border-t border-primary/5 space-y-2">
+                <p className="rounded-xl bg-teal-50 border border-teal-200 px-3 py-2 text-[11px] font-medium text-teal-800">
+                  Diploma? <Link href="/diplomas" onClick={closeAllMenus} className="font-bold underline">9 state diplomas</Link> → <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="font-bold underline">9 state posts</Link> (LSA • VLDA • AVFO • Pharmacist • VFA) — one common core.
+                </p>
                 <Link href="/examinations" onClick={closeAllMenus} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
                   <FileCheck className="h-3.5 w-3.5" /> View All Examinations
                 </Link>
@@ -749,6 +810,41 @@ export default function Navbar() {
                   open={!!expanded.programmes}
                   onToggle={() => toggleSection("programmes")}
                 >
+                  <Link
+                    href={DIPLOMA_UMBRELLA.href}
+                    className="flex items-center gap-2.5 rounded-lg bg-primary/[0.06] border border-primary/10 px-3 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-white"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    {DIPLOMA_UMBRELLA.title}
+                  </Link>
+                    <p className="px-3 pt-2 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70">
+                    Diploma tracks (state-wise)
+                  </p>
+                  {DIPLOMA_TRACKS.map((d) => (
+                    <Link
+                      key={d.slug}
+                      href={diplomaHrefFor(d.slug)}
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[10px] font-extrabold text-primary">
+                        {d.stateCode}
+                      </span>
+                      <span className="flex-1">
+                        {d.short} • {d.state}
+                        <span className="block text-[11px] text-muted-foreground truncate">{d.jobShort} • {d.fullName}</span>
+                      </span>
+                      {d.status === "live" ? (
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      ) : (
+                        <span className="rounded-full bg-amber-100 px-1.5 py-px text-[9px] font-bold text-amber-700">soon</span>
+                      )}
+                    </Link>
+                  ))}
+                  <p className="px-3 pt-2 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70">
+                    Degrees
+                  </p>
                   {programmes.map((p) => (
                     <Link
                       key={p.name}

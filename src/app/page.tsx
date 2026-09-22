@@ -24,6 +24,7 @@ const HomeVideoTestimonials = dynamicImport(
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
 import {
   Card,
   CardContent,
@@ -65,15 +66,6 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 const programmes = [
-  {
-    name: "A.H.D.P.",
-    fullName: "Animal Husbandry Diploma Programme",
-    description: "Comprehensive diploma in animal husbandry practices",
-    icon: BookOpen,
-    href: "/syllabus/ahdp",
-    image: "/images/ahdp.webp",
-    color: "bg-primary",
-  },
   {
     name: "B.V.Sc & A.H.",
     fullName: "Bachelor of Veterinary Science & Animal Husbandry",
@@ -348,7 +340,7 @@ export default async function HomePage() {
 
               <p className="mt-4 max-w-xl text-[15px] md:text-[17px] leading-relaxed text-muted-foreground">
                 Complete curricula, mock tests, study materials and expert guidance for
-                A.H.D.P., B.V.Sc &amp; A.H., M.V.Sc and Ph.D — all in one place, on every device.
+                Diploma (AHDP + 8 tracks), B.V.Sc &amp; A.H., M.V.Sc and Ph.D — all in one place, on every device.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
@@ -508,7 +500,7 @@ export default async function HomePage() {
                       Try before you enroll — free sample study material, mock tests, adaptive tests, PYQs &amp; flashcards
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      AHDP • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
+                      AHDP • Diploma basket (9 tracks) • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
                     </p>
                   </div>
                 </div>
@@ -603,9 +595,68 @@ export default async function HomePage() {
               Our <span className="va-gradient-text">Programmes</span>
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground">Comprehensive veterinary education across all academic levels — decorative, modern, industry-ready</p>
+            <p className="text-muted-foreground">Diploma basket (9 tracks) + degrees — one platform from paravet to Ph.D</p>
           </div>
-          <div className="mt-12 grid md:grid-cols-2 gap-6 md:gap-7">
+          {/* Diploma hub — full-width card */}
+          <Link href={DIPLOMA_UMBRELLA.href} className="group mt-10 block">
+            <Card className="va-card-hover overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-2xl hover:border-primary/25 transition-all duration-300">
+              <div className="relative overflow-hidden">
+                <Image
+                  src="/images/ahdp.webp"
+                  alt={DIPLOMA_UMBRELLA.title}
+                  width={1200}
+                  height={400}
+                  className="h-52 md:h-64 w-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
+                <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                  <div className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold tracking-wide text-white shadow-lg backdrop-blur-md border border-white/20 bg-primary">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    {DIPLOMA_UMBRELLA.title}
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur-md border border-white/20 bg-emerald-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> AHDP syllabus live
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                  <div className="flex flex-wrap gap-1.5">
+                    {DIPLOMA_TRACKS.map((d) => (
+                      <span
+                        key={d.slug}
+                        className="inline-flex items-center gap-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-2.5 py-1 text-[11px] font-bold text-white"
+                      >
+                        {d.short}
+                        {d.status === "live" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex items-end justify-between gap-3">
+                    <p className="max-w-2xl text-sm text-white/85">
+                      AHDP (RJ) • VLDD (HR) • DAH (MP) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 9 state posts.
+                    </p>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
+                      <ArrowRight className="h-5 w-5" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <CardContent className="flex flex-col md:flex-row md:items-center gap-3 p-5 md:p-6">
+                <div className="flex-1">
+                  <h3 className="text-[19px] font-bold leading-tight group-hover:text-primary transition-colors">
+                    {DIPLOMA_UMBRELLA.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {DIPLOMA_UMBRELLA.description} Start with the live AHDP syllabus today.
+                  </p>
+                </div>
+                <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-3 text-sm font-bold text-white shadow-md">
+                  Explore 9 Diplomas <ArrowRight className="h-4 w-4" />
+                </span>
+              </CardContent>
+            </Card>
+          </Link>
+          <div className="mt-6 grid md:grid-cols-3 gap-6 md:gap-7">
             {programmes.map((programme) => (
               <Link key={programme.name} href={programme.href} className="group">
                 <Card className="va-card-hover h-full overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white p-0 shadow-sm hover:shadow-2xl hover:border-primary/20 hover:-translate-y-1 transition-all duration-300">

@@ -15,6 +15,20 @@ const PROGRAMME_NAME_TO_SLUG: Record<string, string> = {
   AHDP: "ahdp",
   "A.H.D.P.": "ahdp",
   "A.H.D.P": "ahdp",
+  // Diploma-basket tracks all reuse the AHDP core syllabus until their
+  // specialization modules are authored (see src/lib/diplomas.ts).
+  DVP: "ahdp",
+  DVPH: "ahdp",
+  "DVP (HP)": "ahdp",
+  DLE: "ahdp",
+  VLDD: "ahdp",
+  DAH: "ahdp",
+  DVPLE: "ahdp",
+  DVSAHT: "ahdp",
+  DVLD: "ahdp",
+  DVLT: "ahdp",
+  "STOCK ASST.": "ahdp",
+  "STOCK ASSISTANT": "ahdp",
   BVSC: "bvsc",
   "B.V.Sc & A.H.": "bvsc",
   "B.V.Sc & A.H": "bvsc",
@@ -32,6 +46,9 @@ export function slugToProgrammeName(slug: string): string {
 export function programmeNameToSlug(name: string): string {
   if (PROGRAMME_NAME_TO_SLUG[name]) return PROGRAMME_NAME_TO_SLUG[name];
   const lower = name.toLowerCase();
+  // Any diploma-basket alias resolves to the AHDP core.
+  if (["dvp", "dvph", "dle", "vldd", "dah", "dvple", "dvsaht", "dvld", "dvlt", "stock"].some((k) => lower.includes(k)))
+    return "ahdp";
   if (lower.includes("ahdp")) return "ahdp";
   if (lower.includes("b.v.sc")) return "bvsc";
   if (lower.includes("m.v.sc")) return "mvsc";
