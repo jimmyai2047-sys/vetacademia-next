@@ -647,29 +647,6 @@
 /* Highlighted callouts authored as blockquote + strong lead-in */
 .chapter-content blockquote p { margin: 0.3em 0; }
 
-/* ── Consistent content width on large screens ────────────────────────────
-   Tailwind's default `container` snaps max-width to breakpoints (1024px → 64rem,
-   1280px → 80rem, 1536px → 96rem). So the same page renders 1280px wide on a
-   laptop but 1536px wide on a desktop. Cap it at one width so laptop and
-   desktop look identical. Tablets (< 1280px) intentionally stay fluid and
-   full-width — correct UX for small screens. Unlayered CSS wins over the
-   layered Tailwind utility, no !important needed. */
-@media (min-width: 80rem) {
-  .container {
-    max-width: 80rem; /* 1280px — same on laptop and desktop */
-  }
-}
-
-/* ── Universal gutters ───────────────────────────────────────────────────
-   Phones keep 16px (see mobile rules below); tablet and up get 24px so the
-   layout doesn't feel like a stretched phone. Unlayered CSS wins over the
-   per-usage `px-4` utilities, so this applies site-wide from one place. */
-@media (min-width: 40rem) {
-  .container {
-    padding-inline: 1.5rem;
-  }
-}
-
 /* ── Mobile UX Enhancements ─────────────────────────────────────────── */
 @media (max-width: 640px) {
   /* Prevent horizontal scroll on mobile */
