@@ -3,7 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
-import PracticePage from "@/components/practice-page";
+import MockTestPlayer from "@/components/mock-test-player-lazy";
 import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
@@ -87,7 +87,7 @@ export default async function PracticeRoute({
 
   const mcqs = chapter.mcqs.map((m) => ({
     id: m.id,
-    question: m.question,
+    text: m.question,
     options: (() => {
       try {
         const raw = m.options;
@@ -98,19 +98,26 @@ export default async function PracticeRoute({
         return [];
       }
     })(),
-    correctIndex: m.correctIndex,
+    correctAnswer: m.correctIndex,
     explanation: m.explanation,
     marks: m.marks,
+    difficulty: m.difficulty,
   }));
 
+  const totalMarks = mcqs.reduce((s, q) => s + q.marks, 0);
+
+  // Chapter practice uses the same mock-test format as mock tests.
   return (
-    <PracticePage
-      chapterId={chapterId}
-      chapterTitle={chapter.title}
-      subjectName={chapter.subject.name}
-      programmeSlug={progSlug}
-      subjectId={chapter.subject.id}
-      mcqs={mcqs}
+    <MockTestPlayer
+      testId={chapterId}
+      title={`${chapter.title} — Practice`}
+      duration={Math.max(mcqs.length, 10)}
+      totalMarks={totalMarks}
+      questions={mcqs}
+      mode="chapter"
+      backHref={`/reader/${chapterId}`}
+      backLabel="Back to Chapter"
+      progressSubjectId={chapter.subject.id}
     />
   );
 }

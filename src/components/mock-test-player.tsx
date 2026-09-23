@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, Crown, Sparkles, Clock, Trophy, Shield } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, Crown, Sparkles, Clock, Trophy, Shield, ListChecks } from "lucide-react";
 import { TestStatsSidebar } from "@/components/test-stats";
 import { nextDifficulty, difficultyLabel } from "@/lib/adaptive";
 
@@ -188,6 +188,10 @@ export default function MockTestPlayer({
   totalMarks,
   questions,
   adaptive = false,
+  mode = "mock",
+  backHref,
+  backLabel,
+  progressSubjectId,
 }: {
   testId: string;
   title: string;
@@ -195,6 +199,12 @@ export default function MockTestPlayer({
   totalMarks: number;
   questions: Q[];
   adaptive?: boolean;
+  // "chapter" reuses the mock-test format for chapter practice: local scoring
+  // (no mock-test attempt row), custom back link, and optional progress save.
+  mode?: "mock" | "chapter";
+  backHref?: string;
+  backLabel?: string;
+  progressSubjectId?: string;
 }) {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -252,6 +262,26 @@ export default function MockTestPlayer({
 
   async function submit() {
     setSubmitted(true);
+
+    // Chapter practice: score locally (answers are embedded), optionally save
+    // subject progress. No mock-test attempt row exists for chapters.
+    if (mode === "chapter") {
+      let s = 0;
+      for (const q of questions) {
+        const ca = review[q.id]?.correctAnswer ?? q.correctAnswer;
+        if (ca !== undefined && answers[q.id] === ca) s += q.marks;
+      }
+      setScore(s);
+      if (progressSubjectId) {
+        const pct = totalMarks > 0 ? Math.round((s / totalMarks) * 100) : 0;
+        csrfFetch("/api/progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subjectId: progressSubjectId, progress: pct }),
+        }).catch(() => {});
+      }
+      return;
+    }
 
     try {
       const res = await csrfFetch(`/api/mock-tests/${testId}/attempt`, {
@@ -373,12 +403,12 @@ export default function MockTestPlayer({
 
   const progressPct = Math.round((attempted / Math.max(1, questions.length)) * 100);
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <Link
-        href="/mock-tests"
+        href={backHref ?? "/mock-tests"}
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Mock Tests
+        <ArrowLeft className="h-4 w-4" /> {backLabel ?? "Back to Mock Tests"}
       </Link>
 
       {/* Royal header */}
@@ -395,7 +425,11 @@ export default function MockTestPlayer({
               </span>
               <div className="min-w-0">
                 <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur border border-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase">
-                  <Crown className="h-3 w-3 text-[#d4a843]" /> Royal Examination
+                  {mode === "chapter" ? (
+                    <><ListChecks className="h-3 w-3 text-[#d4a843]" /> Chapter Practice</>
+                  ) : (
+                    <><Crown className="h-3 w-3 text-[#d4a843]" /> Royal Examination</>
+                  )}
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-tight mt-1">{title}</h1>
                 <p className="text-white/75 text-xs sm:text-sm flex flex-wrap items-center gap-2 mt-1">
@@ -416,7 +450,7 @@ export default function MockTestPlayer({
               ) : (
                 <div className="hidden sm:flex items-center gap-2 rounded-full bg-white/10 backdrop-blur border border-white/20 px-3 py-1.5 text-white">
                   <Shield className="h-4 w-4 text-[#d4a843]" />
-                  <span className="text-xs font-semibold tracking-wide">Timed • Justified • Royal</span>
+                    <span className="text-xs font-semibold tracking-wide">{mode === "chapter" ? "Timed • Practice" : "Timed • Justified • Royal"}</span>
                 </div>
               )}
             </div>
@@ -444,7 +478,7 @@ export default function MockTestPlayer({
             <div className="text-3xl font-extrabold tracking-tight">
               {score} <span className="text-lg font-semibold text-muted-foreground">/ {totalMarks}</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">Your royal score</p>
+            <p className="text-sm text-muted-foreground mt-1">{mode === "chapter" ? "Your practice score" : "Your royal score"}</p>
             {saved && (
               <p className="text-xs text-green-600 mt-1 inline-flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Saved to your progress</p>
             )}
