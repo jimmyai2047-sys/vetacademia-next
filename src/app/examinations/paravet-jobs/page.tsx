@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { STATE_JOBS } from "@/lib/state-jobs";
+import { DIPLOMA_BY_SLUG } from "@/lib/diplomas";
 import {
   ArrowRight,
   Award,
@@ -40,7 +41,8 @@ export default function ParavetJobsPage() {
           </p>
           <p className="mt-1.5 text-[13px] text-muted-foreground">
             Anatomy, physiology, nutrition, reproduction, medicine, pharmacy basics & extension — the live{" "}
-            <Link href="/syllabus/ahdp" className="font-bold text-primary hover:underline">AHDP syllabus</Link>{" "}
+            <Link href="/syllabus/ahdp" className="font-bold text-primary hover:underline">AHDP</Link> /{" "}
+            <Link href="/syllabus/dvp" className="font-bold text-primary hover:underline">DVP (UP)</Link> syllabi{" "}
             plus <Link href="/prepare?tab=LSA" className="font-bold text-primary hover:underline">LSA track</Link>{" "}
             materials, PYQs & mocks. ~80% of every state paper.
           </p>
@@ -119,9 +121,9 @@ export default function ParavetJobsPage() {
               </div>
 
               <div className="mt-4 grid grid-cols-3 gap-2">
-                <Link href="/syllabus/ahdp">
+                <Link href={DIPLOMA_BY_SLUG[j.diplomaSlug]?.syllabusHref ?? "/syllabus/ahdp"}>
                   <Button variant="outline" size="sm" className="w-full text-[11px] px-1">
-                    <BookOpen className="h-3 w-3 mr-0.5" /> Core
+                    <BookOpen className="h-3 w-3 mr-0.5" /> {DIPLOMA_BY_SLUG[j.diplomaSlug]?.status === "live" ? "Syllabus" : "Core"}
                   </Button>
                 </Link>
                 <Link href={`/prepare?tab=LSA&state=${j.slug}`}>

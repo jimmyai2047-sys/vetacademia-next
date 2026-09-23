@@ -44,10 +44,11 @@ export default async function ProgrammePage({
 }) {
   const { programme: slug } = await params;
 
-  // Diploma-basket tracks (dvp, dle, vldd, …) reuse the live AHDP core until
-  // their specialization modules are authored — see src/lib/diplomas.ts.
+  // Diploma-basket tracks without their own programme reuse the live AHDP
+  // core (see src/lib/diplomas.ts). Tracks with status "live" (AHDP, DVP)
+  // query their own DB programme.
   const diplomaTrack = getDiploma(slug);
-  const isDiplomaFallback = !!diplomaTrack && slug.toLowerCase() !== "ahdp";
+  const isDiplomaFallback = !!diplomaTrack && diplomaTrack.status !== "live";
   const dbSlug = isDiplomaFallback ? "ahdp" : slug;
   const dbName = slugToProgrammeName(dbSlug);
 

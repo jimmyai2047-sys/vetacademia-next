@@ -212,9 +212,10 @@ export default function DiplomasPage() {
         </span>
       </div>
       <p className="mb-5 max-w-3xl text-sm text-muted-foreground">
-        VLDD, DAH, DVP, DVSAHT, DVPLE, DVLD and DVLT share ~80% of the Rajasthan AHDP core (anatomy, physiology,
-        nutrition, reproduction, medicine, pharmacy basics, extension). Start with the live AHDP syllabus now —
-        track-specific modules (e.g. dispensing for DVP, microscopy for DVLT) plus your state&apos;s GK unlock next.
+        VLDD, DAH, DVSAHT, DVPLE, DVLD and DVLT share ~80% of the Rajasthan AHDP core (anatomy, physiology,
+        nutrition, reproduction, medicine, pharmacy basics, extension). Start with a live syllabus now — AHDP or{" "}
+        <Link href="/syllabus/dvp" className="font-bold text-primary hover:underline">DVP (Uttar Pradesh)</Link> —{" "}
+        track-specific modules (e.g. dispensing for DVP-HP, microscopy for DVLT) plus your state&apos;s GK unlock next.
       </p>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {soon.map((d) => {

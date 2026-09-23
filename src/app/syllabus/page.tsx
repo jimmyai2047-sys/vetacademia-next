@@ -34,6 +34,7 @@ const colorMap: Record<string, string> = {
 
 const descriptionMap: Record<string, string> = {
   ahdp: "Comprehensive diploma in animal husbandry practices covering all essential aspects of livestock management.",
+  dvp: "DUVASU Mathura Diploma in Veterinary Pharmacy (Uttar Pradesh) — 24 courses across 4 semesters with theory + practical topics.",
   bvsc: "Professional undergraduate degree in veterinary science and animal husbandry as per VCI MSVE-2016 regulations.",
   mvsc: "Advanced postgraduate specializations in various veterinary disciplines with departmental structure.",
   phd: "Doctoral research programs in various veterinary specializations across 18 departments.",
@@ -85,7 +86,7 @@ export default async function SyllabusPage() {
               <span className="flex flex-wrap items-center gap-2">
                 <span className="text-base font-extrabold group-hover:text-emerald-700">Diploma in Veterinary & Animal Husbandry</span>
                 <Badge className="rounded-full bg-emerald-600 text-white border-0 text-[10px]">9 tracks</Badge>
-                <Badge variant="secondary" className="rounded-full text-[10px]">AHDP live</Badge>
+                <Badge variant="secondary" className="rounded-full text-[10px]">AHDP + DVP (UP) live</Badge>
               </span>
               <span className="mt-1 block text-sm text-muted-foreground">
                 AHDP (RJ) • VLDD (HR) • DAH (MP) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 9 state posts. Open the hub for authority, post & track details.

@@ -130,9 +130,9 @@ export const DIPLOMA_TRACKS: DiplomaTrack[] = [
     careers: ["Veterinary pharmacist", "Livestock Extension Officer", "Dispensary assistant"],
     examLink: "/examinations/paravet-jobs#uttar-pradesh",
     examLabel: "Pharmacist • UPSSSC",
-    status: "coming-soon",
-    syllabusHref: "/syllabus/ahdp",
-    badge: "High demand",
+    status: "live",
+    syllabusHref: "/syllabus/dvp",
+    badge: "Syllabus live",
   },
   {
     slug: "dvsaht",

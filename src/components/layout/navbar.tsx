@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { isExpertRole } from "@/lib/roles";
-import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
+import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA, getDiploma } from "@/lib/diplomas";
 import {
   Menu,
   GraduationCap,
@@ -62,10 +62,12 @@ const programmes = [
   { name: "Ph.D", href: "/syllabus/phd", icon: Stethoscope },
 ];
 
-// Diploma basket lives in src/lib/diplomas.ts — AHDP is live, the rest reuse
-// the AHDP core until their specialization modules are authored.
-const diplomaHrefFor = (slug: string) =>
-  slug === "ahdp" ? "/syllabus/ahdp" : `/diplomas#diploma-${slug}`;
+// Diploma basket lives in src/lib/diplomas.ts — live tracks (AHDP, DVP)
+// link straight to their syllabus; the rest go to the hub anchor.
+const diplomaHrefFor = (slug: string) => {
+  const t = getDiploma(slug);
+  return t && t.status === "live" ? `/syllabus/${slug}` : `/diplomas#diploma-${slug}`;
+};
 
 const examCategories = [
   // Paravet state jobs — 9 states, one hub
