@@ -20,7 +20,7 @@ export function GoogleButton({
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/auth/providers", { cache: "no-store" })
+    fetch("/api/auth/oauth-providers", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (!cancelled) setEnabled(Boolean(d.google));
