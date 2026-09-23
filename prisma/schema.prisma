@@ -122,6 +122,7 @@ model Chapter {
   subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   chapterContents ChapterContent[]
   studyMaterials StudyMaterial[]
+  isDemo Boolean @default(false) // free preview chapter visible without enrollment (like MockTest/ExamMaterial isDemo)
 
   author   String? // content author / contributor (display only)
   reviewer String? // subject-matter reviewer who verified the content
@@ -136,6 +137,7 @@ model Chapter {
   mcqs     ChapterMcq[]
 
   @@index([subjectId])
+  @@index([isDemo])
 }
 
 // ==================== CHAPTER SECTIONS ====================

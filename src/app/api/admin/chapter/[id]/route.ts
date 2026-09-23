@@ -45,6 +45,9 @@ export async function PATCH(
     if (typeof body.reviewer === "string") {
       data.reviewer = body.reviewer.trim() || null;
     }
+    if (typeof body.isDemo === "boolean") {
+      data.isDemo = body.isDemo;
+    }
 
     if (Object.keys(data).length === 0) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
@@ -53,7 +56,7 @@ export async function PATCH(
     const updated = await prisma.chapter.update({
       where: { id },
       data,
-      select: { id: true, title: true, content: true, unitNumber: true, type: true },
+      select: { id: true, title: true, content: true, unitNumber: true, type: true, isDemo: true },
     });
 
     return NextResponse.json(updated);

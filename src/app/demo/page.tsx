@@ -34,6 +34,7 @@ export const dynamic = "force-dynamic";
 
 const PROGRAMMES = [
   { slug: "ahdp", label: "A.H.D.P", sub: "Animal Husbandry Diploma" },
+  { slug: "dvp", label: "DVP", sub: "Diploma in Veterinary Pharmacy (UP)" },
   { slug: "bvsc", label: "B.V.Sc & A.H.", sub: "Bachelor of Veterinary Science" },
   { slug: "mvsc", label: "M.V.Sc", sub: "Postgraduate (18 departments)" },
   { slug: "phd", label: "Ph.D", sub: "Veterinary Science Research" },
@@ -46,7 +47,7 @@ const EXAMS = [
 ];
 
 export default async function DemoPage() {
-  const [studyMaterials, mockTests, examMaterials, flashQuestions] = await Promise.all([
+  const [studyMaterials, mockTests, examMaterials, flashQuestions, demoChapters] = await Promise.all([
     prisma.studyMaterial.findMany({
       where: { isDemo: true },
       include: { subject: { include: { programme: true } } },
@@ -66,6 +67,15 @@ export default async function DemoPage() {
       },
       take: 40,
     }).catch(() => []),
+    prisma.chapter.findMany({
+      where: { isDemo: true },
+      include: {
+        subject: { include: { programme: true } },
+        _count: { select: { sections: true } },
+      },
+      orderBy: [{ updatedAt: "desc" }],
+      take: 20,
+    }).catch(() => []),
   ]);
 
   const progSlug = (m: { subject?: { programme?: { name: string } } | null }) =>
@@ -75,7 +85,7 @@ export default async function DemoPage() {
     mockTests.filter((t) => progSlug(t) === slug && filter(t));
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
       <DecorativePageHeader
         badge="Free Preview"
         title="Try VetAcademia free"
@@ -188,6 +198,42 @@ export default async function DemoPage() {
       </section>
 
       <div className="va-divider-dots my-8"><span /></div>
+
+      {/* Free Chapters — full book chapters open without enrollment */}
+      {demoChapters.length > 0 && (
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="h-9 w-9 rounded-xl bg-emerald-600/10 flex items-center justify-center"><BookOpen className="h-5 w-5 text-emerald-700" /></span>
+            <h2 className="text-2xl font-bold">Free Chapters</h2>
+            <Badge className="bg-emerald-600 hover:bg-emerald-600 rounded-full">No login needed</Badge>
+            <span className="h-px flex-1 bg-gradient-to-r from-emerald-600/10 to-transparent ml-2 hidden sm:block" />
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            {demoChapters.map((c) => (
+              <Link
+                key={c.id}
+                href={`/reader/${c.id}`}
+                className="group flex items-center gap-3 rounded-[1.25rem] border border-primary/10 bg-white p-4 shadow-sm hover:shadow-md hover:border-emerald-600/30 transition-all"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-sm">
+                  <BookOpen className="h-5 w-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-semibold group-hover:text-primary transition-colors">
+                    {c.title}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    {c.subject?.programme ? programmeNameToSlug(c.subject.programme.name).toUpperCase() + " · " : ""}
+                    {c.subject?.name}
+                    {c._count ? ` · ${c._count.sections} lectures` : ""}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* By Examination */}
       <section>

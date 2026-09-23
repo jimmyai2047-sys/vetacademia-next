@@ -192,6 +192,7 @@ export default async function SubjectContentPage({
                 <ChapterTitleEditor
                   chapterId={course.id}
                   initialTitle={course.title}
+                  initialIsDemo={course.isDemo}
                 />
               </div>
               <ChapterRichEditor
@@ -233,6 +234,7 @@ export default async function SubjectContentPage({
                         chapterId={ch.id}
                         initialTitle={ch.title}
                         unitNumber={ch.unitNumber}
+                        initialIsDemo={ch.isDemo}
                       />
                     </div>
                     <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
@@ -277,6 +279,7 @@ export default async function SubjectContentPage({
                         chapterId={ch.id}
                         initialTitle={ch.title}
                         unitNumber={ch.unitNumber}
+                        initialIsDemo={ch.isDemo}
                       />
                     </div>
                     <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">

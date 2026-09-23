@@ -50,6 +50,7 @@ export default async function SubjectPage({
               unitNumber: true,
               courseCode: true,
               creditHours: true,
+              isDemo: true,
               chapterContents: { orderBy: { createdAt: "desc" } },
             },
           },
@@ -257,6 +258,9 @@ export default async function SubjectPage({
                       <CardTitle className="text-sm group-hover:text-primary transition-colors leading-tight mb-2">
                         {course.title}
                       </CardTitle>
+                      {course.isDemo && (
+                        <Badge className="bg-emerald-600 hover:bg-emerald-600 mt-1">Free Preview</Badge>
+                      )}
                       <div className="flex items-center gap-2 mt-2">
                         {course.creditHours && course.creditHours.includes("+") && parseInt(course.creditHours.split("+")[0], 10) > 0 && (
                           <Badge variant="outline" className="text-[10px] gap-1 text-blue-600 border-blue-200">
@@ -303,6 +307,9 @@ export default async function SubjectPage({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <span className="text-left font-semibold text-[0.95rem] leading-snug block truncate">{chapter.title}</span>
+                                  {chapter.isDemo && (
+                                    <Badge className="bg-emerald-600 hover:bg-emerald-600 mt-1 text-[10px]">Free Preview</Badge>
+                                  )}
                                 </div>
                               </div>
                             </AccordionTrigger>
@@ -354,6 +361,9 @@ export default async function SubjectPage({
                                     {index + 1}
                                   </div>
                                   <span className="text-left">{chapter.title}</span>
+                                  {chapter.isDemo && (
+                                    <Badge className="bg-emerald-600 hover:bg-emerald-600 text-[10px]">Free</Badge>
+                                  )}
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent className="pb-4">
@@ -387,20 +397,57 @@ export default async function SubjectPage({
           )}
           </>
           ) : (
-            <EnrollCta
-              planSlug={purchasePlanSlug}
-              title={purchaseViaCheckout ? "Unlock this content" : "Enroll to access syllabus"}
-              message={
-                purchaseViaCheckout
-                  ? `Buy ${
-                      progSlug === "bvsc" || progSlug === "ahdp"
-                        ? `${subject.programme.name} ${subject.year}`
-                        : subject.name
-                    } to unlock chapters, notes and study material.`
-                  : `Enroll in ${subject.programme.name} to unlock chapters, notes and study material.`
-              }
-              to={purchaseViaCheckout ? "checkout" : "pricing"}
-            />
+            <>
+              {subject.chapters.some((c) => c.isDemo) && (
+                <div className="mb-6 rounded-[1.5rem] border border-emerald-600/20 bg-gradient-to-br from-emerald-50/60 via-white to-white p-4 md:p-5 shadow-sm">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge className="bg-emerald-600 hover:bg-emerald-600 rounded-full">Free Preview</Badge>
+                    <h2 className="text-base font-bold">Try a chapter free — no enrollment needed</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    These chapters are open to everyone. Unlock the full subject for the rest.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {subject.chapters
+                      .filter((c) => c.isDemo)
+                      .map((c) => (
+                        <Link
+                          key={c.id}
+                          href={`/reader/${c.id}`}
+                          className="group flex items-center gap-3 rounded-xl border border-primary/10 bg-white p-3 hover:border-emerald-600/40 hover:shadow-md transition-all"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 font-bold text-sm">
+                            <BookOpen className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                              {c.title}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {c.courseCode ? `${c.courseCode} · ` : ""}Unit {c.unitNumber} · Free
+                            </span>
+                          </span>
+                          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                        </Link>
+                      ))}
+                  </div>
+                </div>
+              )}
+              <EnrollCta
+                planSlug={purchasePlanSlug}
+                title={purchaseViaCheckout ? "Unlock this content" : "Enroll to access syllabus"}
+                message={
+                  purchaseViaCheckout
+                    ? `Buy ${
+                        progSlug === "bvsc" || progSlug === "ahdp"
+                          ? `${subject.programme.name} ${subject.year}`
+                          : subject.name
+                      } to unlock chapters, notes and study material.`
+                    : `Enroll in ${subject.programme.name} to unlock chapters, notes and study material.`
+                }
+                to={purchaseViaCheckout ? "checkout" : "pricing"}
+              />
+            </>
           )}
         </TabsContent>
       </Tabs>

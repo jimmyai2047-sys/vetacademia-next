@@ -40,9 +40,9 @@ export default async function PracticeRoute({
       ? access.ownedYearScopes.has(`${progSlug}:${chapter.subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(chapter.subject.id);
-  const hasAccess = access.isAdmin || programmeOwned || yearOwned || subjectOwned;
+  const hasAccess = chapter.isDemo || access.isAdmin || programmeOwned || yearOwned || subjectOwned;
 
-  if (!access.isAuthed) {
+  if (!chapter.isDemo && !access.isAuthed) {
     return (
       <div className="container mx-auto px-4 py-10 max-w-2xl text-center">
         <h1 className="text-xl font-semibold mb-2 tracking-tight">Login required</h1>

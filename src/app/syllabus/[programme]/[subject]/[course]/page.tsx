@@ -63,7 +63,7 @@ export default async function CoursePage({
       ? access.ownedYearScopes.has(`${progSlug}:${course.subject.year}`)
       : false;
   const subjectOwned = access.ownedSubjectIds.has(course.subject.id);
-  const hasAccess = programmeOwned || yearOwned || subjectOwned || access.isAdmin;
+  const hasAccess = course.isDemo || programmeOwned || yearOwned || subjectOwned || access.isAdmin;
 
   let purchasePlanSlug: string = progSlug;
   let purchaseViaCheckout = false;
@@ -156,6 +156,9 @@ export default async function CoursePage({
         <div className="flex items-center gap-3 mt-3 flex-wrap">
           {course.courseCode && (
             <Badge variant="secondary" className="font-mono">{course.courseCode}</Badge>
+          )}
+          {course.isDemo && (
+            <Badge className="bg-emerald-600 hover:bg-emerald-600">Free Preview</Badge>
           )}
           {course.creditHours && (
           <Badge variant="secondary" className="gap-1">

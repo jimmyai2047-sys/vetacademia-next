@@ -9,16 +9,34 @@ export default function ChapterTitleEditor({
   chapterId,
   initialTitle,
   unitNumber,
+  initialIsDemo,
 }: {
   chapterId: string;
   initialTitle: string;
   unitNumber?: number | null;
+  initialIsDemo?: boolean;
 }) {
   const [title, setTitle] = useState(initialTitle);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(!!initialIsDemo);
+  const [demoSaving, setDemoSaving] = useState(false);
+
+  async function toggleDemo() {
+    setDemoSaving(true);
+    try {
+      const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDemo: !isDemo }),
+      });
+      if (res.ok) setIsDemo(!isDemo);
+    } finally {
+      setDemoSaving(false);
+    }
+  }
 
   async function save() {
     const trimmed = title.trim();
@@ -54,7 +72,7 @@ export default function ChapterTitleEditor({
 
   if (!editing) {
     return (
-      <div className="flex items-center gap-2 group">
+      <div className="flex items-center gap-2 group flex-wrap">
         <span className="text-sm font-medium">
           {prefix}{title}
         </span>
@@ -71,6 +89,21 @@ export default function ChapterTitleEditor({
           <span className="text-xs text-green-600 flex items-center gap-1">
             <Check className="h-3 w-3" /> Saved
           </span>
+        )}
+        {initialIsDemo !== undefined && (
+          <button
+            type="button"
+            onClick={toggleDemo}
+            disabled={demoSaving}
+            title={isDemo ? "Free preview ON — click to lock" : "Locked — click to make free preview"}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold border transition-colors ${
+              isDemo
+                ? "bg-emerald-600 text-white border-emerald-600"
+                : "bg-white text-muted-foreground border-primary/15 hover:border-emerald-600/50 hover:text-emerald-700"
+            }`}
+          >
+            {isDemo ? "Free" : "Locked"}
+          </button>
         )}
       </div>
     );

@@ -76,9 +76,9 @@ export default async function ChapterReaderRoute({
       : false;
   const subjectOwned = access.ownedSubjectIds.has(chapter.subjectId);
   const hasAccess =
-    programmeOwned || yearOwned || subjectOwned || access.isAdmin;
+    chapter.isDemo || programmeOwned || yearOwned || subjectOwned || access.isAdmin;
 
-  if (!access.isAuthed) redirect(`/login?redirect=/reader/${chapterId}`);
+  if (!chapter.isDemo && !access.isAuthed) redirect(`/login?redirect=/reader/${chapterId}`);
 
   if (!hasAccess) {
     return (
