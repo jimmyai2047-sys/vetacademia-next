@@ -54,7 +54,7 @@ export default async function ConsultationsPage() {
   const isExpert = !!expert;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
       <DecorativePageHeader
         badge={isExpert ? "Expert Dashboard • Incoming Requests" : "My Bookings • Video Consultations"}
         title="My"

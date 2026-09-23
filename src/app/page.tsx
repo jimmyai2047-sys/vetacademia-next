@@ -447,7 +447,7 @@ export default async function HomePage() {
       </section>
 
       {/* Stats - Highly Decorative - LIVE */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48] text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7] text-white">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '20px 20px' }} />
         <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -488,7 +488,7 @@ export default async function HomePage() {
             <div className="rounded-[1.7rem] bg-gradient-to-r from-primary/[0.06] via-white to-blue-50/30">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-5 px-6 py-6 md:px-8 md:py-7">
                 <div className="flex flex-1 items-start gap-4">
-                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">
+                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
                     <Star className="h-6 w-6 fill-white/20" />
                   </div>
                   <div>
@@ -505,7 +505,7 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <Link href="/demo" className="w-full sm:w-auto shrink-0">
-                  <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg sm:w-auto">
+                  <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg sm:w-auto">
                     Explore Free Demos
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
@@ -650,7 +650,7 @@ export default async function HomePage() {
                     {DIPLOMA_UMBRELLA.description} Start with the live AHDP syllabus today.
                   </p>
                 </div>
-                <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-3 text-sm font-bold text-white shadow-md">
+                <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-3 text-sm font-bold text-white shadow-md">
                   Explore 9 Diplomas <ArrowRight className="h-4 w-4" />
                 </span>
               </CardContent>
@@ -770,7 +770,7 @@ export default async function HomePage() {
             <div className="rounded-[1.7rem] bg-gradient-to-br from-white via-primary/[0.02] to-blue-50/30 p-6 md:p-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div className="flex items-start gap-4">
-                  <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">
+                  <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
                     <ExternalLink className="h-6 w-6" />
                   </div>
                   <div>
@@ -841,7 +841,7 @@ export default async function HomePage() {
                   "Affordable pricing for students — scholarship available",
                 ].map((item, idx) => (
                   <div key={item} className="group relative flex items-start gap-4 rounded-2xl border border-transparent bg-white p-3.5 shadow-sm hover:border-primary/10 hover:shadow-md transition-all">
-                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md group-hover:scale-105 transition-transform">
+                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md group-hover:scale-105 transition-transform">
                       <CheckCircle className="h-5 w-5" />
                       <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#d4a843] text-[10px] font-bold text-white ring-2 ring-white">{idx + 1}</span>
                     </span>
@@ -850,7 +850,7 @@ export default async function HomePage() {
                 ))}
               </div>
               <Link href="/signup" className="mt-8 inline-block w-full sm:w-auto">
-                <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg sm:w-auto">
+                <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg sm:w-auto">
                   Get Started Today <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -860,7 +860,7 @@ export default async function HomePage() {
               <div className="relative overflow-hidden rounded-[2rem] border bg-white p-2 shadow-2xl">
                 <div className="relative h-[380px] md:h-[440px] overflow-hidden rounded-[1.5rem]">
                   <Image src="/images/bvsc.webp" alt="Veterinary Education" fill sizes="(max-width: 1024px) 100vw, 560px" className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-[#005f48]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/80 via-[#0284c7]/20 to-transparent" />
                   {/* Floating badge */}
                   <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-md border border-white/20 px-3 py-1.5 text-xs font-bold shadow-lg">
                     <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Live Since 2020
@@ -868,7 +868,7 @@ export default async function HomePage() {
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <div className="rounded-2xl bg-white/95 backdrop-blur-md border border-white/20 p-5 shadow-xl">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
                           <GraduationCap className="h-6 w-6" />
                         </div>
                         <div>
@@ -1037,7 +1037,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden py-8 md:py-12">
         <div className="absolute inset-0">
           <Image src="/images/ahdp.webp" alt="" fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e]/95 via-primary/90 to-[#005f48]/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e]/95 via-primary/90 to-[#0284c7]/90" />
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '22px 22px' }} />
         </div>
         {/* Floating orbs */}

@@ -103,7 +103,7 @@ export default function ReaderPage({
 
         {/* Title area */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e] ring-2 ring-[#d4a843]/30 flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e] ring-2 ring-[#d4a843]/30 flex items-center justify-center shadow-lg">
             <BookOpen className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-2xl font-bold mb-3 tracking-tight">
@@ -164,7 +164,7 @@ export default function ReaderPage({
                   href={`/reader/${chapterId}/${i}`}
                   className="flex items-center gap-4 rounded-xl border border-border bg-background p-4 hover:bg-accent hover:border-primary/40 transition-all group"
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#003d2e] text-white font-bold shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white font-bold shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                     {i + 1}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -241,7 +241,7 @@ export default function ReaderPage({
                   <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-primary shrink-0" />
                 </Link>
               ) : (
-                <div className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#003d2e] text-white p-5 text-center shadow-lg">
+                <div className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#0c4a6e] text-white p-5 text-center shadow-lg">
                   <p className="text-white text-sm mb-1">
                     All Lectures Complete!
                   </p>

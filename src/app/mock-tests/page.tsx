@@ -87,7 +87,7 @@ const CATEGORIES: CategoryDef[] = [
     subLabel: "पशु चिकित्सा अधिकारी",
     anchor: "vo",
     predicate: isVeterinaryOfficer,
-    gradient: "from-[#003d2e] via-primary to-[#005f48]",
+    gradient: "from-[#0c4a6e] via-primary to-[#0284c7]",
     icon: "vo",
   },
   {
@@ -295,7 +295,7 @@ export default async function MockTestsPage() {
                           )}
 
                           <Link href={`/mock-tests/${test.id}`} className="w-full block">
-                            <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
+                            <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
                               {test._count.questions === 0 ? "No Questions" : "Start Test"}
                             </Button>
                           </Link>
@@ -350,7 +350,7 @@ export default async function MockTestsPage() {
                           </a>
                         )}
                         <Link href={`/mock-tests/${test.id}`} className="w-full block">
-                          <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
+                          <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
                             {test._count.questions === 0 ? "No Questions" : "Start Test"}
                           </Button>
                         </Link>

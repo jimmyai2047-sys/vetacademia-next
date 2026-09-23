@@ -71,7 +71,7 @@ const faqs = [
 export default function FaqsPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-3xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-3xl">
         <DecorativePageHeader
           badge="FAQs • Quick Answers • Updated Weekly"
           title="Frequently Asked"
@@ -111,7 +111,7 @@ export default function FaqsPage() {
                 <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-primary/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 <CardHeader className="pb-2 relative">
                   <div className="flex items-start gap-3">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white text-xs font-bold shadow-md mt-0.5">{i + 1}</span>
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white text-xs font-bold shadow-md mt-0.5">{i + 1}</span>
                     <CardTitle className="text-[17px] leading-snug pt-1 group-hover:text-primary transition-colors">{item.q}</CardTitle>
                   </div>
                 </CardHeader>
@@ -134,7 +134,7 @@ export default function FaqsPage() {
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md"
                   >
                     <MessageCircle className="h-4 w-4" /> Contact Us
                   </Link>

@@ -129,7 +129,7 @@ export default function CatalogClient() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
           badge="B.V.Sc & A.H. (UG) • M.V.Sc (PG) • Ph.D. • 16 Subjects • Textbook & Reference"
           title="Reading List"
@@ -218,7 +218,7 @@ export default function CatalogClient() {
                     onClick={() => setActiveLevel("all")}
                     variant={activeLevel === "all" ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full ${activeLevel === "all" ? "shadow-md bg-gradient-to-r from-primary to-[#005f48] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
+                    className={`rounded-full ${activeLevel === "all" ? "shadow-md bg-gradient-to-r from-primary to-[#0284c7] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
                   >
                     All Levels
                   </Button>
@@ -257,7 +257,7 @@ export default function CatalogClient() {
                     onClick={() => setActiveSubject("all")}
                     variant={activeSubject === "all" ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full ${activeSubject === "all" ? "shadow-md bg-gradient-to-r from-primary to-[#005f48] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
+                    className={`rounded-full ${activeSubject === "all" ? "shadow-md bg-gradient-to-r from-primary to-[#0284c7] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
                   >
                     All Subjects
                   </Button>
@@ -272,7 +272,7 @@ export default function CatalogClient() {
                         onClick={() => setActiveSubject(id)}
                         variant={active ? "default" : "outline"}
                         size="sm"
-                        className={`rounded-full ${active ? "shadow-md bg-gradient-to-r from-primary to-[#005f48] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
+                        className={`rounded-full ${active ? "shadow-md bg-gradient-to-r from-primary to-[#0284c7] border-0" : "border-primary/15 bg-white hover:bg-primary/5"}`}
                       >
                         {sub.code}
                       </Button>
@@ -357,7 +357,7 @@ export default function CatalogClient() {
                         className="w-full flex items-center gap-3 px-4 py-3.5 md:px-5 text-left hover:bg-primary/[0.02] transition-colors"
                         aria-expanded={expanded.has(sub.code)}
                       >
-                        <span className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow shrink-0">
+                        <span className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow shrink-0">
                           <BookOpen className="h-4 w-4" />
                         </span>
                         <div className="min-w-0 flex-1">
@@ -555,7 +555,7 @@ export default function CatalogClient() {
                     </Button>
                   </Link>
                   <Link href="/syllabus">
-                    <Button className="rounded-full gap-2 bg-gradient-to-r from-primary to-[#005f48] shadow-md">
+                    <Button className="rounded-full gap-2 bg-gradient-to-r from-primary to-[#0284c7] shadow-md">
                       Browse Syllabus <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>

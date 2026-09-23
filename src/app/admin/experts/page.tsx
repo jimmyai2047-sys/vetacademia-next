@@ -199,7 +199,7 @@ export default function AdminExpertsPage() {
     <div className="space-y-6">
       {/* Royal Header */}
       <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -240,7 +240,7 @@ export default function AdminExpertsPage() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white"><Sparkles className="h-4 w-4" /></span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white"><Sparkles className="h-4 w-4" /></span>
               {editing ? "Edit Expert" : "Add Expert"}
             </CardTitle>
           </CardHeader>
@@ -378,7 +378,7 @@ export default function AdminExpertsPage() {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <Button type="submit" disabled={saving} className="rounded-xl bg-gradient-to-br from-primary to-[#005f48] hover:from-primary/90 hover:to-[#005f48]/90 text-white shadow-sm gap-2">
+                <Button type="submit" disabled={saving} className="rounded-xl bg-gradient-to-br from-primary to-[#0284c7] hover:from-primary/90 hover:to-[#0284c7]/90 text-white shadow-sm gap-2">
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                   {editing ? "Save Changes" : "Create Expert"}
                 </Button>
@@ -425,7 +425,7 @@ export default function AdminExpertsPage() {
                       decoding="async"
                     />
                   ) : (
-                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white flex items-center justify-center font-semibold shadow-sm">
+                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white flex items-center justify-center font-semibold shadow-sm">
                       {e.name
                         .split(" ")
                         .map((n) => n[0])

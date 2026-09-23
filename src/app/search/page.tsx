@@ -50,7 +50,7 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
         badge="Search"
         title="Search"
@@ -70,7 +70,7 @@ export default async function SearchPage({
             aria-label="Search subjects"
             className="flex-1 h-10 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground"
           />
-          <button type="submit" className="rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md transition-all">
+          <button type="submit" className="rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md transition-all">
             Search
           </button>
         </div>

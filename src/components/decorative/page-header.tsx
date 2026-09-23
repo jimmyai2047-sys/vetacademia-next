@@ -11,7 +11,7 @@ interface PageHeaderProps {
 }
 
 const variants = {
-  primary: "from-primary via-[#005f48] to-[#003d2e]",
+  primary: "from-primary via-[#0284c7] to-[#0c4a6e]",
   blue: "from-blue-600 via-blue-700 to-indigo-700",
   emerald: "from-emerald-600 via-teal-600 to-cyan-700",
   purple: "from-purple-600 via-violet-600 to-indigo-600",

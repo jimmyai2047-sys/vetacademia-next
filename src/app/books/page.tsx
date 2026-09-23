@@ -80,7 +80,7 @@ export default async function BooksPage({
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
           badge="AHDP • BVSc • MVSc • PhD • Curated Library"
           title="Recommended Books"

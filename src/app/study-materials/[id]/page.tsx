@@ -61,7 +61,7 @@ export default async function StudyMaterialDetailPage({
   const cat = CATEGORY_META[post.category] || null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
       <Link
         href="/study-materials"
         className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors mb-6"
@@ -96,7 +96,7 @@ export default async function StudyMaterialDetailPage({
                 href={downloadUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-4 py-2 text-sm font-medium text-white shadow-sm hover:shadow-md transition-all mt-2"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-4 py-2 text-sm font-medium text-white shadow-sm hover:shadow-md transition-all mt-2"
               >
                 <FileText className="h-4 w-4" />
                 Download attachment

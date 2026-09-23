@@ -84,7 +84,7 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       {/* Royal Header */}
       <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
               <p className="text-xs text-white/60 uppercase tracking-widest">Total Users</p>
               <p className="text-xl font-bold">{totalUsers.toLocaleString()}</p>
             </div>
-            <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg">
+            <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#0c4a6e] shadow-lg">
               <Sparkles className="h-6 w-6" />
             </div>
           </div>
@@ -168,7 +168,7 @@ export default async function AdminDashboard() {
                     className="group flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-blue-50/30 hover:shadow-sm transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white font-bold text-sm shadow-sm">
+                      <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white font-bold text-sm shadow-sm">
                         {user.name.charAt(0).toUpperCase()}
                         <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white" />
                       </div>
@@ -224,7 +224,7 @@ export default async function AdminDashboard() {
                     key={attempt.id}
                     className="group flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-purple-50/40 hover:to-blue-50/20 hover:shadow-sm transition-all"
                   >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/10 text-primary group-hover:from-primary group-hover:to-[#005f48] group-hover:text-white transition-all">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/10 text-primary group-hover:from-primary group-hover:to-[#0284c7] group-hover:text-white transition-all">
                       <Activity className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -284,4 +284,5 @@ export default async function AdminDashboard() {
       </Card>
     </div>
   );
-}
+}
+

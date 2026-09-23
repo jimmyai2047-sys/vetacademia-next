@@ -26,7 +26,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function PrivacyPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-3xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-3xl">
         <DecorativePageHeader
           badge="Legal • Privacy Policy"
           title="Privacy"

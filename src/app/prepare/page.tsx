@@ -75,7 +75,7 @@ export default async function PreparePage({
         <div className="mt-5 va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-5 md:p-6 text-center">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
             <GraduationCap className="h-7 w-7" />
           </div>
           <h2 className="mt-4 text-2xl font-bold">Log in to access exam preparation</h2>

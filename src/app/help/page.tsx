@@ -67,7 +67,7 @@ const helpTopics = [
 export default function HelpPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-7xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-7xl">
         <DecorativePageHeader
           badge="Help Center • Guides • Support"
           title="Help"
@@ -132,7 +132,7 @@ export default function HelpPage() {
             <div className="rounded-[1.45rem] bg-white p-6 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
               <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
               <div className="flex items-center gap-3 relative">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
                   <MessageCircle className="h-5 w-5" />
                 </div>
                 <div>
@@ -142,7 +142,7 @@ export default function HelpPage() {
               </div>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md gap-1.5 shrink-0"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md gap-1.5 shrink-0"
               >
                 Contact Support <ArrowRight className="h-4 w-4" />
               </Link>

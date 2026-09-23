@@ -842,7 +842,7 @@ function SignupInner() {
             {step < 2 ? (
               <Button
                 type="button"
-                className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg"
+                className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg"
                 disabled={isLoading || guestLoading}
                 onClick={next}
               >
@@ -851,7 +851,7 @@ function SignupInner() {
             ) : (
               <Button
                 type="submit"
-                className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg"
+                className="flex-1 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg"
                 disabled={isLoading || guestLoading || !acceptedTerms}
               >
                 {isLoading ? (

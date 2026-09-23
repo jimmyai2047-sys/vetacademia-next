@@ -42,7 +42,7 @@ export default async function FarmGuidePage({
 
   return (
     <FarmLanguageProvider initialLang={lang}>
-      <div lang={FARMER_LANG_LOCALE[lang]} className="container mx-auto px-4 py-8 max-w-6xl">
+      <div lang={FARMER_LANG_LOCALE[lang]} className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-foreground transition-colors">Home</Link>

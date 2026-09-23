@@ -266,7 +266,7 @@ export default async function ProgrammePage({
           </div>
         )}
         <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-5">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
           <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
               <div className="relative px-5 py-5 md:px-6 md:py-6 text-white">
@@ -287,7 +287,7 @@ export default async function ProgrammePage({
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 text-xs font-medium">
                     <Users className="h-3.5 w-3.5" /> {totalCourses} Courses
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#d4a843] px-3 py-1 text-xs font-bold text-[#003d2e]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#d4a843] px-3 py-1 text-xs font-bold text-[#0c4a6e]">
                     VCI MSVE-2016
                   </span>
                 </div>
@@ -405,4 +405,5 @@ export default async function ProgrammePage({
       )}
     </div>
   );
-}
+}
+

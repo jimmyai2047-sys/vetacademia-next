@@ -126,7 +126,7 @@ function ResetInner() {
       ) : null}
       <Button
         type="submit"
-        className="w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg"
+        className="w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg"
         disabled={loading}
       >
         {loading ? (

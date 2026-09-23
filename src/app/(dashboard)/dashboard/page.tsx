@@ -167,9 +167,9 @@ export default async function DashboardPage() {
     : [{ label: "Role", value: "Admin", icon: LayoutDashboard, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" }];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-8">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -220,7 +220,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Link href="/admin">
-              <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-sm">Go to Admin Panel</Button>
+              <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-sm">Go to Admin Panel</Button>
             </Link>
           </CardContent>
         </Card>

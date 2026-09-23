@@ -30,7 +30,7 @@ export default async function PapersPage() {
   ]);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 group"
@@ -96,7 +96,7 @@ export default async function PapersPage() {
                   return (
                     <section key={year} id={`year-${year}`} className="scroll-mt-20">
                       <div className="sticky top-[68px] z-10 -mx-4 px-4 py-2 bg-white/80 backdrop-blur-md border-y border-primary/5 flex items-center gap-3 mb-4">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white text-sm font-bold shadow-sm">{year.slice(-2)}</span>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white text-sm font-bold shadow-sm">{year.slice(-2)}</span>
                         <h2 className="text-lg font-bold">{year}</h2>
                         <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">{yearPapers.length} papers</span>
                         <div className="ml-auto h-px flex-1 bg-gradient-to-r from-primary/10 to-transparent hidden sm:block" />
@@ -131,7 +131,7 @@ export default async function PapersPage() {
                                       </span>
                                       <Link
                                         href={`/papers/${p.id}`}
-                                        className="inline-flex items-center gap-1 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-3 py-1.5 text-xs font-medium text-white hover:shadow-md transition-all"
+                                        className="inline-flex items-center gap-1 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-3 py-1.5 text-xs font-medium text-white hover:shadow-md transition-all"
                                       >
                                         Solve
                                       </Link>

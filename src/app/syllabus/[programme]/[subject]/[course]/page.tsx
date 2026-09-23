@@ -138,7 +138,7 @@ export default async function CoursePage({
             sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/80 via-black/30 to-transparent" />
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
         </div>
 
@@ -239,4 +239,5 @@ export default async function CoursePage({
       )}
     </div>
   );
-}
+}
+

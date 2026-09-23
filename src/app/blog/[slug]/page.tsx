@@ -116,7 +116,7 @@ export default async function BlogPostPage({
         <div className="va-divider-dots my-8 max-w-[200px] mx-auto"><span /></div>
 
         <div className="va-card-hover relative overflow-hidden rounded-[1.75rem] border-0 shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-[#d4a843]/20 blur-3xl pointer-events-none" />

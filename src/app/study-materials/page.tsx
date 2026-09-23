@@ -38,7 +38,7 @@ export default async function StudyMaterialsPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <DecorativePageHeader
           badge="Members Only"
           title="Study"
@@ -96,7 +96,7 @@ export default async function StudyMaterialsPage() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
         badge="Study Hub • 10K+ Resources"
         title="Study"

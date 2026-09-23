@@ -30,7 +30,7 @@ export default async function AdminPricingPage() {
       <div className="space-y-8">
         {/* Royal Gradient Header */}
         <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -44,7 +44,7 @@ export default async function AdminPricingPage() {
                 <Shield className="h-3.5 w-3.5 text-[#d4a843] shrink-0" /> Set the one-time price and description for each programme, exam preparation plan, and granular year/subject plan. Changes apply immediately on the public pricing page.
               </p>
             </div>
-            <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg shrink-0">
+            <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#0c4a6e] shadow-lg shrink-0">
               <CreditCard className="h-6 w-6" />
             </div>
           </div>

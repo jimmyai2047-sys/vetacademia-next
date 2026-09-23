@@ -119,7 +119,7 @@ function ForgotInner() {
           ) : null}
           <Button
             type="submit"
-            className="w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] shadow-md hover:shadow-lg"
+            className="w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg"
             disabled={loading}
           >
             <Mail className="h-4 w-4" aria-hidden="true" />

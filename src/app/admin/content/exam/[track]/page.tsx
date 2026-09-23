@@ -57,7 +57,7 @@ export default async function ExamContentPage({
     <div className="space-y-6">
       {/* Royal Gradient Header */}
       <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -90,14 +90,14 @@ export default async function ExamContentPage({
               const examSlug = examMap[track] || track;
               return (
                 <Link href={`/examinations/${examSlug}`} target="_blank" rel="noopener noreferrer">
-                  <Button className="rounded-xl bg-white text-[#003d2e] hover:bg-white/90 font-semibold shadow-lg gap-2">
+                  <Button className="rounded-xl bg-white text-[#0c4a6e] hover:bg-white/90 font-semibold shadow-lg gap-2">
                     <Eye className="h-4 w-4" /> Preview as Student
                     <ExternalLink className="h-3.5 w-3.5 opacity-60" />
                   </Button>
                 </Link>
               );
             })()}
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg shrink-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#0c4a6e] shadow-lg shrink-0">
               <Award className="h-6 w-6" />
             </div>
           </div>
@@ -256,7 +256,7 @@ export default async function ExamContentPage({
 
       {materialSections.map((section) => (
         <section key={section.category} className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5 space-y-4">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4a843] via-primary to-[#003d2e]" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#d4a843] via-primary to-[#0c4a6e]" />
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#d4a843]/15 border border-[#d4a843]/20">
               <Sparkles className="h-4 w-4 text-[#9a7b2e]" />

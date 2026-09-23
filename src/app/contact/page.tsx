@@ -14,7 +14,7 @@ import { FacebookIcon, InstagramIcon, WhatsAppIcon, TelegramIcon } from "@/compo
 export default function ContactPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-7xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-7xl">
         <DecorativePageHeader
           badge="Contact • Support • 24/7 Help"
           title="Contact"
@@ -100,7 +100,7 @@ export default function ContactPage() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
               <CardContent className="p-6 flex items-start gap-4 relative">
                 <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md group-hover:scale-105 transition-transform">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md group-hover:scale-105 transition-transform">
                   <MessageCircle className="h-5 w-5" />
                 </div>
                 <div>
@@ -188,7 +188,7 @@ export default function ContactPage() {
                   </Link>
                   <Link
                     href="/help"
-                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md"
+                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md"
                   >
                     Visit Help Center
                   </Link>

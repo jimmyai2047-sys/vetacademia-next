@@ -53,7 +53,7 @@ export default async function TestimonialsPage() {
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
           badge="Student Success Stories • Real Results"
           title="Trusted by Thousands of"
@@ -201,7 +201,7 @@ export default async function TestimonialsPage() {
       {/* CTA */}
       <section className="relative overflow-hidden py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e] text-white shadow-xl">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e] text-white shadow-xl">
             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
             <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl" />

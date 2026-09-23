@@ -44,7 +44,7 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* Decorative background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-[#005f48] to-[#004030]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-[#0284c7] to-[#004030]" />
       <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '24px 24px' }} />
       {/* Top ornamental border */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -83,7 +83,7 @@ export default function Footer() {
                 { icon: MapPin, text: "Rajasthan • India" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="group flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#d4a843]/20 text-[#d4a843] group-hover:bg-[#d4a843] group-hover:text-[#003d2e] transition-colors">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#d4a843]/20 text-[#d4a843] group-hover:bg-[#d4a843] group-hover:text-[#0c4a6e] transition-colors">
                     <Icon className="h-3.5 w-3.5" />
                   </span>
                   <span className="text-sm text-white/80">{text}</span>

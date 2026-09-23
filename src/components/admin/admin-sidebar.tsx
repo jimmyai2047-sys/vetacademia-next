@@ -53,11 +53,11 @@ export default function AdminSidebar() {
   return (
     <aside className="w-64 border-r bg-gradient-to-b from-white via-white to-muted/20 backdrop-blur-xl min-h-[calc(100vh-4rem)] flex flex-col relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "18px 18px" }} />
+      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #0284c7 1px, transparent 0)`, backgroundSize: "18px 18px" }} />
       <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
 
       <div className="relative p-4 flex-1 overflow-y-auto">
-        <Link href="/admin" className="group flex items-center gap-3 mb-6 rounded-xl bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e] p-3 text-white shadow-lg hover:shadow-xl transition-all">
+        <Link href="/admin" className="group flex items-center gap-3 mb-6 rounded-xl bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e] p-3 text-white shadow-lg hover:shadow-xl transition-all">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/20 text-white font-bold text-sm shadow-sm">
             VA
           </div>
@@ -84,11 +84,11 @@ export default function AdminSidebar() {
                 className={cn(
                   "group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border",
                   isActive
-                    ? "bg-gradient-to-r from-primary to-[#005f48] text-white shadow-md border-transparent"
+                    ? "bg-gradient-to-r from-primary to-[#0284c7] text-white shadow-md border-transparent"
                     : "text-muted-foreground hover:bg-gradient-to-r hover:from-primary/5 hover:to-blue-50/30 hover:text-foreground border-transparent hover:border-primary/10 hover:shadow-sm bg-white/50"
                 )}
               >
-                <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg border transition-all", isActive ? "bg-white/15 border-white/20 text-white" : "bg-gradient-to-br from-primary/10 to-blue-500/10 border-primary/10 text-primary group-hover:from-primary group-hover:to-[#005f48] group-hover:text-white")}>
+                <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg border transition-all", isActive ? "bg-white/15 border-white/20 text-white" : "bg-gradient-to-br from-primary/10 to-blue-500/10 border-primary/10 text-primary group-hover:from-primary group-hover:to-[#0284c7] group-hover:text-white")}>
                   <item.icon className="h-4 w-4" />
                 </span>
                 <span className="flex-1 truncate">{item.name}</span>

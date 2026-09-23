@@ -44,7 +44,7 @@ export default function MobileCheckout() {
       <div className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-[#d4a843]/15 blur-3xl pointer-events-none" />
       <div className="va-card-hover relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white/80 backdrop-blur-xl shadow-xl p-8 text-center">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white font-bold shadow-md">VA</div>
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white font-bold shadow-md">VA</div>
         <h2 className="mt-4 text-xl font-bold tracking-tight">VetAcademia</h2>
         <div className="va-divider-dots my-4 max-w-[120px] mx-auto"><span /></div>
         {error ? (

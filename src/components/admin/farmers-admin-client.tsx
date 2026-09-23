@@ -236,7 +236,7 @@ function Editor({
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={submit} disabled={busy} className="rounded-xl bg-gradient-to-br from-primary to-[#005f48] hover:from-primary/90 hover:to-[#005f48]/90 text-white shadow-sm">
+          <Button onClick={submit} disabled={busy} className="rounded-xl bg-gradient-to-br from-primary to-[#0284c7] hover:from-primary/90 hover:to-[#0284c7]/90 text-white shadow-sm">
             {busy ? "Saving..." : "Save"}
           </Button>
           <Button variant="outline" onClick={onCancel} className="rounded-xl">

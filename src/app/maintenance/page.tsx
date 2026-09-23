@@ -15,7 +15,7 @@ export default function MaintenancePage() {
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
         <div className="p-8 space-y-4">
           <Badge className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Scheduled maintenance</Badge>
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-lg">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
             <Wrench className="h-8 w-8" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">Under <span className="va-gradient-text">Maintenance</span></h1>

@@ -66,7 +66,7 @@ function QuestionText({ text }: { text: string }) {
             <table className="w-full text-[13.5px] border-collapse">
               {header && (
                 <thead>
-                  <tr className="bg-gradient-to-r from-primary to-[#005f48] text-white">
+                  <tr className="bg-gradient-to-r from-primary to-[#0284c7] text-white">
                     {header.map((c, j) => (
                       <th key={j} className="px-3.5 py-2 border-r border-white/15 last:border-r-0 text-left font-bold tracking-wide text-xs uppercase">
                         {c}
@@ -413,7 +413,7 @@ export default function MockTestPlayer({
 
       {/* Royal header */}
       <div className="relative overflow-hidden rounded-[1.4rem] border border-primary/10 shadow-xl mb-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "18px 18px" }} />
         <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -438,7 +438,7 @@ export default function MockTestPlayer({
                   <span>{questions.length} questions</span>
                   <span className="h-1 w-1 rounded-full bg-white/30" />
                   <span>{totalMarks} marks</span>
-                  {adaptive && <Badge className="rounded-full bg-[#d4a843] text-[#003d2e] border-0 ml-1"><Sparkles className="h-3 w-3 mr-1" />Adaptive</Badge>}
+                  {adaptive && <Badge className="rounded-full bg-[#d4a843] text-[#0c4a6e] border-0 ml-1"><Sparkles className="h-3 w-3 mr-1" />Adaptive</Badge>}
                 </p>
               </div>
             </div>
@@ -472,7 +472,7 @@ export default function MockTestPlayer({
         <Card className="mb-6 overflow-hidden border-primary/10 shadow-lg bg-gradient-to-br from-white to-primary/[0.04]">
           <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <CardContent className="p-6 text-center">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md mb-2">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md mb-2">
               <Trophy className="h-5 w-5" />
             </div>
             <div className="text-3xl font-extrabold tracking-tight">
@@ -520,7 +520,7 @@ export default function MockTestPlayer({
                   <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
                   <CardHeader className="pb-3">
                     <CardTitle className="flex gap-3 items-start leading-relaxed text-[15px]">
-                      <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#005f48] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
+                      <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0284c7] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
                         {i + 1}
                       </span>
                       <span className="flex-1 min-w-0 pt-0.5">
@@ -675,7 +675,7 @@ function AdaptiveQuestion({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <CardTitle className="flex gap-3 items-start leading-relaxed flex-1 min-w-0 text-[15px]">
-            <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#005f48] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
+            <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0284c7] text-white text-xs font-extrabold shadow-sm ring-1 ring-primary/20">
               {index}
             </span>
             <span className="flex-1 min-w-0 pt-0.5">

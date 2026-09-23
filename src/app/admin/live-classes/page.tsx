@@ -10,7 +10,7 @@ export default async function AdminLiveClassesPage() {
     <div className="space-y-6">
       {/* Royal Header */}
       <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -34,7 +34,7 @@ export default async function AdminLiveClassesPage() {
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-[#d4a843] text-[#003d2e] shadow-lg">
+          <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-[#d4a843] text-[#0c4a6e] shadow-lg">
             <Video className="h-5 w-5" />
           </div>
         </div>

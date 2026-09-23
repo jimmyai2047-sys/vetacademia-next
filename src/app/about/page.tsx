@@ -51,7 +51,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8 max-w-6xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-6xl">
         <DecorativePageHeader
           badge="About VetAcademia • Since 2020 • Trusted by 10K+"
           title="About"
@@ -75,7 +75,7 @@ export default function AboutPage() {
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
             <CardContent className="p-8 relative">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#005f48] flex items-center justify-center shrink-0 shadow-md">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] flex items-center justify-center shrink-0 shadow-md">
                   <Target className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -194,7 +194,7 @@ export default function AboutPage() {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                 <CardContent className="p-6 relative">
                   <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/5 blur-xl group-hover:bg-primary/10 transition-colors pointer-events-none" />
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md group-hover:scale-105 transition-transform">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md group-hover:scale-105 transition-transform">
                     <v.icon className="h-5 w-5" />
                   </div>
                   <span className="absolute top-6 right-6 flex h-6 w-6 items-center justify-center rounded-full bg-[#d4a843] text-white text-[11px] font-bold ring-2 ring-white shadow-md">{idx + 1}</span>
@@ -226,7 +226,7 @@ export default function AboutPage() {
                   </Link>
                   <Link
                     href="/admission"
-                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all gap-1.5 shadow-md"
+                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all gap-1.5 shadow-md"
                   >
                     <GraduationCap className="h-4 w-4" /> Apply for Admission
                   </Link>

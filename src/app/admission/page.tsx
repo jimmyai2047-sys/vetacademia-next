@@ -50,7 +50,7 @@ const benefits = [
 export default function AdmissionPage() {
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-5xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-5xl">
         <DecorativePageHeader
           badge="Admissions Open 2026 • Free Counseling"
           title="Admission &"
@@ -106,14 +106,14 @@ export default function AdmissionPage() {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
                 <CardContent className="p-6 relative">
                   <h2 className="font-semibold mb-1 flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md"><FileCheck className="h-4 w-4" /></span> Admission Process
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md"><FileCheck className="h-4 w-4" /></span> Admission Process
                   </h2>
                   <div className="h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843] mb-4" />
                   <ol className="space-y-4 relative">
                     <div className="absolute left-[15px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary via-primary/30 to-transparent hidden sm:block" />
                     {steps.map((s, i) => (
                       <li key={s.title} className="relative flex gap-3 bg-white rounded-xl border border-primary/5 p-3 shadow-sm">
-                        <div className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-primary to-[#005f48] text-white flex items-center justify-center text-sm font-bold shadow-md ring-2 ring-white">
+                        <div className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-primary to-[#0284c7] text-white flex items-center justify-center text-sm font-bold shadow-md ring-2 ring-white">
                           {i + 1}
                         </div>
                         <div>

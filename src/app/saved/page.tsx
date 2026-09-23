@@ -68,7 +68,7 @@ export default function SavedPage() {
 
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-4 pt-8 max-w-3xl">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-3xl">
         <DecorativePageHeader
           badge="Revision • Bookmarks"
           title="Saved"

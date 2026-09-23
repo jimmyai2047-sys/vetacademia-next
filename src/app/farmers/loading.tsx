@@ -1,6 +1,6 @@
 export default function FarmersLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       {/* Hero skeleton */}
       <div className="relative mb-8 overflow-hidden rounded-2xl h-48 bg-muted animate-pulse" />
 

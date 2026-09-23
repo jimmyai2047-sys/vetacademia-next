@@ -28,7 +28,7 @@ export default async function VetsPage() {
   const vetPosts = await getPublishedPosts("VETS").catch(() => []);
   return (
     <div className="pb-16 md:pb-0">
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
           badge="For Practitioners • Clinical • Community"
           title="For"
@@ -160,7 +160,7 @@ export default async function VetsPage() {
       </div>
 
       {/* Articles with Filters + Search */}
-      <div id="articles" className="container mx-auto px-4 py-8">
+      <div id="articles" className="container mx-auto px-4 py-8 md:py-12">
         <div className="flex items-center gap-3 mb-2">
           <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border-emerald-200 gap-1.5">
             <Sparkles className="h-3.5 w-3.5" /> Curated

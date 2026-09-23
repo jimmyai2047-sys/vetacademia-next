@@ -25,7 +25,7 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center max-w-xl">
+      <div className="container mx-auto px-4 py-8 md:py-12 text-center max-w-xl">
         <div className="va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-6 md:p-8">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
           <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />

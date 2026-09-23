@@ -33,7 +33,7 @@ export function AuthShell({
         )}
       >
         {/* Brand panel */}
-        <aside className="relative hidden flex-col justify-between gap-6 overflow-hidden bg-gradient-to-b from-primary to-[#003d2e] p-6 text-white lg:flex">
+        <aside className="relative hidden flex-col justify-between gap-6 overflow-hidden bg-gradient-to-b from-primary to-[#0c4a6e] p-6 text-white lg:flex">
           <div className="absolute inset-0 va-pattern-grid opacity-10 pointer-events-none" aria-hidden="true" />
           <div>
             <BrandLogo

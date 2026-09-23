@@ -219,7 +219,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full">
       {/* Ornamental top gradient */}
       <div className="h-[3px] w-full bg-gradient-to-r from-primary via-[#d4a843] to-primary va-gradient-animate" />
-      <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(0,95,72,0.07)]">
+      <div className="border-b bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 shadow-[0_4px_30px_rgba(2,132,199,0.07)]">
         <div className="absolute inset-0 va-pattern-dots pointer-events-none" />
         <div className="container relative mx-auto flex h-[68px] items-center justify-between gap-2 px-3 sm:px-4">
           {/* Logo - Left most corner attached */}
@@ -266,13 +266,13 @@ export default function Navbar() {
               Student Corner
             </Button>
             <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[560px] max-w-[calc(100vw-2rem)] transition-all duration-300 ease-out ${openMenus["programmes"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
-              <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden">
+              <div className="rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden">
               <div className="absolute top-3 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-              <div className="absolute inset-0 top-3 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #005f48 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
+              <div className="absolute inset-0 top-3 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #0284c7 1px, transparent 0)`, backgroundSize: "16px 16px" }} />
               <div className="relative bg-gradient-to-br from-primary/[0.07] via-white to-blue-50/30 p-4 border-b border-primary/5 mt-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
                       <Crown className="h-4 w-4" />
                     </span>
                     <div>
@@ -289,7 +289,7 @@ export default function Navbar() {
                 {/* Diploma group */}
                 <div className="p-2.5 sm:border-r border-primary/5">
                   <Link href={DIPLOMA_UMBRELLA.href} onClick={closeAllMenus} className="group/umb flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-primary/[0.08] to-blue-50/40 border border-primary/10 px-3 py-2.5 hover:border-primary/25 transition-all">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
                       <BookOpen className="h-4 w-4" />
                     </span>
                     <span className="flex-1 min-w-0">
@@ -335,7 +335,7 @@ export default function Navbar() {
                       onClick={closeAllMenus}
                       className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 hover:shadow-sm transition-all"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/10 text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent group-hover/item:shadow-md transition-all">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/10 text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#0284c7] group-hover/item:text-white group-hover/item:border-transparent group-hover/item:shadow-md transition-all">
                         <p.icon className="h-4 w-4" />
                       </span>
                       <div className="flex-1 min-w-0">
@@ -360,7 +360,7 @@ export default function Navbar() {
                 <Link
                   href="/syllabus"
                   onClick={closeAllMenus}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-[#005f48] to-[#003d2e] text-white px-4 py-2.5 text-sm font-bold shadow-lg hover:shadow-xl hover:from-primary/90 transition-all group/btn"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-[#0284c7] to-[#0c4a6e] text-white px-4 py-2.5 text-sm font-bold shadow-lg hover:shadow-xl hover:from-primary/90 transition-all group/btn"
                 >
                   <BookOpenCheck className="h-4 w-4" />
                   View All Syllabus
@@ -388,7 +388,7 @@ export default function Navbar() {
               <BookOpen className="h-4 w-4" />
               Prepare
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[460px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["prepare"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[460px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["prepare"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-600 via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-emerald-50 via-white to-blue-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center justify-between">
@@ -415,7 +415,7 @@ export default function Navbar() {
                       onClick={closeAllMenus}
                       className="group/item flex items-center gap-2.5 rounded-xl border border-primary/5 bg-gradient-to-br from-white to-muted/20 p-3 hover:border-primary/15 hover:from-primary/[0.06] hover:to-blue-50/30 hover:shadow-sm transition-all"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white transition-all">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#0284c7] group-hover/item:text-white transition-all">
                         <c.icon className="h-4 w-4" />
                       </span>
                       <div className="min-w-0 flex-1">
@@ -437,7 +437,7 @@ export default function Navbar() {
                     { href: "/papers", label: "PYQ Papers", icon: FileCheck, color: "from-amber-500 to-orange-500" },
                     { href: "/study-materials", label: "Materials", icon: BookOpenCheck, color: "from-purple-500 to-violet-500" },
                     { href: "/live-classes", label: "Live Classes", icon: Radio, color: "from-rose-500 to-pink-500" },
-                    { href: "/demo", label: "Free Demo", icon: Play, color: "from-primary to-[#005f48]" },
+                    { href: "/demo", label: "Free Demo", icon: Play, color: "from-primary to-[#0284c7]" },
                   ].map((t) => (
                     <Link key={t.href} href={t.href} onClick={closeAllMenus} className="group/tool flex flex-col items-center gap-1.5 rounded-xl border border-primary/5 bg-white p-3 hover:border-primary/15 hover:shadow-sm hover:bg-gradient-to-br hover:from-primary/[0.04] hover:to-transparent transition-all text-center">
                       <span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${t.color} text-white shadow-sm group-hover/tool:scale-105 transition-transform`}>
@@ -465,7 +465,7 @@ export default function Navbar() {
               <FileCheck className="h-4 w-4" />
               Exams
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[440px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["exams"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-[#d4a843] to-emerald-600" />
               <div className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50/30 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -486,7 +486,7 @@ export default function Navbar() {
                     onClick={closeAllMenus}
                     className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-emerald-50/30 hover:shadow-sm transition-all"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#005f48] group-hover/item:text-white group-hover/item:border-transparent transition-all">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-primary group-hover/item:to-[#0284c7] group-hover/item:text-white group-hover/item:border-transparent transition-all">
                       <c.icon className="h-4 w-4" />
                     </span>
                     <div className="flex-1 min-w-0">
@@ -513,7 +513,7 @@ export default function Navbar() {
                   <Link href="/study-materials" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-white border border-primary/10 px-3 py-2.5 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
                     <BookOpenCheck className="h-3.5 w-3.5 text-primary" /> Study Materials
                   </Link>
-                  <Link href="/papers" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                  <Link href="/papers" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
                     <FileCheck className="h-3.5 w-3.5" /> PYQ Papers
                   </Link>
                 </div>
@@ -535,7 +535,7 @@ export default function Navbar() {
               <Users className="h-4 w-4" />
               Resources
             </Button>
-            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["resources"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["resources"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-purple-600 via-[#d4a843] to-pink-600" />
               <div className="relative bg-gradient-to-br from-purple-50 via-white to-pink-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
@@ -587,7 +587,7 @@ export default function Navbar() {
                         </div>
                       </Link>
                     ))}
-                    <Link href="/demo" className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white py-2 text-xs font-bold shadow-md hover:shadow-lg transition-all">
+                    <Link href="/demo" className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] text-white py-2 text-xs font-bold shadow-md hover:shadow-lg transition-all">
                       <Play className="h-3.5 w-3.5" /> Free Demo
                     </Link>
                   </div>
@@ -610,11 +610,11 @@ export default function Navbar() {
               <Info className="h-4 w-4" />
               About
             </Button>
-            <div onClick={closeAllMenus} className={`absolute right-0 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,95,72,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["about"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+            <div onClick={closeAllMenus} className={`absolute right-0 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["about"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-blue-600" />
               <div className="relative bg-gradient-to-br from-primary/[0.06] via-white to-amber-50/20 p-4 border-b border-primary/5">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
                     <Info className="h-4 w-4" />
                   </span>
                   <div>
@@ -733,7 +733,7 @@ export default function Navbar() {
         {/* Mobile Menu - Enhanced for Mobile */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger
-            className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#005f48] text-white shadow-md hover:shadow-lg active:scale-95 transition-all"
+            className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md hover:shadow-lg active:scale-95 transition-all"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
@@ -1057,7 +1057,7 @@ export default function Navbar() {
                     <Link
                       href={isAdmin ? "/admin" : "/dashboard"}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-primary to-[#005f48] text-white px-4 py-3 text-sm font-bold shadow-md hover:shadow-lg transition-all"
+                      className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] text-white px-4 py-3 text-sm font-bold shadow-md hover:shadow-lg transition-all"
                     >
                       <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur text-white">
                         <LayoutDashboard className="h-4 w-4" />
@@ -1104,7 +1104,7 @@ export default function Navbar() {
                         </Button>
                       </Link>
                       <Link href="/signup" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full rounded-xl h-11 bg-gradient-to-r from-primary to-[#005f48] shadow-md">Sign up</Button>
+                        <Button className="w-full rounded-xl h-11 bg-gradient-to-r from-primary to-[#0284c7] shadow-md">Sign up</Button>
                       </Link>
                     </div>
                   </>

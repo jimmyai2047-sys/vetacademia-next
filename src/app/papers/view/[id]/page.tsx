@@ -41,7 +41,7 @@ export default async function PostViewerPage({
           <a
             href={viewUrl}
             download={post.fileName || "document.pdf"}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-4 py-2 text-xs font-medium text-white shadow-sm hover:shadow-md transition-all"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-4 py-2 text-xs font-medium text-white shadow-sm hover:shadow-md transition-all"
           >
             <Download className="h-3.5 w-3.5" /> Download
           </a>

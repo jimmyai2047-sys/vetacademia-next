@@ -48,97 +48,98 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   /* VetAcademia brand colors */
-  --color-vet-green: #005f48;
-  --color-vet-green-light: #00a878;
-  --color-vet-green-dark: #003d2e;
+  --color-vet-sky: #0284c7;
+  --color-vet-sky-light: #0ea5e9;
+  --color-vet-sky-dark: #0c4a6e;
   --color-vet-gold: #d4a843;
+
 }
 
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.99 0.004 165);
-  --foreground: oklch(0.21 0.02 200);
+  --background: oklch(0.99 0.006 244);
+  --foreground: oklch(0.21 0.02 244);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.02 200);
+  --card-foreground: oklch(0.21 0.02 244);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.02 200);
+  --popover-foreground: oklch(0.21 0.02 244);
 
-  /* VetAcademia brand green */
-  --primary: oklch(0.43 0.10 165);
+  /* VetAcademia brand sky blue (#0284c7) */
+  --primary: oklch(0.59 0.13 244);
   --primary-foreground: oklch(0.985 0 0);
 
-  --secondary: oklch(0.96 0.012 165);
-  --secondary-foreground: oklch(0.26 0.03 200);
+  --secondary: oklch(0.96 0.015 244);
+  --secondary-foreground: oklch(0.26 0.03 244);
 
-  --muted: oklch(0.96 0.008 165);
-  --muted-foreground: oklch(0.52 0.02 200);
+  --muted: oklch(0.96 0.012 244);
+  --muted-foreground: oklch(0.52 0.03 244);
 
-  --accent: oklch(0.95 0.022 165);
-  --accent-foreground: oklch(0.30 0.06 165);
+  --accent: oklch(0.95 0.03 244);
+  --accent-foreground: oklch(0.35 0.08 244);
 
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
 
-  --border: oklch(0.91 0.006 165);
-  --input: oklch(0.91 0.006 165);
-  --ring: oklch(0.43 0.10 165);
+  --border: oklch(0.91 0.01 244);
+  --input: oklch(0.91 0.01 244);
+  --ring: oklch(0.59 0.13 244);
 
-  --chart-1: oklch(0.43 0.10 165);
+  --chart-1: oklch(0.59 0.13 244);
   --chart-2: oklch(0.72 0.13 85);
-  --chart-3: oklch(0.55 0.12 200);
+  --chart-3: oklch(0.60 0.13 244);
   --chart-4: oklch(0.58 0.13 280);
   --chart-5: oklch(0.55 0.13 320);
 
-  --sidebar: oklch(0.985 0.004 165);
-  --sidebar-foreground: oklch(0.21 0.02 200);
-  --sidebar-primary: oklch(0.43 0.10 165);
+  --sidebar: oklch(0.985 0.006 244);
+  --sidebar-foreground: oklch(0.21 0.02 244);
+  --sidebar-primary: oklch(0.59 0.13 244);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.95 0.022 165);
-  --sidebar-accent-foreground: oklch(0.30 0.06 165);
-  --sidebar-border: oklch(0.91 0.006 165);
-  --sidebar-ring: oklch(0.43 0.10 165);
+  --sidebar-accent: oklch(0.95 0.03 244);
+  --sidebar-accent-foreground: oklch(0.35 0.08 244);
+  --sidebar-border: oklch(0.91 0.01 244);
+  --sidebar-ring: oklch(0.59 0.13 244);
 }
 
 .dark {
-  --background: oklch(0.17 0.018 165);
-  --foreground: oklch(0.97 0.005 165);
-  --card: oklch(0.21 0.018 165);
-  --card-foreground: oklch(0.97 0.005 165);
-  --popover: oklch(0.21 0.018 165);
-  --popover-foreground: oklch(0.97 0.005 165);
+  --background: oklch(0.20 0.02 244);
+  --foreground: oklch(0.97 0.005 244);
+  --card: oklch(0.24 0.02 244);
+  --card-foreground: oklch(0.97 0.005 244);
+  --popover: oklch(0.24 0.02 244);
+  --popover-foreground: oklch(0.97 0.005 244);
 
-  --primary: oklch(0.62 0.13 165);
-  --primary-foreground: oklch(0.17 0.02 165);
+  --primary: oklch(0.71 0.12 240);
+  --primary-foreground: oklch(0.20 0.03 244);
 
-  --secondary: oklch(0.27 0.02 165);
-  --secondary-foreground: oklch(0.97 0.005 165);
+  --secondary: oklch(0.28 0.03 244);
+  --secondary-foreground: oklch(0.97 0.005 244);
 
-  --muted: oklch(0.27 0.02 165);
-  --muted-foreground: oklch(0.72 0.02 165);
+  --muted: oklch(0.28 0.03 244);
+  --muted-foreground: oklch(0.72 0.03 244);
 
-  --accent: oklch(0.30 0.03 165);
-  --accent-foreground: oklch(0.97 0.005 165);
+  --accent: oklch(0.32 0.05 244);
+  --accent-foreground: oklch(0.97 0.005 244);
 
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.13 165);
+  --ring: oklch(0.71 0.12 240);
 
-  --chart-1: oklch(0.62 0.13 165);
+  --chart-1: oklch(0.71 0.12 240);
   --chart-2: oklch(0.72 0.13 85);
-  --chart-3: oklch(0.62 0.12 200);
+  --chart-3: oklch(0.65 0.12 240);
   --chart-4: oklch(0.68 0.13 280);
   --chart-5: oklch(0.62 0.13 320);
 
-  --sidebar: oklch(0.21 0.018 165);
-  --sidebar-foreground: oklch(0.97 0.005 165);
-  --sidebar-primary: oklch(0.62 0.13 165);
-  --sidebar-primary-foreground: oklch(0.17 0.02 165);
-  --sidebar-accent: oklch(0.30 0.03 165);
-  --sidebar-accent-foreground: oklch(0.97 0.005 165);
+  --sidebar: oklch(0.24 0.02 244);
+  --sidebar-foreground: oklch(0.97 0.005 244);
+  --sidebar-primary: oklch(0.71 0.12 240);
+  --sidebar-primary-foreground: oklch(0.20 0.03 244);
+  --sidebar-accent: oklch(0.32 0.05 244);
+  --sidebar-accent-foreground: oklch(0.97 0.005 244);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.13 165);
+  --sidebar-ring: oklch(0.71 0.12 240);
 }
 
 @layer base {
@@ -559,7 +560,7 @@
   border: 1px solid rgba(255,255,255,0.3);
 }
 .va-glass-dark {
-  background: rgba(0,95,72,0.85);
+  background: rgba(12,74,110,0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -595,7 +596,7 @@
 }
 .va-card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -12px rgba(0,95,72,0.15), 0 8px 20px -8px rgba(0,95,72,0.1);
+  box-shadow: 0 20px 40px -12px rgba(2,132,199,0.18), 0 8px 20px -8px rgba(2,132,199,0.12);
 }
 /* Gradient text */
 .va-gradient-text {
@@ -645,6 +646,29 @@
 }
 /* Highlighted callouts authored as blockquote + strong lead-in */
 .chapter-content blockquote p { margin: 0.3em 0; }
+
+/* ── Consistent content width on large screens ────────────────────────────
+   Tailwind's default `container` snaps max-width to breakpoints (1024px → 64rem,
+   1280px → 80rem, 1536px → 96rem). So the same page renders 1280px wide on a
+   laptop but 1536px wide on a desktop. Cap it at one width so laptop and
+   desktop look identical. Tablets (< 1280px) intentionally stay fluid and
+   full-width — correct UX for small screens. Unlayered CSS wins over the
+   layered Tailwind utility, no !important needed. */
+@media (min-width: 80rem) {
+  .container {
+    max-width: 80rem; /* 1280px — same on laptop and desktop */
+  }
+}
+
+/* ── Universal gutters ───────────────────────────────────────────────────
+   Phones keep 16px (see mobile rules below); tablet and up get 24px so the
+   layout doesn't feel like a stretched phone. Unlayered CSS wins over the
+   per-usage `px-4` utilities, so this applies site-wide from one place. */
+@media (min-width: 40rem) {
+  .container {
+    padding-inline: 1.5rem;
+  }
+}
 
 /* ── Mobile UX Enhancements ─────────────────────────────────────────── */
 @media (max-width: 640px) {
@@ -709,7 +733,7 @@
 /* Improve mobile scrolling */
 @media (max-width: 768px) {
   * {
-    -webkit-tap-highlight-color: rgba(0, 95, 72, 0.1);
+    -webkit-tap-highlight-color: rgba(2, 132, 199, 0.12);
   }
   /* Smooth scrolling for mobile */
   html {

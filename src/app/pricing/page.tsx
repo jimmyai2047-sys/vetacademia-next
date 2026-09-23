@@ -193,7 +193,7 @@ export default async function PricingPage({
           ) : (
             <Link
               href={`/checkout?plan=${encodeURIComponent(plan.slug)}`}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#005f48] px-4 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md group-hover:shadow-primary/20"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-4 py-2.5 text-sm font-medium text-white hover:shadow-lg transition-all shadow-md group-hover:shadow-primary/20"
             >
               Enroll Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
@@ -206,7 +206,7 @@ export default async function PricingPage({
   return (
     <div className="flex flex-col">
       {/* Decorative Header */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
           badge="Affordable • One-Time • Lifetime Access"
           title="Plans &"

@@ -21,7 +21,7 @@ export default async function AdmissionsAdminPage() {
     <div className="space-y-6">
       {/* Royal Header */}
       <div className="relative overflow-hidden rounded-[1.25rem] border border-primary/10 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#003d2e] via-primary to-[#005f48]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7]" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
         <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#d4a843]/15 blur-3xl" />
@@ -100,7 +100,7 @@ export default async function AdmissionsAdminPage() {
                   <td className="px-4 py-3 align-top">
                     <Badge
                       variant={e.status === "NEW" ? "default" : "secondary"}
-                      className={`text-xs rounded-full ${e.status === "NEW" ? "bg-gradient-to-br from-primary to-[#005f48] text-white border-0 shadow-sm" : ""}`}
+                      className={`text-xs rounded-full ${e.status === "NEW" ? "bg-gradient-to-br from-primary to-[#0284c7] text-white border-0 shadow-sm" : ""}`}
                     >
                       {e.status}
                     </Badge>

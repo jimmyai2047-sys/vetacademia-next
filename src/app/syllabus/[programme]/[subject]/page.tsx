@@ -170,7 +170,7 @@ export default async function SubjectPage({
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#003d2e]/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/80 via-black/30 to-transparent" />
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-80" />
           </div>
 
@@ -239,7 +239,7 @@ export default async function SubjectPage({
               {subject.chapters.map((course, index) => (
                 <Link key={course.id} href={`/syllabus/${progSlug}/${subject.id}/${course.id}`}>
                   <Card className="va-card-hover overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                    <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary via-[#005f48] to-[#003d2e]">
+                    <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Hash className="h-10 w-10 text-white/30" />
                       </div>
@@ -455,4 +455,5 @@ export default async function SubjectPage({
       </div>
     </div>
   );
-}
+}
+
