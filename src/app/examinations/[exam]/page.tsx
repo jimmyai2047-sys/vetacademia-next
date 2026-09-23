@@ -26,6 +26,7 @@ import {
   ArrowLeft,
   ChevronRight,
   Radio,
+  Pill,
   Stethoscope,
   Tractor,
   GraduationCap,
@@ -167,6 +168,17 @@ const examMeta: Record<
     lightColor: "bg-orange-50",
     textColor: "text-orange-600",
     badge: "ARS - ASRB",
+  },
+  "up-pharmacist": {
+    title: "UP Veterinary Pharmacist",
+    subtitle: "UPSSSC — DVP syllabus + UP GK",
+    description:
+      "Complete preparation for UPSSSC Veterinary Pharmacist recruitment — 24 DVP (Uttar Pradesh) subjects with theory + practical topics, previous year papers, mock tests and UP General Knowledge.",
+    icon: Pill,
+    color: "bg-violet-600",
+    lightColor: "bg-violet-50",
+    textColor: "text-violet-600",
+    badge: "UPSSSC • DVP",
   },
   other: {
     title: "Other Examinations",

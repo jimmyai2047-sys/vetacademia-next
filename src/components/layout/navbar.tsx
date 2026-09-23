@@ -25,6 +25,7 @@ import {
   Stethoscope,
   FileCheck,
   Tractor,
+  Pill,
   HeartPulse,
   Home,
   Users,
@@ -74,6 +75,7 @@ const examCategories = [
   { name: "Paravet State Jobs (9 States)", href: "/examinations/paravet-jobs", icon: Tractor, desc: "LSA • VLDA • AVFO • Pharmacist • VFA — pick your state" },
   // PSC — अलग-अलग plate
   { name: "V.O. / V.S. (PSC)", href: "/examinations/psc#veterinary-officer", icon: Stethoscope, desc: "PSC — B.V.Sc • V.O. / V.S." },
+  { name: "UP Pharmacist", href: "/examinations/up-pharmacist", icon: Pill, desc: "UP • DVP syllabus + UP GK • UPSSSC" },
   { name: "L.S.A. (PSC)", href: "/examinations/psc#livestock-assistant", icon: Tractor, desc: "Rajasthan LSA • AHDP core + Raj. GK • RSSB" },
   // ICAR Entrance — JRF / SRF अलग-अलग plate
   { name: "ICAR-JRF", href: "/examinations/icar-jrf", icon: BookMarked, desc: "ICAR Entrance — JRF" },
@@ -90,6 +92,7 @@ const examCategories = [
 const prepCategories = [
   { name: "Veterinary Officer", href: "/prepare?tab=VO", icon: Stethoscope, desc: "VO/VS" },
   { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA • 9 state posts • common core" },
+  { name: "UP Pharmacist", href: "/prepare?tab=UP_PHARMACIST", icon: Pill, desc: "UP • DVP subjects • UPSSSC" },
   { name: "ARS / NET", href: "/prepare?tab=ARS", icon: Beaker, desc: "ARS & NET" },
   { name: "ICAR Entrance", href: "/prepare?tab=ICAR_ENTRANCE", icon: BookMarked, desc: "JRF / SRF" },
   { name: "ICAR-NET", href: "/prepare?tab=NET", icon: Microscope, desc: "ICAR-NET" },

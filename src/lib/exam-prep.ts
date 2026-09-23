@@ -26,7 +26,7 @@ export const MATERIAL_TYPES: { value: MaterialType; label: string }[] = [
 ];
 
 export type ExamPrepCategory = {
-  key: "VO" | "LSA" | "ARS" | "ICAR_ENTRANCE" | "NET";
+  key: "VO" | "LSA" | "UP_PHARMACIST" | "ARS" | "ICAR_ENTRANCE" | "NET";
   label: string;
   // granular content tracks that belong to this prep category
   tracks: string[];
@@ -46,6 +46,12 @@ export const EXAM_PREP_CATEGORIES: ExamPrepCategory[] = [
     label: "Livestock Assistant (LSA)",
     tracks: ["livestock-assistant"],
     examKey: "psc",
+  },
+  {
+    key: "UP_PHARMACIST",
+    label: "Veterinary Pharmacist (UP)",
+    tracks: ["up-pharmacist"],
+    examKey: "up-pharmacist",
   },
   {
     key: "ARS",
@@ -77,6 +83,7 @@ export function getExamPrepCategory(key: string) {
 export const EXAM_CONTENT_TRACK_TO_CATEGORY: Record<string, string> = {
   "veterinary-officer": "VO",
   "livestock-assistant": "LSA",
+  "up-pharmacist": "UP_PHARMACIST",
   "icar-jrf-srf": "ICAR_ENTRANCE",
   "icar-ars-net": "ARS",
   "icar-net": "NET",
@@ -89,11 +96,12 @@ export function categoryForExamContentTrack(key: string) {
 // Each prep category maps to an academic programme that supplies the Subject
 // list, and a "level" that decides the second-level label
 // (Chapter / Unit for UG, Course for PG).
-export type Programme = "bvsc" | "ahdp" | "mvsc";
+export type Programme = "bvsc" | "ahdp" | "dvp" | "mvsc";
 
 export const CATEGORY_TO_PROGRAMME: Record<string, Programme> = {
   VO: "bvsc",
   LSA: "ahdp",
+  UP_PHARMACIST: "dvp",
   ICAR_ENTRANCE: "bvsc",
   ARS: "mvsc",
   NET: "mvsc",
@@ -119,6 +127,9 @@ export const EXAM_CONTENT_MATERIAL_SECTIONS: Record<string, MaterialSection[]> =
   ],
   "livestock-assistant": [
     { label: "Study Materials (AHDP Subjects)", category: "LSA" },
+  ],
+  "up-pharmacist": [
+    { label: "Study Materials (DVP Subjects)", category: "UP_PHARMACIST" },
   ],
   "icar-jrf-srf": [
     {

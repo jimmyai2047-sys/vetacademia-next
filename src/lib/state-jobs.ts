@@ -30,6 +30,7 @@ export type StateJob = {
   recruitingBody: string; // e.g. "RSSB"
   gkPaper: string; // e.g. "Rajasthan GK"
   note?: string; // verified recruitment detail (posts, pay, eligibility, council)
+  prepHref?: string; // dedicated prepare tab, e.g. "/prepare?tab=UP_PHARMACIST&state=uttar-pradesh"
 };
 
 export const STATE_JOBS: StateJob[] = [
@@ -84,6 +85,8 @@ export const STATE_JOBS: StateJob[] = [
     postShort: "Pharmacist",
     recruitingBody: "UPSSSC",
     gkPaper: "UP GK",
+    note: "UPSSSC recruits Veterinary Pharmacists for the Animal Husbandry Dept.; DVP (DUVASU Mathura) is the qualifying diploma. Posts and pattern as per the latest UPSSSC advertisement.",
+    prepHref: "/prepare?tab=UP_PHARMACIST&state=uttar-pradesh",
   },
   {
     slug: "punjab",

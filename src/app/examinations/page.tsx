@@ -27,6 +27,7 @@ import {
   Stethoscope,
   Tractor,
   FlaskConical,
+  Pill,
   Atom,
   Library,
 } from "lucide-react";
@@ -95,6 +96,22 @@ const examinations: Array<{
     papers: 50,
     mockTests: 20,
     href: "/examinations/psc#livestock-assistant",
+    group: "PSC",
+  },
+  {
+    id: "up-pharmacist",
+    title: "UP Veterinary Pharmacist",
+    subtitle: "DVP • UPSSSC",
+    description:
+      "UPSSSC Veterinary Pharmacist preparation — 24 DVP (Uttar Pradesh) subjects with theory + practical topics, previous year papers, mock tests and UP GK.",
+    icon: Pill,
+    color: "bg-violet-600",
+    lightColor: "bg-violet-50",
+    textColor: "text-violet-600",
+    badge: "UPSSSC • DVP",
+    papers: 0,
+    mockTests: 0,
+    href: "/examinations/up-pharmacist",
     group: "PSC",
   },
   // ── ICAR Entrance — JRF & SRF अलग-अलग plate ──
@@ -243,7 +260,7 @@ export default function ExaminationsPage() {
             <div className="mx-auto h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
               <GraduationCap className="h-5 w-5 text-primary" />
             </div>
-            <div className="text-2xl font-extrabold">10</div>
+            <div className="text-2xl font-extrabold">11</div>
             <div className="text-xs text-muted-foreground">Exam Plates</div>
             <div className="mx-auto mt-2 h-0.5 w-6 rounded-full bg-primary/20" />
           </CardContent>

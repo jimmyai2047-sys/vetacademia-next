@@ -52,6 +52,7 @@ type PreparedCategory = {
     duration: number;
   }[];
   lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
+  dvpSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
 };
 
 export default async function PreparePage({
@@ -138,6 +139,24 @@ export default async function PreparePage({
         }));
       }
 
+      // For UP Pharmacist, fetch DVP (Uttar Pradesh) subjects as plates
+      let dvpSubjects: PreparedCategory["dvpSubjects"] = undefined;
+      if (c.key === "UP_PHARMACIST") {
+        const dvpSubs = await prisma.subject.findMany({
+          where: { programme: { name: "DVP" } },
+          orderBy: [{ code: "asc" }],
+          select: { id: true, name: true, code: true, _count: { select: { chapters: true } } },
+        });
+        const counts = new Map<string, number>();
+        for (const m of materials) if ((m as any).subject) counts.set((m as any).subject, (counts.get((m as any).subject) || 0) + 1);
+        dvpSubjects = dvpSubs.map((s) => ({
+          id: s.id,
+          name: s.name,
+          code: s.code,
+          chapterCount: counts.get(s.name) || 0,
+        }));
+      }
+
       const papers = await prisma.post.findMany({
         where: {
           category: "PREVIOUS_YEAR",
@@ -188,6 +207,7 @@ export default async function PreparePage({
         mockTests: mockTests.map(mapTest),
         adaptiveTests: adaptiveTests.map(mapTest),
         lsaSubjects,
+        dvpSubjects,
       };
       })
     );

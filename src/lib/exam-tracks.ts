@@ -18,6 +18,7 @@ export const TRACK_OPTIONS: TrackOption[] = [
   { value: "", label: "None (general)", exam: null },
   { value: "veterinary-officer", label: "VO/VS (PSC)", exam: "psc" },
   { value: "livestock-assistant", label: "LSA (PSC)", exam: "psc" },
+  { value: "up-pharmacist", label: "UP Pharmacist", exam: "up-pharmacist" },
   { value: "icar-jrf-srf", label: "ICAR-JRF/SRF", exam: "icar-entrance" },
   { value: "icar-pre", label: "ICAR Pre (ARS/NET)", exam: "ars" },
   { value: "icar-mains", label: "ICAR Mains (ARS/NET)", exam: "ars" },
@@ -52,6 +53,11 @@ export const EXAM_CONTENT_TRACKS: ExamTrack[] = [
     key: "livestock-assistant",
     label: "Livestock Assistant (LSA)",
     subs: [{ tag: "livestock-assistant", label: "LSA" }],
+  },
+  {
+    key: "up-pharmacist",
+    label: "Veterinary Pharmacist (UPSSSC)",
+    subs: [{ tag: "up-pharmacist", label: "UP Pharmacist" }],
   },
   {
     key: "icar-jrf-srf",

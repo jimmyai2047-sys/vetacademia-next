@@ -75,6 +75,16 @@ export const PLANS: PlanDef[] = [
     sortOrder: 6,
   },
   {
+    slug: "up-pharmacist",
+    name: "Veterinary Pharmacist (UPSSSC)",
+    type: "EXAM",
+    description:
+      "Targeted preparation for UPSSSC Veterinary Pharmacist recruitment — DVP syllabus + UP GK.",
+    defaultPrice: 999,
+    examSlug: "up-pharmacist",
+    sortOrder: 10,
+  },
+  {
     slug: "icar-jrf-srf",
     name: "ICAR-JRF/SRF",
     type: "EXAM",
@@ -118,6 +128,8 @@ export function getExamKeysForPlan(examSlug?: string): string[] {
     case "veterinary-officer":
     case "livestock-assistant":
       return ["psc"];
+    case "up-pharmacist":
+      return ["up-pharmacist"];
     case "icar-jrf-srf":
       return ["icar-entrance"];
     case "net":
@@ -134,6 +146,8 @@ export function planSlugForExam(examKey: string): string | null {
   switch (examKey) {
     case "psc":
       return "veterinary-officer";
+    case "up-pharmacist":
+      return "up-pharmacist";
     case "icar-entrance":
     case "icar-jrf":
     case "icar-srf":

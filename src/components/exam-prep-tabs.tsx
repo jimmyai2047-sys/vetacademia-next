@@ -54,6 +54,7 @@ type PreparedCategory = {
   mockTests: TestItem[];
   adaptiveTests: TestItem[];
   lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
+  dvpSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
 };
 
 const TYPE_ICON: Record<string, any> = {
@@ -355,6 +356,89 @@ export default function ExamPrepTabs({
                             ))}
                         </div>
                         <p className="text-[11px] text-muted-foreground">Reader will open with left flowchart (Programme → AHDP → {s.name} → Chapter → Lecture → Practice) + wide justified content, watermark & copy-block — exactly like test file.</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </Section>
+        </>
+      )}
+
+      {cat.key === "UP_PHARMACIST" && cat.dvpSubjects && (
+        <>
+          <div className="mb-5 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 via-white to-purple-50/40 p-4">
+            <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-violet-900">
+              <MapPin className="h-4 w-4" /> Preparing for Uttar Pradesh: Veterinary Pharmacist
+              <Badge className="rounded-full bg-violet-600 text-white border-0 text-[10px]">UPSSSC</Badge>
+              <Badge variant="outline" className="rounded-full text-[10px]">UP GK</Badge>
+            </p>
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              Below are the 24 DVP (DUVASU Mathura) subjects with theory + practical topics.{" "}
+              <Link href="/examinations/up-pharmacist" className="font-bold text-violet-700 hover:underline">
+                UP Pharmacist plate →
+              </Link>{" "}
+              <Link href="/syllabus/dvp" className="font-bold text-violet-700 hover:underline">
+                Full DVP syllabus →
+              </Link>
+            </p>
+          </div>
+          <Section title="Subjects (DVP — UP Pharmacist) — Click a plate to see its chapters" icon={BookOpen} empty={cat.dvpSubjects.length === 0}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cat.dvpSubjects.map((s) => {
+              const mats = cat.materials.filter((m) => m.subject === s.name);
+              return (
+                <Card key={s.id} id={`subject-${s.id}`} className="hover:shadow-md transition-shadow scroll-mt-20 overflow-hidden">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const el = document.getElementById(`up-subject-${s.id}`);
+                      if (el) {
+                        const isOpen = el.dataset.expanded === "true";
+                        el.dataset.expanded = isOpen ? "false" : "true";
+                        el.style.display = isOpen ? "none" : "block";
+                      }
+                    }}
+                  >
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-violet-600" />
+                        {s.name}
+                      </CardTitle>
+                      {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between">
+                      <Badge variant="secondary" className="text-xs">{mats.length} chapters</Badge>
+                      <span className="text-xs text-violet-700 font-medium">{mats.length === 0 ? "No chapters yet — click to add" : "Click to view →"}</span>
+                    </CardContent>
+                  </div>
+                  <div id={`up-subject-${s.id}`} data-expanded="false" style={{ display: "none" }} className="border-t bg-muted/20 p-3">
+                    {mats.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No chapters yet for {s.name}. Add via Admin → Content → Examination → UP Pharmacist → Subject: {s.name}
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-violet-600" /> Chapters ({mats.length}) — one by one</span>
+                        </div>
+                        <div className="grid gap-3">
+                          {mats
+                            .slice()
+                            .sort((a, b) => (a.topic || a.title).localeCompare(b.topic || b.title))
+                            .map((m, idx) => (
+                              <div key={m.id} className="flex items-center gap-3 rounded-xl border bg-white p-3 hover:shadow-sm transition-shadow">
+                                <span className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-xs font-bold text-violet-700 shrink-0">{String(idx + 1).padStart(2, "0")}</span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium truncate">{m.topic || m.title}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{m.title}</p>
+                                </div>
+                                <Button render={<Link href={`/prepare/material/${m.id}`} />} size="sm" variant="default" className="rounded-full text-xs h-7 px-3 shrink-0">Read →</Button>
+                              </div>
+                            ))}
+                        </div>
                       </div>
                     )}
                   </div>

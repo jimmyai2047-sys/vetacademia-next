@@ -126,7 +126,7 @@ export default function ParavetJobsPage() {
                     <BookOpen className="h-3 w-3 mr-0.5" /> {DIPLOMA_BY_SLUG[j.diplomaSlug]?.status === "live" ? "Syllabus" : "Core"}
                   </Button>
                 </Link>
-                <Link href={`/prepare?tab=LSA&state=${j.slug}`}>
+                <Link href={j.prepHref ?? `/prepare?tab=LSA&state=${j.slug}`}>
                   <Button size="sm" className="w-full text-[11px] px-1 bg-teal-600 hover:bg-teal-700">
                     Prepare <ChevronRight className="h-3 w-3 ml-0.5" />
                   </Button>

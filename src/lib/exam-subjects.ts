@@ -33,6 +33,12 @@ const GK: Discipline = {
   isGeneral: true,
 };
 
+const UP_GK: Discipline = {
+  slug: "up-general-knowledge",
+  name: "UP General Knowledge",
+  isGeneral: true,
+};
+
 // Canonical discipline definitions (slug, display name, linked subject).
 const D = {
   anatomy: { slug: "anatomy", name: "Veterinary Anatomy", subjectName: "Veterinary Anatomy", programmeSlug: "mvsc" },
@@ -120,11 +126,23 @@ const PSC_GROUPS: Group[] = [
   },
 ];
 
+// UP Veterinary Pharmacist (UPSSSC): DVP (Uttar Pradesh) subjects + UP GK.
+const UP_PHARMACIST_GROUPS: Group[] = [
+  {
+    slug: "veterinary-pharmacist",
+    name: "Veterinary Pharmacist (UP)",
+    planSlug: "up-pharmacist",
+    programmeSlug: "dvp",
+    extraDisciplines: [UP_GK],
+  },
+];
+
 export const EXAM_STRUCTURE: Record<string, ExamStructure> = {
   "icar-entrance": { groups: ICAR_JRF_GROUPS },
   net: { disciplines: ARS_NET_DISCIPLINES },
   ars: { disciplines: ARS_NET_DISCIPLINES },
   psc: { groups: PSC_GROUPS },
+  "up-pharmacist": { groups: UP_PHARMACIST_GROUPS },
 };
 
 export function getExamGroups(exam: string): Group[] {
