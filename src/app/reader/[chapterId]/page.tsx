@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getAccess } from "@/lib/access";
 import { getSignedUrl } from "@/lib/blob";
+import { signBlobViewerUrl } from "@/lib/blob-token";
 import { programmeNameToSlug } from "@/lib/programme";
 import ReaderPage from "./reader-page";
 
@@ -82,7 +83,7 @@ export default async function ChapterReaderRoute({
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#edf6fd] px-4">
         <div className="va-glass text-center p-8 rounded-[1.5rem] border border-primary/10 shadow-xl max-w-md w-full">
           <h1 className="text-2xl font-bold mb-4 tracking-tight">Content Locked</h1>
           <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
@@ -108,10 +109,20 @@ export default async function ChapterReaderRoute({
     }))
   );
 
+  // Tokenized /api/blob URL for the in-site Office/Google viewer iframe.
+  // Minted here (page already enforces the paywall above) because external
+  // viewers fetch server-side without session cookies. Only blob hosts need
+  // the proxy — anything else yields null and the viewer uses the direct url.
+  function viewerProxyUrl(raw: string | null | undefined): string | null {
+    if (!raw || !raw.includes("blob.vercel-storage.com")) return null;
+    return signBlobViewerUrl(raw);
+  }
+
   const chapterResources = await Promise.all(
     chapter.chapterContents.map(async (c: any) => ({
       ...c,
       url: await getSignedUrl(c.url),
+      viewerUrl: viewerProxyUrl(c.url),
     }))
   );
 
@@ -135,6 +146,7 @@ export default async function ChapterReaderRoute({
         id: m.id,
         title: m.title,
         url: await getSignedUrl(m.url),
+        viewerUrl: viewerProxyUrl(m.url),
         fileType: m.fileType,
         fileName: m.fileName || m.title,
         size: null,

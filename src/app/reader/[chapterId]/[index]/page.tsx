@@ -91,7 +91,7 @@ export default async function LectureRoute({
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fdf6ec] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#edf6fd] px-4">
         <div className="va-glass text-center p-8 rounded-[1.5rem] border border-primary/10 shadow-xl max-w-md w-full">
           <h1 className="text-2xl font-bold mb-4 tracking-tight">Content Locked</h1>
           <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>

@@ -120,7 +120,7 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
   const progress = totalPages > 1 ? Math.round(((page + 1) / totalPages) * 100) : 100;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#fdf6ec] dark:bg-[#1a1a2e]">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#edf6fd] dark:bg-[#1a1a2e]">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-amber-200/50 dark:border-slate-700/50 bg-[#f5e6c8]/80 dark:bg-[#16213e]/80 backdrop-blur-sm">
         <div className="flex items-center gap-3 min-w-0">

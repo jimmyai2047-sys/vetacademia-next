@@ -78,7 +78,7 @@ export default function ReaderPage({
   const isLSA = true; // All programmes (BVSc/MVSc/PhD) + Exams — copy block + watermark on every chapter
 
   return (
-    <div className="min-h-screen bg-[#fdf6ec] dark:bg-[#0f172a] flex">
+    <div className="min-h-screen bg-[#edf6fd] dark:bg-[#0f172a] flex">
       {sidebarUnits && sidebarUnits.length > 0 && (
         <SyllabusSidebar units={sidebarUnits} subjectName={subjectName} />
       )}
