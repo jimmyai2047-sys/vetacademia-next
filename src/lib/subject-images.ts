@@ -128,6 +128,40 @@ const subjectImages: Record<string, string> = {
   // Veterinary Surgery & Radiology
   "Advanced Veterinary Surgery": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
   "Advanced Veterinary Radiology": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AHDP / BVSc variants
+  // ═══════════════════════════════════════════════════════════════════════════
+  "Flashcards": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
+  "Veterinary Clinical Practices: Part-I": "https://images.unsplash.com/photo-1733783506192-653df6185a7d?w=800&q=80",
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DVP (Uttar Pradesh) Subjects
+  // ═══════════════════════════════════════════════════════════════════════════
+  "Anatomy of Livestock and Poultry": "https://images.unsplash.com/photo-1503429888457-07726f9469ba?w=800&q=80",
+  "Basic Concepts of Pharmacy and Toxicology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Basics of Animal Nutrition and Health": "https://images.unsplash.com/photo-1559113386-9a07836a1b72?w=800&q=80",
+  "Basics of Animal Physiology": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
+  "Basics of Clinical Pathology": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80",
+  "Basics of Clinical Veterinary Medicine": "https://images.unsplash.com/photo-1733783506192-653df6185a7d?w=800&q=80",
+  "Clinical Pharmacy": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Community Veterinary Pharmacy": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Elementary Microbiology": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80",
+  "Elementary Parasitology": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80",
+  "Exposure to Polyclinics": "https://images.unsplash.com/photo-1733783506192-653df6185a7d?w=800&q=80",
+  "Farm Management Practices": "https://images.unsplash.com/photo-1569858241634-5aee6e47091a?w=800&q=80",
+  "Fundamentals of Computer and its Application": "https://images.unsplash.com/photo-1641926489586-dd5dae881415?w=800&q=80",
+  "Fundamentals of Pharmacology": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Introduction to Andrology and Artificial Insemination": "https://images.unsplash.com/photo-1506110061263-1de62e5aad6a?w=800&q=80",
+  "Introduction to Animal Husbandry Extension": "https://images.unsplash.com/photo-1657536011755-b6cbe9c4c522?w=800&q=80",
+  "Introduction to Clinical Biochemistry": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
+  "Introduction to Gynaecology and Obstetrics": "https://images.unsplash.com/photo-1506110061263-1de62e5aad6a?w=800&q=80",
+  "Introduction to Livestock Breeds and Economic Traits": "https://images.unsplash.com/photo-1569858241634-5aee6e47091a?w=800&q=80",
+  "Introduction to Livestock Management": "https://images.unsplash.com/photo-1657536011755-b6cbe9c4c522?w=800&q=80",
+  "Practical Laboratory Diagnosis": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80",
+  "Preliminary Surgical Procedures and Care": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80",
+  "Veterinary Hospital Pharmacy": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+  "Veterinary Pharmacist Jurisprudence": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&q=80",
 };
 
 const programmeImages: Record<string, string> = {

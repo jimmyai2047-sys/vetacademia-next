@@ -137,7 +137,7 @@ export default async function CoursePage({
         {/* Hero banner */}
         <div className="relative h-32 w-full overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl mb-4">
           <Image
-            src={getCourseImage(course.courseCode) ?? getSubjectImage(course.subject.name)}
+            src={getCourseImage(course.courseCode, course.title) ?? getSubjectImage(course.subject.name)}
             alt={course.title}
             fill
             priority

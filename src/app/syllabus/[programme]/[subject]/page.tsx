@@ -241,10 +241,10 @@ export default async function SubjectPage({
                 <Link key={course.id} href={`/syllabus/${progSlug}/${subject.id}/${course.id}`}>
                   <Card className="va-card-hover overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer">
                     <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]">
-                      {getCourseImage(course.courseCode) ? (
+                      {getCourseImage(course.courseCode, course.title) ? (
                         <>
                           <Image
-                            src={getCourseImage(course.courseCode)!}
+                            src={getCourseImage(course.courseCode, course.title)!}
                             alt={course.title}
                             fill
                             sizes="(max-width: 768px) 100vw, 400px"
