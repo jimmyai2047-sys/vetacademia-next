@@ -44,6 +44,7 @@ export default async function CoursePage({
             },
           },
           chapterContents: { orderBy: { createdAt: "desc" } },
+          sections: { orderBy: { order: "asc" }, select: { id: true, title: true, order: true } },
         },
       }),
     ["syllabus-course", courseId],
@@ -99,6 +100,17 @@ export default async function CoursePage({
   );
 
   const courseHtml = await prepareChapterHtml(course.content);
+
+  // Sections (lectures) split into Theory / Practical plates.
+  // Convention: a section whose title starts with "Practical" belongs to the
+  // Practical plate; everything else belongs to the Theory plate. This keeps
+  // Unit I theory (Chapters 1-9) separate from the practical manual without
+  // a schema migration. readerIndex is the position in the full ordered list,
+  // which is what /reader/[chapterId]/[index] expects.
+  const allSections = (course.sections ?? []).map((s, idx) => ({ ...s, readerIndex: idx }));
+  const isPracticalTitle = (t: string) => /^practical[\s:\-–]*/i.test((t || "").trim());
+  const theorySections = allSections.filter((s) => !isPracticalTitle(s.title));
+  const practicalSections = allSections.filter((s) => isPracticalTitle(s.title));
 
   // Parse creditHours "X+Y" into Theory + Practical
   let theoryCredits = 0;
@@ -197,6 +209,40 @@ export default async function CoursePage({
               ) : (
                 <p className="text-sm text-muted-foreground italic">Theory content coming soon...</p>
               )}
+              {/* Theory plate — Unit I lectures (Chapters 1-9) */}
+              {theorySections.length > 0 && (
+                <div className="mt-4 border-t pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      Theory Lectures ({theorySections.length})
+                    </p>
+                    <Link
+                      href={`/reader/${course.id}`}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Open all in Reader
+                    </Link>
+                  </div>
+                  <div className="space-y-2">
+                    {theorySections.map((s) => (
+                      <Link
+                        key={s.id}
+                        href={`/reader/${course.id}/${s.readerIndex}`}
+                        className="flex items-center gap-3 rounded-xl border border-border bg-background p-3 hover:bg-accent hover:border-primary/40 transition-all group"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
+                          {s.readerIndex + 1}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                            {s.title}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
               <ChapterResources contents={signedContents} />
             </CardContent>
           </Card>
@@ -215,14 +261,42 @@ export default async function CoursePage({
               </div>
             </CardHeader>
             <CardContent>
-              {course.content && !course.content.startsWith("Credit Hours:") ? (
-                isHtmlContent(course.content) ? (
-                  <ProtectedHtml html={courseHtml} />
-                ) : (
-                  <p className="text-sm text-muted-foreground">{course.content}</p>
-                )
+              {/* Practical plate — only sections titled "Practical ..." appear here,
+                  so the Theory overview is never duplicated in this card. */}
+              {practicalSections.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      Practical Exercises ({practicalSections.length})
+                    </p>
+                    <Link
+                      href={`/reader/${course.id}`}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Open all in Reader
+                    </Link>
+                  </div>
+                  {practicalSections.map((s) => (
+                    <Link
+                      key={s.id}
+                      href={`/reader/${course.id}/${s.readerIndex}`}
+                      className="flex items-center gap-3 rounded-xl border border-border bg-background p-3 hover:bg-accent hover:border-emerald-600/40 transition-all group"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
+                        {s.readerIndex + 1}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                          {s.title}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">Practical content coming soon...</p>
+                <p className="text-sm text-muted-foreground italic">
+                  Practical manual (16 periods) follows as a companion section — coming soon. Theory Unit I lectures are listed in the Theory plate.
+                </p>
               )}
               <ChapterResources contents={signedContents} />
             </CardContent>
