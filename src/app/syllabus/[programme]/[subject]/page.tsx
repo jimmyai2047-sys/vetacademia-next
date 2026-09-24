@@ -21,6 +21,7 @@ import { ArrowLeft, ArrowRight, BookOpen, FileText, Clock, Hash, Timer, FlaskCon
 import ChapterResources from "@/components/chapter-resources";
 import { getSignedUrl } from "@/lib/blob";
 import { getSubjectImage } from "@/lib/subject-images";
+import { getCourseImage } from "@/lib/course-images";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
@@ -240,9 +241,22 @@ export default async function SubjectPage({
                 <Link key={course.id} href={`/syllabus/${progSlug}/${subject.id}/${course.id}`}>
                   <Card className="va-card-hover overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer">
                     <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Hash className="h-10 w-10 text-white/30" />
-                      </div>
+                      {getCourseImage(course.courseCode) ? (
+                        <>
+                          <Image
+                            src={getCourseImage(course.courseCode)!}
+                            alt={course.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 400px"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/70 via-black/10 to-transparent" />
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Hash className="h-10 w-10 text-white/30" />
+                        </div>
+                      )}
                       <div className="absolute top-3 left-3">
                         <Badge className="bg-white/20 text-white border-white/30 text-xs font-mono">
                           {course.courseCode}

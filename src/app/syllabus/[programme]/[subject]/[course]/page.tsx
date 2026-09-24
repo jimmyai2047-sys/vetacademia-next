@@ -17,6 +17,7 @@ import { isHtmlContent } from "@/lib/content";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getSignedUrl } from "@/lib/blob";
 import { getSubjectImage } from "@/lib/subject-images";
+import { getCourseImage } from "@/lib/course-images";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
@@ -136,8 +137,8 @@ export default async function CoursePage({
         {/* Hero banner */}
         <div className="relative h-32 w-full overflow-hidden rounded-[1.5rem] border border-primary/10 shadow-xl mb-4">
           <Image
-            src={getSubjectImage(course.subject.name)}
-            alt={course.subject.name}
+            src={getCourseImage(course.courseCode) ?? getSubjectImage(course.subject.name)}
+            alt={course.title}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 768px"
