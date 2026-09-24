@@ -10,6 +10,12 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
@@ -251,16 +257,21 @@ export default async function CoursePage({
         {practicalCredits > 0 && (
           <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[#d4a843] to-primary opacity-70" />
-            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <FlaskConical className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Practical</CardTitle>
-                <p className="text-sm text-muted-foreground">{practicalCredits} Credits</p>
-              </div>
-            </CardHeader>
-            <CardContent>
+            {/* Practical plate — collapsed by default, opens when clicked */}
+            <Accordion>
+              <AccordionItem value="practical" className="border-0">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <FlaskConical className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-lg font-semibold leading-none">Practical</p>
+                      <p className="text-sm text-muted-foreground mt-1">{practicalCredits} Credits{practicalSections.length > 0 ? ` · ${practicalSections.length} Exercises` : ""}</p>
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6">
               {/* Practical plate — only sections titled "Practical ..." appear here,
                   so the Theory overview is never duplicated in this card. */}
               {practicalSections.length > 0 ? (
@@ -299,7 +310,9 @@ export default async function CoursePage({
                 </p>
               )}
               <ChapterResources contents={signedContents} />
-            </CardContent>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </Card>
         )}
       </div>
