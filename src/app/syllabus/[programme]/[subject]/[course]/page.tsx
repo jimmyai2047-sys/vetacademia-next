@@ -10,13 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ArrowLeft, BookOpen, FlaskConical, Clock } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
@@ -107,24 +101,17 @@ export default async function CoursePage({
 
   const courseHtml = await prepareChapterHtml(course.content);
 
-  // Sections (lectures) split into Theory / Practical plates.
-  // Convention: a section whose title starts with "Practical" belongs to the
-  // Practical plate; everything else belongs to the Theory plate. This keeps
-  // Unit I theory (Chapters 1-9) separate from the practical manual without
-  // a schema migration. readerIndex is the position in the full ordered list,
-  // which is what /reader/[chapterId]/[index] expects.
-  const allSections = (course.sections ?? []).map((s, idx) => ({ ...s, readerIndex: idx }));
-  const isPracticalTitle = (t: string) => /^practical[\s:\-–]*/i.test((t || "").trim());
-  const theorySections = allSections.filter((s) => !isPracticalTitle(s.title));
-  const practicalSections = allSections.filter((s) => isPracticalTitle(s.title));
+  // Sections (lectures) for the Theory plate (Phase I — theory only).
+  // Practical plates are intentionally NOT rendered until Phase II, when
+  // practical content is supplied per programme/subject/course on command.
+  // readerIndex is the position in the full ordered list, which is what
+  // /reader/[chapterId]/[index] expects.
+  const theorySections = (course.sections ?? []).map((s, idx) => ({ ...s, readerIndex: idx }));
 
-  // Parse creditHours "X+Y" into Theory + Practical
+  // Parse creditHours "X+Y" — only the Theory (X) part is shown in Phase I.
   let theoryCredits = 0;
-  let practicalCredits = 0;
   if (course.creditHours && course.creditHours.includes("+")) {
-    const parts = course.creditHours.split("+");
-    theoryCredits = parseInt(parts[0], 10) || 0;
-    practicalCredits = parseInt(parts[1], 10) || 0;
+    theoryCredits = parseInt(course.creditHours.split("+")[0], 10) || 0;
   } else if (course.creditHours) {
     theoryCredits = parseInt(course.creditHours, 10) || 0;
   }
@@ -187,10 +174,10 @@ export default async function CoursePage({
         </div>
       </div>
 
-      {/* Theory / Practical split */}
+      {/* Theory only (Phase I) — no Practical plate until Phase II on command */}
       {hasAccess ? (
-      <div className="grid md:grid-cols-2 gap-6">
-        {theoryCredits === 0 && practicalCredits === 0 && (
+      <div className="grid gap-6">
+        {theoryCredits === 0 && (
           <p>Content coming soon</p>
         )}
         {theoryCredits > 0 && (
@@ -251,68 +238,6 @@ export default async function CoursePage({
               )}
               <ChapterResources contents={signedContents} />
             </CardContent>
-          </Card>
-        )}
-
-        {practicalCredits > 0 && (
-          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-[#d4a843] to-primary opacity-70" />
-            {/* Practical plate — collapsed by default, opens when clicked */}
-            <Accordion>
-              <AccordionItem value="practical" className="border-0">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <FlaskConical className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-lg font-semibold leading-none">Practical</p>
-                      <p className="text-sm text-muted-foreground mt-1">{practicalCredits} Credits{practicalSections.length > 0 ? ` · ${practicalSections.length} Exercises` : ""}</p>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6">
-              {/* Practical plate — only sections titled "Practical ..." appear here,
-                  so the Theory overview is never duplicated in this card. */}
-              {practicalSections.length > 0 ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                      Practical Exercises ({practicalSections.length})
-                    </p>
-                    <Link
-                      href={`/reader/${course.id}`}
-                      className="text-sm font-medium text-primary hover:underline"
-                    >
-                      Open all in Reader
-                    </Link>
-                  </div>
-                  {practicalSections.map((s) => (
-                    <Link
-                      key={s.id}
-                      href={`/reader/${course.id}/${s.readerIndex}`}
-                      className="flex items-center gap-3 rounded-xl border border-border bg-background p-3 hover:bg-accent hover:border-emerald-600/40 transition-all group"
-                    >
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
-                        {s.readerIndex + 1}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold group-hover:text-primary">
-                          {s.title}
-                        </span>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  Practical manual (16 periods) follows as a companion section — coming soon. Theory Unit I lectures are listed in the Theory plate.
-                </p>
-              )}
-              <ChapterResources contents={signedContents} />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </Card>
         )}
       </div>
