@@ -52,7 +52,7 @@ const faqs = [
   },
   {
     q: "What is the refund / cancellation policy?",
-    a: "Subscriptions are non-refundable once activated, but if you face a technical issue, contact support within 7 days at Contact Us — we will review and resolve quickly. See Terms for details.",
+    a: "Enrollments are non-refundable once activated, but technical issues reported within 7 days are fixed on priority or refunded if the fault is ours. Failed payments auto-refund in 5-7 days. Full details on the Refund Policy page.",
   },
   {
     q: "How do I get my certificate after completing a course?",

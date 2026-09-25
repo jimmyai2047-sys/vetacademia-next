@@ -92,6 +92,17 @@ export async function POST(req: Request) {
           data: { status: "FAILED" },
         });
       }
+    } else if (eventName === "payment.dispute.created" || eventName === "payment.chargeback.created") {
+      // A buyer raised a bank dispute/chargeback. Alert loudly in logs so the
+      // team contacts the customer within 24h (early resolution wins disputes).
+      const dispute = event?.payload?.dispute?.entity || {};
+      console.error("[webhook] DISPUTE opened", {
+        orderId,
+        paymentId: payment.paymentId,
+        amount: payment.amount,
+        reason: dispute.reason_description ?? dispute.reason ?? "unknown",
+        disputeId: dispute.id ?? "unknown",
+      });
     }
   } catch (err) {
     console.error("[webhook] processing error:", err);

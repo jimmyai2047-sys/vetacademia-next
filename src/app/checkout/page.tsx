@@ -120,8 +120,11 @@ export default async function CheckoutPage({
 
           <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
           <p className="text-xs text-muted-foreground text-center">
-            By enrolling you agree to the terms of use. Enrollment is per account
-            and grants full access to the plan&apos;s content.
+            By enrolling you agree to the{" "}
+            <Link href="/terms" className="underline hover:text-primary">terms of use</Link>
+            {" "}and{" "}
+            <Link href="/refund-policy" className="underline hover:text-primary">refund policy</Link>.
+            Enrollment is per account and grants full access to the plan&apos;s content.
           </p>
         </CardContent>
       </Card>
