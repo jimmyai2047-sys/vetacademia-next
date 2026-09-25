@@ -182,7 +182,7 @@ export default async function VetsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="relative">
+          <div className="relative overflow-clip">
             <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-emerald-100 blur-3xl opacity-60 pointer-events-none" />
             <VetArticleFilters posts={vetPosts} />
           </div>

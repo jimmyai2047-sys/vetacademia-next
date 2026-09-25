@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
+import { validateCsrf } from "@/lib/csrf";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
@@ -126,11 +127,14 @@ async function extractPdf(buffer: Buffer): Promise<string> {
   return parts.join("\n") || "<p></p>";
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getAdminSession();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
 
     const form = await req.formData();

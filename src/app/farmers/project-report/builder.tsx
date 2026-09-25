@@ -657,6 +657,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
           </div>
         ))}
       </div>
+      <div className="va-divider-dots my-4"><span /></div>
 
       {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
 
@@ -832,7 +833,7 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
           <CardHeader><CardTitle className="text-base">Project location — {animalLabel}</CardTitle></CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-4">
             <div className="md:col-span-2 border rounded-lg p-3 grid md:grid-cols-2 gap-4 bg-muted/20">
-              <p className="md:col-span-2 text-xs font-semibold text-muted-foreground">Project Address (Reverse Order — PDF Me Sahi Order Me Aayega)</p>
+              <p className="md:col-span-2 text-xs font-semibold text-muted-foreground">Project Address (reverse order — printed correctly in PDF)</p>
               <CascadeInput id="loc-country" label="Country" value={form.cover.project.country ?? "India"} options={COUNTRIES} placeholder="Select Country" onPick={(v) => { set("cover.project.country", v); resetDown("cover.project", "country"); }} />
               <CascadeInput id="loc-state" label="State / UT" value={form.cover.project.state ?? ""} options={form.cover.project.country === "India" || !form.cover.project.country ? INDIAN_STATES : []} placeholder="Select State" onPick={(v) => { set("cover.project.state", v); resetDown("cover.project", "state"); }} />
               <CascadeInput id="loc-district" label="District" value={form.cover.project.district ?? ""} options={districtsOf(form.cover.project.state ?? "")} placeholder="Select District" onPick={(v) => { set("cover.project.district", v); resetDown("cover.project", "district"); }} />

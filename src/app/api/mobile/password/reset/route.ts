@@ -17,9 +17,9 @@ export async function POST(req: Request) {
     const token = typeof body.token === "string" ? body.token : "";
     const password = typeof body.password === "string" ? body.password : "";
 
-    if (!token || password.length < 6) {
+    if (!token || password.length < 8) {
       return NextResponse.json(
-        { error: "Token and password (min 6 chars) required" },
+        { error: "Token and password (min 8 chars) required" },
         { status: 400 }
       );
     }

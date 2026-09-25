@@ -11,14 +11,15 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Pill, Calculator, AlertTriangle, BookOpen, Ban, Stethoscope, GraduationCap, Microscope, Search, ArrowRight, ChevronDown, Syringe, Milk, Beef } from "lucide-react";
+import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 type Role = "vet" | "expert" | "student";
 type Section = "browse" | "dose" | "interactions" | "choices" | "banned";
 
 const ROLES: Array<{ value: Role; label: string; hindi: string; icon: any; blurb: string; section: Section }> = [
-  { value: "vet", label: "Field Vet", hindi: "फील्ड पशुचिकित्सक", icon: Stethoscope, blurb: "Dose calculator, withdrawal periods and contraindications — for on-field use.", section: "browse" },
-  { value: "expert", label: "Expert", hindi: "विशेषज्ञ", icon: Microscope, blurb: "Interactions, drugs-of-choice and banned-list review with alternatives.", section: "interactions" },
-  { value: "student", label: "Student", hindi: "विद्यार्थी", icon: GraduationCap, blurb: "Category-wise drug study, notes and exam-ready revision.", section: "browse" },
+  { value: "vet", label: "Field Vet", hindi: "Field Veterinarian", icon: Stethoscope, blurb: "Dose calculator, withdrawal periods and contraindications — for on-field use.", section: "browse" },
+  { value: "expert", label: "Expert", hindi: "Specialist", icon: Microscope, blurb: "Interactions, drugs-of-choice and banned-list review with alternatives.", section: "interactions" },
+  { value: "student", label: "Student", hindi: "Veterinary Student", icon: GraduationCap, blurb: "Category-wise drug study, notes and exam-ready revision.", section: "browse" },
 ];
 
 const SECTIONS: Array<{ value: Section; label: string; icon: any }> = [
@@ -124,17 +125,23 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
 
   return (
     <div className="container mx-auto px-4 py-8 pb-16">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge className="rounded-full bg-emerald-600 gap-1.5"><Pill className="h-3 w-3" /> Vet Drug Guide</Badge>
-        <Badge variant="outline" className="rounded-full">{meta.count}+ drugs • teaching reference</Badge>
-      </div>
-      <h1 className="mt-3 text-3xl font-extrabold tracking-tight">
-        Drug Ready-Reckoner <span className="va-gradient-text">for Vets & Students</span>
-      </h1>
-      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-        Dose rate, route, milk/meat withdrawal, contraindications, precautions and notes.
-        Teaching reference ranges — verify the label before clinical use.
-      </p>
+      <DecorativePageHeader
+        badge="Vet Drug Guide • Teaching Reference"
+        title="Drug Ready-Reckoner"
+        titleHighlight="for Vets & Students"
+        description="Dose rate, route, milk/meat withdrawal, contraindications, precautions and notes. Teaching reference ranges — verify the label before clinical use."
+        variant="emerald"
+        actions={
+          <>
+            <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+              <Pill className="h-3.5 w-3.5" /> {meta.count}+ drugs
+            </Badge>
+            <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
+              Teaching reference
+            </Badge>
+          </>
+        }
+      />
 
       {/* 1. Who are you? */}
       <h2 className="mt-6 text-sm font-bold uppercase tracking-wider text-muted-foreground">1. I am a…</h2>
@@ -406,7 +413,7 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
         <a href="/samples/sample-drug-guide.pdf" target="_blank" rel="noopener" className="font-semibold text-emerald-700 underline">Download print-ready sample PDF</a>
-        {" "}• Full drug PDF guide (print-ready) coming soon. {roleInfo.label} ke liye aur kya chahiye? <Link href="/contact" className="underline">Contact</Link>
+        {" "}• Full drug PDF guide (print-ready) coming soon. What else do you need as {roleInfo.label}? <Link href="/contact" className="underline">Contact</Link>
       </p>
       <div className="mt-4 flex justify-center">
         <Link href="/vets">

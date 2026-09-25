@@ -45,10 +45,16 @@ export function sanitizeChapterContent(html: string): string {
       "*": ["class", "style"],
     },
     transformTags: {
-      img: (tagName, attribs) => ({
-        tagName,
-        attribs: { ...attribs, loading: "lazy", decoding: "async" },
-      }),
+      img: (tagName, attribs) => {
+        // Block executable SVG data-URIs (script-capable); base64 photos stay allowed.
+        if (attribs.src && /^data:image\/svg/i.test(attribs.src.trim())) {
+          delete attribs.src;
+        }
+        return {
+          tagName,
+          attribs: { ...attribs, loading: "lazy", decoding: "async" },
+        };
+      },
     },
     allowedStyles: {
       "*": {
@@ -70,7 +76,7 @@ export function sanitizeChapterContent(html: string): string {
         ],
       },
     },
-    allowedSchemes: ["http", "https", "data"],
+    allowedSchemes: ["http", "https"],
     allowedSchemesByTag: { img: ["http", "https", "data"] },
   });
 }

@@ -81,7 +81,7 @@ export default function MapPicker({ latitude, longitude, query, onChange }: MapP
 
   async function findVillage() {
     if (!query.trim()) {
-      setNote("Pehle gaon / tehsil / district bharo, phir Find dabao.");
+      setNote("Enter village / tehsil / district first, then press Find.");
       return;
     }
     setLocating(true);
@@ -91,7 +91,7 @@ export default function MapPicker({ latitude, longitude, query, onChange }: MapP
       const res = await fetch(url, { headers: { Accept: "application/json" } });
       const arr = (await res.json()) as Array<{ lat: string; lon: string; display_name: string }>;
       if (arr.length === 0 || !mapRef.current || !markerRef.current) {
-        setNote("Jagah nahi mili — map par tap karke point karo.");
+        setNote("Location not found — tap on the map to mark the point.");
         return;
       }
       const lat = parseFloat(arr[0].lat);
@@ -99,9 +99,9 @@ export default function MapPicker({ latitude, longitude, query, onChange }: MapP
       mapRef.current.setView([lat, lon], 15);
       markerRef.current.setLatLng([lat, lon]);
       cbRef.current(lat.toFixed(6), lon.toFixed(6));
-      setNote("Mil gayi: " + arr[0].display_name.split(",").slice(0, 3).join(","));
+      setNote("Found: " + arr[0].display_name.split(",").slice(0, 3).join(","));
     } catch {
-      setNote("Map search fail — tap karke point karo.");
+      setNote("Map search failed — tap on the map to mark the point.");
     } finally {
       setLocating(false);
     }
@@ -114,7 +114,7 @@ export default function MapPicker({ latitude, longitude, query, onChange }: MapP
           {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
           Find Village On Map
         </Button>
-        <span className="text-xs text-muted-foreground">Phir pin ko drag karo ya map par tap karo — neeche lat/long apne aap badal jayegi.</span>
+        <span className="text-xs text-muted-foreground">Then drag the pin or tap on the map — latitude/longitude below will update automatically.</span>
       </div>
       <div ref={divRef} className="h-72 w-full rounded-xl border z-0" />
       {note && <p className="text-xs text-muted-foreground">{note}</p>}

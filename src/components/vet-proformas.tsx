@@ -22,7 +22,12 @@ function typeLabel(t: string) {
 }
 
 export default async function VetProformas() {
-  const items = await prisma.vetProforma.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "desc" }] });
+  const items = await prisma.vetProforma.findMany({
+    where: { published: true },
+    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+    take: 50,
+    select: { id: true, title: true, type: true, description: true, wordUrl: true, pdfUrl: true },
+  }).catch(() => []);
   if (items.length === 0) {
     return (
       <Card className="rounded-[1.5rem] border-dashed">
