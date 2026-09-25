@@ -49,6 +49,7 @@ export async function GET(
           name: true,
           type: true,
           price: true,
+          validityDays: true,
           description: true,
           programmeSlug: true,
           examSlug: true,
@@ -107,6 +108,8 @@ export async function GET(
         : report
           ? `Project Report — ${report.title} (${report.animalType})`
           : payment.planSlug || "—",
+      planSlug: payment.planSlug,
+      expiresAt: payment.expiresAt,
       plan: payment.plan,
       report,
       createdAt: payment.createdAt,

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 import { PLANS, getExamKeysForPlan } from "@/lib/plans";
-import { programmeNameToSlug } from "@/lib/programme";
+import { activeAccessFilter } from "@/lib/plan-validity";
 
 export async function GET(req: Request) {
   try {
@@ -16,10 +16,10 @@ export async function GET(req: Request) {
     });
     const isAdmin = user?.role === "ADMIN";
 
-    const ALL_PLAN_SLUGS = new Set(PLANS.map((p: any) => p.slug));
+    const ALL_PLAN_SLUGS = new Set(PLANS.map((p) => p.slug));
     const ALL_PROGRAMME_SLUGS = new Set(
-      PLANS.filter((p: any) => p.type === "COURSE" && p.programmeSlug).map(
-        (p: any) => p.programmeSlug!
+      PLANS.filter((p) => p.type === "COURSE" && p.programmeSlug).map(
+        (p) => p.programmeSlug!
       )
     );
     const ALL_EXAM_KEYS = new Set(["psc", "icar-entrance", "net", "ars"]);
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
     }
 
     const payments = await prisma.payment.findMany({
-      where: { userId, status: "PAID", planSlug: { not: null } },
+      where: { userId, status: "PAID", planSlug: { not: null }, ...activeAccessFilter() },
       include: { plan: true },
     });
 

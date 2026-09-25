@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { validateCsrf } from "@/lib/csrf";
+import { activeAccessFilter } from "@/lib/plan-validity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,9 +34,12 @@ export async function POST(req: NextRequest) {
     if (!plan) {
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
     }
+    if (plan.isListed === false) {
+      return NextResponse.json({ error: "This plan is no longer on sale" }, { status: 410 });
+    }
 
     const existing = await prisma.payment.findFirst({
-      where: { userId: session.user.id, planSlug: slug, status: "PAID" },
+      where: { userId: session.user.id, planSlug: slug, status: "PAID", ...activeAccessFilter() },
     });
     if (existing) {
       return NextResponse.json({ id: existing.id, alreadyPaid: true });

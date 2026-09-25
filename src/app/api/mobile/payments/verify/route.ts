@@ -4,6 +4,7 @@ import Razorpay from "razorpay";
 import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 import { isRazorpayLive } from "@/lib/razorpay-config";
+import { computeExpiresAt } from "@/lib/plan-validity";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const keyId = process.env.RAZORPAY_KEY_ID;
@@ -72,9 +73,21 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
     }
 
+    const plan = payment.planSlug
+      ? await prisma.plan.findUnique({
+          where: { slug: payment.planSlug },
+          select: { validityDays: true },
+        })
+      : null;
+
     await prisma.payment.update({
       where: { id: payment.id },
-      data: { status: "PAID", method: "RAZORPAY", paymentId: razorpay_payment_id },
+      data: {
+        status: "PAID",
+        method: "RAZORPAY",
+        paymentId: razorpay_payment_id,
+        expiresAt: computeExpiresAt(payment.createdAt, plan?.validityDays ?? null),
+      },
     });
 
     return NextResponse.json({ success: true, status: "PAID" });

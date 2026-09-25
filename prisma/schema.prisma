@@ -654,6 +654,8 @@ model Plan {
   type          String // COURSE | EXAM
   description   String?
   price         Int      @default(0) // in INR
+  validityDays  Int? // access duration in days; null = lifetime access
+  isListed      Boolean @default(true) // false = hidden from storefront, existing buyers keep access
   programmeSlug String? // for COURSE plans: ahdp | bvsc | mvsc | phd
   examSlug      String? // for EXAM plans: veterinary-officer | livestock-assistant | icar-jrf-srf | net | ars
   year          String? // for YEAR-scoped COURSE plans (BVSc/AHDP): e.g. "3rd Year"
@@ -681,6 +683,7 @@ model Payment {
   paymentId String?
   planSlug  String?
   metadata  String?
+  expiresAt DateTime? // null = lifetime (incl. all purchases up to 24.09.2026 20:40 IST)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -690,6 +693,7 @@ model Payment {
   @@index([userId])
   @@index([orderId])
   @@index([planSlug])
+  @@index([expiresAt])
 }
 
 // ==================== GENERATED PROJECT REPORTS (farmer report builder) ====================

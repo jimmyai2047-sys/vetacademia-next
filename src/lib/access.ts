@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PLANS, getExamKeysForPlan } from "@/lib/plans";
 import { programmeNameToSlug } from "@/lib/programme";
+import { activeAccessFilter } from "@/lib/plan-validity";
 
 export type AccessInfo = {
   userId: string | null;
@@ -37,33 +38,15 @@ const ALL_YEAR_SCOPES = new Set(
 );
 
 // Returns the plans the current user has PAID for, derived from Payment rows.
+// Only non-expired payments grant access (expiresAt null = lifetime,
+// which includes all purchases up to the 24.09.2026 lifetime cutoff).
 // Used to gate premium content (syllabus, previous-year papers, mock tests).
 // Cached per request so multiple gating checks (page + attempt API + subject
 // lookups) inside a single render/share don't each hit the DB.
-export const getAccess = cache(async (): Promise<AccessInfo> => {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  const role = session?.user?.role;
-  if (!userId) return EMPTY;
-
-  // Admin gets full access to all content — no payment required
-  if (role === "ADMIN") {
-    return {
-      userId,
-      isAuthed: true,
-      isAdmin: true,
-      planSlugs: ALL_PLAN_SLUGS,
-      programmeSlugs: ALL_PROGRAMME_SLUGS,
-      examKeys: ALL_EXAM_KEYS,
-      examPlanOwned: true,
-      ownedYearScopes: ALL_YEAR_SCOPES,
-      ownedSubjectIds: new Set(),
-    };
-  }
-
+async function accessFromPayments(userId: string): Promise<AccessInfo> {
   const { prisma } = await import("@/lib/prisma");
   const payments = await prisma.payment.findMany({
-    where: { userId, status: "PAID", planSlug: { not: null } },
+    where: { userId, status: "PAID", planSlug: { not: null }, ...activeAccessFilter() },
     include: { plan: true },
   });
 
@@ -100,20 +83,64 @@ export const getAccess = cache(async (): Promise<AccessInfo> => {
   }
 
   return info;
+}
+
+function fullAdminAccess(userId: string): AccessInfo {
+  return {
+    userId,
+    isAuthed: true,
+    isAdmin: true,
+    planSlugs: ALL_PLAN_SLUGS,
+    programmeSlugs: ALL_PROGRAMME_SLUGS,
+    examKeys: ALL_EXAM_KEYS,
+    examPlanOwned: true,
+    ownedYearScopes: ALL_YEAR_SCOPES,
+    ownedSubjectIds: new Set(),
+  };
+}
+
+export const getAccess = cache(async (): Promise<AccessInfo> => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  const role = session?.user?.role;
+  if (!userId) return EMPTY;
+
+  // Admin gets full access to all content — no payment required
+  if (role === "ADMIN") return fullAdminAccess(userId);
+
+  return accessFromPayments(userId);
 });
+
+// Token-based (mobile app / Bearer) callers have a verified userId but no
+// NextAuth session. Role is re-read from the DB on every call — never trust
+// the client — and banned users get EMPTY so a ban takes effect immediately
+// even for previously issued mobile tokens.
+export async function getAccessForUser(userId: string): Promise<AccessInfo> {
+  if (!userId) return EMPTY;
+  const { prisma } = await import("@/lib/prisma");
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true, banned: true },
+  });
+  if (!user || user.banned) return EMPTY;
+  if (user.role === "ADMIN") return fullAdminAccess(userId);
+  return accessFromPayments(userId);
+}
 
 // Returns whether the current user may take a given mock/adaptive/PYQ test.
 // Mirrors the gating used by the /mock-tests/[id] and /papers/[id] pages so
 // the attempt-save API cannot be bypassed by calling it directly.
-export async function canAccessMockTest(test: {
-  subjectId?: string | null;
-  exam?: string | null;
-  isDemo?: boolean;
-}): Promise<boolean> {
+async function mockTestAllowed(
+  access: AccessInfo,
+  test: {
+    subjectId?: string | null;
+    exam?: string | null;
+    isDemo?: boolean;
+  }
+): Promise<boolean> {
   // Demo tests are free for everyone (no purchase required).
   if (test.isDemo) return true;
 
-  const access = await getAccess();
   if (!access.isAuthed) return false;
 
   if (test.exam) {
@@ -143,4 +170,24 @@ export async function canAccessMockTest(test: {
   // users are still blocked from saving attempts by the 401 check in the
   // attempt API, but the test player itself is publicly viewable.
   return true;
+}
+
+export async function canAccessMockTest(test: {
+  subjectId?: string | null;
+  exam?: string | null;
+  isDemo?: boolean;
+}): Promise<boolean> {
+  return mockTestAllowed(await getAccess(), test);
+}
+
+// Same gating for mobile (Bearer-token) callers that have no NextAuth session.
+export async function canAccessMockTestForUser(
+  userId: string,
+  test: {
+    subjectId?: string | null;
+    exam?: string | null;
+    isDemo?: boolean;
+  }
+): Promise<boolean> {
+  return mockTestAllowed(await getAccessForUser(userId), test);
 }

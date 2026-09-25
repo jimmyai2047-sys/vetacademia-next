@@ -41,7 +41,8 @@ type Payment = {
   orderId: string;
   paymentId: string;
   product: string;
-  plan: { slug: string; name: string; type: string; price: number; description: string | null } | null;
+  expiresAt: string | null;
+  plan: { slug: string; name: string; type: string; price: number; validityDays: number | null; description: string | null } | null;
   report: { id: string; title: string; animalType: string; amount: number; status: string } | null;
   createdAt: string;
   updatedAt: string;
@@ -93,6 +94,7 @@ export default function AdminPaymentDetailPage() {
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const [history, setHistory] = useState<HistoryRow[]>([]);
   const [totals, setTotals] = useState({ transactions: 0, paid: 0, lifetimePaid: 0 });
+  const [expired, setExpired] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -107,6 +109,10 @@ export default function AdminPaymentDetailPage() {
         return;
       }
       setPayment(data.payment);
+      setExpired(
+        !!data.payment?.expiresAt &&
+          new Date(data.payment.expiresAt).getTime() <= Date.now()
+      );
       setBuyer(data.buyer);
       setHistory(data.history || []);
       setTotals(data.totals || { transactions: 0, paid: 0, lifetimePaid: 0 });
@@ -193,6 +199,16 @@ export default function AdminPaymentDetailPage() {
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Field label="Product / Service" value={payment.product} />
               <Field label="Date / Time" value={fmtDate(payment.createdAt)} />
+              <Field
+                label="Validity"
+                value={
+                  !payment.expiresAt
+                    ? "Lifetime"
+                    : !expired
+                      ? `Active till ${fmtDate(payment.expiresAt)}`
+                      : `Expired ${fmtDate(payment.expiresAt)}`
+                }
+              />
               <Field label="Payment Method" value={payment.method} />
               <Field label="Currency" value={payment.currency} />
               <Field label="Razorpay Payment ID" value={payment.paymentId} mono />

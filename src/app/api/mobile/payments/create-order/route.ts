@@ -33,6 +33,8 @@ export async function POST(req: Request) {
     const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
     if (!plan)
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+    if (plan.isListed === false)
+      return NextResponse.json({ error: "This plan is no longer on sale" }, { status: 410 });
 
     let payment = await prisma.payment.findFirst({
       where: { userId, planSlug, status: "PENDING" },

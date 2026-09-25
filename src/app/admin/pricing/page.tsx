@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import PlanEditor from "@/components/admin/plan-editor";
 import PlanCreateForm from "@/components/admin/plan-create-form";
+import PlanFamilyGenerator from "@/components/admin/plan-family-generator";
 import { Crown, Shield, CreditCard } from "lucide-react";
 
 
@@ -68,6 +69,8 @@ export default async function AdminPricingPage() {
 
         <PlanCreateForm />
 
+        <PlanFamilyGenerator />
+
         <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -84,6 +87,8 @@ export default async function AdminPricingPage() {
                   type: p.type,
                   description: p.description,
                   price: p.price,
+                  validityDays: p.validityDays,
+                  isListed: p.isListed,
                 }}
               />
             ))}
@@ -106,6 +111,7 @@ export default async function AdminPricingPage() {
                 type: p.type,
                 description: p.description,
                 price: p.price,
+                validityDays: p.validityDays,
               }}
             />
           ))}
@@ -128,6 +134,7 @@ export default async function AdminPricingPage() {
                 type: p.type,
                 description: p.description,
                 price: p.price,
+                validityDays: p.validityDays,
               }}
             />
           ))}
@@ -150,6 +157,7 @@ export default async function AdminPricingPage() {
                 type: p.type,
                 description: p.description,
                 price: p.price,
+                validityDays: p.validityDays,
               }}
             />
           ))}

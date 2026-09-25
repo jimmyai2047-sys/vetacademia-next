@@ -8,6 +8,7 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import { logAudit } from "@/lib/audit";
 import { isRazorpayLive } from "@/lib/razorpay-config";
+import { computeExpiresAt } from "@/lib/plan-validity";
 
 const keyId = process.env.RAZORPAY_KEY_ID;
 const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -96,12 +97,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const plan = payment.planSlug
+      ? await prisma.plan.findUnique({
+          where: { slug: payment.planSlug },
+          select: { validityDays: true },
+        })
+      : null;
+
     const updated = await prisma.payment.update({
       where: { id: payment.id },
       data: {
         status: "PAID",
         method: "RAZORPAY",
         paymentId: razorpay_payment_id,
+        expiresAt: computeExpiresAt(payment.createdAt, plan?.validityDays ?? null),
       },
     });
 

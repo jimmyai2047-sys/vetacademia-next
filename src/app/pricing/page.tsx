@@ -17,8 +17,9 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, GraduationCap, Award, ArrowRight, Layers, Sparkles, Wallet, ShieldCheck } from "lucide-react";
+import { Check, GraduationCap, Award, ArrowRight, Layers, Wallet, ShieldCheck } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { formatValidity } from "@/lib/plan-validity";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,7 @@ export default async function PricingPage({
     type: string;
     description: string | null;
     price: number;
+    validityDays: number | null;
     programmeSlug: string | null;
     examSlug: string | null;
     year: string | null;
@@ -72,12 +74,14 @@ export default async function PricingPage({
     [plans, access, subjects] = await Promise.all([
       prisma.plan.findMany({
         orderBy: { sortOrder: "asc" },
+        where: { isListed: true },
         select: {
           slug: true,
           name: true,
           type: true,
           description: true,
           price: true,
+          validityDays: true,
           programmeSlug: true,
           examSlug: true,
           year: true,
@@ -183,6 +187,9 @@ export default async function PricingPage({
             <span className="text-3xl font-extrabold tracking-tight">Rs.{plan.price.toLocaleString("en-IN")}</span>
             <span className="text-sm font-normal text-muted-foreground">/ one-time</span>
           </div>
+          <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border-emerald-200 w-fit">
+            {formatValidity(plan.validityDays)}
+          </Badge>
           {enrolled ? (
             <Link
               href={contentLinkForPlan(plan)}

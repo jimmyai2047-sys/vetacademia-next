@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getExamKeysForPlan } from "@/lib/plans";
 import { roleGroup } from "@/lib/roles";
+import { activeAccessFilter } from "@/lib/plan-validity";
 export {
   PROGRAMME_REFS,
   EXAM_REFS,
@@ -28,7 +29,7 @@ export async function getEligibleCommunityLinks(
   });
 
   const payments = await prisma.payment.findMany({
-    where: { userId, status: "PAID" },
+    where: { userId, status: "PAID", ...activeAccessFilter() },
     include: { plan: true },
   });
 

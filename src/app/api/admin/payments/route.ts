@@ -83,7 +83,7 @@ export async function GET(req: Request) {
             year: true,
           },
         },
-        plan: { select: { slug: true, name: true, type: true, price: true } },
+        plan: { select: { slug: true, name: true, type: true, price: true, validityDays: true } },
       },
     }),
     prisma.payment.count({ where }),
@@ -132,6 +132,7 @@ export async function GET(req: Request) {
       paymentId: p.paymentId || "—",
       product,
       planSlug: p.planSlug || null,
+      expiresAt: p.expiresAt,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       buyer: {

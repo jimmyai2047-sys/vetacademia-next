@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Check } from "lucide-react";
+import { VALIDITY_OPTIONS } from "@/lib/plan-validity";
 
 type PlanRow = {
   slug: string;
@@ -11,11 +12,16 @@ type PlanRow = {
   type: string;
   description: string | null;
   price: number;
+  validityDays: number | null;
+  isListed?: boolean;
 };
 
 export default function PlanEditor({ plan }: { plan: PlanRow }) {
   const [price, setPrice] = useState(plan.price);
   const [description, setDescription] = useState(plan.description ?? "");
+  const [validityDays, setValidityDays] = useState(
+    plan.validityDays != null ? String(plan.validityDays) : ""
+  );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +34,11 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
       const res = await fetch(`/api/admin/plans/${plan.slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ price, description }),
+        body: JSON.stringify({
+          price,
+          description,
+          validityDays: validityDays === "" ? null : Number(validityDays),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -52,6 +62,11 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
           <div className="text-xs text-muted-foreground uppercase tracking-wide">
             {plan.type}
           </div>
+          {plan.isListed === false && (
+            <span className="text-[10px] font-bold tracking-widest uppercase rounded-full bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5">
+              Unlisted
+            </span>
+          )}
         </div>
         <div className="text-xs text-muted-foreground">{plan.slug}</div>
       </div>
@@ -64,6 +79,21 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
           value={price}
           onChange={(e) => setPrice(Number(e.target.value) || 0)}
         />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium">Validity</label>
+        <select
+          value={validityDays}
+          onChange={(e) => setValidityDays(e.target.value)}
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          {VALIDITY_OPTIONS.map((o) => (
+            <option key={o.label} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="space-y-1.5">

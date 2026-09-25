@@ -1,11 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
+import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
+import { parseValidityDays } from "@/lib/plan-validity";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const session = await getAdminSession();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!validateCsrf(req)) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   }
 
   const body = await req.json().catch(() => ({}));
@@ -19,6 +24,7 @@ export async function POST(req: Request) {
     examSlug,
     year,
     subjectId,
+    validityDays,
   } = body ?? {};
 
   if (typeof slug !== "string" || !/^[a-z0-9-]+$/.test(slug)) {
@@ -42,6 +48,12 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
+  // validityDays: blank = lifetime; otherwise must be 6, 12 or 24 months.
+  const parsed = parseValidityDays(validityDays);
+  if (parsed.error) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+  const validity = parsed.value;
 
   const existing = await prisma.plan.findUnique({ where: { slug } });
   if (existing) {
@@ -65,6 +77,7 @@ export async function POST(req: Request) {
         examSlug: examSlug || null,
         year: year || null,
         subjectId: subjectId || null,
+        validityDays: validity,
         sortOrder: (maxOrder._max.sortOrder ?? 0) + 1,
       },
     });

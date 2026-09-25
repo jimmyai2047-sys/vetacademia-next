@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { VALIDITY_OPTIONS } from "@/lib/plan-validity";
 
 export default function PlanCreateForm() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function PlanCreateForm() {
     description: "",
     programmeSlug: "",
     examSlug: "",
+    validityDays: "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,11 @@ export default function PlanCreateForm() {
     const res = await fetch("/api/admin/plans", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, price: Number(form.price) }),
+      body: JSON.stringify({
+        ...form,
+        price: Number(form.price),
+        validityDays: form.validityDays === "" ? null : Number(form.validityDays),
+      }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -47,6 +53,7 @@ export default function PlanCreateForm() {
       description: "",
       programmeSlug: "",
       examSlug: "",
+      validityDays: "",
     });
     router.refresh();
   }
@@ -109,6 +116,20 @@ export default function PlanCreateForm() {
             onChange={(e) => set("examSlug", e.target.value)}
             placeholder="veterinary-officer | icar-jrf-srf | net | ars"
           />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium">Validity</label>
+          <select
+            value={form.validityDays}
+            onChange={(e) => set("validityDays", e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            {VALIDITY_OPTIONS.map((o) => (
+              <option key={o.label} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="space-y-1.5">

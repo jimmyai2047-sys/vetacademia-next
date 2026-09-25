@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { computeExpiresAt } from "@/lib/plan-validity";
 
 export const runtime = "nodejs";
 
@@ -68,12 +69,19 @@ export async function POST(req: Request) {
           });
           return NextResponse.json({ received: true });
         }
+        const plan = payment.planSlug
+          ? await prisma.plan.findUnique({
+              where: { slug: payment.planSlug },
+              select: { validityDays: true },
+            })
+          : null;
         await prisma.payment.update({
           where: { id: payment.id },
           data: {
             status: "PAID",
             method: "RAZORPAY",
             paymentId: entity.id ?? payment.paymentId,
+            expiresAt: computeExpiresAt(payment.createdAt, plan?.validityDays ?? null),
           },
         });
       }

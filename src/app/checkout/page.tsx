@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import CheckoutButton from "@/components/checkout-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { activeAccessFilter, formatValidity } from "@/lib/plan-validity";
 import { ArrowLeft, ShieldCheck, Wallet } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -38,10 +39,10 @@ export default async function CheckoutPage({
 
   // --- Plan checkout ---
   const plan = await prisma.plan.findUnique({ where: { slug } });
-  if (!plan) notFound();
+  if (!plan || plan.isListed === false) notFound();
 
   const existing = await prisma.payment.findFirst({
-    where: { userId: session.user.id, planSlug: slug, status: "PAID" },
+    where: { userId: session.user.id, planSlug: slug, status: "PAID", ...activeAccessFilter() },
   });
 
   return (
@@ -96,6 +97,8 @@ export default async function CheckoutPage({
               <div className="font-semibold">{plan.name}</div>
               <div className="text-sm text-muted-foreground">
                 {plan.type === "COURSE" ? "Programme" : "Exam Preparation"}
+                {" • "}
+                {formatValidity(plan.validityDays)}
               </div>
             </div>
             <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15">

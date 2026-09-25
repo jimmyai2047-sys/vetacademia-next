@@ -37,6 +37,8 @@ type PaymentRow = {
   orderId: string;
   paymentId: string;
   product: string;
+  expiresAt: string | null;
+  expired: boolean;
   createdAt: string;
   buyer: Buyer;
 };
@@ -99,7 +101,12 @@ export default function AdminPaymentsPage() {
           setError((data as { error?: string } | null)?.error || "Failed to load payments");
           return;
         }
-        setRows(data.payments || []);
+        setRows(
+          ((data.payments || []) as PaymentRow[]).map((r) => ({
+            ...r,
+            expired: !!r.expiresAt && new Date(r.expiresAt).getTime() <= Date.now(),
+          }))
+        );
         setTotal(data.total || 0);
         setPage(data.page || 1);
         setTotalPages(data.totalPages || 1);
@@ -136,6 +143,7 @@ export default function AdminPaymentsPage() {
       "College",
       "Product",
       "Amount",
+      "ValidityExpiresAt",
       "Currency",
       "Method",
       "Status",
@@ -153,6 +161,7 @@ export default function AdminPaymentsPage() {
         r.buyer.college,
         r.product,
         r.amount,
+        r.expiresAt ? fmtDate(r.expiresAt) : "Lifetime",
         r.currency,
         r.method,
         r.status,
@@ -268,6 +277,7 @@ export default function AdminPaymentsPage() {
                   <th className="px-4 py-3">Buyer</th>
                   <th className="px-4 py-3">Product / Service</th>
                   <th className="px-4 py-3">Amount</th>
+                  <th className="px-4 py-3">Validity</th>
                   <th className="px-4 py-3">Method</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Detail</th>
@@ -288,6 +298,15 @@ export default function AdminPaymentsPage() {
                     </td>
                     <td className="px-4 py-3 max-w-[220px]">{r.product}</td>
                     <td className="px-4 py-3 font-bold whitespace-nowrap">Rs.{r.amount.toLocaleString("en-IN")}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-xs">
+                      {!r.expiresAt ? (
+                        <span className="font-semibold text-emerald-700">Lifetime</span>
+                      ) : !r.expired ? (
+                        <span> till {fmtDate(r.expiresAt)}</span>
+                      ) : (
+                        <span className="font-semibold text-red-600">Expired {fmtDate(r.expiresAt)}</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">{r.method}</td>
                     <td className="px-4 py-3"><Badge className={`rounded-full px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase ${statusStyle(r.status)}`}>{r.status}</Badge></td>
                     <td className="px-4 py-3">
