@@ -200,15 +200,11 @@ export class Ctx {
       hasHindi = false;
     }
     this.fonts = { reg: reg, bold: bold, hi: hi, hiBold: hiBold, hasHindi: hasHindi };
-    const logoPaths = [
-      path.join(process.cwd(), "public", "logo-vetacademia.png"),
-    ];
+    // Static path (not a loop variable) so Vercel traces just this file.
+    const logoPath = path.join(process.cwd(), "public", "logo-vetacademia.png");
     try {
-      for (let li = 0; li < logoPaths.length; li++) {
-        if (fs.existsSync(logoPaths[li])) {
-          this.logo = await this.doc.embedPng(fs.readFileSync(logoPaths[li]));
-          break;
-        }
+      if (fs.existsSync(logoPath)) {
+        this.logo = await this.doc.embedPng(fs.readFileSync(logoPath));
       }
     } catch {
       this.logo = null;
@@ -646,7 +642,7 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = path.join(process.cwd(), "public", "sketches", "processing.png");
+    const sketchPath = path.join(process.cwd(), "assets", "sketches", "processing.png");
     if (fs.existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;
