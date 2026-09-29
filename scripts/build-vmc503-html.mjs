@@ -253,9 +253,14 @@ function rowsEqual(a, b) {
 
 function needsContinuation(rows) {
   if (!rows.length) return false;
+  // A table continues if ANY cell of its last row is mid-sentence — not just
+  // the last cell (a row's cells split across the page break in any column,
+  // e.g. Table 7.5's BSE row whose 2nd-to-last cell ended with "…infected cattle").
   const lastRow = rows[rows.length - 1];
-  const last = normChars(lastRow[lastRow.length - 1] || "");
-  return last.length > 0 && !TERMINAL_PUNCT_RE.test(last);
+  return lastRow.some((cell) => {
+    const c = normChars(String(cell ?? ""));
+    return c.length > 0 && !TERMINAL_PUNCT_RE.test(c);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -331,17 +336,29 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
           ? 999
           : 14; // sentence continues across the page break
 
-    // cross-page table continuation (only when we've moved to a later page)
+    // cross-page table continuation: while a pending table is active and we've
+    // moved past its page, try to match its continuation at EVERY line (the
+    // continuation may sit below a page-break sentence, a repeated caption, or
+    // right at the top). A cand only counts when the column count matches AND
+    // it either repeats the header row (page-top repeat) or starts with an
+    // empty first cell (split-row fragment) — this prevents merging an
+    // unrelated same-width table.
     if (pendingTable && ln.pageNo > pendingTable.lastPage) {
       const cands = tablesByPage.get(ln.pageNo) || [];
+      const starts = [i];
+      if (TABLE_CAPTION_RE.test(text)) starts.push(i + 1); // repeated caption line
       let done = false;
-      outer: for (const skip of [0, 1]) {
-        if (skip > 0 && !TABLE_CAPTION_RE.test(lines[i]?.text || "")) break;
+      outer: for (const start of starts) {
         for (let c = 0; c < cands.length; c++) {
-          if (tableCols(cands[c]) !== tableCols(pendingTable.rows)) continue;
-          const end = tryMatchTable(lines, i + skip, cands[c]);
-          if (end >= i + skip) {
-            const newRows = cands[c].map((r) => [...r]);
+          const cand = cands[c];
+          if (tableCols(cand) !== tableCols(pendingTable.rows)) continue;
+          if (usedCands.has(`${ln.pageNo}:${c}`)) continue;
+          const headerRepeat = rowsEqual(cand[0], pendingTable.rows[0]);
+          const fragStart = !normChars(String(cand[0]?.[0] ?? ""));
+          if (!headerRepeat && !fragStart) continue;
+          const end = tryMatchTable(lines, start, cand);
+          if (end >= start) {
+            const newRows = cand.map((r) => [...r]);
             // drop the repeated header row printed at the top of the next page
             if (newRows.length && rowsEqual(newRows[0], pendingTable.rows[0])) newRows.shift();
             if (newRows.length && normChars(newRows[0][0] || "") === "") {
@@ -358,6 +375,10 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
             pendingTable.lastPage = ln.pageNo;
             usedCands.add(`${ln.pageNo}:${c}`);
             report.tablesContinued++;
+            if (process.env.TABLE_DEBUG)
+              console.log(
+                `[dbg] ch${chapterN} MERGE "${pendingTable.caption}" <- p${ln.pageNo}#${c} (${newRows.length} rows, headerRepeat=${headerRepeat})`,
+              );
             i = end;
             prev = lines[i];
             pendingTable = null;
@@ -366,23 +387,46 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
           }
         }
       }
-      if (pendingTable) {
-        warnings.push(
-          `ch${chapterN}: table "${pendingTable.caption}" (p${pendingTable.startPage}, ` +
-            `${tableCols(pendingTable.rows)}cols, last row=${JSON.stringify(pendingTable.rows[pendingTable.rows.length - 1])}) ` +
-            `not continued on p${ln.pageNo}; page cands=${JSON.stringify(
-              (tablesByPage.get(ln.pageNo) || []).map((t) => [
-                tableCols(t),
-                t.length,
-                t[0] ? String(t[0][0]).slice(0, 25) : "",
-              ]),
-            )}`,
-        );
-        pendingTable = null;
-      }
       if (done) continue;
+      // Give up when the continuation clearly didn't materialize: we've walked
+      // too far from the table or hit a structural element. Warn only when the
+      // table genuinely looked cut off (needsCont) to keep the report useful.
+      const dist = i - pendingTable.endIdx;
+      const structural =
+        TABLE_CAPTION_RE.test(text) ||
+        LECTURE_H_RE.test(text) ||
+        BOX_BANNER_RE.test(text) ||
+        INDIA_FOCUS_RE.test(text) ||
+        ANSWER_KEY_RE.test(text) ||
+        (SUB_HEADING_RE.test(text) && ln.h >= 12.6) ||
+        (SECTION_HEADING_RE.test(text) && ln.h >= 14) ||
+        (chapterN === 18 && /^Index$/.test(text));
+      if (dist > 60 || structural) {
+        if (process.env.TABLE_DEBUG)
+          console.log(
+            `[dbg] ch${chapterN} GIVEUP "${pendingTable.caption}" at p${ln.pageNo} dist=${dist} structural=${structural} needsCont=${pendingTable.needsCont}`,
+          );
+        if (pendingTable.needsCont) {
+          warnings.push(
+            `ch${chapterN}: table "${pendingTable.caption}" (p${pendingTable.startPage}, ` +
+              `${tableCols(pendingTable.rows)}cols, last row=${JSON.stringify(pendingTable.rows[pendingTable.rows.length - 1])}) ` +
+              `not continued on p${ln.pageNo}; page cands=${JSON.stringify(
+                (tablesByPage.get(ln.pageNo) || []).map((t) => [
+                  tableCols(t),
+                  t.length,
+                  t[0] ? String(t[0][0]).slice(0, 25) : "",
+                ]),
+              )}`,
+          );
+        }
+        pendingTable = null;
+        // fall through: this line still needs normal processing below
+      }
+      // else: keep pending and let the line be processed normally below
     } else if (pendingTable) {
-      // still on the table's own page -> the heuristic was a false positive
+      // still on the table's own page -> the table finished where it started
+      if (process.env.TABLE_DEBUG)
+        console.log(`[dbg] ch${chapterN} SAMEPAGE-CLEAR "${pendingTable.caption}"`);
       pendingTable = null;
     }
 
@@ -403,14 +447,25 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
       if (matched) {
         closeCur();
         usedCands.add(`${ln.pageNo}:${matched.c}`);
+        const needsCont = needsContinuation(matched.rows);
         const t = {
           caption: text,
           rows: matched.rows.map((r) => [...r]),
           startPage: ln.pageNo,
           lastPage: ln.pageNo,
+          endIdx: matched.end,
+          needsCont,
         };
         blocks.push(t);
-        if (needsContinuation(t.rows)) pendingTable = t;
+        // Always pend across a page boundary: a table may continue even when
+        // every last-row cell ends with terminal punctuation (Table 2.1 ends
+        // its last row with "." but has more rows on the next page). The
+        // give-up bounds (structural marker / 60 lines) keep this cheap.
+        pendingTable = t;
+        if (process.env.TABLE_DEBUG)
+          console.log(
+            `[dbg] ch${chapterN} CAP "${text}" p${ln.pageNo} cols=${tableCols(matched.rows)} rows=${matched.rows.length} needsCont=${needsCont} lastRow=${JSON.stringify(matched.rows[matched.rows.length - 1]).slice(0, 110)}`,
+          );
         i = matched.end;
         prev = lines[i];
         continue;
@@ -625,7 +680,7 @@ async function main() {
     chapters: [],
     totals: {
       chars: 0, h2: 0, h3: 0, h4: 0, ul: 0, ol: 0,
-      tables: 0, figures: 0, warnings: 0,
+      tables: 0, figures: 0, warnings: 0, proseLeftovers: 0,
     },
   };
 
@@ -707,6 +762,7 @@ async function main() {
       tablesContinued: 0,
       tableFragments: 0,
       unconsumedTables: 0,
+      proseLeftovers: [],
       figures: [],
       warnings: [],
     };
@@ -722,11 +778,33 @@ async function main() {
     });
 
     let unconsumed = 0;
+    // Detect the exact user-facing defect: a getTable cand that was never
+    // matched but whose text still ended up in the output as flowing prose
+    // (table body rendered below the table as a paragraph).
+    const plain = normChars(html.replace(/<[^>]+>/g, " "));
     for (const [pgNo, cands] of tablesByPage) {
       if (pgNo < start || pgNo > end) continue;
-      cands.forEach((_, ci) => {
-        if (!usedCands.has(`${pgNo}:${ci}`)) unconsumed++;
+      cands.forEach((cand, ci) => {
+        if (usedCands.has(`${pgNo}:${ci}`)) return;
+        unconsumed++;
+        const probe = normChars(cand.flat().join(" ")).slice(0, 120);
+        if (probe.length >= 30 && plain.includes(probe)) {
+          chReport.proseLeftovers.push({
+            page: pgNo,
+            cand: ci,
+            cols: tableCols(cand),
+            rows: cand.length,
+            text: String(cand.flat().join(" ")).replace(/\s+/g, " ").slice(0, 120),
+          });
+        }
       });
+    }
+    if (chReport.proseLeftovers.length) {
+      const w = `ch${n}: ${chReport.proseLeftovers.length} unconsumed table(s) leaked into prose: ${chReport.proseLeftovers
+        .map((p) => `p${p.page}#${p.cand} (${p.cols}c) ${p.text.slice(0, 50)}…`)
+        .join(" | ")}`;
+      chReport.warnings.push(w);
+      console.log("   WARN:", w);
     }
     chReport.unconsumedTables = unconsumed;
     chReport.chars = html.length;
@@ -756,6 +834,7 @@ async function main() {
     report.totals.tables += chReport.tablesMatched;
     report.totals.figures += chReport.figures.length;
     report.totals.warnings += chReport.warnings.length;
+    report.totals.proseLeftovers += chReport.proseLeftovers.length;
   }
 
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));

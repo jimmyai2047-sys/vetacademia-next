@@ -1,9 +1,11 @@
 import { issueSignedToken, presignUrl } from "@vercel/blob";
 
-// Cache signed URLs. They are valid for 60 min, so we cache for 50 min to stay
-// safely within the validity window and avoid re-signing on every render/request
-// (the syllabus pages otherwise trigger one signing call per Blob image).
-const CACHE_TTL_MS = 50 * 60 * 1000;
+// Cache signed URLs. The Blob service allows up to 7 days; we sign for 24 h so
+// that pages held open across sessions (and lazily-loaded images far below the
+// fold) still load instead of 403-ing after the old 60-minute window. Cached
+// until 10 min before expiry to avoid re-signing on every render/request (the
+// syllabus pages otherwise trigger one signing call per Blob image).
+const CACHE_TTL_MS = 23 * 60 * 60 * 1000;
 declare global {
   var __VA_BLOB_URL_CACHE: Map<string, { url: string; expires: number }> | undefined;
   var __VA_BLOB_INFLIGHT: Map<string, Promise<string>> | undefined;
@@ -45,7 +47,7 @@ export async function getSignedUrl(blobUrl: string | null | undefined): Promise<
   const signing = (async () => {
     try {
       const pathname = new URL(blobUrl).pathname.replace(/^\//, "");
-      const validUntil = Date.now() + 60 * 60 * 1000;
+      const validUntil = Date.now() + 24 * 60 * 60 * 1000;
       const signedToken = await issueSignedToken({
         token: token as string,
         pathname,

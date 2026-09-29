@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-29T02:46:02.341Z",
+  "generatedAt": "2026-09-29T08:37:05.774Z",
   "lofEntries": 46,
   "chapters": [
     {
@@ -24,6 +24,7 @@
       "tablesContinued": 2,
       "tableFragments": 1,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 26,
@@ -47,7 +48,7 @@
         45
       ],
       "html": "chapter-02.html",
-      "chars": 27265,
+      "chars": 27450,
       "headings": {
         "h1": 1,
         "h2": 4,
@@ -59,9 +60,10 @@
         "ol": 4
       },
       "tablesMatched": 5,
-      "tablesContinued": 1,
+      "tablesContinued": 3,
       "tableFragments": 1,
-      "unconsumedTables": 5,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 37,
@@ -87,7 +89,7 @@
         60
       ],
       "html": "chapter-03.html",
-      "chars": 40520,
+      "chars": 40625,
       "headings": {
         "h1": 1,
         "h2": 5,
@@ -99,9 +101,10 @@
         "ol": 4
       },
       "tablesMatched": 7,
-      "tablesContinued": 2,
+      "tablesContinued": 3,
       "tableFragments": 2,
-      "unconsumedTables": 3,
+      "unconsumedTables": 2,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 47,
@@ -154,6 +157,7 @@
       "tablesContinued": 4,
       "tableFragments": 3,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 64,
@@ -170,7 +174,8 @@
       ],
       "warnings": [
         "ch4: table \"Table 4.3: ICTV ranks and suffixes, with rabies virus as an example\" (p63, 3cols, last row=[\"Species\",\"Binomial: genus + epithet\",\"Lyssavirus rabies\"]) not continued on p64; page cands=[]",
-        "ch4: table \"Table 4.5: The seven Baltimore classes\" (p66, 5cols, last row=[\"VII\",\"dsDNA with\\nRNA\\nintermediate\\n(dsDNA-RT)\",\"±DNA (cccDNA) →\\nmRNA and pregenomic\\nRNA → reverse\\ntranscription → DNA\",\"Partially dsDNA; replication\\nvia RNA pregenome\",\"Hepadnaviridae\\n(hepatitis B virus, duck\\nhepatitis B virus); plant\\ncaulimoviruses\"]) not continued on p67; page cands=[[3,9,\"Family (Baltimore\\nclass)\"]]"
+        "ch4: table \"Table 4.5: The seven Baltimore classes\" (p66, 5cols, last row=[\"VII\",\"dsDNA with\\nRNA\\nintermediate\\n(dsDNA-RT)\",\"±DNA (cccDNA) →\\nmRNA and pregenomic\\nRNA → reverse\\ntranscription → DNA\",\"Partially dsDNA; replication\\nvia RNA pregenome\",\"Hepadnaviridae\\n(hepatitis B virus, duck\\nhepatitis B virus); plant\\ncaulimoviruses\"]) not continued on p67; page cands=[[3,9,\"Family (Baltimore\\nclass)\"]]",
+        "ch4: table \"Table 4.10: Glossary of important terms\" (p71, 2cols, last row=[\"Isolate\",\"Virus obtained from a single source.\"]) not continued on p72; page cands=[]"
       ]
     },
     {
@@ -195,6 +200,7 @@
       "tablesContinued": 3,
       "tableFragments": 2,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 77,
@@ -241,6 +247,7 @@
       "tablesContinued": 1,
       "tableFragments": 0,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 91,
@@ -266,7 +273,7 @@
         115
       ],
       "html": "chapter-07.html",
-      "chars": 36024,
+      "chars": 36356,
       "headings": {
         "h1": 1,
         "h2": 4,
@@ -278,9 +285,10 @@
         "ol": 4
       },
       "tablesMatched": 6,
-      "tablesContinued": 1,
-      "tableFragments": 0,
-      "unconsumedTables": 4,
+      "tablesContinued": 2,
+      "tableFragments": 1,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 105,
@@ -325,6 +333,7 @@
       "tablesContinued": 1,
       "tableFragments": 1,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 118,
@@ -369,6 +378,7 @@
       "tablesContinued": 0,
       "tableFragments": 0,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 134,
@@ -389,7 +399,9 @@
           "alt": "Figure 9.3: Retrovirus replication cycle and reverse transcription"
         }
       ],
-      "warnings": []
+      "warnings": [
+        "ch9: table \"Table 9.2: Glossary of important terms\" (p141, 2cols, last row=[\"Reverse genetics\",\"Generation of infectious virus from cloned nucleic acid to engineer viruses\\nand vaccines.\"]) not continued on p142; page cands=[]"
+      ]
     },
     {
       "chapter": 10,
@@ -413,6 +425,7 @@
       "tablesContinued": 0,
       "tableFragments": 0,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 148,
@@ -453,6 +466,7 @@
       "tablesContinued": 0,
       "tableFragments": 0,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 159,
@@ -468,7 +482,8 @@
         }
       ],
       "warnings": [
-        "ch11: table \"Table 11.3: Pattern-recognition receptors that sense viruses\" (p161, 4cols, last row=[\"NLRP3\\ninflammasome\",\"Cytoplasm\",\"Viral ion channels, damage\\nsignals\",\"IL-1β, IL-18, pyroptosis\"]) not continued on p162; page cands=[]"
+        "ch11: table \"Table 11.3: Pattern-recognition receptors that sense viruses\" (p161, 4cols, last row=[\"NLRP3\\ninflammasome\",\"Cytoplasm\",\"Viral ion channels, damage\\nsignals\",\"IL-1β, IL-18, pyroptosis\"]) not continued on p162; page cands=[]",
+        "ch11: table \"Table 11.5: Glossary of important terms\" (p164, 2cols, last row=[\"Immunotolerance\",\"Failure to respond immunologically to an antigen present during foetal life.\"]) not continued on p165; page cands=[]"
       ]
     },
     {
@@ -478,7 +493,7 @@
         179
       ],
       "html": "chapter-12.html",
-      "chars": 30146,
+      "chars": 30301,
       "headings": {
         "h1": 1,
         "h2": 5,
@@ -490,9 +505,10 @@
         "ol": 4
       },
       "tablesMatched": 6,
-      "tablesContinued": 1,
+      "tablesContinued": 2,
       "tableFragments": 0,
-      "unconsumedTables": 4,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 169,
@@ -524,7 +540,7 @@
         189
       ],
       "html": "chapter-13.html",
-      "chars": 24875,
+      "chars": 25125,
       "headings": {
         "h1": 1,
         "h2": 4,
@@ -536,9 +552,10 @@
         "ol": 4
       },
       "tablesMatched": 5,
-      "tablesContinued": 1,
+      "tablesContinued": 3,
       "tableFragments": 0,
-      "unconsumedTables": 5,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 181,
@@ -562,7 +579,7 @@
         202
       ],
       "html": "chapter-14.html",
-      "chars": 32611,
+      "chars": 32689,
       "headings": {
         "h1": 1,
         "h2": 5,
@@ -574,9 +591,10 @@
         "ol": 5
       },
       "tablesMatched": 8,
-      "tablesContinued": 2,
+      "tablesContinued": 3,
       "tableFragments": 1,
-      "unconsumedTables": 4,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 192,
@@ -598,6 +616,7 @@
         }
       ],
       "warnings": [
+        "ch14: table \"Table 14.3: Oncogenic DNA viruses of importance\" (p192, 4cols, last row=[\"Poxviridae\",\"Shope fibroma virus, Yaba\\nmonkey tumour virus\",\"Benign, self-limiting tumours\",\"Viral growth-factor\\nhomologues (EGF-like)\"]) not continued on p193; page cands=[[4,2,\"Class\"]]",
         "ch14: table \"Table 14.5: Examples of viral oncogenes and their cellular functions\" (p194, 3cols, last row=[\"fos, jun\",\"Murine osteosarcoma virus; avian sarcoma\\nvirus 17\",\"AP-1 transcription factor components\"]) not continued on p195; page cands=[[4,10,\"Disease\"]]"
       ]
     },
@@ -623,6 +642,7 @@
       "tablesContinued": 3,
       "tableFragments": 1,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 206,
@@ -671,6 +691,7 @@
       "tablesContinued": 2,
       "tableFragments": 0,
       "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 221,
@@ -702,7 +723,7 @@
         242
       ],
       "html": "chapter-17.html",
-      "chars": 32808,
+      "chars": 32836,
       "headings": {
         "h1": 1,
         "h2": 5,
@@ -714,9 +735,10 @@
         "ol": 5
       },
       "tablesMatched": 10,
-      "tablesContinued": 1,
+      "tablesContinued": 2,
       "tableFragments": 1,
-      "unconsumedTables": 4,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 234,
@@ -743,7 +765,7 @@
         253
       ],
       "html": "chapter-18.html",
-      "chars": 28018,
+      "chars": 28156,
       "headings": {
         "h1": 1,
         "h2": 5,
@@ -755,9 +777,10 @@
         "ol": 5
       },
       "tablesMatched": 7,
-      "tablesContinued": 2,
-      "tableFragments": 0,
-      "unconsumedTables": 5,
+      "tablesContinued": 4,
+      "tableFragments": 1,
+      "unconsumedTables": 3,
+      "proseLeftovers": [],
       "figures": [
         {
           "page": 245,
@@ -773,12 +796,13 @@
         }
       ],
       "warnings": [
-        "ch18: table \"Table 18.5: Immunological and biological approaches to antiviral therapy\" (p248, 2cols, last row=[\"Plant-derived compounds\",\"Many plant extracts (e.g. neem, tulsi, turmeric/curcumin) show in vitro\\nantiviral activity against veterinary viruses; clinical evidence is limited and\\nrequires rigorous evaluation\"]) not continued on p249; page cands=[[2,6,\"Mechanism\"],[1,2,\"INDIA FOCUS: ANTIVIRAL TH\"],[1,2,\"LINK WITH PRACTICAL CLASS\"]]"
+        "ch18: table \"Table 18.5: Immunological and biological approaches to antiviral therapy\" (p248, 2cols, last row=[\"Plant-derived compounds\",\"Many plant extracts (e.g. neem, tulsi, turmeric/curcumin) show in vitro\\nantiviral activity against veterinary viruses; clinical evidence is limited and\\nrequires rigorous evaluation\"]) not continued on p249; page cands=[[2,6,\"Mechanism\"],[1,2,\"INDIA FOCUS: ANTIVIRAL TH\"],[1,2,\"LINK WITH PRACTICAL CLASS\"]]",
+        "ch18: table \"Table 18.7: Glossary of important terms\" (p250, 2cols, last row=[\"Monoclonal antibody\",\"Antibody from a single B-cell clone, used for passive protection.\"]) not continued on p251; page cands=[]"
       ]
     }
   ],
   "totals": {
-    "chars": 583979,
+    "chars": 585250,
     "h2": 86,
     "h3": 263,
     "h4": 121,
@@ -786,6 +810,7 @@
     "ol": 83,
     "tables": 118,
     "figures": 46,
-    "warnings": 17
+    "warnings": 22,
+    "proseLeftovers": 0
   }
 }
