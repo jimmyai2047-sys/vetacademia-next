@@ -5,6 +5,7 @@ import { getAccess } from "@/lib/access";
 import { getSignedUrl } from "@/lib/blob";
 import { signBlobViewerUrl } from "@/lib/blob-token";
 import { programmeNameToSlug } from "@/lib/programme";
+import { matchChapterMockTests } from "@/lib/chapter-mock-tests";
 import ReaderPage from "./reader-page";
 
 export const metadata = {
@@ -101,6 +102,23 @@ export default async function ChapterReaderRoute({
     ? ""
     : await prepareChapterHtml(chapter.content);
 
+  // One mock test per chapter, shown at the end of that chapter in the reader.
+  const courseMockTests =
+    hasAccess && chapter.courseCode
+      ? await prisma.mockTest.findMany({
+          where: {
+            subjectId: chapter.subjectId,
+            title: { startsWith: chapter.courseCode },
+          },
+          select: { id: true, title: true, duration: true, totalMarks: true },
+          orderBy: { title: "asc" },
+        })
+      : [];
+  const chapterMockTests = matchChapterMockTests(
+    courseMockTests,
+    chapter.sections.map((s) => s.title)
+  );
+
   const preparedSections = await Promise.all(
     chapter.sections.map(async (s) => ({
       id: s.id,
@@ -169,6 +187,7 @@ export default async function ChapterReaderRoute({
       sections={preparedSections}
       resources={resources}
       activeSectionIndex={null}
+      chapterMockTests={chapterMockTests}
       sidebarUnits={sidebarUnits}
     />
   );

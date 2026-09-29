@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, ClipboardList, Clock } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronRight, ClipboardList, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
@@ -20,6 +20,7 @@ import { getSubjectImage } from "@/lib/subject-images";
 import { getCourseImage } from "@/lib/course-images";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
+import { chapterTitleWithoutNumber, matchChapterMockTests } from "@/lib/chapter-mock-tests";
 import EnrollCta from "@/components/enroll-cta";
 
 
@@ -103,10 +104,15 @@ export default async function CoursePage({
               select: { id: true, title: true, duration: true, totalMarks: true },
               orderBy: { title: "asc" },
             }),
-          ["syllabus-mock-tests", course.subject.id],
+          ["syllabus-mock-tests", course.id],
           { revalidate: 120 }
         )()
       : [];
+
+  // Mock test for each chapter (section), so it can be rendered at the end of
+  // that chapter's row instead of only in the grouped card below.
+  const sectionTitles = (course.sections ?? []).map((s) => s.title);
+  const mockBySection = matchChapterMockTests(mockTests, sectionTitles);
 
   const signedContents = await Promise.all(
     course.chapterContents.map(async (c) => ({
@@ -233,22 +239,45 @@ export default async function CoursePage({
                     </Link>
                   </div>
                   <div className="space-y-2">
-                    {theorySections.map((s) => (
-                      <Link
-                        key={s.id}
-                        href={`/reader/${course.id}/${s.readerIndex}`}
-                        className="flex items-center gap-3 rounded-xl border border-border bg-background p-3 hover:bg-accent hover:border-primary/40 transition-all group"
-                      >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
-                          {s.readerIndex + 1}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold group-hover:text-primary">
-                            {s.title}
-                          </span>
-                        </span>
-                      </Link>
-                    ))}
+                    {theorySections.map((s) => {
+                      const mock = mockBySection[s.readerIndex] ?? null;
+                      return (
+                        <div
+                          key={s.id}
+                          className="rounded-xl border border-border bg-background overflow-hidden"
+                        >
+                          <Link
+                            href={`/reader/${course.id}/${s.readerIndex}`}
+                            className="flex items-center gap-3 p-3 hover:bg-accent transition-all group"
+                          >
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
+                              {s.readerIndex + 1}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                                {s.title}
+                              </span>
+                            </span>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0" />
+                          </Link>
+                          {mock && (
+                            <div className="flex items-center justify-between gap-3 border-t border-border/70 bg-muted/30 px-3 py-2">
+                              <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                <ClipboardList className="h-3.5 w-3.5 text-emerald-600" />
+                                Mock Test &middot; {mock.totalMarks ?? 20} MCQs &middot;{" "}
+                                {mock.duration ?? 20} min
+                              </span>
+                              <Link
+                                href={`/mock-tests/${mock.id}`}
+                                className="text-xs font-semibold text-primary hover:underline shrink-0"
+                              >
+                                Start Test &rarr;
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -275,10 +304,22 @@ export default async function CoursePage({
             <CardContent>
               <div className="grid gap-2 sm:grid-cols-2">
                 {mockTests.map((t, idx) => {
-                  const chapterNo = t.title.match(/Ch-(\d+)/)?.[1] ?? String(idx + 1);
-                  const display = t.title
-                    .replace(/^VMC 503\s*Ch-\d+:\s*/i, "")
-                    .replace(/\s*-\s*Mock Test\s*\(\d+\s*MCQs\)\s*$/i, "");
+                  const matchedIdx = mockBySection.findIndex((m) => m?.id === t.id);
+                  const chapterNo =
+                    (t.title.match(/Ch-(\d+)/i)?.[1]?.replace(/^0+/, "") ||
+                      (matchedIdx >= 0 ? String(matchedIdx + 1) : String(idx + 1)));
+                  const display =
+                    matchedIdx >= 0 && sectionTitles[matchedIdx]
+                      ? chapterTitleWithoutNumber(sectionTitles[matchedIdx])
+                      : t.title
+                          .replace(
+                            new RegExp(
+                              `^${(courseCode ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*Ch-\\d+:\\s*`,
+                              "i"
+                            ),
+                            ""
+                          )
+                          .replace(/\s*-\s*Mock Test\s*\(\d+\s*MCQs\)\s*$/i, "");
                   return (
                     <Link
                       key={t.id}
