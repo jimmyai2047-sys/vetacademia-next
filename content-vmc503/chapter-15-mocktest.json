@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 15 end-of-chapter MCQs (Section 15.12), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 15 Epidemiology of Viral Diseases (Lectures 25 and 26). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "Enzootic is the constant presence of a disease in an animal population at the usual level (epizootic = outbreak among animals; panzootic = worldwide) (Section 15.1).",
+      "marks": 1,
+      "options": [
+        "Epizootic",
+        "Enzootic",
+        "Panzootic",
+        "Sporadic"
+      ],
+      "text": "Constant presence of a disease in an animal population at the usual level is called:"
+    },
+    {
+      "correctAnswer": 2,
+      "explanation": "Herd immunity threshold = 1 - 1/R0 = 1 - 1/4 = 0.75 = 75% (Section 15.2).",
+      "marks": 1,
+      "options": [
+        "25%",
+        "50%",
+        "75%",
+        "100%"
+      ],
+      "text": "If R0 = 4, the herd immunity threshold is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "An infection spreads in a population when R0 > 1; if R0 < 1 the infection dies out (Section 15.2).",
+      "marks": 1,
+      "options": [
+        "R0 < 1",
+        "R0 > 1",
+        "R0 = 0",
+        "Prevalence is zero"
+      ],
+      "text": "An infection can spread in a population when:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The case fatality rate is the proportion of clinical cases that die (mortality rate = deaths in the population) (Section 15.2).",
+      "marks": 1,
+      "options": [
+        "Mortality rate",
+        "Case fatality rate",
+        "Attack rate",
+        "Morbidity rate"
+      ],
+      "text": "The proportion of clinical cases that die is the:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Seroprevalence measures the proportion with antibody, indicating past exposure or vaccination rather than new cases (Sections 15.2, 15.7).",
+      "marks": 1,
+      "options": [
+        "New cases",
+        "Past exposure or vaccination",
+        "Deaths",
+        "Vector density"
+      ],
+      "text": "Seroprevalence mainly measures:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Pigs are amplifying hosts in the Japanese encephalitis virus cycle, developing high viraemia that infects feeding Culex mosquitoes (Section 15.4).",
+      "marks": 1,
+      "options": [
+        "Dead-end hosts",
+        "Amplifying hosts",
+        "Vectors",
+        "Not infected"
+      ],
+      "text": "Pigs in the Japanese encephalitis cycle are:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The main vector of Kyasanur Forest disease virus is the tick Haemaphysalis spinigera (Section 15.4).",
+      "marks": 1,
+      "options": [
+        "Culex",
+        "Haemaphysalis spinigera",
+        "Culicoides",
+        "Aedes"
+      ],
+      "text": "The main vector of Kyasanur Forest disease is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Bluetongue virus is transmitted by Culicoides biting midges (Sections 15.4, 16).",
+      "marks": 1,
+      "options": [
+        "Ticks",
+        "Culicoides midges",
+        "Fleas",
+        "Tabanids"
+      ],
+      "text": "Bluetongue virus is transmitted by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Tabanid flies act as mechanical vectors of EIAV - the virus does not replicate in the fly (Section 15.4).",
+      "marks": 1,
+      "options": [
+        "Biological vector",
+        "Mechanical vector",
+        "Reservoir",
+        "Amplifying host"
+      ],
+      "text": "Equine infectious anaemia virus is transmitted by tabanids as a:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Successive peaks one incubation period apart indicate propagated (person-to-person / animal-to-animal) spread (Section 15.5).",
+      "marks": 1,
+      "options": [
+        "Point-source outbreak",
+        "Propagated spread",
+        "Continuing common source",
+        "No outbreak"
+      ],
+      "text": "An epidemic curve with successive peaks one incubation period apart indicates:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Seasonality of arboviral diseases is due to vector abundance and temperature-dependent extrinsic incubation (Sections 15.4, 15.6).",
+      "marks": 1,
+      "options": [
+        "Host age",
+        "Vector abundance and temperature",
+        "Vaccination",
+        "Animal markets"
+      ],
+      "text": "Seasonal occurrence of arboviral diseases is mainly due to:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Lumpy skin disease was first reported in India in 2019 (Odisha), followed by a major epidemic (Section 15.6).",
+      "marks": 1,
+      "options": [
+        "2006",
+        "2019",
+        "2022",
+        "2011"
+      ],
+      "text": "Lumpy skin disease was first reported in India in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "African swine fever was first confirmed in India in 2020 in Assam and Arunachal Pradesh (Section 15.6).",
+      "marks": 1,
+      "options": [
+        "Kerala, 2018",
+        "Assam and Arunachal Pradesh, 2020",
+        "Punjab, 2015",
+        "Maharashtra, 2006"
+      ],
+      "text": "African swine fever was first confirmed in India in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The reservoir of Nipah virus is fruit bats (Pteropus spp.); pigs are amplifying/intermediate hosts (Sections 15.4, 15.6).",
+      "marks": 1,
+      "options": [
+        "Pigs",
+        "Fruit bats (Pteropus)",
+        "Rodents",
+        "Ticks"
+      ],
+      "text": "The reservoir of Nipah virus is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "NADRES (National Animal Disease Referral Expert System) disease forecasting is operated by ICAR-NIVEDI, Bengaluru (Section 15.7).",
+      "marks": 1,
+      "options": [
+        "ICAR-NIFMD",
+        "ICAR-NIVEDI",
+        "ICAR-NIHSAD",
+        "ICAR-IVRI"
+      ],
+      "text": "NADRES disease forecasting is operated by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Sampling of selected herds to monitor infection over time is sentinel surveillance (Section 15.7).",
+      "marks": 1,
+      "options": [
+        "Passive surveillance",
+        "Sentinel surveillance",
+        "Syndromic surveillance",
+        "Participatory surveillance"
+      ],
+      "text": "Sampling of selected herds to monitor infection over time is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "VP1 of FMDV is the gene commonly used for molecular epidemiology and phylogenetic typing (Sections 15.8, Practicals).",
+      "marks": 1,
+      "options": [
+        "VP4",
+        "VP1",
+        "3D",
+        "Lpro"
+      ],
+      "text": "The gene commonly used for FMD molecular epidemiology is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "O/ME-SA/Ind-2001 (and its sub-lineages) has predominated in India and spread to other countries (Section 15.8).",
+      "marks": 1,
+      "options": [
+        "O/PanAsia-2",
+        "O/ME-SA/Ind-2001",
+        "O/EA-3",
+        "O/CATHAY"
+      ],
+      "text": "The predominant FMDV serotype O lineage in India is:"
+    },
+    {
+      "correctAnswer": 2,
+      "explanation": "Rinderpest was declared globally eradicated in 2011 - the first animal disease so far eradicated (Sections 15.9, Summary).",
+      "marks": 1,
+      "options": [
+        "2001",
+        "2006",
+        "2011",
+        "2016"
+      ],
+      "text": "Rinderpest was declared globally eradicated in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "PPR is targeted for global eradication by 2030 under the FAO/OIE global control programme (Section 15.9).",
+      "marks": 1,
+      "options": [
+        "2025",
+        "2030",
+        "2040",
+        "2050"
+      ],
+      "text": "PPR is targeted for global eradication by:"
+    }
+  ],
+  "title": "VMC 503 Ch-15: Epidemiology of Viral Diseases - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

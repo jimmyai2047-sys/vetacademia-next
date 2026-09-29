@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 18 end-of-chapter MCQs (Section 18.11), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 18 Viral Chemotherapy (Lectures 31 and 32). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "Idoxuridine (5-iodo-2'-deoxyuridine), used topically for herpetic keratitis, was the first clinically used antiviral drug (Sections 18.2, 18.5).",
+      "marks": 1,
+      "options": [
+        "Acyclovir",
+        "Idoxuridine",
+        "Amantadine",
+        "Zidovudine"
+      ],
+      "text": "The first clinically used antiviral drug was:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "Gertrude Elion shared the Nobel Prize (with Hitchings and Blackley) for the rational design of acyclovir and other antivirals (Section 18.2).",
+      "marks": 1,
+      "options": [
+        "Gertrude Elion",
+        "Rosalind Franklin",
+        "Barbara McClintock",
+        "Dorothy Hodgkin"
+      ],
+      "text": "The Nobel laureate associated with acyclovir was:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Acyclovir is first phosphorylated by viral thymidine kinase (selective activation in infected cells), then by host kinases to the active triphosphate (Sections 18.4, 18.5).",
+      "marks": 1,
+      "options": [
+        "Host thymidine kinase",
+        "Viral thymidine kinase",
+        "Viral DNA polymerase",
+        "Host RNA polymerase"
+      ],
+      "text": "Acyclovir is first phosphorylated by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Acyclovir lacks a 3'-hydroxyl group, so it terminates DNA chains after incorporation (chain terminator) (Section 18.5).",
+      "marks": 1,
+      "options": [
+        "5'-phosphate",
+        "3'-hydroxyl group",
+        "Base",
+        "Nitrogen"
+      ],
+      "text": "Acyclovir terminates DNA chains because it lacks:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Famciclovir is an oral prodrug of penciclovir (Section 18.5).",
+      "marks": 1,
+      "options": [
+        "Acyclovir",
+        "Penciclovir",
+        "Ganciclovir",
+        "Cidofovir"
+      ],
+      "text": "Famciclovir is a prodrug of:"
+    },
+    {
+      "correctAnswer": 2,
+      "explanation": "Famciclovir is the most widely used systemic antiviral for FHV-1 in cats; acyclovir and valacyclovir are toxic to cats (bone marrow, renal and hepatic toxicity) (Section 18.6).",
+      "marks": 1,
+      "options": [
+        "Acyclovir",
+        "Valacyclovir",
+        "Famciclovir",
+        "Amantadine"
+      ],
+      "text": "The antiviral of choice for systemic treatment of FHV-1 in cats is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Amantadine blocks the M2 ion channel of influenza A, inhibiting uncoating (Sections 18.4, 18.5).",
+      "marks": 1,
+      "options": [
+        "Neuraminidase",
+        "M2 ion channel",
+        "PA endonuclease",
+        "HA fusion"
+      ],
+      "text": "Amantadine inhibits influenza A by blocking:"
+    },
+    {
+      "correctAnswer": 2,
+      "explanation": "Oseltamivir is a neuraminidase inhibitor that blocks release of progeny virions from infected cells (Sections 18.4, 18.5).",
+      "marks": 1,
+      "options": [
+        "Attachment",
+        "Uncoating",
+        "Release of virions",
+        "Transcription"
+      ],
+      "text": "Oseltamivir inhibits:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Baloxavir marboxil inhibits the cap-dependent endonuclease (PA subunit) of influenza virus, blocking mRNA synthesis (Sections 18.4, 18.5).",
+      "marks": 1,
+      "options": [
+        "Neuraminidase",
+        "Cap-dependent endonuclease",
+        "M2",
+        "Reverse transcriptase"
+      ],
+      "text": "Baloxavir marboxil inhibits:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The oseltamivir-resistance mutation in N1 neuraminidase is H275Y (S31N is amantadine resistance in M2) (Sections 18.8, Practicals).",
+      "marks": 1,
+      "options": [
+        "S31N",
+        "H275Y",
+        "I38T",
+        "M184V"
+      ],
+      "text": "The oseltamivir-resistance mutation in N1 neuraminidase is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "GS-441524 (nucleoside analogue, parent of remdesivir) is used to treat feline infectious peritonitis (Sections 18.6, References).",
+      "marks": 1,
+      "options": [
+        "Canine parvovirus",
+        "Feline infectious peritonitis",
+        "EHV-1",
+        "FeLV"
+      ],
+      "text": "GS-441524 is used to treat:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "GC376 is a protease inhibitor (3C-like main protease inhibitor) developed for feline coronavirus/FIP (Sections 18.5, 18.6).",
+      "marks": 1,
+      "options": [
+        "Nucleoside analogue",
+        "Protease inhibitor",
+        "Neuraminidase inhibitor",
+        "Interferon"
+      ],
+      "text": "GC376 is a:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "Ribavirin is a broad-spectrum guanosine analogue that inhibits RdRp and induces lethal mutagenesis (Sections 18.5, 18.9).",
+      "marks": 1,
+      "options": [
+        "Guanosine",
+        "Thymidine",
+        "Cytidine only",
+        "Uridine only"
+      ],
+      "text": "Ribavirin is a broad-spectrum analogue of:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Molnupiravir acts mainly by lethal mutagenesis of RNA viruses (introduces errors during replication) (Section 18.5).",
+      "marks": 1,
+      "options": [
+        "Blocking entry",
+        "Lethal mutagenesis",
+        "Inhibiting neuraminidase",
+        "Inhibiting integrase"
+      ],
+      "text": "Molnupiravir acts mainly by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Zidovudine (AZT) is a nucleoside reverse transcriptase inhibitor used against retroviruses (Section 18.5).",
+      "marks": 1,
+      "options": [
+        "Protease inhibitor",
+        "Nucleoside reverse transcriptase inhibitor",
+        "Integrase inhibitor",
+        "Fusion inhibitor"
+      ],
+      "text": "Zidovudine (AZT) is a:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Recombinant feline interferon-omega is used in dogs for canine parvovirus enteritis (and retrovirus infections) as an extra-label treatment (Section 18.6).",
+      "marks": 1,
+      "options": [
+        "Rabies",
+        "Canine parvovirus enteritis",
+        "Distemper encephalitis only",
+        "Kennel cough"
+      ],
+      "text": "Recombinant feline interferon-omega is used in dogs for:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Valacyclovir is used in horses against EHV-1 (myeloencephalopathy and outbreaks) (Section 18.6).",
+      "marks": 1,
+      "options": [
+        "Equine influenza",
+        "EHV-1",
+        "EIA",
+        "West Nile"
+      ],
+      "text": "Valacyclovir is used in horses against:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Selectivity index = CC50 / IC50 (cytotoxic concentration divided by inhibitory concentration) - a measure of the safety margin of an antiviral (Sections 18.3, 18.9).",
+      "marks": 1,
+      "options": [
+        "IC50 / CC50",
+        "CC50 / IC50",
+        "IC50 x CC50",
+        "CC50 - IC50"
+      ],
+      "text": "The selectivity index of an antiviral is:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "Acyclovir resistance in herpesviruses commonly involves mutations in the viral thymidine kinase gene, preventing initial phosphorylation (Section 18.8).",
+      "marks": 1,
+      "options": [
+        "TK mutations",
+        "M2 mutations",
+        "NA mutations",
+        "Integrase mutations"
+      ],
+      "text": "Acyclovir resistance in herpesviruses commonly involves:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Antiviral use in poultry is discouraged mainly because of residues in food-producing animals and the emergence of resistance (Section 18.6).",
+      "marks": 1,
+      "options": [
+        "High cost only",
+        "Residues and emergence of resistance",
+        "Lack of any effect",
+        "Legal requirement to vaccinate"
+      ],
+      "text": "Antiviral use in poultry is discouraged mainly because of:"
+    }
+  ],
+  "title": "VMC 503 Ch-18: Viral Chemotherapy - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

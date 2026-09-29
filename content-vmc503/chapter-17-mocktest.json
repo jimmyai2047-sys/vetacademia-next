@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 17 end-of-chapter MCQs (Section 17.16), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 17 Viral Vaccines (Lectures 29 and 30). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "Pasteur developed the first attenuated viral vaccine (rabies) using dried spinal cords of infected rabbits - attenuated by passage (Sections 17.2, 17.4).",
+      "marks": 1,
+      "options": [
+        "Smallpox",
+        "Rabies",
+        "Anthrax",
+        "Polio"
+      ],
+      "text": "The first attenuated viral vaccine was developed by Pasteur against:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Plowright's tissue culture rinderpest vaccine (TCRV) enabled the eradication of rinderpest (Sections 17.2, Summary).",
+      "marks": 1,
+      "options": [
+        "Jenner",
+        "Plowright",
+        "Sabin",
+        "Theiler"
+      ],
+      "text": "The vaccine that eradicated rinderpest was developed by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The PPR vaccine strain Sungri/96 is a live attenuated vaccine developed in Vero cells (Sections 17.4, Summary).",
+      "marks": 1,
+      "options": [
+        "Embryonated eggs",
+        "Vero cells",
+        "Rabbits",
+        "Mice"
+      ],
+      "text": "The PPR vaccine strain Sungri/96 was developed in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Lapinised CSF vaccine (C-strain) was attenuated by serial passage in rabbits (Sections 17.4, 17.5).",
+      "marks": 1,
+      "options": [
+        "Pigs",
+        "Rabbits",
+        "Goats",
+        "Eggs"
+      ],
+      "text": "Lapinised CSF vaccine was attenuated by passage in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Binary ethyleneimine (BEI) is the inactivant of choice for FMD vaccine - it preserves antigenicity better than formalin (Sections 17.5, 17.12).",
+      "marks": 1,
+      "options": [
+        "Formalin",
+        "Binary ethyleneimine",
+        "Phenol",
+        "Ethanol"
+      ],
+      "text": "The inactivant of choice for FMD vaccine is:"
+    },
+    {
+      "correctAnswer": 2,
+      "explanation": "'No need for cold chain' is NOT an advantage of live vaccines - live vaccines are heat-labile and require a strict cold chain (Section 17.4).",
+      "marks": 1,
+      "options": [
+        "CMI induction",
+        "Single dose",
+        "No need for cold chain",
+        "Mucosal immunity"
+      ],
+      "text": "Which is NOT an advantage of live vaccines?"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Inactivated vaccines mainly induce serum IgG (humoral immunity), with weak CMI and little mucosal IgA (Section 17.5).",
+      "marks": 1,
+      "options": [
+        "Mucosal IgA",
+        "Serum IgG",
+        "CTLs",
+        "IgE"
+      ],
+      "text": "Inactivated vaccines mainly induce:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "HVT-IBD is a vectored (recombinant) vaccine - turkey herpesvirus vector expressing IBDV VP2 (Section 17.6).",
+      "marks": 1,
+      "options": [
+        "Subunit vaccine",
+        "Vectored vaccine",
+        "DNA vaccine",
+        "Inactivated vaccine"
+      ],
+      "text": "HVT-IBD vaccine is an example of:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "PCV2 ORF2 subunit vaccines are produced in baculovirus-insect cell expression systems (Section 17.6).",
+      "marks": 1,
+      "options": [
+        "Eggs",
+        "Baculovirus-insect cells",
+        "Rabbits",
+        "Bacteria only"
+      ],
+      "text": "PCV2 ORF2 vaccines are produced in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The West Nile virus DNA vaccine for horses (2005) was the first licensed veterinary DNA vaccine for an infectious disease (Sections 17.2, 17.6).",
+      "marks": 1,
+      "options": [
+        "Equine influenza",
+        "West Nile virus",
+        "EHV-1",
+        "Rabies"
+      ],
+      "text": "The first licensed veterinary DNA vaccine for an infectious disease in horses was against:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "V-RG (recombinant vaccinia-rabies glycoprotein) oral bait vaccine protects wildlife against rabies (Section 17.6).",
+      "marks": 1,
+      "options": [
+        "Distemper",
+        "Rabies",
+        "Parvovirus",
+        "ASF"
+      ],
+      "text": "V-RG oral bait vaccine protects wildlife against:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "DIVA for IBR is based on deletion of gE - vaccinated animals are gE-negative while infected animals are gE-positive (Sections 13.6, 17.6).",
+      "marks": 1,
+      "options": [
+        "gB",
+        "gE",
+        "gD",
+        "TK only"
+      ],
+      "text": "DIVA for IBR is based on deletion of:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "NSP ELISA in FMD detects antibodies to non-structural proteins such as 3ABC, indicating natural infection rather than vaccination (Sections 17.6, 17.12).",
+      "marks": 1,
+      "options": [
+        "VP1",
+        "3ABC",
+        "VP2",
+        "Leader protein only"
+      ],
+      "text": "NSP ELISA in FMD detects antibodies to:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Montanide ISA 206 is a double oil emulsion (water-in-oil-in-water type) adjuvant used in poultry ND/AI/EDS vaccines (Section 17.7).",
+      "marks": 1,
+      "options": [
+        "Aluminium adjuvant",
+        "Double oil emulsion adjuvant",
+        "Saponin",
+        "TLR agonist"
+      ],
+      "text": "Montanide ISA 206 is a:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Marek's disease vaccines may be given in ovo at day 18 of incubation (also at hatchery) (Section 17.8).",
+      "marks": 1,
+      "options": [
+        "In drinking water at 6 weeks",
+        "In ovo at day 18",
+        "By wing-web at 10 weeks",
+        "Orally in feed"
+      ],
+      "text": "Marek's disease vaccines may be given:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Chlorinated water inactivates live vaccines given in drinking water - a common cause of vaccine failure (Sections 17.8, 17.10).",
+      "marks": 1,
+      "options": [
+        "Inactivated oil vaccines",
+        "Live vaccines in drinking water",
+        "Subunit vaccines",
+        "DNA vaccines"
+      ],
+      "text": "Chlorinated water can cause failure of:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The potency of FMD vaccine is expressed as the 50% protective dose (PD50) per dose (Section 17.12).",
+      "marks": 1,
+      "options": [
+        "EID50",
+        "PD50",
+        "LD50",
+        "HA units"
+      ],
+      "text": "The potency of FMD vaccine is expressed as:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Lumpi-ProVacInd, a homologous live attenuated LSD vaccine from an Indian LSDV isolate, was developed by ICAR-NRCE, Hisar with ICAR-IVRI, Izatnagar and released in 2022 (Sections 17.6, 17.13).",
+      "marks": 1,
+      "options": [
+        "ICAR-NIFMD",
+        "ICAR-NRCE and ICAR-IVRI",
+        "NIV Pune",
+        "ICAR-NIHSAD"
+      ],
+      "text": "Lumpi-ProVacInd was developed by:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "Core vaccines for dogs in India include CDV, CAV, CPV-2 and rabies (Section 17.9).",
+      "marks": 1,
+      "options": [
+        "CDV, CAV, CPV-2 and rabies",
+        "Leptospira only",
+        "Kennel cough only",
+        "Coronavirus only"
+      ],
+      "text": "Core vaccines for dogs in India include:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Veterinary vaccines in India are regulated under the Drugs and Cosmetics Act, 1940 (and Rules 1945) (Section 17.13).",
+      "marks": 1,
+      "options": [
+        "Prevention of Cruelty to Animals Act",
+        "Drugs and Cosmetics Act, 1940",
+        "Livestock Importation Act",
+        "Food Safety Act"
+      ],
+      "text": "Veterinary vaccines in India are regulated under the:"
+    }
+  ],
+  "title": "VMC 503 Ch-17: Viral Vaccines - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

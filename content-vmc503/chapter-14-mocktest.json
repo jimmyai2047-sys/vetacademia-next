@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 14 end-of-chapter MCQs (Section 14.11), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 14 Viral Oncogenesis (Lectures 23 and 24). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "Peyton Rous first transmitted a solid tumour (chicken sarcoma) by a cell-free filtrate in 1911, earning the Nobel Prize decades later (Section 14.2).",
+      "marks": 1,
+      "options": [
+        "Ellermann and Bang",
+        "Peyton Rous",
+        "Shope",
+        "Bittner"
+      ],
+      "text": "The first transmission of a solid tumour (chicken sarcoma) by a cell-free filtrate was by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The vaccine against Marek's disease (a herpesvirus-induced T-cell lymphoma) was the first vaccine against a naturally occurring cancer (Sections 14.6, 14.7).",
+      "marks": 1,
+      "options": [
+        "Avian leukosis",
+        "Marek's disease",
+        "Enzootic bovine leukosis",
+        "Feline leukaemia"
+      ],
+      "text": "The first vaccine against a naturally occurring cancer was against:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Bishop and Varmus showed that v-src originated from a normal cellular gene (c-src), the proto-oncogene concept - Nobel Prize 1989 (Section 14.2).",
+      "marks": 1,
+      "options": [
+        "Temin and Baltimore",
+        "Bishop and Varmus",
+        "zur Hausen",
+        "Epstein and Barr"
+      ],
+      "text": "v-src was shown to originate from a cellular gene by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Growth of transformed cells in soft agar indicates anchorage independence - a hallmark of transformation (loss of anchorage dependence) (Section 14.3).",
+      "marks": 1,
+      "options": [
+        "Contact inhibition",
+        "Anchorage independence",
+        "Senescence",
+        "Apoptosis"
+      ],
+      "text": "Growth of transformed cells in soft agar indicates:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "HPV E7 binds and inactivates pRb (E6 binds p53), releasing E2F and driving uncontrolled cell cycle progression (Sections 14.3, 14.4).",
+      "marks": 1,
+      "options": [
+        "p53",
+        "pRb",
+        "PDGF receptor",
+        "Ras"
+      ],
+      "text": "HPV E7 protein binds:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "BPV E5 is a transmembrane oncoprotein that activates the PDGF-beta receptor signalling pathway (Section 14.4.1).",
+      "marks": 1,
+      "options": [
+        "EGF receptor",
+        "PDGF-beta receptor",
+        "p53",
+        "c-myc"
+      ],
+      "text": "BPV E5 protein transforms cells by activating:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Enzootic haematuria of cattle involves co-carcinogenesis: BPV-2 plus bracken fern (Pteridium aquilinum), which provides immunosuppressive and mutagenic compounds (Section 14.4.1).",
+      "marks": 1,
+      "options": [
+        "Lantana",
+        "Bracken fern",
+        "Parthenium",
+        "Aflatoxin"
+      ],
+      "text": "Enzootic haematuria of cattle is associated with BPV-2 and:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Equine sarcoid, the commonest skin tumour of horses and donkeys, is associated with BPV-1 and BPV-2 (cross-species infection) (Section 14.4.1).",
+      "marks": 1,
+      "options": [
+        "Equine papillomavirus only",
+        "BPV-1 and BPV-2",
+        "EHV-1",
+        "EIAV"
+      ],
+      "text": "Equine sarcoid is associated with:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The oncoprotein of Marek's disease virus is Meq (mdv bamhi-eorf4), which drives T-cell lymphoma (Sections 14.4.2, Summary).",
+      "marks": 1,
+      "options": [
+        "Tax",
+        "Meq",
+        "E6",
+        "Large T"
+      ],
+      "text": "The oncoprotein of Marek's disease virus is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Marek's disease virus is shed from feather follicle epithelium as dander/dust - the primary route of lateral spread (Section 14.6).",
+      "marks": 1,
+      "options": [
+        "Bursa",
+        "Feather follicle epithelium",
+        "Faeces only",
+        "Eggs"
+      ],
+      "text": "Marek's disease virus is shed from:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Acute transforming retroviruses are replication-defective and carry a v-onc; they need a helper virus to replicate (Section 14.5).",
+      "marks": 1,
+      "options": [
+        "Replication-competent",
+        "Replication-defective and carry a v-onc",
+        "DNA viruses",
+        "Non-integrating"
+      ],
+      "text": "Acute transforming retroviruses are usually:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Avian leukosis virus causes bursal lymphoma mainly by insertional mutagenesis - integration activating c-myc (Section 14.5).",
+      "marks": 1,
+      "options": [
+        "Carrying v-src",
+        "Insertional activation of c-myc",
+        "Tax trans-activation",
+        "Inactivating p53"
+      ],
+      "text": "Avian leukosis virus causes bursal lymphoma mainly by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Bovine leukaemia virus (a deltaretrovirus) causes tumours by trans-activation by the Tax protein, which drives proliferation of infected B cells (Section 14.5).",
+      "marks": 1,
+      "options": [
+        "Carrying v-onc",
+        "Trans-activation by Tax",
+        "Env oncoprotein",
+        "Integration near c-myc"
+      ],
+      "text": "Bovine leukaemia virus causes tumours by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Ovine pulmonary adenocarcinoma is caused by jaagsiekte sheep retrovirus (JSRV) (Sections 14.5, 14.6).",
+      "marks": 1,
+      "options": [
+        "MVV",
+        "JSRV",
+        "BLV",
+        "ENTV-2"
+      ],
+      "text": "Ovine pulmonary adenocarcinoma is caused by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "In JSRV the oncogenic protein is Env - the SU domain activates both the PI3K/Akt and MAPK pathways (Section 14.5).",
+      "marks": 1,
+      "options": [
+        "Gag",
+        "Env",
+        "Pol",
+        "Tax"
+      ],
+      "text": "In JSRV, the oncogenic protein is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "ALV-J mainly causes myelocytomatosis in meat-type (broiler) chickens; it emerged in the UK in 1988 (Section 14.6).",
+      "marks": 1,
+      "options": [
+        "Lymphoid leukosis in layers",
+        "Myelocytomatosis in meat-type chickens",
+        "Sarcoma in turkeys",
+        "Nerve enlargement"
+      ],
+      "text": "ALV-J mainly causes:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Talimogene laherparepvec (T-VEC) is an oncolytic herpes simplex virus 1, approved by the US FDA for melanoma (Sections 14.2, 14.8).",
+      "marks": 1,
+      "options": [
+        "Adenovirus",
+        "Herpes simplex virus 1",
+        "Reovirus",
+        "NDV"
+      ],
+      "text": "Talimogene laherparepvec (T-VEC) is an oncolytic:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "H101 (Oncorine), approved in China, is an adenovirus deleted in E1B-55K - it replicates selectively in p53-deficient tumour cells (Section 14.8).",
+      "marks": 1,
+      "options": [
+        "E1A",
+        "E1B-55K",
+        "E3",
+        "E4"
+      ],
+      "text": "H101 (Oncorine), approved in China, is an adenovirus deleted in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Tumour selectivity of many oncolytic viruses is due to tumour defects in interferon signalling - infected tumour cells cannot shut off viral replication (Sections 11.5, 14.8).",
+      "marks": 1,
+      "options": [
+        "Ribosomes",
+        "Interferon signalling",
+        "Mitochondria",
+        "Golgi apparatus"
+      ],
+      "text": "Tumour selectivity of many oncolytic viruses is due to tumour defects in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Poultry vaccines are produced in SPF eggs partly to avoid contamination with adventitious retroviruses - REV and ALV (Section 5.6).",
+      "marks": 1,
+      "options": [
+        "IBDV",
+        "REV and ALV",
+        "NDV",
+        "Fowlpox"
+      ],
+      "text": "Poultry vaccines are produced in SPF eggs partly to avoid contamination with:"
+    }
+  ],
+  "title": "VMC 503 Ch-14: Viral Oncogenesis - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, Clock } from "lucide-react";
+import { ArrowLeft, BookOpen, ClipboardList, Clock } from "lucide-react";
 import ChapterResources from "@/components/chapter-resources";
 import ProtectedHtml from "@/components/protected-html";
 import { isHtmlContent } from "@/lib/content";
@@ -92,6 +92,21 @@ export default async function CoursePage({
       }
     }
   }
+
+  const courseCode = course.courseCode;
+  const mockTests =
+    hasAccess && courseCode
+      ? await unstable_cache(
+          () =>
+            prisma.mockTest.findMany({
+              where: { subjectId: course.subject.id, title: { startsWith: courseCode } },
+              select: { id: true, title: true, duration: true, totalMarks: true },
+              orderBy: { title: "asc" },
+            }),
+          ["syllabus-mock-tests", course.subject.id],
+          { revalidate: 120 }
+        )()
+      : [];
 
   const signedContents = await Promise.all(
     course.chapterContents.map(async (c) => ({
@@ -238,6 +253,54 @@ export default async function CoursePage({
                 </div>
               )}
               <ChapterResources contents={signedContents} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Chapter Mock Tests — one 20-MCQ test per chapter (same enrolment gating) */}
+        {mockTests.length > 0 && (
+          <Card className="va-card-hover rounded-[1.5rem] border-primary/10 shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <ClipboardList className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Chapter Mock Tests</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {mockTests.length} tests &middot; 20 MCQs each &middot; timed practice
+                </p>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {mockTests.map((t, idx) => {
+                  const chapterNo = t.title.match(/Ch-(\d+)/)?.[1] ?? String(idx + 1);
+                  const display = t.title
+                    .replace(/^VMC 503\s*Ch-\d+:\s*/i, "")
+                    .replace(/\s*-\s*Mock Test\s*\(\d+\s*MCQs\)\s*$/i, "");
+                  return (
+                    <Link
+                      key={t.id}
+                      href={`/mock-tests/${t.id}`}
+                      className="flex items-center gap-3 rounded-xl border border-border bg-background p-3 hover:bg-accent hover:border-primary/40 transition-all group"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white text-xs font-bold shrink-0 group-hover:scale-105 transition-transform">
+                        {chapterNo}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                          {display}
+                        </span>
+                        <span className="block text-xs text-muted-foreground mt-0.5">
+                          {t.totalMarks} marks &middot; {t.duration} min
+                        </span>
+                      </span>
+                      <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
+                    </Link>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         )}

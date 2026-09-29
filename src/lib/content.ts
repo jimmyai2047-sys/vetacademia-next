@@ -28,6 +28,8 @@ export function sanitizeChapterContent(html: string): string {
       "code",
       "pre",
       "span",
+      "sup",
+      "sub",
       "table",
       "thead",
       "tbody",

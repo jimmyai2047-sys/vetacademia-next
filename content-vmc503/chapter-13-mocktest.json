@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 13 end-of-chapter MCQs (Section 13.9), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 13 Viral Persistence (Lecture 22). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "In latency the viral genome persists (often in episomal form) without producing virions; it can be reactivated later (Section 13.2).",
+      "marks": 1,
+      "options": [
+        "Infectious virus is continuously produced",
+        "Viral genome persists without virus production",
+        "Virus is cleared",
+        "The cell is transformed"
+      ],
+      "text": "In latent infection:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Alphaherpesviruses (BoHV-1, Aujeszky's disease virus, feline herpesvirus) establish latency mainly in sensory ganglia, with latency-related transcripts detected by PCR (Section 13.4).",
+      "marks": 1,
+      "options": [
+        "Hepatocytes",
+        "Sensory ganglia",
+        "Erythrocytes",
+        "Enterocytes"
+      ],
+      "text": "Alphaherpesviruses establish latency mainly in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Reactivation of latent BoHV-1 is triggered by corticosteroids and stress (also parturition, transport), leading to renewed shedding (Sections 13.4, 13.5).",
+      "marks": 1,
+      "options": [
+        "Vitamin supplementation",
+        "Corticosteroids and stress",
+        "Antibiotics",
+        "Vaccination with inactivated vaccine"
+      ],
+      "text": "Reactivation of latent BoHV-1 can be triggered by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "A latently infected animal is seropositive (from earlier infection) but does not shed virus between reactivation events (Section 13.4).",
+      "marks": 1,
+      "options": [
+        "Seronegative and shedding",
+        "Seropositive and not shedding between reactivations",
+        "Seronegative and not shedding",
+        "Always clinically ill"
+      ],
+      "text": "An animal latently infected with BoHV-1 is usually:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "BVDV PI calves result from foetal infection with non-cytopathic (ncp) BVDV at about 40-120 days of gestation, before the fetal immune system is competent (Sections 11.7, 13.5).",
+      "marks": 1,
+      "options": [
+        "0-10 days",
+        "40-120 days of gestation",
+        "200-280 days",
+        "After birth"
+      ],
+      "text": "BVDV PI calves result from foetal infection with ncp BVDV at about:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "PI animals are immunotolerant to BVDV - they are seronegative (no antibody), continuously shed virus, and are lifelong carriers (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Seropositive",
+        "Seronegative (immunotolerant)",
+        "Non-shedding",
+        "Immune"
+      ],
+      "text": "BVDV PI animals are usually:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Mucosal disease develops when a PI animal is superinfected with homologous cytopathic BVDV, causing fatal erosive/ulcerative lesions (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Heterologous ncp BVDV",
+        "Homologous cytopathic BVDV",
+        "BoHV-1",
+        "Rotavirus"
+      ],
+      "text": "Mucosal disease develops in a PI animal exposed to:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "PI animals are antibody-negative, so they are best detected by antigen ELISA or RT-PCR (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Antibody ELISA",
+        "Antigen ELISA or RT-PCR",
+        "CFT",
+        "HI test"
+      ],
+      "text": "PI animals are best detected by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Maedi-visna virus (SRLV) persists mainly in monocytes/macrophages; provirus is carried in monocytes and expression increases as they mature into macrophages (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Neurons",
+        "Monocytes/macrophages",
+        "Erythrocytes",
+        "Hepatocytes"
+      ],
+      "text": "Maedi-visna virus persists mainly in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Small ruminant lentiviruses (MVV, CAEV) are transmitted mainly through colostrum and milk - feeding heat-treated colostrum prevents infection (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Insect vectors",
+        "Colostrum and milk",
+        "Semen only",
+        "Eggs"
+      ],
+      "text": "Small ruminant lentiviruses are transmitted mainly through:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Recurrent fever episodes in equine infectious anaemia are due to antigenic variation of the viral envelope glycoprotein, allowing escape from neutralising antibody (Sections 13.5, 13.6).",
+      "marks": 1,
+      "options": [
+        "Latency",
+        "Antigenic variation",
+        "Immune tolerance",
+        "Integration"
+      ],
+      "text": "Recurrent fever episodes in EIA are due to:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "EIA carriers are detected by the Coggins test (agar gel immunodiffusion test for EIAV antibody) (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Coggins test",
+        "Rose Bengal test",
+        "HI test",
+        "Tuberculin test"
+      ],
+      "text": "EIA carriers are detected by the:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "EIAV is transmitted mainly by biting flies (tabanids) and iatrogenically (shared needles, transfusion) (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Culicoides",
+        "Biting flies and iatrogenically",
+        "Faeces",
+        "Aerosols"
+      ],
+      "text": "EIAV is transmitted mainly by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "FMD carriers harbour virus in the oropharyngeal epithelium (pharynx), which is sampled by probang (Sections 13.5, 13.6).",
+      "marks": 1,
+      "options": [
+        "Liver",
+        "Oropharyngeal epithelium",
+        "Brain",
+        "Kidney"
+      ],
+      "text": "FMD carriers harbour virus in the:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The sample used to detect FMD carriers is the probang sample (oesophageal-pharyngeal scrape/fluid), with NSP serology as an indicator of infection (Sections 13.5, 13.6).",
+      "marks": 1,
+      "options": [
+        "Nasal swab",
+        "Probang sample",
+        "Faeces",
+        "Urine"
+      ],
+      "text": "The sample used to detect FMD carriers is the:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Carrier stallions shed equine arteritis virus in semen - hence screening and semen testing in eradication programmes (Section 13.5).",
+      "marks": 1,
+      "options": [
+        "Faeces",
+        "Semen",
+        "Saliva",
+        "Milk"
+      ],
+      "text": "Carrier stallions shed equine arteritis virus in:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Maedi-visna is a classic slow infection - lifelong, with disease appearing months to years after infection (Sections 13.1, 13.5).",
+      "marks": 1,
+      "options": [
+        "Rotavirus enteritis",
+        "Maedi-visna",
+        "Newcastle disease",
+        "FMD"
+      ],
+      "text": "Which is an example of a slow infection?"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Old dog encephalitis is a late (delayed) complication of canine distemper - comparable to subacute sclerosing panencephalitis after measles (Sections 12.6, 13.2).",
+      "marks": 1,
+      "options": [
+        "Rabies",
+        "Canine distemper",
+        "CPV-2",
+        "Canine adenovirus"
+      ],
+      "text": "Old dog encephalitis is a late complication of:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "ncp BVDV is a common adventitious contaminant of foetal bovine serum and cell lines - hence routine screening of sera (Sections 13.3, 13.6).",
+      "marks": 1,
+      "options": [
+        "ncp BVDV",
+        "Rabies virus",
+        "IBDV",
+        "Influenza virus"
+      ],
+      "text": "A common contaminant of foetal bovine serum is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Eradication of BoHV-1 in Europe relied on gE-deleted marker vaccines with DIVA testing (seropositive/gE-negative animals distinguish vaccinated from infected) (Sections 13.6, 16).",
+      "marks": 1,
+      "options": [
+        "Antibiotics",
+        "gE-deleted marker vaccines with DIVA testing",
+        "Insect control",
+        "Culling all cattle"
+      ],
+      "text": "Eradication of BoHV-1 in Europe relied on:"
+    }
+  ],
+  "title": "VMC 503 Ch-13: Viral Persistence - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

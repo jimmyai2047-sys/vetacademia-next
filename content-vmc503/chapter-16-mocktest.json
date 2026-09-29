@@ -1,0 +1,252 @@
+{
+  "createdFrom": "VMC 503 General Virology Chapter 16 end-of-chapter MCQs (Section 16.13), answer key verified",
+  "description": "VMC 503 General Virology - Chapter 16 Immune Response to Viruses (Lectures 27 and 28). 20 MCQs from book question bank with answer key.",
+  "duration": 20,
+  "exam": "mvsc",
+  "kind": "MOCK",
+  "questions": [
+    {
+      "correctAnswer": 1,
+      "explanation": "Interferon was discovered by Isaacs and Lindenmann in 1957 while studying virus interference (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "Jenner and Pasteur",
+        "Isaacs and Lindenmann",
+        "Temin and Baltimore",
+        "Burnet and Fenner"
+      ],
+      "text": "Interferon was discovered by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "RIG-I recognises short double-stranded RNA with a 5'-triphosphate end (a hallmark of many cytoplasmic RNA viruses) (Section 16.3).",
+      "marks": 1,
+      "options": [
+        "CpG DNA",
+        "5'-triphosphate dsRNA",
+        "LPS",
+        "Flagellin"
+      ],
+      "text": "RIG-I recognises:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Cytoplasmic viral DNA is sensed by the cGAS-STING pathway, which produces cyclic GMP-AMP and activates IRF3 (Section 16.3).",
+      "marks": 1,
+      "options": [
+        "TLR3",
+        "cGAS-STING",
+        "MDA5",
+        "TLR7"
+      ],
+      "text": "Cytoplasmic viral DNA is sensed by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Chickens lack RIG-I (ducks and geese have it) - a notable species difference in innate viral sensing in poultry (Sections 11.5, 16.3).",
+      "marks": 1,
+      "options": [
+        "Duck",
+        "Chicken",
+        "Goose",
+        "Swan"
+      ],
+      "text": "Which bird species lacks RIG-I?"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Plasmacytoid dendritic cells are the major producers of IFN-alpha (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "Neutrophils",
+        "Plasmacytoid dendritic cells",
+        "Erythrocytes",
+        "Eosinophils"
+      ],
+      "text": "The major producers of IFN-alpha are:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Type III interferons (IFN-lambda) act mainly on epithelial cells, where receptors are concentrated - important at mucosal surfaces (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "Neurons",
+        "Epithelial cells",
+        "Erythrocytes",
+        "Hepatocytes only"
+      ],
+      "text": "Type III interferons act mainly on:"
+    },
+    {
+      "correctAnswer": 0,
+      "explanation": "Type I IFN signals through the JAK1/TYK2 kinases and STAT1/STAT2 with IRF9 (ISGF3), inducing interferon-stimulated genes (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "JAK1/TYK2 and STAT1/STAT2",
+        "MyD88 only",
+        "cAMP",
+        "Calcium only"
+      ],
+      "text": "Type I IFN signalling uses:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "PKR phosphorylates eIF2alpha, shutting off protein synthesis and thereby inhibiting viral replication (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "RNase L",
+        "eIF2alpha",
+        "STAT1",
+        "IRF3"
+      ],
+      "text": "PKR inhibits virus replication by phosphorylating:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Mx proteins (dynamin-like GTPases) mainly inhibit influenza and other negative-strand RNA viruses (Section 16.4).",
+      "marks": 1,
+      "options": [
+        "Retroviruses",
+        "Influenza and other negative-strand RNA viruses",
+        "Poxviruses",
+        "Prions"
+      ],
+      "text": "Mx proteins mainly inhibit:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "NK cells kill cells with reduced MHC class I - the 'missing self' hypothesis; many viruses down-regulate MHC I to evade CTLs (Sections 11.5, 16.5).",
+      "marks": 1,
+      "options": [
+        "Increased MHC I",
+        "Reduced MHC I",
+        "Increased MHC II",
+        "IgA on surface"
+      ],
+      "text": "NK cells kill infected cells that have:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Viral peptides presented on MHC class I are recognised by CD8+ cytotoxic T cells (Sections 11.5, 16.6).",
+      "marks": 1,
+      "options": [
+        "CD4+ T cells",
+        "CD8+ T cells",
+        "B cells",
+        "Neutrophils"
+      ],
+      "text": "Viral peptides presented on MHC class I are recognised by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "IgM is the first antibody class produced after primary infection; it later switches to IgG (Section 16.6).",
+      "marks": 1,
+      "options": [
+        "IgG",
+        "IgM",
+        "IgA",
+        "IgE"
+      ],
+      "text": "The first antibody class produced after infection is:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Antibodies to influenza neuraminidase act by inhibiting release of progeny virions (anti-HA antibodies block attachment) (Sections 11.6, 16.6).",
+      "marks": 1,
+      "options": [
+        "Blocking attachment",
+        "Inhibiting release of progeny virions",
+        "Blocking uncoating",
+        "Activating NK cells only"
+      ],
+      "text": "Antibodies to influenza neuraminidase act by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Mucosal surfaces are protected mainly by secretory IgA, which neutralises virus at the portal of entry (Section 16.7).",
+      "marks": 1,
+      "options": [
+        "IgE",
+        "Secretory IgA",
+        "IgD",
+        "IgM only"
+      ],
+      "text": "Mucosal surfaces are protected mainly by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Cattle lack appreciable placental transfer of antibody; maternal antibodies are transferred only through colostrum (Section 16.8).",
+      "marks": 1,
+      "options": [
+        "Across the placenta",
+        "Only through colostrum",
+        "Through the yolk",
+        "Not at all"
+      ],
+      "text": "In cattle, maternal antibodies are transferred:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "In chickens, maternal IgY (IgG) is deposited in the yolk and taken up by the developing chick (Section 16.8).",
+      "marks": 1,
+      "options": [
+        "Colostrum",
+        "Yolk",
+        "Placenta",
+        "Crop milk"
+      ],
+      "text": "In chickens, maternal IgY reaches the chick through:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "The window of susceptibility is caused by maternal antibody interference - antibody neutralises vaccine virus, preventing both infection and active immunisation (Sections 16.8, 16.9).",
+      "marks": 1,
+      "options": [
+        "Vaccine overdose",
+        "Maternal antibody interference",
+        "Interferon",
+        "Genetic resistance"
+      ],
+      "text": "The window of susceptibility is caused by:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "BVDV and CSFV Npro evade innate immunity by degrading IRF3, blocking type I interferon induction (Section 16.9).",
+      "marks": 1,
+      "options": [
+        "STAT1",
+        "IRF3",
+        "MHC I",
+        "IgG"
+      ],
+      "text": "BVDV and CSFV Npro evade immunity by degrading:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Poxvirus-encoded soluble cytokine receptors are viroceptors (a class of virokines) that scavenge host cytokines - viral immune evasion (Section 16.9).",
+      "marks": 1,
+      "options": [
+        "Superantigens",
+        "Virokines/viroceptors",
+        "Interferons",
+        "Prions"
+      ],
+      "text": "Poxvirus-encoded soluble cytokine receptors are examples of:"
+    },
+    {
+      "correctAnswer": 1,
+      "explanation": "Chicken MHC haplotype B21 is associated with resistance to Marek's disease (Section 16.10).",
+      "marks": 1,
+      "options": [
+        "B19",
+        "B21",
+        "B2",
+        "B13"
+      ],
+      "text": "Chicken MHC haplotype associated with resistance to Marek's disease is:"
+    }
+  ],
+  "title": "VMC 503 Ch-16: Immune Response to Viruses - Mock Test (20 MCQs)",
+  "totalMarks": 20,
+  "track": "veterinary-microbiology-vmc503"
+}

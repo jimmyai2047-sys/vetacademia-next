@@ -1,0 +1,791 @@
+{
+  "generatedAt": "2026-09-29T02:46:02.341Z",
+  "lofEntries": 46,
+  "chapters": [
+    {
+      "chapter": 1,
+      "range": [
+        26,
+        35
+      ],
+      "html": "chapter-01.html",
+      "chars": 29696,
+      "headings": {
+        "h1": 1,
+        "h2": 4,
+        "h3": 15,
+        "h4": 1
+      },
+      "lists": {
+        "ul": 9,
+        "ol": 4
+      },
+      "tablesMatched": 4,
+      "tablesContinued": 2,
+      "tableFragments": 1,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 26,
+          "bookPage": 2,
+          "num": "1.1",
+          "alt": "Figure 1.1: Six eras of virology and the technologies that defined them"
+        },
+        {
+          "page": 28,
+          "bookPage": 4,
+          "num": "1.2",
+          "alt": "Figure 1.2: Classic filtration experiments that established the existence of viruses as filterable, self-replicating agents"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "chapter": 2,
+      "range": [
+        36,
+        45
+      ],
+      "html": "chapter-02.html",
+      "chars": 27265,
+      "headings": {
+        "h1": 1,
+        "h2": 4,
+        "h3": 14,
+        "h4": 4
+      },
+      "lists": {
+        "ul": 12,
+        "ol": 4
+      },
+      "tablesMatched": 5,
+      "tablesContinued": 1,
+      "tableFragments": 1,
+      "unconsumedTables": 5,
+      "figures": [
+        {
+          "page": 37,
+          "bookPage": 13,
+          "num": "2.1",
+          "alt": "Figure 2.1: Size range of viruses from the smallest circoviruses to giant viruses, compared with bacteria and cells (logarithmic scale)"
+        },
+        {
+          "page": 39,
+          "bookPage": 15,
+          "num": "2.2",
+          "alt": "Figure 2.2: Regressive, escape, virus-first and multiple-origin hypotheses for the origin of viruses"
+        }
+      ],
+      "warnings": [
+        "ch2: table \"Table 2.2: Comparison of viruses with other infectious agents\" (p37, 5cols, last row=[\"Susceptibility to\\ninterferon\",\"No\",\"Some\",\"No\",\"Yes\"]) not continued on p38; page cands=[[2,6,\"Arguments that viruses ar\"],[4,2,\"Hypothesis\"]]"
+      ]
+    },
+    {
+      "chapter": 3,
+      "range": [
+        46,
+        60
+      ],
+      "html": "chapter-03.html",
+      "chars": 40520,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 17,
+        "h4": 8
+      },
+      "lists": {
+        "ul": 16,
+        "ol": 4
+      },
+      "tablesMatched": 7,
+      "tablesContinued": 2,
+      "tableFragments": 2,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 47,
+          "bookPage": 23,
+          "num": "3.1",
+          "alt": "Figure 3.1: Structural components of naked icosahedral and enveloped virions"
+        },
+        {
+          "page": 49,
+          "bookPage": 25,
+          "num": "3.2",
+          "alt": "Figure 3.2: Helical, icosahedral and complex capsid symmetry, and the Caspar–Klug triangulation principle for icosahedral capsids"
+        },
+        {
+          "page": 53,
+          "bookPage": 29,
+          "num": "3.3",
+          "alt": "Figure 3.3: The major structural types of viral genomes and their characteristic terminal features"
+        },
+        {
+          "page": 56,
+          "bookPage": 32,
+          "num": "3.4",
+          "alt": "Figure 3.4: Structural basis of the relative resistance of viruses and prions to disinfectants"
+        }
+      ],
+      "warnings": [
+        "ch3: table \"Table 3.4: Types of viral genomes with veterinary examples\" (p52, 3cols, last row=[\"Circular −ssRNA\\n(ribozyme-containing)\",\"Satellite-like; requires helper virus\",\"Hepatitis delta virus\"]) not continued on p53; page cands=[]"
+      ]
+    },
+    {
+      "chapter": 4,
+      "range": [
+        61,
+        74
+      ],
+      "html": "chapter-04.html",
+      "chars": 37547,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 15,
+        "h4": 7
+      },
+      "lists": {
+        "ul": 9,
+        "ol": 4
+      },
+      "tablesMatched": 10,
+      "tablesContinued": 4,
+      "tableFragments": 3,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 64,
+          "bookPage": 40,
+          "num": "4.1",
+          "alt": "Figure 4.1: From realm to strain: the full classification and naming chain for rabies virus and foot-and-mouth disease virus"
+        },
+        {
+          "page": 67,
+          "bookPage": 43,
+          "num": "4.2",
+          "alt": "Figure 4.2: The Baltimore classification: pathways from genome to mRNA"
+        }
+      ],
+      "warnings": [
+        "ch4: table \"Table 4.3: ICTV ranks and suffixes, with rabies virus as an example\" (p63, 3cols, last row=[\"Species\",\"Binomial: genus + epithet\",\"Lyssavirus rabies\"]) not continued on p64; page cands=[]",
+        "ch4: table \"Table 4.5: The seven Baltimore classes\" (p66, 5cols, last row=[\"VII\",\"dsDNA with\\nRNA\\nintermediate\\n(dsDNA-RT)\",\"±DNA (cccDNA) →\\nmRNA and pregenomic\\nRNA → reverse\\ntranscription → DNA\",\"Partially dsDNA; replication\\nvia RNA pregenome\",\"Hepadnaviridae\\n(hepatitis B virus, duck\\nhepatitis B virus); plant\\ncaulimoviruses\"]) not continued on p67; page cands=[[3,9,\"Family (Baltimore\\nclass)\"]]"
+      ]
+    },
+    {
+      "chapter": 5,
+      "range": [
+        75,
+        89
+      ],
+      "html": "chapter-05.html",
+      "chars": 41531,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 16,
+        "h4": 9
+      },
+      "lists": {
+        "ul": 17,
+        "ol": 4
+      },
+      "tablesMatched": 9,
+      "tablesContinued": 3,
+      "tableFragments": 2,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 77,
+          "bookPage": 53,
+          "num": "5.1",
+          "alt": "Figure 5.1: Anatomy of the embryonated hen’s egg and the six routes of virus inoculation with characteristic results"
+        },
+        {
+          "page": 80,
+          "bookPage": 56,
+          "num": "5.2",
+          "alt": "Figure 5.2: Characteristic cytopathic effects and other visible signs of virus replication in cell cultures"
+        },
+        {
+          "page": 82,
+          "bookPage": 58,
+          "num": "5.3",
+          "alt": "Figure 5.3: Quantification of virus by plaque assay and end-point titration, and the phases of the one-step growth cycle"
+        }
+      ],
+      "warnings": [
+        "ch5: table \"Table 5.4: Methods of detecting virus replication in cell cultures\" (p79, 2cols, last row=[\"Electron microscopy\",\"Morphology of virions in cell culture harvests\"]) not continued on p80; page cands=[]"
+      ]
+    },
+    {
+      "chapter": 6,
+      "range": [
+        90,
+        102
+      ],
+      "html": "chapter-06.html",
+      "chars": 34408,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 13,
+        "h4": 7
+      },
+      "lists": {
+        "ul": 12,
+        "ol": 4
+      },
+      "tablesMatched": 6,
+      "tablesContinued": 1,
+      "tableFragments": 0,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 91,
+          "bookPage": 67,
+          "num": "6.1",
+          "alt": "Figure 6.1: Direct (virus-detecting) and indirect (antibody-detecting) approaches to viral diagnosis and their timing during infection"
+        },
+        {
+          "page": 95,
+          "bookPage": 71,
+          "num": "6.2",
+          "alt": "Figure 6.2: Reverse transcription, thermal cycling and real-time fluorescence detection in molecular viral diagnosis"
+        }
+      ],
+      "warnings": [
+        "ch6: table \"Table 6.2: Methods for detecting viral antigens\" (p93, 3cols, last row=[\"Counter-\\nimmunoelectrophoresis,\\nlatex agglutination,\\nwestern blot\",\"Other antigen–antibody reactions\",\"Mostly replaced by ELISA and PCR\"]) not continued on p94; page cands=[[3,7,\"Method\"]]"
+      ]
+    },
+    {
+      "chapter": 7,
+      "range": [
+        103,
+        115
+      ],
+      "html": "chapter-07.html",
+      "chars": 36024,
+      "headings": {
+        "h1": 1,
+        "h2": 4,
+        "h3": 11,
+        "h4": 12
+      },
+      "lists": {
+        "ul": 23,
+        "ol": 4
+      },
+      "tablesMatched": 6,
+      "tablesContinued": 1,
+      "tableFragments": 0,
+      "unconsumedTables": 4,
+      "figures": [
+        {
+          "page": 105,
+          "bookPage": 81,
+          "num": "7.1",
+          "alt": "Figure 7.1: The rod-like structure of a viroid and the asymmetric and symmetric rolling-circle pathways of replication"
+        },
+        {
+          "page": 108,
+          "bookPage": 84,
+          "num": "7.2",
+          "alt": "Figure 7.2: Conformational conversion of PrPᶜ to PrPˢᶜ and prion propagation"
+        },
+        {
+          "page": 110,
+          "bookPage": 86,
+          "num": "7.3",
+          "alt": "Figure 7.3: Pathogenesis of orally acquired prion disease (scrapie/BSE)"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "chapter": 8,
+      "range": [
+        117,
+        130
+      ],
+      "html": "chapter-08.html",
+      "chars": 34660,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 16,
+        "h4": 4
+      },
+      "lists": {
+        "ul": 13,
+        "ol": 5
+      },
+      "tablesMatched": 4,
+      "tablesContinued": 1,
+      "tableFragments": 1,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 118,
+          "bookPage": 94,
+          "num": "8.1",
+          "alt": "Figure 8.1: The eight generalised steps of the animal virus replication cycle"
+        },
+        {
+          "page": 122,
+          "bookPage": 98,
+          "num": "8.2",
+          "alt": "Figure 8.2: Replication cycle of a herpesvirus, with latency"
+        },
+        {
+          "page": 125,
+          "bookPage": 101,
+          "num": "8.3",
+          "alt": "Figure 8.3: Comparison of DNA replication strategies"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "chapter": 9,
+      "range": [
+        131,
+        144
+      ],
+      "html": "chapter-09.html",
+      "chars": 36711,
+      "headings": {
+        "h1": 1,
+        "h2": 6,
+        "h3": 12,
+        "h4": 10
+      },
+      "lists": {
+        "ul": 14,
+        "ol": 10
+      },
+      "tablesMatched": 2,
+      "tablesContinued": 0,
+      "tableFragments": 0,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 134,
+          "bookPage": 110,
+          "num": "9.1",
+          "alt": "Figure 9.1: Replication strategies of positive-sense RNA viruses"
+        },
+        {
+          "page": 136,
+          "bookPage": 112,
+          "num": "9.2",
+          "alt": "Figure 9.2: Replication cycle of influenza A virus"
+        },
+        {
+          "page": 139,
+          "bookPage": 115,
+          "num": "9.3",
+          "alt": "Figure 9.3: Retrovirus replication cycle and reverse transcription"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "chapter": 10,
+      "range": [
+        145,
+        156
+      ],
+      "html": "chapter-10.html",
+      "chars": 29647,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 16,
+        "h4": 1
+      },
+      "lists": {
+        "ul": 14,
+        "ol": 4
+      },
+      "tablesMatched": 5,
+      "tablesContinued": 0,
+      "tableFragments": 0,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 148,
+          "bookPage": 124,
+          "num": "10.1",
+          "alt": "Figure 10.1: Mutation, recombination and reassortment compared"
+        },
+        {
+          "page": 151,
+          "bookPage": 127,
+          "num": "10.2",
+          "alt": "Figure 10.2: Non-genetic interactions between viruses"
+        }
+      ],
+      "warnings": [
+        "ch10: table \"Table 10.1: Overview of virus–virus interactions\" (p145, 4cols, last row=[\"Non-genetic\",\"Defective interfering particles\",\"No (defective)\",\"Deleted genomes that interfere with\\nstandard virus\"]) not continued on p146; page cands=[[2,10,\"Type\"]]"
+      ]
+    },
+    {
+      "chapter": 11,
+      "range": [
+        158,
+        167
+      ],
+      "html": "chapter-11.html",
+      "chars": 24100,
+      "headings": {
+        "h1": 1,
+        "h2": 4,
+        "h3": 13,
+        "h4": 5
+      },
+      "lists": {
+        "ul": 11,
+        "ol": 4
+      },
+      "tablesMatched": 5,
+      "tablesContinued": 0,
+      "tableFragments": 0,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 159,
+          "bookPage": 135,
+          "num": "11.1",
+          "alt": "Figure 11.1: Possible outcomes of virus infection of a cell"
+        },
+        {
+          "page": 162,
+          "bookPage": 138,
+          "num": "11.2",
+          "alt": "Figure 11.2: Innate sensing of viruses in the cell and viral evasion"
+        }
+      ],
+      "warnings": [
+        "ch11: table \"Table 11.3: Pattern-recognition receptors that sense viruses\" (p161, 4cols, last row=[\"NLRP3\\ninflammasome\",\"Cytoplasm\",\"Viral ion channels, damage\\nsignals\",\"IL-1β, IL-18, pyroptosis\"]) not continued on p162; page cands=[]"
+      ]
+    },
+    {
+      "chapter": 12,
+      "range": [
+        168,
+        179
+      ],
+      "html": "chapter-12.html",
+      "chars": 30146,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 15,
+        "h4": 9
+      },
+      "lists": {
+        "ul": 15,
+        "ol": 4
+      },
+      "tablesMatched": 6,
+      "tablesContinued": 1,
+      "tableFragments": 0,
+      "unconsumedTables": 4,
+      "figures": [
+        {
+          "page": 169,
+          "bookPage": 145,
+          "num": "12.1",
+          "alt": "Figure 12.1: Stages of viral pathogenesis in the animal"
+        },
+        {
+          "page": 173,
+          "bookPage": 149,
+          "num": "12.2",
+          "alt": "Figure 12.2: Mechanisms of tissue injury in viral disease"
+        },
+        {
+          "page": 175,
+          "bookPage": 151,
+          "num": "12.3",
+          "alt": "Figure 12.3: Pathogenesis of rabies — a model of neural spread"
+        }
+      ],
+      "warnings": [
+        "ch12: table \"Table 12.1: Routes of entry of viruses\" (p169, 3cols, last row=[\"Iatrogenic\",\"Contaminated needles, surgical instruments, blood\\nproducts, vaccines\",\"EIAV, BLV (needles, rectal\\ngloves), transmission of\\ncontaminants in vaccines\"]) not continued on p170; page cands=[]"
+      ]
+    },
+    {
+      "chapter": 13,
+      "range": [
+        180,
+        189
+      ],
+      "html": "chapter-13.html",
+      "chars": 24875,
+      "headings": {
+        "h1": 1,
+        "h2": 4,
+        "h3": 12,
+        "h4": 7
+      },
+      "lists": {
+        "ul": 9,
+        "ol": 4
+      },
+      "tablesMatched": 5,
+      "tablesContinued": 1,
+      "tableFragments": 0,
+      "unconsumedTables": 5,
+      "figures": [
+        {
+          "page": 181,
+          "bookPage": 157,
+          "num": "13.1",
+          "alt": "Figure 13.1: Patterns of virus infection over time: acute, chronic, latent and slow"
+        },
+        {
+          "page": 183,
+          "bookPage": 159,
+          "num": "13.2",
+          "alt": "Figure 13.2: Latency and reactivation of an alphaherpesvirus (BoHV-1)"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "chapter": 14,
+      "range": [
+        190,
+        202
+      ],
+      "html": "chapter-14.html",
+      "chars": 32611,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 14,
+        "h4": 9
+      },
+      "lists": {
+        "ul": 11,
+        "ol": 5
+      },
+      "tablesMatched": 8,
+      "tablesContinued": 2,
+      "tableFragments": 1,
+      "unconsumedTables": 4,
+      "figures": [
+        {
+          "page": 192,
+          "bookPage": 168,
+          "num": "14.1",
+          "alt": "Figure 14.1: Inactivation of tumour suppressors by DNA virus oncoproteins"
+        },
+        {
+          "page": 194,
+          "bookPage": 170,
+          "num": "14.2",
+          "alt": "Figure 14.2: Three mechanisms of retroviral oncogenesis"
+        },
+        {
+          "page": 197,
+          "bookPage": 173,
+          "num": "14.3",
+          "alt": "Figure 14.3: Mechanism of oncolytic virotherapy"
+        }
+      ],
+      "warnings": [
+        "ch14: table \"Table 14.5: Examples of viral oncogenes and their cellular functions\" (p194, 3cols, last row=[\"fos, jun\",\"Murine osteosarcoma virus; avian sarcoma\\nvirus 17\",\"AP-1 transcription factor components\"]) not continued on p195; page cands=[[4,10,\"Disease\"]]"
+      ]
+    },
+    {
+      "chapter": 15,
+      "range": [
+        203,
+        216
+      ],
+      "html": "chapter-15.html",
+      "chars": 32645,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 15,
+        "h4": 7
+      },
+      "lists": {
+        "ul": 10,
+        "ol": 4
+      },
+      "tablesMatched": 10,
+      "tablesContinued": 3,
+      "tableFragments": 1,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 206,
+          "bookPage": 182,
+          "num": "15.1",
+          "alt": "Figure 15.1: Viral disease results from interaction of agent, host and environment"
+        },
+        {
+          "page": 208,
+          "bookPage": 184,
+          "num": "15.2",
+          "alt": "Figure 15.2: Epidemic curves and the SIR model"
+        },
+        {
+          "page": 211,
+          "bookPage": 187,
+          "num": "15.3",
+          "alt": "Figure 15.3: Framework for the control and eradication of a viral disease"
+        }
+      ],
+      "warnings": [
+        "ch15: table \"Table 15.1: Basic epidemiological terms\" (p203, 2cols, last row=[\"Spillover\",\"Transmission of a virus from its reservoir host to a new host species\"]) not continued on p204; page cands=[[2,11,\"Measure\"]]",
+        "ch15: table \"Table 15.3: Modes of transmission of viruses\" (p205, 3cols, last row=[\"Iatrogenic\",\"Veterinary procedures, contaminated\\nvaccines or biologicals\",\"EIA, BLV (needles, rectal gloves), vaccine\\ncontamination with REV or BVDV\"]) not continued on p206; page cands=[[4,3,\"Virus\"]]",
+        "ch15: table \"Table 15.5: Types of epidemic curve\" (p207, 3cols, last row=[\"Seasonal / cyclical\",\"Regular peaks by season or years\",\"Arboviral diseases (BTV, JE) after\\nmonsoon; epidemic cycles as susceptibles\\naccumulate\"]) not continued on p208; page cands=[[2,2,\"Factor\"]]"
+      ]
+    },
+    {
+      "chapter": 16,
+      "range": [
+        218,
+        230
+      ],
+      "html": "chapter-16.html",
+      "chars": 30767,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 16,
+        "h4": 6
+      },
+      "lists": {
+        "ul": 11,
+        "ol": 5
+      },
+      "tablesMatched": 9,
+      "tablesContinued": 2,
+      "tableFragments": 0,
+      "unconsumedTables": 3,
+      "figures": [
+        {
+          "page": 221,
+          "bookPage": 197,
+          "num": "16.1",
+          "alt": "Figure 16.1: Sensing of viral nucleic acids, induction of type I interferon and the antiviral state"
+        },
+        {
+          "page": 224,
+          "bookPage": 200,
+          "num": "16.2",
+          "alt": "Figure 16.2: Time course of the immune response to an acute viral infection"
+        },
+        {
+          "page": 225,
+          "bookPage": 201,
+          "num": "16.3",
+          "alt": "Figure 16.3: Maternal antibody decline and the window of susceptibility"
+        }
+      ],
+      "warnings": [
+        "ch16: table \"Table 16.4: Cellular and humoral innate defences against viruses\" (p221, 2cols, last row=[\"Acute-phase response and\\nfever\",\"Hepatic acute-phase proteins; cytokine-induced fever and sickness behaviour\"]) not continued on p222; page cands=[[2,7,\"Cell\"],[2,3,\"Mechanism\"]]"
+      ]
+    },
+    {
+      "chapter": 17,
+      "range": [
+        231,
+        242
+      ],
+      "html": "chapter-17.html",
+      "chars": 32808,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 19,
+        "h4": 8
+      },
+      "lists": {
+        "ul": 13,
+        "ol": 5
+      },
+      "tablesMatched": 10,
+      "tablesContinued": 1,
+      "tableFragments": 1,
+      "unconsumedTables": 4,
+      "figures": [
+        {
+          "page": 234,
+          "bookPage": 210,
+          "num": "17.1",
+          "alt": "Figure 17.1: Types of viral vaccines: conventional and new-generation platforms"
+        },
+        {
+          "page": 238,
+          "bookPage": 214,
+          "num": "17.2",
+          "alt": "Figure 17.2: Production and quality control of a cell-culture viral vaccine (e.g. FMD)"
+        }
+      ],
+      "warnings": [
+        "ch17: table \"Table 17.2: Methods of producing live attenuated vaccines\" (p232, 3cols, last row=[\"Reverse genetics and gene\\ndeletion\",\"Rational deletion of virulence genes\",\"gE-deleted BoHV-1 and PRV; ASFV gene-\\ndeleted vaccines; codon-deoptimised\\nviruses\"]) not continued on p233; page cands=[[3,11,\"Feature\"],[3,6,\"Agent\"]]",
+        "ch17: table \"Table 17.8: Routes of vaccine administration\" (p236, 2cols, last row=[\"In ovo (day 18 of incubation)\",\"Marek’s disease, HVT-vectored vaccines, IBD immune-complex vaccines\"]) not continued on p237; page cands=[[2,5,\"Category\"]]"
+      ]
+    },
+    {
+      "chapter": 18,
+      "range": [
+        243,
+        253
+      ],
+      "html": "chapter-18.html",
+      "chars": 28018,
+      "headings": {
+        "h1": 1,
+        "h2": 5,
+        "h3": 14,
+        "h4": 7
+      },
+      "lists": {
+        "ul": 11,
+        "ol": 5
+      },
+      "tablesMatched": 7,
+      "tablesContinued": 2,
+      "tableFragments": 0,
+      "unconsumedTables": 5,
+      "figures": [
+        {
+          "page": 245,
+          "bookPage": 221,
+          "num": "18.1",
+          "alt": "Figure 18.1: Targets of antiviral drugs in the virus replication cycle"
+        },
+        {
+          "page": 246,
+          "bookPage": 222,
+          "num": "18.2",
+          "alt": "Figure 18.2: Mechanism of action of acyclovir"
+        }
+      ],
+      "warnings": [
+        "ch18: table \"Table 18.5: Immunological and biological approaches to antiviral therapy\" (p248, 2cols, last row=[\"Plant-derived compounds\",\"Many plant extracts (e.g. neem, tulsi, turmeric/curcumin) show in vitro\\nantiviral activity against veterinary viruses; clinical evidence is limited and\\nrequires rigorous evaluation\"]) not continued on p249; page cands=[[2,6,\"Mechanism\"],[1,2,\"INDIA FOCUS: ANTIVIRAL TH\"],[1,2,\"LINK WITH PRACTICAL CLASS\"]]"
+      ]
+    }
+  ],
+  "totals": {
+    "chars": 583979,
+    "h2": 86,
+    "h3": 263,
+    "h4": 121,
+    "ul": 230,
+    "ol": 83,
+    "tables": 118,
+    "figures": 46,
+    "warnings": 17
+  }
+}
