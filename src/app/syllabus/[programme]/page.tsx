@@ -18,6 +18,8 @@ import { getDiploma } from "@/lib/diplomas";
 import SyllabusProgress from "@/components/syllabus-progress";
 import SyllabusDarkToggle from "@/components/syllabus-dark-toggle";
 import SyllabusBookmarkButton from "@/components/syllabus-bookmark-button";
+import CurriculumSidebar from "@/components/curriculum-sidebar";
+import { getCurriculumSidebar } from "@/lib/curriculum-sidebar";
 
 
 
@@ -102,6 +104,12 @@ export default async function ProgrammePage({
   )();
 
   if (!programme) notFound();
+
+  // Hierarchical curriculum sidebar — programme → subjects → chapters.
+  const curriculum = await getCurriculumSidebar({
+    programmeId: programme.id,
+    programmeSlug: slug,
+  });
 
   const Icon = iconMap[programme.icon || "BookOpen"] || BookOpen;
   const colorClass = colorMap[slug] || "text-primary";
@@ -239,6 +247,9 @@ export default async function ProgrammePage({
   };
 
   return (
+    <div className="min-h-screen flex">
+      <CurriculumSidebar data={curriculum} />
+      <div className="flex-1 min-w-0">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between mb-4">
           <Link href="/syllabus" className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-primary hover:text-white transition-colors">
@@ -403,6 +414,8 @@ export default async function ProgrammePage({
           </div>
         </div>
       )}
+      </div>
+      </div>
     </div>
   );
 }

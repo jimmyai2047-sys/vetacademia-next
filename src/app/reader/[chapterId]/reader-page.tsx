@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import ChapterReader from "@/components/chapter-reader";
-import SyllabusSidebar from "@/components/syllabus-sidebar";
+import CurriculumSidebar from "@/components/curriculum-sidebar";
+import type { CurriculumSidebarData } from "@/lib/curriculum-sidebar";
 import { sanitizeHtml } from "@/lib/sanitize";
 import dynamic from "next/dynamic";
 
@@ -34,6 +35,8 @@ interface Section {
   html: string;
 }
 
+const subscribeNoop = () => () => {};
+
 interface Props {
   title: string;
   subjectName: string;
@@ -57,7 +60,8 @@ interface Props {
   activeSectionIndex: number | null;
   /** One entry per section — the chapter's mock test, or null when none exists. */
   chapterMockTests?: (ChapterMockTest | null)[];
-  sidebarUnits?: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[];
+  /** Hierarchical curriculum tree (programme → subjects → chapters). */
+  curriculum?: CurriculumSidebarData;
 }
 
 export default function ReaderPage({
@@ -74,24 +78,42 @@ export default function ReaderPage({
   resources,
   activeSectionIndex,
   chapterMockTests = [],
-  sidebarUnits,
+  curriculum,
 }: Props) {
   const [readerOpen, setReaderOpen] = useState(false);
   const hasSections = sections.length > 0;
   const isSingleLecture =
     activeSectionIndex !== null && activeSectionIndex >= 0 && activeSectionIndex < sections.length;
+
+  // DOMPurify has no `window` during SSR (its default export then lacks
+  // `.sanitize`), so sanitizing during the server pass crashes it and the
+  // lecture HTML never makes it into the SSR output. Gate the (browser-only)
+  // sanitize behind a hydration flag: server and first client render stay
+  // empty and identical; once hydrated, sanitize runs in render — still in
+  // the browser, still before dangerouslySetInnerHTML, and without a flash
+  // when navigating lecture to lecture.
+  const isHydrated = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false
+  );
+  const lectureHtml =
+    isHydrated && isSingleLecture && sections[activeSectionIndex!]
+      ? sanitizeHtml(sections[activeSectionIndex!].html)
+      : "";
+
   const activeMockTest =
     isSingleLecture ? chapterMockTests[activeSectionIndex!] ?? null : null;
   const isLSA = true; // All programmes (BVSc/MVSc/PhD) + Exams — copy block + watermark on every chapter
 
   return (
     <div className="min-h-screen bg-[#edf6fd] dark:bg-[#0f172a] flex">
-      {sidebarUnits && sidebarUnits.length > 0 && (
-        <SyllabusSidebar
-          units={sidebarUnits}
-          subjectName={subjectName}
-          hrefFor={(id) => `/reader/${id}`}
-          activeId={chapterId}
+      {curriculum && (
+        <CurriculumSidebar
+          data={curriculum}
+          activeSubjectId={subjectId}
+          activeChapterId={chapterId}
+          activeSectionIndex={activeSectionIndex}
         />
       )}
       <div className="flex-1 min-w-0 max-w-[1440px] mx-auto px-4 lg:px-6 py-8">
@@ -234,7 +256,7 @@ export default function ReaderPage({
               onContextMenu={isLSA ? (e) => e.preventDefault() : undefined}
               onDragStart={isLSA ? (e: React.DragEvent) => e.preventDefault() : undefined}
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(sections[activeSectionIndex!].html),
+                __html: lectureHtml,
               }}
             />
 

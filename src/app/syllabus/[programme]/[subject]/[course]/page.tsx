@@ -22,6 +22,8 @@ import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import { chapterTitleWithoutNumber, matchChapterMockTests } from "@/lib/chapter-mock-tests";
 import EnrollCta from "@/components/enroll-cta";
+import CurriculumSidebar from "@/components/curriculum-sidebar";
+import { getCurriculumSidebar } from "@/lib/curriculum-sidebar";
 
 
 
@@ -42,7 +44,7 @@ export default async function CoursePage({
               id: true,
               name: true,
               year: true,
-              programme: { select: { name: true } },
+              programme: { select: { id: true, name: true } },
             },
           },
           chapterContents: { orderBy: { createdAt: "desc" } },
@@ -130,6 +132,15 @@ export default async function CoursePage({
   // /reader/[chapterId]/[index] expects.
   const theorySections = (course.sections ?? []).map((s, idx) => ({ ...s, readerIndex: idx }));
 
+  // Hierarchical curriculum sidebar — programme → subjects → chapters
+  // (this course's lectures are attached as the active chapter's sections).
+  const curriculum = await getCurriculumSidebar({
+    programmeId: course.subject.programme.id,
+    programmeSlug: progSlug,
+    activeSubjectId: course.subject.id,
+    activeChapterId: course.id,
+  });
+
   // Parse creditHours "X+Y" — only the Theory (X) part is shown in Phase I.
   let theoryCredits = 0;
   if (course.creditHours && course.creditHours.includes("+")) {
@@ -139,7 +150,14 @@ export default async function CoursePage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen flex">
+      <CurriculumSidebar
+        data={curriculum}
+        activeSubjectId={course.subject.id}
+        activeChapterId={course.id}
+      />
+      <div className="flex-1 min-w-0">
+      <div className="container mx-auto px-4 py-4">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
         <Link href="/syllabus" className="hover:text-primary">Syllabus</Link>
@@ -354,6 +372,8 @@ export default async function CoursePage({
           to={purchaseViaCheckout ? "checkout" : "pricing"}
         />
       )}
+      </div>
+      </div>
     </div>
   );
 }

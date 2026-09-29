@@ -25,7 +25,8 @@ import { getCourseImage } from "@/lib/course-images";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
-import SyllabusSidebar from "@/components/syllabus-sidebar";
+import CurriculumSidebar from "@/components/curriculum-sidebar";
+import { getCurriculumSidebar } from "@/lib/curriculum-sidebar";
 
 
 
@@ -41,7 +42,7 @@ export default async function SubjectPage({
       prisma.subject.findFirst({
         where: { id: subjectId },
         include: {
-          programme: { select: { name: true, fullName: true } },
+          programme: { select: { id: true, name: true, fullName: true } },
           chapters: {
             orderBy: { unitNumber: "asc" },
             select: {
@@ -118,24 +119,6 @@ export default async function SubjectPage({
   const theoryGrouped = groupByUnit(theoryChapters);
   const practicalGrouped = groupByUnit(practicalChapters);
 
-  // Sidebar data
-  const sidebarUnits: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[] = [];
-  let globalIdx = 0;
-  for (const [unit, chapters] of Object.entries(theoryGrouped)) {
-    sidebarUnits.push({
-      unit,
-      type: "theory",
-      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++globalIdx })),
-    });
-  }
-  for (const [unit, chapters] of Object.entries(practicalGrouped)) {
-    sidebarUnits.push({
-      unit,
-      type: "practical",
-      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++globalIdx })),
-    });
-  }
-
   const signedContents = new Map<string, (typeof subject.chapters)[number]["chapterContents"]>();
   await Promise.all(
     subject.chapters.map(async (ch) => {
@@ -151,12 +134,17 @@ export default async function SubjectPage({
     })
   );
 
+  // Hierarchical curriculum sidebar — programme → subjects → chapters.
+  const curriculum = await getCurriculumSidebar({
+    programmeId: subject.programme.id,
+    programmeSlug: progSlug,
+    activeSubjectId: subject.id,
+  });
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
-      {!hasCourses && hasAccess && sidebarUnits.length > 0 && (
-        <SyllabusSidebar units={sidebarUnits} subjectName={subject.name} />
-      )}
+      <CurriculumSidebar data={curriculum} activeSubjectId={subject.id} />
 
       {/* Main content */}
       <div className="flex-1 min-w-0">

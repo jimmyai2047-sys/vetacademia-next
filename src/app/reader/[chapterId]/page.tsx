@@ -6,6 +6,7 @@ import { getSignedUrl } from "@/lib/blob";
 import { signBlobViewerUrl } from "@/lib/blob-token";
 import { programmeNameToSlug } from "@/lib/programme";
 import { matchChapterMockTests } from "@/lib/chapter-mock-tests";
+import { getCurriculumSidebar } from "@/lib/curriculum-sidebar";
 import ReaderPage from "./reader-page";
 
 export const metadata = {
@@ -23,7 +24,7 @@ export default async function ChapterReaderRoute({
     where: { id: chapterId },
     include: {
       subject: {
-        select: { name: true, year: true, programme: { select: { name: true } } },
+        select: { name: true, year: true, programme: { select: { id: true, name: true } } },
       },
       chapterContents: true,
       sections: { orderBy: { order: "asc" } },
@@ -31,43 +32,6 @@ export default async function ChapterReaderRoute({
   });
 
   if (!chapter) notFound();
-
-  // Sidebar flowchart — all chapters of this subject grouped by unit (for left nav)
-  const allChaptersForSidebar = await prisma.chapter.findMany({
-    where: { subjectId: chapter.subjectId },
-    orderBy: [{ unitNumber: "asc" }, { title: "asc" }],
-    select: { id: true, title: true, type: true, unitNumber: true },
-  });
-  const _groupByUnit = (chapters: typeof allChaptersForSidebar) =>
-    chapters.reduce(
-      (acc, ch) => {
-        const key = `Unit ${ch.unitNumber}`;
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(ch);
-        return acc;
-      },
-      {} as Record<string, typeof allChaptersForSidebar>
-    );
-  const _theory = allChaptersForSidebar.filter((c) => c.type !== "PRACTICAL");
-  const _practical = allChaptersForSidebar.filter((c) => c.type === "PRACTICAL");
-  const _theoryGrouped = _groupByUnit(_theory);
-  const _practicalGrouped = _groupByUnit(_practical);
-  const sidebarUnits: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[] = [];
-  let _globalIdx = 0;
-  for (const [unit, chapters] of Object.entries(_theoryGrouped)) {
-    sidebarUnits.push({
-      unit,
-      type: "theory",
-      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++_globalIdx })),
-    });
-  }
-  for (const [unit, chapters] of Object.entries(_practicalGrouped)) {
-    sidebarUnits.push({
-      unit,
-      type: "practical",
-      chapters: chapters.map((ch) => ({ id: ch.id, title: ch.title, index: ++_globalIdx })),
-    });
-  }
 
   const access = await getAccess();
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
@@ -101,6 +65,15 @@ export default async function ChapterReaderRoute({
   const signedHtml = hasSections
     ? ""
     : await prepareChapterHtml(chapter.content);
+
+  // Hierarchical curriculum sidebar — programme → subjects → chapters
+  // (sections of this chapter are attached for the lecture list).
+  const curriculum = await getCurriculumSidebar({
+    programmeId: chapter.subject.programme.id,
+    programmeSlug,
+    activeSubjectId: chapter.subjectId,
+    activeChapterId: chapter.id,
+  });
 
   // One mock test per chapter, shown at the end of that chapter in the reader.
   const courseMockTests =
@@ -188,7 +161,7 @@ export default async function ChapterReaderRoute({
       resources={resources}
       activeSectionIndex={null}
       chapterMockTests={chapterMockTests}
-      sidebarUnits={sidebarUnits}
+      curriculum={curriculum}
     />
   );
 }
