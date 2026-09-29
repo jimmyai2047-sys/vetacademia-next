@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { BookOpen, ChevronRight, FlaskConical, List, GraduationCap, Search } from "lucide-react";
 
 interface SidebarChapter {
@@ -18,10 +19,19 @@ interface SidebarUnit {
 interface SyllabusSidebarProps {
   units: SidebarUnit[];
   subjectName: string;
+  /**
+   * Navigate mode (reader pages): clicking a chapter goes to hrefFor(id)
+   * instead of scrolling. Omit for scroll mode (subject pages).
+   */
+  hrefFor?: (chapterId: string) => string;
+  /** Active chapter in navigate mode (scroll mode uses scroll-spy). */
+  activeId?: string;
 }
 
-export default function SyllabusSidebar({ units, subjectName }: SyllabusSidebarProps) {
-  const [activeId, setActiveId] = useState<string>("");
+export default function SyllabusSidebar({ units, subjectName, hrefFor, activeId: activeIdProp }: SyllabusSidebarProps) {
+  const navigateMode = typeof hrefFor === "function";
+  const [scrollActiveId, setScrollActiveId] = useState<string>("");
+  const activeId = navigateMode ? (activeIdProp ?? "") : scrollActiveId;
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -29,19 +39,20 @@ export default function SyllabusSidebar({ units, subjectName }: SyllabusSidebarP
     const el = document.getElementById(`chapter-${id}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActiveId(id);
+      setScrollActiveId(id);
       setIsOpen(false);
     }
   }, []);
 
   useEffect(() => {
+    if (navigateMode) return; // navigate mode: nothing to observe on this page
     const allIds = units.flatMap((u) => u.chapters.map((c) => c.id));
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             const id = entry.target.id.replace("chapter-", "");
-            setActiveId(id);
+            setScrollActiveId(id);
           }
         }
       },
@@ -52,7 +63,7 @@ export default function SyllabusSidebar({ units, subjectName }: SyllabusSidebarP
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, [units]);
+  }, [units, navigateMode]);
 
   const filteredUnits = units
     .map((u) => ({
@@ -117,23 +128,41 @@ export default function SyllabusSidebar({ units, subjectName }: SyllabusSidebarP
                 <span className="ml-auto text-[10px] bg-muted px-1.5 py-0.5 rounded-full">{unit.chapters.length}</span>
               </div>
               <div className="ml-2 pl-3 border-l-2 border-dashed border-border space-y-1">
-                {unit.chapters.map((ch) => (
-                  <button
-                    key={ch.id}
-                    onClick={() => scrollTo(ch.id)}
-                    className={`w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm border transition-all duration-200 ${
-                      activeId === ch.id
-                        ? "bg-gradient-to-r from-primary to-teal-600 text-white border-primary shadow-md translate-x-1"
-                        : "bg-white/70 hover:bg-white border-transparent hover:border-border hover:shadow-sm text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 border ${activeId === ch.id ? "bg-white/20 border-white/30 text-white" : "bg-muted border-border"}`}>
-                      {String(ch.index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="truncate leading-snug font-medium">{ch.title}</span>
-                    <ChevronRight className={`h-3.5 w-3.5 ml-auto shrink-0 ${activeId === ch.id ? "text-white" : "opacity-40"}`} />
-                  </button>
-                ))}
+                {unit.chapters.map((ch) => {
+                  const isActive = activeId === ch.id;
+                  const itemClass = `w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm border transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-primary to-teal-600 text-white border-primary shadow-md translate-x-1"
+                      : "bg-white/70 hover:bg-white border-transparent hover:border-border hover:shadow-sm text-muted-foreground hover:text-foreground"
+                  }`;
+                  const inner = (
+                    <>
+                      <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 border ${isActive ? "bg-white/20 border-white/30 text-white" : "bg-muted border-border"}`}>
+                        {String(ch.index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="truncate leading-snug font-medium">{ch.title}</span>
+                      <ChevronRight className={`h-3.5 w-3.5 ml-auto shrink-0 ${isActive ? "text-white" : "opacity-40"}`} />
+                    </>
+                  );
+                  return navigateMode ? (
+                    <Link
+                      key={ch.id}
+                      href={hrefFor!(ch.id)}
+                      onClick={() => setIsOpen(false)}
+                      className={itemClass}
+                    >
+                      {inner}
+                    </Link>
+                  ) : (
+                    <button
+                      key={ch.id}
+                      onClick={() => scrollTo(ch.id)}
+                      className={itemClass}
+                    >
+                      {inner}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}

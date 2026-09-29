@@ -21,10 +21,12 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   List,
   ListChecks,
 } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
+import type { ChapterMockTest } from "@/lib/chapter-mock-tests";
 
 interface Section {
   id: string;
@@ -53,6 +55,8 @@ interface Props {
   }[];
   /** null = overview (all sections listed), number = single lecture mode */
   activeSectionIndex: number | null;
+  /** One entry per section — the chapter's mock test, or null when none exists. */
+  chapterMockTests?: (ChapterMockTest | null)[];
   sidebarUnits?: { unit: string; chapters: { id: string; title: string; index: number }[]; type: "theory" | "practical" }[];
 }
 
@@ -69,18 +73,26 @@ export default function ReaderPage({
   sections,
   resources,
   activeSectionIndex,
+  chapterMockTests = [],
   sidebarUnits,
 }: Props) {
   const [readerOpen, setReaderOpen] = useState(false);
   const hasSections = sections.length > 0;
   const isSingleLecture =
     activeSectionIndex !== null && activeSectionIndex >= 0 && activeSectionIndex < sections.length;
+  const activeMockTest =
+    isSingleLecture ? chapterMockTests[activeSectionIndex!] ?? null : null;
   const isLSA = true; // All programmes (BVSc/MVSc/PhD) + Exams — copy block + watermark on every chapter
 
   return (
     <div className="min-h-screen bg-[#edf6fd] dark:bg-[#0f172a] flex">
       {sidebarUnits && sidebarUnits.length > 0 && (
-        <SyllabusSidebar units={sidebarUnits} subjectName={subjectName} />
+        <SyllabusSidebar
+          units={sidebarUnits}
+          subjectName={subjectName}
+          hrefFor={(id) => `/reader/${id}`}
+          activeId={chapterId}
+        />
       )}
       <div className="flex-1 min-w-0 max-w-[1440px] mx-auto px-4 lg:px-6 py-8">
         {/* Header */}
@@ -158,21 +170,43 @@ export default function ReaderPage({
               Lectures ({sections.length})
             </p>
             <div className="space-y-3">
-              {sections.map((s, i) => (
-                <Link
-                  key={s.id}
-                  href={`/reader/${chapterId}/${i}`}
-                  className="flex items-center gap-4 rounded-xl border border-border bg-background p-4 hover:bg-accent hover:border-primary/40 transition-all group"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white font-bold shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold truncate">{s.title}</p>
+              {sections.map((s, i) => {
+                const mock = chapterMockTests[i] ?? null;
+                return (
+                  <div
+                    key={s.id}
+                    className="rounded-xl border border-border bg-background overflow-hidden"
+                  >
+                    <Link
+                      href={`/reader/${chapterId}/${i}`}
+                      className="flex items-center gap-4 p-4 hover:bg-accent transition-all group"
+                    >
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#0c4a6e] text-white font-bold shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold truncate">{s.title}</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
+                    </Link>
+                    {mock && (
+                      <div className="flex items-center justify-between gap-3 border-t border-border/70 bg-muted/30 px-4 py-2.5">
+                        <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                          <ClipboardList className="h-3.5 w-3.5 text-emerald-600" />
+                          Mock Test &middot; {mock.totalMarks ?? 20} MCQs &middot;{" "}
+                          {mock.duration ?? 20} min
+                        </span>
+                        <Link
+                          href={`/mock-tests/${mock.id}`}
+                          className="text-xs font-semibold text-primary hover:underline shrink-0"
+                        >
+                          Start Test &rarr;
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0" />
-                </Link>
-              ))}
+                );
+              })}
             </div>
 
             {/* Resources */}
@@ -203,6 +237,30 @@ export default function ReaderPage({
                 __html: sanitizeHtml(sections[activeSectionIndex!].html),
               }}
             />
+
+            {/* End of chapter — mock test for this chapter */}
+            {activeMockTest && (
+              <div className="mt-10 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-[#d4a843]/10 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shrink-0">
+                    <ClipboardList className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-semibold leading-tight">Chapter Mock Test</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {activeMockTest.totalMarks ?? 20} MCQs &middot;{" "}
+                      {activeMockTest.duration ?? 20} min &middot; check your understanding
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href={`/mock-tests/${activeMockTest.id}`}
+                  className="px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm text-center hover:bg-primary/90 transition-all active:scale-95 shadow-md shrink-0"
+                >
+                  Start Mock Test &rarr;
+                </Link>
+              </div>
+            )}
 
             {/* Prev / Next navigation */}
             <div className="mt-12 flex flex-col sm:flex-row gap-4">
