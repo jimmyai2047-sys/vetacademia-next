@@ -71,9 +71,9 @@ function buildOverview(metas) {
     );
   }
   parts.push(
-    "<p>Open a chapter in the Reader for the full text, tables and figures. Every chapter ends with a " +
-      "question bank (20 MCQs with answer key, short and long answer questions) and has a companion " +
-      "20-MCQ mock test — use the Chapter Mock Tests card on this page to practise chapter-wise.</p>",
+    "<p>Open a chapter in the Reader for the full text, tables and figures. Every chapter ends with " +
+      "short and long answer questions, and each chapter has a companion 20-MCQ mock test with answer " +
+      "key — use the Chapter Mock Tests card on this page to practise chapter-wise.</p>",
   );
   return parts.join("\n");
 }
@@ -197,8 +197,9 @@ async function main() {
           author: "Dr. Ashok Baindha, PGIVER Jaipur, RUVAS Jaipur",
           reviewer: "PGIVER, Jaipur (RUVAS, Bikaner)",
           description:
-            "VMC 503 General Virology — 18 chapters with full text, tables and figures, question banks " +
-            "(20 MCQs with answer key per chapter) and 18 chapter mock tests (M.V.Sc Veterinary Microbiology).",
+            "VMC 503 General Virology — 18 chapters with full text, tables and figures, short and long " +
+            "answer questions, plus 18 chapter mock tests with 20 MCQs and answer key each " +
+            "(M.V.Sc Veterinary Microbiology).",
           tags: ["VMC503", "General Virology", "M.V.Sc", "Veterinary Microbiology"],
         },
       });

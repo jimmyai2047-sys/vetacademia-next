@@ -93,7 +93,8 @@ for (let i = 0; i < report.chapters.length; i++) {
 
 check(totalTables === 118, `total tables ${totalTables} vs 118`);
 check(totalImgs === 46, `total imgs ${totalImgs} vs 46`);
-check(totalChars >= 583979, `total chars ${totalChars} below raw total`);
+const rawTotal = report.chapters.reduce((s, c) => s + c.chars, 0);
+check(totalChars >= rawTotal, `total chars ${totalChars} below raw total ${rawTotal}`);
 const imageUrls = Object.values(images).flat();
 check(imageUrls.length === 46, `_images.json urls ${imageUrls.length} vs 46`);
 

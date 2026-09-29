@@ -272,6 +272,8 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
   let cur = null; // {kind:'p'|'ul'|'ol', plain, html, items?, marker?, start?, lastNum?}
   let opener = false;
   let pendingTable = null;
+  let skipMcq = false; // true between the MCQ heading and Short Answer heading
+  let mcqSub = null; // subsection number of the skipped MCQ heading (e.g. 12)
   const warnings = report.warnings;
   const usedCands = new Set();
 
@@ -430,6 +432,16 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
       pendingTable = null;
     }
 
+    // MCQ region: skip the questions, options and answer key (the companion
+    // mock test carries the same 20 MCQs); the Short Answer heading exits the
+    // skip and is emitted — renumbered — by the heading block below.
+    if (skipMcq) {
+      if (!(SECTION_HEADING_RE.test(text) && ln.h >= 14 && /Short Answer Questions$/.test(text))) {
+        continue;
+      }
+      skipMcq = false;
+    }
+
     // table caption
     if (TABLE_CAPTION_RE.test(text)) {
       const cands = tablesByPage.get(ln.pageNo) || [];
@@ -485,6 +497,30 @@ function buildChapterHtml({ meta, chapterN, lines, images, tablesByPage, lofMap,
     else if (SECTION_HEADING_RE.test(text) && ln.h >= 14) heading = { level: 3 };
 
     if (heading) {
+      // MCQ heading: close the current list/paragraph and skip the whole MCQ
+      // block — its body lines are filtered out by the skip check above, and
+      // the block itself lives only in the mock tests.
+      if (
+        heading.level === 3 &&
+        SECTION_HEADING_RE.test(text) &&
+        /Multiple Choice Questions$/.test(text)
+      ) {
+        const mm = text.match(/^(\d{1,2})\.(\d{1,2})(?=\s|$)/);
+        if (mm && Number(mm[1]) === chapterN) mcqSub = Number(mm[2]);
+        closeCur();
+        skipMcq = true;
+        continue;
+      }
+      // sections after the removed MCQ block shift down one number so the
+      // chapter keeps contiguous numbering (…1.11 Glossary, 1.12 Short Answer…)
+      if (heading.level === 3 && mcqSub !== null) {
+        const mm = text.match(/^(\d{1,2})\.(\d{1,2})(?=\s|$)/);
+        if (mm && Number(mm[1]) === chapterN && Number(mm[2]) > mcqSub) {
+          const dec = `${mm[1]}.${Number(mm[2]) - 1}`;
+          ln.text = ln.text.replace(/^\d{1,2}\.\d{1,2}/, dec);
+          ln.html = ln.html.replace(/^\d{1,2}\.\d{1,2}/, dec);
+        }
+      }
       const next = lines[i + 1];
       if (next && next.pageNo === ln.pageNo) {
         const nextDy = ln.y - next.y;

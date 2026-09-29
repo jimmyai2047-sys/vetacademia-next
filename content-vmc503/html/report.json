@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-29T08:37:05.774Z",
+  "generatedAt": "2026-09-29T09:16:59.667Z",
   "lofEntries": 46,
   "chapters": [
     {
@@ -9,16 +9,16 @@
         35
       ],
       "html": "chapter-01.html",
-      "chars": 29696,
+      "chars": 27117,
       "headings": {
         "h1": 1,
         "h2": 4,
-        "h3": 15,
-        "h4": 1
+        "h3": 14,
+        "h4": 0
       },
       "lists": {
         "ul": 9,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 4,
       "tablesContinued": 2,
@@ -48,16 +48,16 @@
         45
       ],
       "html": "chapter-02.html",
-      "chars": 27450,
+      "chars": 24543,
       "headings": {
         "h1": 1,
         "h2": 4,
-        "h3": 14,
-        "h4": 4
+        "h3": 13,
+        "h4": 3
       },
       "lists": {
         "ul": 12,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 5,
       "tablesContinued": 3,
@@ -89,16 +89,16 @@
         60
       ],
       "html": "chapter-03.html",
-      "chars": 40625,
+      "chars": 37829,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 17,
-        "h4": 8
+        "h3": 16,
+        "h4": 7
       },
       "lists": {
         "ul": 16,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 7,
       "tablesContinued": 3,
@@ -142,16 +142,16 @@
         74
       ],
       "html": "chapter-04.html",
-      "chars": 37547,
+      "chars": 35202,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 15,
-        "h4": 7
+        "h3": 14,
+        "h4": 6
       },
       "lists": {
         "ul": 9,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 10,
       "tablesContinued": 4,
@@ -185,16 +185,16 @@
         89
       ],
       "html": "chapter-05.html",
-      "chars": 41531,
+      "chars": 38265,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 16,
-        "h4": 9
+        "h3": 15,
+        "h4": 8
       },
       "lists": {
         "ul": 17,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 9,
       "tablesContinued": 3,
@@ -232,16 +232,16 @@
         102
       ],
       "html": "chapter-06.html",
-      "chars": 34408,
+      "chars": 31358,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 13,
-        "h4": 7
+        "h3": 12,
+        "h4": 6
       },
       "lists": {
         "ul": 12,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 6,
       "tablesContinued": 1,
@@ -273,16 +273,16 @@
         115
       ],
       "html": "chapter-07.html",
-      "chars": 36356,
+      "chars": 33843,
       "headings": {
         "h1": 1,
         "h2": 4,
-        "h3": 11,
-        "h4": 12
+        "h3": 10,
+        "h4": 11
       },
       "lists": {
         "ul": 23,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 6,
       "tablesContinued": 2,
@@ -318,16 +318,16 @@
         130
       ],
       "html": "chapter-08.html",
-      "chars": 34660,
+      "chars": 31834,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 16,
-        "h4": 4
+        "h3": 15,
+        "h4": 3
       },
       "lists": {
         "ul": 13,
-        "ol": 5
+        "ol": 4
       },
       "tablesMatched": 4,
       "tablesContinued": 1,
@@ -363,16 +363,16 @@
         144
       ],
       "html": "chapter-09.html",
-      "chars": 36711,
+      "chars": 33716,
       "headings": {
         "h1": 1,
         "h2": 6,
-        "h3": 12,
-        "h4": 10
+        "h3": 11,
+        "h4": 9
       },
       "lists": {
         "ul": 14,
-        "ol": 10
+        "ol": 9
       },
       "tablesMatched": 2,
       "tablesContinued": 0,
@@ -410,16 +410,16 @@
         156
       ],
       "html": "chapter-10.html",
-      "chars": 29647,
+      "chars": 26357,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 16,
-        "h4": 1
+        "h3": 15,
+        "h4": 0
       },
       "lists": {
         "ul": 14,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 5,
       "tablesContinued": 0,
@@ -451,16 +451,16 @@
         167
       ],
       "html": "chapter-11.html",
-      "chars": 24100,
+      "chars": 21501,
       "headings": {
         "h1": 1,
         "h2": 4,
-        "h3": 13,
-        "h4": 5
+        "h3": 12,
+        "h4": 4
       },
       "lists": {
         "ul": 11,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 5,
       "tablesContinued": 0,
@@ -493,16 +493,16 @@
         179
       ],
       "html": "chapter-12.html",
-      "chars": 30301,
+      "chars": 27191,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 15,
-        "h4": 9
+        "h3": 14,
+        "h4": 8
       },
       "lists": {
         "ul": 15,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 6,
       "tablesContinued": 2,
@@ -540,16 +540,16 @@
         189
       ],
       "html": "chapter-13.html",
-      "chars": 25125,
+      "chars": 22291,
       "headings": {
         "h1": 1,
         "h2": 4,
-        "h3": 12,
-        "h4": 7
+        "h3": 11,
+        "h4": 6
       },
       "lists": {
         "ul": 9,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 5,
       "tablesContinued": 3,
@@ -579,16 +579,16 @@
         202
       ],
       "html": "chapter-14.html",
-      "chars": 32689,
+      "chars": 29954,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 14,
-        "h4": 9
+        "h3": 13,
+        "h4": 8
       },
       "lists": {
         "ul": 11,
-        "ol": 5
+        "ol": 4
       },
       "tablesMatched": 8,
       "tablesContinued": 3,
@@ -627,16 +627,16 @@
         216
       ],
       "html": "chapter-15.html",
-      "chars": 32645,
+      "chars": 29976,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 15,
-        "h4": 7
+        "h3": 14,
+        "h4": 6
       },
       "lists": {
         "ul": 10,
-        "ol": 4
+        "ol": 3
       },
       "tablesMatched": 10,
       "tablesContinued": 3,
@@ -676,16 +676,16 @@
         230
       ],
       "html": "chapter-16.html",
-      "chars": 30767,
+      "chars": 28235,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 16,
-        "h4": 6
+        "h3": 15,
+        "h4": 5
       },
       "lists": {
         "ul": 11,
-        "ol": 5
+        "ol": 4
       },
       "tablesMatched": 9,
       "tablesContinued": 2,
@@ -723,16 +723,16 @@
         242
       ],
       "html": "chapter-17.html",
-      "chars": 32836,
+      "chars": 30207,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 19,
-        "h4": 8
+        "h3": 18,
+        "h4": 7
       },
       "lists": {
         "ul": 13,
-        "ol": 5
+        "ol": 4
       },
       "tablesMatched": 10,
       "tablesContinued": 2,
@@ -765,16 +765,16 @@
         253
       ],
       "html": "chapter-18.html",
-      "chars": 28156,
+      "chars": 25433,
       "headings": {
         "h1": 1,
         "h2": 5,
-        "h3": 14,
-        "h4": 7
+        "h3": 13,
+        "h4": 6
       },
       "lists": {
         "ul": 11,
-        "ol": 5
+        "ol": 4
       },
       "tablesMatched": 7,
       "tablesContinued": 4,
@@ -802,12 +802,12 @@
     }
   ],
   "totals": {
-    "chars": 585250,
+    "chars": 534852,
     "h2": 86,
-    "h3": 263,
-    "h4": 121,
+    "h3": 245,
+    "h4": 103,
     "ul": 230,
-    "ol": 83,
+    "ol": 65,
     "tables": 118,
     "figures": 46,
     "warnings": 22,
