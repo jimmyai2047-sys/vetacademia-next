@@ -8,7 +8,7 @@ import VetsPageNav from "@/components/vets-page-nav";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText, Pill, ArrowRight } from "lucide-react";
+import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText, Pill, ArrowRight, Calculator } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
@@ -21,6 +21,8 @@ import VetReferenceCollapsible from "@/components/vet-reference-collapsible";
 import VetTestimonials from "@/components/vet-testimonials";
 import VetStickyCta from "@/components/vet-sticky-cta";
 import VetProformas from "@/components/vet-proformas";
+import VetFluidCalculator from "@/components/vet-fluid-calculator";
+import VetGestationCalculator from "@/components/vet-gestation-calculator";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +35,7 @@ export default async function VetsPage() {
           badge="For Practitioners • Clinical • Community"
           title="For"
           titleHighlight="Veterinarians"
-          description="Resources, consultation tools, community and curated articles for practicing veterinarians — clinical references, case studies and expert insights in one decorative hub."
+          description="Resources, consultation tools, community and curated articles for practicing veterinarians — clinical references, case studies and expert insights in one structured hub."
           variant="emerald"
           actions={
             <>
@@ -65,25 +67,25 @@ export default async function VetsPage() {
 
       {/* Decorative stats strip */}
       <div className="container mx-auto px-4 mt-6">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <Card className="va-card-hover rounded-[1.25rem] border-primary/5 bg-white/70 backdrop-blur shadow-sm text-center">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Stethoscope className="h-5 w-5" /></div>
-              <div className="mt-2 text-lg font-extrabold">Clinical</div>
+              <div className="mt-2 text-base sm:text-lg font-extrabold">Clinical</div>
               <div className="text-xs text-muted-foreground">References</div>
             </CardContent>
           </Card>
           <Card className="va-card-hover rounded-[1.25rem] border-primary/5 bg-white/70 backdrop-blur shadow-sm text-center">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><BookOpen className="h-5 w-5" /></div>
-              <div className="mt-2 text-lg font-extrabold">Evidence</div>
+              <div className="mt-2 text-base sm:text-lg font-extrabold">Evidence</div>
               <div className="text-xs text-muted-foreground">Based Care</div>
             </CardContent>
           </Card>
           <Card className="va-card-hover rounded-[1.25rem] border-primary/5 bg-white/70 backdrop-blur shadow-sm text-center">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600"><Sparkles className="h-5 w-5" /></div>
-              <div className="mt-2 text-lg font-extrabold">24/7</div>
+              <div className="mt-2 text-base sm:text-lg font-extrabold">24/7</div>
               <div className="text-xs text-muted-foreground">Access</div>
             </CardContent>
           </Card>
@@ -129,6 +131,20 @@ export default async function VetsPage() {
         <VetCaseSubmit />
         <VetInteractionChecker />
         <VetVaccinationScheduler />
+      </div>
+
+      {/* Clinical Calculators: Fluid therapy + Gestation due date */}
+      <div className="container mx-auto px-4 mt-6" id="calculators">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge className="rounded-full bg-emerald-600 gap-1.5">
+            <Calculator className="h-3 w-3" /> Calculators
+          </Badge>
+          <span className="text-xs text-muted-foreground">Fluid plan • Gestation due date — on-field, offline-friendly</span>
+        </div>
+        <div className="grid lg:grid-cols-2 gap-4">
+          <VetFluidCalculator />
+          <VetGestationCalculator />
+        </div>
       </div>
 
       {/* Clinical Reference - collapsible, repositioned above articles */}

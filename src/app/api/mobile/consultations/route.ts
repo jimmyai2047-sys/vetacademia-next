@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         studentId: userId,
         expertId: body.expertId,
         slot: new Date(body.slot),
-        duration: body.duration || 30,
+        duration: Math.min(Math.max(Number(body.duration) || 30, 15), 120),
         notes: body.notes || null,
         status: "PENDING",
       },

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -10,18 +11,17 @@ import SanitizedHtml from "@/components/sanitized-html";
 
 export const dynamic = "force-dynamic";
 
+const getPostBySlug = cache(async (slug: string) =>
+  prisma.blogPost.findUnique({ where: { slug } }).catch(() => null)
+);
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await prisma.blogPost
-    .findUnique({
-      where: { slug },
-      select: { title: true, excerpt: true },
-    })
-    .catch(() => null);
+  const post = await getPostBySlug(slug);
 
   if (!post) return { title: "Article Not Found | VetAcademia" };
 
@@ -41,9 +41,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await prisma.blogPost
-    .findUnique({ where: { slug } })
-    .catch(() => null);
+  const post = await getPostBySlug(slug);
 
   if (!post || !post.isPublished) notFound();
 

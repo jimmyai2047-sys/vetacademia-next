@@ -130,20 +130,20 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
         <div className="flex items-center gap-2">
           <button
             onClick={() => setFontScale((s) => Math.max(0.7, s - 0.1))}
-            className="w-7 h-7 rounded-full bg-amber-200/60 dark:bg-slate-700/60 text-amber-800 dark:text-amber-200 text-xs font-bold flex items-center justify-center hover:bg-amber-300/80 dark:hover:bg-slate-600/80"
+            className="min-h-[44px] min-w-[44px] rounded-full bg-amber-200/60 dark:bg-slate-700/60 text-amber-800 dark:text-amber-200 text-xs font-bold flex items-center justify-center hover:bg-amber-300/80 dark:hover:bg-slate-600/80"
             title="Font decrease"
           >
             A-
           </button>
           <button
             onClick={() => setFontScale((s) => Math.min(1.5, s + 0.1))}
-            className="w-7 h-7 rounded-full bg-amber-200/60 dark:bg-slate-700/60 text-amber-800 dark:text-amber-200 text-xs font-bold flex items-center justify-center hover:bg-amber-300/80 dark:hover:bg-slate-600/80"
+            className="min-h-[44px] min-w-[44px] rounded-full bg-amber-200/60 dark:bg-slate-700/60 text-amber-800 dark:text-amber-200 text-xs font-bold flex items-center justify-center hover:bg-amber-300/80 dark:hover:bg-slate-600/80"
             title="Font increase"
           >
             A+
           </button>
           {onClose && (
-            <button onClick={onClose} className="ml-2 p-1.5 rounded-full hover:bg-amber-200/60 dark:hover:bg-slate-700/60">
+            <button onClick={onClose} className="ml-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full hover:bg-amber-200/60 dark:hover:bg-slate-700/60">
               <X className="h-5 w-5 text-amber-800 dark:text-amber-200" />
             </button>
           )}
@@ -170,7 +170,7 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
           else if (x > rect.width * 0.7) goNext();
         }}
       >
-        <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6 overflow-y-auto">
+        <div className="w-full h-full px-4 sm:px-8 md:px-12 lg:px-16 py-6">
           <div
             ref={contentRef}
             className={`chapter-content ${isLSA ? "select-none watermark-lsa relative" : ""}`}
@@ -223,12 +223,17 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
                   <button
                     key={i}
                     onClick={() => setPage(i)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      i === page
-                        ? "bg-amber-700 dark:bg-amber-400 scale-125"
-                        : "bg-amber-300 dark:bg-slate-600 hover:bg-amber-400 dark:hover:bg-slate-500"
-                    }`}
-                  />
+                    aria-label={`Go to page ${i + 1}`}
+                    className="p-2 flex items-center justify-center"
+                  >
+                    <span
+                      className={`block w-2 h-2 rounded-full transition-all ${
+                        i === page
+                          ? "bg-amber-700 dark:bg-amber-400 scale-125"
+                          : "bg-amber-300 dark:bg-slate-600 hover:bg-amber-400 dark:hover:bg-slate-500"
+                      }`}
+                    />
+                  </button>
                 ))}
               {totalPages > 20 && (
                 <span className="text-xs text-amber-600 dark:text-amber-400">

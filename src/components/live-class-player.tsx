@@ -49,11 +49,11 @@ export default function LiveClassPlayer({
   const videoUrl = status === "ENDED" && recordingUrl ? recordingUrl : youtubeUrl;
   const embedUrl = ytEmbedFromUrl(videoUrl);
 
-  const fetchMessages = useCallback(async (after?: string) => {
+  const fetchMessages = useCallback(async (after?: string): Promise<number> => {
     try {
       const qs = after ? `?after=${after}` : "";
       const res = await fetch(`/api/live-classes/${liveClassId}/messages${qs}`);
-      if (!res.ok) return;
+      if (!res.ok) return 0;
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         setMessages((prev) => {
@@ -62,22 +62,41 @@ export default function LiveClassPlayer({
           return [...prev, ...newMsgs];
         });
         pollRef.current = data[data.length - 1].createdAt;
+        return data.length;
       }
-    } catch { /* empty */ }
+      return 0;
+    } catch { return 0; /* empty */ }
   }, [liveClassId]);
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | undefined;
+    let emptyStreak = 0;
     setLoadingChat(true);
     fetchMessages().finally(() => setLoadingChat(false));
-    const interval = setInterval(() => {
-      if (pollRef.current) {
-        fetchMessages(pollRef.current);
-      } else {
-        fetchMessages();
-      }
-    }, 3000);
+    // Ended classes are static recordings — one fetch, no polling.
+    if (status === "ENDED") {
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }
+    const start = (ms: number) => {
+      if (interval) clearInterval(interval);
+      interval = setInterval(async () => {
+        if (typeof document !== "undefined" && document.hidden) return;
+        const n = await fetchMessages(pollRef.current ?? undefined);
+        if (n === 0) {
+          emptyStreak += 1;
+          // Back off 3s → 15s after 3 consecutive empty responses.
+          if (emptyStreak >= 3 && ms !== 15000) start(15000);
+        } else {
+          emptyStreak = 0;
+          if (ms !== 3000) start(3000);
+        }
+      }, ms);
+    };
+    start(3000);
     return () => clearInterval(interval);
-  }, [fetchMessages]);
+  }, [fetchMessages, status]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });

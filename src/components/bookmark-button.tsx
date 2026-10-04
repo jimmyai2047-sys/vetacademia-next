@@ -79,7 +79,7 @@ export default function BookmarkButton({
         disabled={busy}
         aria-label={saved ? "Remove bookmark" : "Bookmark"}
         title={saved ? "Saved" : "Save"}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:text-primary disabled:opacity-50"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:text-primary disabled:opacity-50"
       >
         <Bookmark className={saved ? "h-4 w-4 fill-primary text-primary" : "h-4 w-4"} />
       </button>

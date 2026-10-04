@@ -27,24 +27,38 @@ export default function HeroCarousel() {
   }, []);
   return (
     <div className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[400px] overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border bg-muted shadow-2xl">
-      {slides.map((s, i) => (
-        <Image
-          key={s.src}
-          src={s.src}
-          alt={s.alt}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
-          className={`object-cover transition-opacity duration-700 ${i === idx ? "opacity-100" : "opacity-0"}`}
-          priority={i === 0}
-        />
-      ))}
+      {slides.map((s, i) => {
+        // Only mount active + next slide; others render nothing (saves 12 image fetches).
+        const isActive = i === idx;
+        const isNext = i === (idx + 1) % slides.length;
+        if (!isActive && !isNext) return null;
+        return (
+          <Image
+            key={s.src}
+            src={s.src}
+            alt={s.alt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 560px"
+            className={`object-cover transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0"}`}
+            priority={i === 0}
+            loading={i === 0 ? "eager" : "lazy"}
+          />
+        );
+      })}
       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent pointer-events-none" />
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
         {slides.map((_, i) => (
-          <span
+          <button
             key={i}
-            className={`h-1.5 rounded-full transition-all ${i === idx ? "w-5 bg-white" : "w-1.5 bg-white/50"}`}
-          />
+            type="button"
+            aria-label={`Go to slide ${i + 1}`}
+            onClick={() => setIdx(i)}
+            className="p-2 -m-0.5 flex items-center justify-center"
+          >
+            <span
+              className={`h-1.5 rounded-full transition-all ${i === idx ? "w-5 bg-white" : "w-1.5 bg-white/50"}`}
+            />
+          </button>
         ))}
       </div>
     </div>

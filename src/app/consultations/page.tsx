@@ -10,6 +10,12 @@ import CancelConsultationButton from "@/components/cancel-consultation-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Calendar, Clock, Sparkles, Video, Users, CheckCircle } from "lucide-react";
 
+export const metadata = {
+  title: "VetAcademia | My Consultations — Book & Manage Expert Sessions",
+  description:
+    "View, confirm, reschedule or cancel your one-on-one consultation sessions with veterinary experts on VetAcademia, with timing and status in one dashboard.",
+};
+
 export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, string> = {
@@ -42,9 +48,14 @@ export default async function ConsultationsPage() {
         ? { expertId: expert.id }
         : { studentId: session.user.id },
       orderBy: { slot: "desc" },
-      include: {
+      take: 100,
+      select: {
+        id: true,
+        slot: true,
+        duration: true,
+        status: true,
         student: { select: { name: true, email: true } },
-        expert: { include: { user: { select: { name: true } } } },
+        expert: { select: { user: { select: { name: true } } } },
       },
     });
   } catch {
@@ -61,7 +72,7 @@ export default async function ConsultationsPage() {
         titleHighlight="Consultations"
         description={
           isExpert
-            ? "Consultation requests from students — confirm, reschedule or complete sessions, all in one decorative dashboard."
+            ? "Consultation requests from students — confirm, reschedule or complete sessions, all in one dashboard."
             : "Your expert consultation bookings — track upcoming slots, join video calls, and manage cancellations easily."
         }
         variant="primary"

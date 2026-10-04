@@ -220,7 +220,15 @@ export default async function ExamPage({
   const dbMockTests = await prisma.mockTest.findMany({
     where: { exam: canonicalExam },
     orderBy: { createdAt: "desc" },
-    include: { _count: { select: { questions: true } } },
+    take: 100,
+    select: {
+      id: true,
+      title: true,
+      duration: true,
+      track: true,
+      kind: true,
+      _count: { select: { questions: true } },
+    },
   });
 
   const groupByTrack = (tests: typeof dbMockTests) => {
@@ -412,17 +420,17 @@ export default async function ExamPage({
             </div>
 
             {/* VO Stats strip */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-blue-700">{voSubjects.length}</div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-blue-700">{voSubjects.length}</div>
                 <div className="text-xs text-muted-foreground">Subjects (B.V.Sc)</div>
               </div>
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-blue-700">{voPostsStrict.length || voPosts.length}</div>
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-blue-700">{voPostsStrict.length || voPosts.length}</div>
                 <div className="text-xs text-muted-foreground">Prev. Year Papers</div>
               </div>
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-blue-700">
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-blue-700">
                   {(voPrevGroups[0]?.items.length ?? 0) + (voOtherGroups[0]?.items.length ?? 0) || "—"}
                 </div>
                 <div className="text-xs text-muted-foreground">Mock Tests</div>
@@ -513,15 +521,19 @@ export default async function ExamPage({
                             <div className="text-xs text-muted-foreground">{m.type}{m.subject ? ` · ${m.subject}` : ""}{m.topic ? ` → ${m.topic}` : ""}</div>
                           </div>
                           {(m as any).signedBody || m.body ? (
-                            <div className="rounded-xl border bg-muted/5 p-3 max-h-[260px] overflow-hidden relative">
-                              <div className="pointer-events-none scale-[0.96] origin-top-left w-[104%]">
+                            <>
+                              <div className="rounded-xl border bg-muted/5 p-3 max-h-[260px] overflow-hidden relative">
+                              <div className="pointer-events-none w-full">
                                 <ProtectedHtml html={(m as any).signedBody || m.body!} />
                               </div>
                               <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
-                              <Link href={`/prepare/material/${m.id}`} className="absolute bottom-2 right-2">
-                                <Button size="sm" className="rounded-full shadow-md gap-1.5 text-xs"><BookOpen className="h-3 w-3" /> Read Full</Button>
-                              </Link>
-                            </div>
+                              </div>
+                              <div className="flex justify-end pt-2">
+                                <Link href={`/prepare/material/${m.id}`}>
+                                  <Button size="sm" className="rounded-full shadow-md gap-1.5 text-xs min-h-[44px]"><BookOpen className="h-3 w-3" /> Read Full</Button>
+                                </Link>
+                              </div>
+                            </>
                           ) : null}
                           <div className="flex flex-wrap gap-2">
                             <Link href={`/prepare/material/${m.id}`}>
@@ -646,17 +658,17 @@ export default async function ExamPage({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-teal-700">{lsaSubjects.length}</div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-teal-700">{lsaSubjects.length}</div>
                 <div className="text-xs text-muted-foreground">Subjects (Diploma core)</div>
               </div>
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-teal-700">{lsaPostsStrict.length || lsaPosts.length}</div>
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-teal-700">{lsaPostsStrict.length || lsaPosts.length}</div>
                 <div className="text-xs text-muted-foreground">Prev. Year Papers</div>
               </div>
-              <div className="rounded-xl border bg-white px-3 py-3 text-center">
-                <div className="text-lg font-extrabold text-teal-700">
+              <div className="rounded-xl border bg-white p-3 sm:p-4 text-center">
+                <div className="text-base sm:text-lg font-extrabold text-teal-700">
                   {(lsaPrevGroups[0]?.items.length ?? 0) + (lsaOtherGroups[0]?.items.length ?? 0) || "—"}
                 </div>
                 <div className="text-xs text-muted-foreground">Mock Tests</div>
@@ -744,15 +756,19 @@ export default async function ExamPage({
                             <div className="text-xs text-muted-foreground">{m.type}{m.subject ? ` · ${m.subject}` : ""}{m.topic ? ` → ${m.topic}` : ""}</div>
                           </div>
                           {(m as any).signedBody || m.body ? (
-                            <div className="rounded-xl border bg-muted/5 p-3 max-h-[260px] overflow-hidden relative">
-                              <div className="pointer-events-none scale-[0.96] origin-top-left w-[104%]">
+                            <>
+                              <div className="rounded-xl border bg-muted/5 p-3 max-h-[260px] overflow-hidden relative">
+                              <div className="pointer-events-none w-full">
                                 <ProtectedHtml html={(m as any).signedBody || m.body!} />
                               </div>
                               <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
-                              <Link href={`/prepare/material/${m.id}`} className="absolute bottom-2 right-2">
-                                <Button size="sm" className="rounded-full shadow-md gap-1.5 text-xs"><BookOpen className="h-3 w-3" /> Read Full</Button>
-                              </Link>
-                            </div>
+                              </div>
+                              <div className="flex justify-end pt-2">
+                                <Link href={`/prepare/material/${m.id}`}>
+                                  <Button size="sm" className="rounded-full shadow-md gap-1.5 text-xs min-h-[44px]"><BookOpen className="h-3 w-3" /> Read Full</Button>
+                                </Link>
+                              </div>
+                            </>
                           ) : null}
                           <div className="flex flex-wrap gap-2">
                             <Link href={`/prepare/material/${m.id}`}>

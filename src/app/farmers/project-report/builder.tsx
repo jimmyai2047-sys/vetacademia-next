@@ -850,10 +850,10 @@ export default function ReportBuilder({ initialSaved }: { initialSaved: SavedRep
                 <div key={i} className="flex gap-2">
                   <Input value={t.name} onChange={(e) => set(`location.towns.${i}.name`, e.target.value)} placeholder="Town name" className="text-[15px]" />
                   <Input value={t.km} onChange={(e) => set(`location.towns.${i}.km`, e.target.value)} placeholder="Distance (km)" className="max-w-32 text-[15px]" />
-                  {form.location.towns.length > 1 && (<Button variant="outline" size="sm" onClick={() => setForm((f) => ({ ...f, location: { ...f.location, towns: f.location.towns.filter((_, j) => j !== i) } }))}>X</Button>)}
+                  {form.location.towns.length > 1 && (<Button variant="outline" size="sm" className="min-h-[44px] min-w-[44px]" onClick={() => setForm((f) => ({ ...f, location: { ...f.location, towns: f.location.towns.filter((_, j) => j !== i) } }))}>X</Button>)}
                 </div>
               ))}
-              {form.location.towns.length < 6 && (<Button variant="outline" size="sm" onClick={() => setForm((f) => ({ ...f, location: { ...f.location, towns: [...f.location.towns, { name: "", km: "" }] } }))}>+ Add Town</Button>)}
+              {form.location.towns.length < 6 && (<Button variant="outline" size="sm" className="min-h-[44px] min-w-[44px]" onClick={() => setForm((f) => ({ ...f, location: { ...f.location, towns: [...f.location.towns, { name: "", km: "" }] } }))}>+ Add Town</Button>)}
             </div>
             <Field required label="Nearby Vet Hospital" value={form.location.vetHospital} onChange={(v) => set("location.vetHospital", v)} placeholder="Hospital name, place" />
             <Field required label="Vet Officer / Designation" value={form.location.vetOfficer} onChange={(v) => set("location.vetOfficer", v)} placeholder="Officer name and post" />

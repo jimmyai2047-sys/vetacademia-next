@@ -58,6 +58,17 @@ export default async function BooksPage({
         ...(activeSubject ? { subject: activeSubject } : {}),
       },
       orderBy: [{ order: "asc" }, { title: "asc" }],
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        publisher: true,
+        edition: true,
+        subject: true,
+        level: true,
+        description: true,
+        order: true,
+      },
     })
     .catch((err) => {
       console.error("Books page DB error:", err);

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { validateCsrf } from "@/lib/csrf";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   requireAdminApi,
@@ -40,7 +41,8 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
+  if (!validateCsrf(req)) return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   const auth = await requireAdminApi(req, { strict: true });
   if ("error" in auth) return auth.error;
 

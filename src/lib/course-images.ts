@@ -16,12 +16,12 @@ const U = (id: string) => `https://images.unsplash.com/${id}?w=800&q=80`;
 
 const IMG = {
   microscopist: U("photo-1579154204601-01588f351e67"), // scientist at microscope
-  gramStain: "/images/courses/vmc-502-gram-stain.jpg", // Gram stain micrograph
-  sarsCov: "/images/courses/vmc-503-sars-cov.jpg", // SARS-CoV electron micrograph (PD)
-  fmdv: "/images/courses/vmc-504-fmdv.jpg", // FMD virus electron micrograph (PD)
+  gramStain: "/images/courses/vmc-502-gram-stain.webp", // Gram stain micrograph
+  sarsCov: "/images/courses/vmc-503-sars-cov.webp", // SARS-CoV electron micrograph (PD)
+  fmdv: "/images/courses/vmc-504-fmdv.webp", // FMD virus electron micrograph (PD)
   macrophage: U("photo-1707079917474-8b8169f89883"), // macrophage SEM (NIAID)
   fungus: U("photo-1767606924572-f25ec609eb22"), // coral fungus (mycology)
-  cattleVax: "/images/courses/vmc-507-cattle-vaccination.jpg", // vet vaccinating cattle (CC0)
+  cattleVax: "/images/courses/vmc-507-cattle-vaccination.webp", // vet vaccinating cattle (CC0)
   pipette: U("photo-1532187863486-abf9dbad1b69"), // pipetting into microplate
   fluorCells: U("photo-1576086213369-97a306d36557"), // fluorescent stained cells
   assayPlate: U("photo-1624957485560-47747511b32f"), // immunoassay plate in gloved hands

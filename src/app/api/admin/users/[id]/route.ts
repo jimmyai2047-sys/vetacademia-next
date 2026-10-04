@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { validateCsrf } from "@/lib/csrf";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { STUDENT, ANIMAL_OWNER, GUEST, ADMIN, EXPERT_ROLES } from "@/lib/roles";
 import { requireAdminApi } from "@/lib/admin-api";
@@ -13,9 +14,10 @@ const VALID_ROLES = new Set<string>([
 ]);
 
 export async function PATCH(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!validateCsrf(req)) return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   const auth = await requireAdminApi(req, { strict: true });
   if ("error" in auth) return auth.error;
 
@@ -51,9 +53,10 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!validateCsrf(req)) return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   const auth = await requireAdminApi(req, { strict: true });
   if ("error" in auth) return auth.error;
 

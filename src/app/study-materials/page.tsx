@@ -77,6 +77,8 @@ export default async function StudyMaterialsPage() {
           published: true,
         },
         orderBy: { createdAt: "desc" },
+        take: 100,
+        select: { id: true, title: true, category: true, fileUrl: true, content: true },
       }),
     ["study-materials-posts"],
     { revalidate: 120 }
@@ -139,7 +141,7 @@ export default async function StudyMaterialsPage() {
         <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/10 gap-1.5">
           <Sparkles className="h-3.5 w-3.5" /> Filter by category • Instant search
         </Badge>
-        <span className="text-xs text-muted-foreground">Glass search bar + animated cards — highly decorative gallery below</span>
+        <span className="text-xs text-muted-foreground">Glass search bar + animated cards — structured gallery below</span>
       </div>
 
       <MaterialGallery materials={materials} />

@@ -596,7 +596,7 @@ export default function MockTestPlayer({
                 Submit Test
               </Button>
               {Object.keys(answers).length < questions.length && (
-                <span className="ml-3 text-xs text-muted-foreground">
+                <span className="mt-2 block text-xs text-muted-foreground sm:ml-3 sm:inline">
                   Answer all questions to submit (
                   {Object.keys(answers).length}/{questions.length})
                 </span>
