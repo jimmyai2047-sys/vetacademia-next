@@ -99,8 +99,12 @@ function parseQuals(raw: string): Qualification[] {
 
 const emptyQual = (): Qualification => ({ degree: "", year: "", institution: "" });
 
-export default function AdminExpertsPage() {
-  const [tab, setTab] = useState<"experts" | "applications">("experts");
+export default function AdminExpertsPage({
+  initialTab = "experts",
+}: {
+  initialTab?: "experts" | "applications";
+} = {}) {
+  const [tab, setTab] = useState<"experts" | "applications">(initialTab);
   const [experts, setExperts] = useState<Expert[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [appStatus, setAppStatus] = useState("PENDING");
