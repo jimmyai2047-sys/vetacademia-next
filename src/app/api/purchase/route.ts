@@ -1,10 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { logAudit } from "@/lib/audit";
 import { validateCsrf } from "@/lib/csrf";
-import { activeAccessFilter } from "@/lib/plan-validity";
+import {
+  createPurchaseOrder,
+  PaymentsServiceError,
+} from "@/lib/payments-service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,65 +23,30 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const slug = body?.planSlug;
 
-    if (!slug) {
-      return NextResponse.json(
-        { error: "planSlug required" },
-        { status: 400 }
-      );
-    }
-
     // --- Plan purchase (legacy ProjectReport removed; new GeneratedReport uses /api/payments/create-order + /api/reports/* ) ---
-    const plan = await prisma.plan.findUnique({ where: { slug } });
-    if (!plan) {
-      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
-    }
-    if (plan.isListed === false) {
-      return NextResponse.json({ error: "This plan is no longer on sale" }, { status: 410 });
-    }
-
-    const existing = await prisma.payment.findFirst({
-      where: { userId: session.user.id, planSlug: slug, status: "PAID", ...activeAccessFilter() },
-    });
-    if (existing) {
-      return NextResponse.json({ id: existing.id, alreadyPaid: true });
-    }
-
-    // Reuse an existing pending payment for this user+plan instead of
-    // creating duplicates (e.g. on double-clicks / abandoned attempts).
-    const pending = await prisma.payment.findFirst({
-      where: { userId: session.user.id, planSlug: slug, status: "PENDING" },
-      orderBy: { createdAt: "desc" },
-    });
-    if (pending) {
-      return NextResponse.json(
-        { id: pending.id, amount: pending.amount },
-        { status: 201 }
-      );
-    }
-
-    const payment = await prisma.payment.create({
-      data: {
-        userId: session.user.id,
-        amount: plan.price,
-        currency: "INR",
-        status: "PENDING",
-        planSlug: slug,
-        method: "TEST",
-      },
+    // Thin adapter: plan lookup / PAID reuse / PENDING reuse / TEST create +
+    // audit live in createPurchaseOrder. Shapes + status codes below are
+    // unchanged (verified against checkout-button.tsx: data.id, data.amount).
+    const result = await createPurchaseOrder(session.user.id, {
+      planSlug: slug,
+      auditActor: session.user.email ?? null,
     });
 
-    logAudit({
-      action: "purchase.create",
-      actor: session.user.email,
-      target: payment.id,
-      meta: { planSlug: slug, amount: payment.amount },
-    });
+    if (result.alreadyPaid) {
+      return NextResponse.json({ id: result.id, alreadyPaid: true });
+    }
 
     return NextResponse.json(
-      { id: payment.id, amount: payment.amount },
+      { id: result.id, amount: result.amount },
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof PaymentsServiceError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status }
+      );
+    }
     console.error("Purchase create error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }

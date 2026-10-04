@@ -143,7 +143,7 @@ export async function buildMeatReport(input: MeatReportInput): Promise<Uint8Arra
   ctx.centered("Application for assistance in establishing " + unitLabel0 + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
   try {
-    const sketchPath = path.join(process.cwd(), "public", "sketches", SPECIES_SKETCH[species] ?? "sheep_goat.png");
+    const sketchPath = path.join(process.cwd(), "assets", "sketches", SPECIES_SKETCH[species] ?? "sheep_goat.png");
     if (fs.existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;

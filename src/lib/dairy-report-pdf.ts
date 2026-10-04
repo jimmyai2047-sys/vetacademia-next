@@ -13,18 +13,22 @@ import { appraise, breakEven, loanSchedule, LoanScheduleRow, LOAN_INTEREST_RATE 
 import { findBreed } from "./livestock-breeds";
 import { purposesOf } from "./livestock-purposes";
 import { diseasesOf, diseasesByCategory } from "./livestock-diseases";
-
-export interface ReportAddress {
-  villagePost: string;
-  houseFlat?: string;
-  street?: string;
-  landmark?: string;
-  tehsil: string;
-  district: string;
-  state: string;
-  country: string;
-  pin: string;
-}
+import {
+  A4W,
+  A4H,
+  MARGIN_LEFT,
+  MARGIN_RIGHT,
+  MARGIN_TOP,
+  MARGIN_BOTTOM,
+  CONTENT_W,
+  LAND_W,
+  fmt,
+  capWords,
+  capAddr,
+  addr,
+  sumArr,
+} from "./report-pdf-engine";
+import type { ReportAddress } from "./report-pdf-engine";
 
 export interface CoverDetails {
   applicantName: string;
@@ -66,15 +70,7 @@ export interface DairyReportInput {
   verifyByVetCA?: boolean;
 }
 
-const A4W = 595.28;
-const A4H = 841.89;
-const MARGIN_LEFT = 56.69; // 2cm
-const MARGIN_RIGHT = 42.52; // 1.5cm
-const MARGIN_TOP = 56.69; // 2cm
-const MARGIN_BOTTOM = 42.52; // 1.5cm
 const MARGIN = MARGIN_LEFT;
-const CONTENT_W = A4W - MARGIN_LEFT - MARGIN_RIGHT;
-const LAND_W = A4H - MARGIN_LEFT - MARGIN_RIGHT;
 const CONTENT_H = A4H - MARGIN_TOP - MARGIN_BOTTOM;
 const LAND_H = A4W - MARGIN_TOP - MARGIN_BOTTOM;
 const BRAND_GREEN = { r: 0.06, g: 0.35, b: 0.27 };
@@ -120,29 +116,6 @@ const LBL: Record<string, { en: string; hi: string }> = {
   dscrTitle: { en: "Debt Service Coverage (DSCR) — Equal principal, reducing-balance interest", hi: "ऋण सेवा कवरेज (DSCR)" },
   breakEvenTitle: { en: "Break-even Analysis (Curvilinear)", hi: "ब्रेक-ईवन विश्लेषण" },
 };
-
-function fmt(n: number): string {
-  const r = Math.round(n * 100) / 100;
-  return r.toLocaleString("en-IN", { maximumFractionDigits: 2 });
-}
-
-function capWords(s: string): string {
-  return s.replace(/\b[a-z]/g, (ch) => ch.toUpperCase());
-}
-
-function capAddr(a: ReportAddress): ReportAddress {
-  return {
-    villagePost: capWords(a.villagePost),
-    houseFlat: a.houseFlat ? capWords(a.houseFlat) : a.houseFlat,
-    street: a.street ? capWords(a.street) : a.street,
-    landmark: a.landmark ? capWords(a.landmark) : a.landmark,
-    tehsil: capWords(a.tehsil),
-    district: capWords(a.district),
-    state: capWords(a.state),
-    country: capWords(a.country),
-    pin: a.pin,
-  };
-}
 
 interface Fonts {
   reg: PDFFont;
@@ -597,14 +570,6 @@ class Ctx {
   }
 }
 
-function addr(a: ReportAddress): string {
-  const tail = a.country ? ", " + a.country : "";
-  const pin = a.pin ? " PIN: " + a.pin : "";
-  const detail = [a.houseFlat, a.street, a.landmark].filter((v) => v && v.trim().length > 0).join(", ");
-  const det = detail ? " (" + detail + "), " : ", ";
-  return "Village and Post Office: " + a.villagePost + det + "Tehsil: " + a.tehsil + ", District: " + a.district + ", " + a.state + tail + pin;
-}
-
 export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Array> {
   const lang = input.language == null ? "en" : input.language;
   const species = (input as any).dairySpecies ?? "CATTLE";
@@ -655,7 +620,7 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   // Pencil sketch - cattle vs buffalo (shared Livestock_Pencil_Sketches artwork)
   const sketchFile = species === "BUFFALO" ? "buffalo.png" : "cattle.png";
   try {
-    const sketchPath = path.join(process.cwd(), "public", "sketches", sketchFile);
+    const sketchPath = path.join(process.cwd(), "assets", "sketches", sketchFile);
     if (fs.existsSync(sketchPath)) {
       const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
       const maxW = 440;
@@ -1180,11 +1145,6 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   }
   ctx.finishPages();
   return ctx.doc.save();
-}
-function sumArr(a: number[]): number {
-  let s = 0;
-  for (let i = 0; i < a.length; i++) s += a[i];
-  return s;
 }
 function fmtLakh(v: number): string {
   if (v >= 100000) return 'Rs ' + (Math.round(v / 10000) / 10) + ' L';

@@ -3,7 +3,7 @@ import Razorpay from "razorpay";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { isRazorpayLive } from "@/lib/razorpay-config";
-import { computeExpiresAt } from "@/lib/plan-validity";
+import { computeExpiresAt, activeAccessFilter } from "@/lib/plan-validity";
 import { logAudit } from "@/lib/audit";
 
 /**
@@ -26,6 +26,92 @@ function razorpayClient(): { keyId: string; keySecret: string } {
     throw new PaymentsServiceError(400, "Online payments are not configured");
   }
   return { keyId, keySecret };
+}
+
+// Shared plan lookup previously duplicated between createPlanOrder and
+// src/app/api/purchase/route.ts: find by slug -> 404, unlisted -> 410.
+async function getPlanOrThrow(planSlug: string, forbidUnlisted?: boolean) {
+  const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
+  if (!plan) throw new PaymentsServiceError(404, "Plan not found");
+  if (forbidUnlisted && plan.isListed === false) {
+    throw new PaymentsServiceError(410, "This plan is no longer on sale");
+  }
+  return plan;
+}
+
+// Shared pending-reuse previously duplicated between createPlanOrder
+// (method RAZORPAY) and src/app/api/purchase/route.ts (method TEST):
+// reuse the newest PENDING payment for user+plan, else create one at
+// plan.price. `created` lets the purchase route preserve its audit-on-create-only
+// behaviour and its exact 200-vs-201 shapes.
+async function reusePendingPlanPaymentOrCreate(
+  userId: string,
+  planSlug: string,
+  amount: number,
+  method: string
+) {
+  const pending = await prisma.payment.findFirst({
+    where: { userId, planSlug, status: "PENDING" },
+    orderBy: { createdAt: "desc" },
+  });
+  if (pending) return { payment: pending, created: false as const };
+  const payment = await prisma.payment.create({
+    data: {
+      userId,
+      amount,
+      currency: "INR",
+      status: "PENDING",
+      planSlug,
+      method,
+    },
+  });
+  return { payment, created: true as const };
+}
+
+export interface PurchaseOrderResult {
+  id: string;
+  amount: number;
+  alreadyPaid: boolean;
+}
+
+// Test-mode purchase flow (src/app/api/purchase + checkout-button.tsx):
+// plan lookup (always forbids unlisted) -> active PAID reuse -> PENDING reuse
+// -> TEST PENDING create + purchase.create audit on create only.
+// Distinct from createPlanOrder (RAZORPAY + Razorpay order, no PAID check,
+// no audit) — only the plan-lookup/pending-reuse/price internals are shared
+// via the helpers above; behaviour is unchanged.
+export async function createPurchaseOrder(
+  userId: string,
+  input: { planSlug?: string; auditActor?: string | null }
+): Promise<PurchaseOrderResult> {
+  const { planSlug, auditActor } = input;
+  if (!planSlug) {
+    throw new PaymentsServiceError(400, "planSlug required");
+  }
+  const plan = await getPlanOrThrow(planSlug, true);
+
+  const existing = await prisma.payment.findFirst({
+    where: { userId, planSlug, status: "PAID", ...activeAccessFilter() },
+  });
+  if (existing) {
+    return { id: existing.id, amount: existing.amount, alreadyPaid: true };
+  }
+
+  const { payment, created } = await reusePendingPlanPaymentOrCreate(
+    userId,
+    planSlug,
+    plan.price,
+    "TEST"
+  );
+  if (created) {
+    logAudit({
+      action: "purchase.create",
+      actor: auditActor ?? null,
+      target: payment.id,
+      meta: { planSlug, amount: payment.amount },
+    });
+  }
+  return { id: payment.id, amount: payment.amount, alreadyPaid: false };
 }
 
 export interface PlanOrderResult {
@@ -88,27 +174,14 @@ export async function createPlanOrder(
         },
       }));
   } else {
-    const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
-    if (!plan) throw new PaymentsServiceError(404, "Plan not found");
-    if (forbidUnlisted && plan.isListed === false) {
-      throw new PaymentsServiceError(410, "This plan is no longer on sale");
-    }
+    const plan = await getPlanOrThrow(planSlug as string, forbidUnlisted);
     amount = plan.price;
-    payment =
-      (await prisma.payment.findFirst({
-        where: { userId, planSlug, status: "PENDING" },
-        orderBy: { createdAt: "desc" },
-      })) ??
-      (await prisma.payment.create({
-        data: {
-          userId,
-          amount,
-          currency: "INR",
-          status: "PENDING",
-          planSlug,
-          method: "RAZORPAY",
-        },
-      }));
+    ({ payment } = await reusePendingPlanPaymentOrCreate(
+      userId,
+      planSlug as string,
+      amount,
+      "RAZORPAY"
+    ));
   }
 
   const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
