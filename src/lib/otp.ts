@@ -1,6 +1,7 @@
 ﻿import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const VERIFY_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes
@@ -8,7 +9,7 @@ const MAX_ATTEMPTS = 5;
 const OTP_LENGTH = 6;
 
 function secret(): string {
-  const s = process.env.NEXTAUTH_SECRET;
+  const s = env.NEXTAUTH_SECRET;
   if (!s) {
     throw new Error(
       "NEXTAUTH_SECRET is not configured. Refusing to sign or verify OTPs with a hardcoded fallback secret."
@@ -38,7 +39,7 @@ async function sendOtp(
   code: string,
   purpose: string
 ): Promise<void> {
-  const isProd = process.env.NODE_ENV === "production";
+  const isProd = env.isProd;
   if (isProd) {
     // No provider configured yet â€” fail loudly so we never silently skip sending.
     console.warn(
@@ -75,7 +76,7 @@ export async function createOtpChallenge(
   // Surface the code only outside production so the flow is testable.
   return {
     ok: true,
-    devCode: process.env.NODE_ENV === "production" ? undefined : code,
+    devCode: env.isProd ? undefined : code,
   };
 }
 

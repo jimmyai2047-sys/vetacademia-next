@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { env } from "./env";
 
 // Server-only. Short-lived HMAC tokens that authorize /api/blob fetches made
 // by external server-side viewers (Google Docs / Office Online) which cannot
@@ -13,7 +14,7 @@ import crypto from "crypto";
 export const BLOB_TOKEN_TTL_MS = 2 * 60 * 60 * 1000;
 
 function signingSecret(): string {
-  const s = process.env.NEXTAUTH_SECRET;
+  const s = env.NEXTAUTH_SECRET;
   if (!s) {
     throw new Error(
       "NEXTAUTH_SECRET is not configured. Blob viewer tokens cannot be signed."

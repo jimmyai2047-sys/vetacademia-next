@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { env } from "./env";
 
 declare global {
   var __VA_RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> | undefined;
@@ -11,10 +12,8 @@ const RATE_LIMIT_STORE: Map<string, { count: number; resetAt: number }> =
 // requests across instances. Prefer Upstash Redis (installed via the Vercel
 // Marketplace — injects UPSTASH_REDIS_REST_URL/TOKEN). Falls back to an
 // in-process Map only for local dev / when Redis env vars are not configured.
-const REDIS_URL =
-  process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || "";
-const REDIS_TOKEN =
-  process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || "";
+const REDIS_URL = env.REDIS_URL;
+const REDIS_TOKEN = env.REDIS_TOKEN;
 const USE_REDIS = Boolean(REDIS_URL && REDIS_TOKEN);
 
 const redis = USE_REDIS ? new Redis({ url: REDIS_URL, token: REDIS_TOKEN }) : null;

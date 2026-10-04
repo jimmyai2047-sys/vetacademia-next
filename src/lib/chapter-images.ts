@@ -2,6 +2,7 @@ import { put } from "@vercel/blob";
 import { randomUUID } from "crypto";
 import { getSignedUrl } from "@/lib/blob";
 import { sanitizeChapterContent } from "@/lib/content";
+import { env } from "@/lib/env";
 
 const INLINE_IMG_RE =
   /<img\b[^>]*\ssrc=["'](data:image\/([a-zA-Z0-9.+-]+);base64,([^"']+))["'][^>]*>/gi;
@@ -22,7 +23,7 @@ const WEBP_QUALITY = 72;
  */
 export async function processInlineImages(html: string): Promise<string> {
   if (!html || !/data:image\//.test(html)) return html;
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const token = env.BLOB_READ_WRITE_TOKEN;
   if (!token) return html; // no Blob token (local dev) → keep base64
 
   const matches = [...html.matchAll(INLINE_IMG_RE)].slice(0, MAX_INLINE_IMAGES);

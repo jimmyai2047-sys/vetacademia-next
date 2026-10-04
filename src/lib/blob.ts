@@ -1,4 +1,5 @@
 import { issueSignedToken, presignUrl } from "@vercel/blob";
+import { env } from "./env";
 
 // Cache signed URLs. The Blob service allows up to 7 days; we sign for 24 h so
 // that pages held open across sessions (and lazily-loaded images far below the
@@ -26,7 +27,7 @@ export async function getSignedUrl(blobUrl: string | null | undefined): Promise<
   if (!blobUrl) return "";
   // Local public files (e.g. /proformas/...) need no signing — return as-is.
   if (blobUrl.startsWith("/")) return blobUrl;
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const token = env.BLOB_READ_WRITE_TOKEN;
   if (!token) return blobUrl;
 
   const cached = cache.get(blobUrl);

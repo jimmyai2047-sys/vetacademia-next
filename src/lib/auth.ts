@@ -5,10 +5,11 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 // Fail fast if the session secret is missing. Without it NextAuth cannot
 // sign/verify session tokens, and silently falling back would be insecure.
-if (!process.env.NEXTAUTH_SECRET) {
+if (!env.NEXTAUTH_SECRET) {
   throw new Error(
     "NEXTAUTH_SECRET is not configured. Set it in your environment to enable authentication."
   );
@@ -36,8 +37,8 @@ declare module "next-auth/jwt" {
   }
 }
 
-const GOOGLE_ID = process.env.GOOGLE_CLIENT_ID || "";
-const GOOGLE_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+  const GOOGLE_ID = env.GOOGLE_CLIENT_ID || "";
+  const GOOGLE_SECRET = env.GOOGLE_CLIENT_SECRET || "";
 const HAS_GOOGLE = Boolean(GOOGLE_ID && GOOGLE_SECRET);
 
 export const authOptions: NextAuthOptions = {
@@ -194,7 +195,7 @@ export const authOptions: NextAuthOptions = {
       } catch (err) {
         // P2: never log PII (no email).
         console.error("[auth] OAuth signIn callback failed");
-        if (process.env.NODE_ENV !== "production") console.error(err);
+        if (!env.isProd) console.error(err);
         return false;
       }
     },
@@ -216,7 +217,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);

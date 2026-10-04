@@ -1,9 +1,10 @@
 import crypto from "crypto";
+import { env } from "./env";
 
 const RESET_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 function secret(): string {
-  const s = process.env.NEXTAUTH_SECRET;
+  const s = env.NEXTAUTH_SECRET;
   if (!s) {
     throw new Error(
       "NEXTAUTH_SECRET is not configured. Refusing to sign or verify reset tokens with a hardcoded fallback secret."

@@ -1,9 +1,10 @@
 import crypto from "crypto";
+import { env } from "./env";
 
 function getSecret(): string {
-  const s = process.env.MOBILE_JWT_SECRET;
+  const s = env.MOBILE_JWT_SECRET;
   if (!s) {
-    if (process.env.NODE_ENV === "production") {
+    if (env.isProd) {
       throw new Error("MOBILE_JWT_SECRET is not set. Set it in Vercel env - falling back would allow token forgery.");
     }
     console.warn("MOBILE_JWT_SECRET not set - using dev fallback only.");

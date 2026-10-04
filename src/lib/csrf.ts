@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import type { NextRequest, NextResponse } from "next/server";
 import { CSRF_COOKIE, CSRF_HEADER } from "./csrf-constants";
+import { env } from "./env";
 
 export function generateCsrfToken(): string {
   return crypto.randomBytes(32).toString("hex");
@@ -14,7 +15,7 @@ export function setCsrfCookie(
   res.cookies.set(CSRF_COOKIE, token, {
     httpOnly: false,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: env.isProd,
     path: "/",
     maxAge: 60 * 60 * 2,
   });

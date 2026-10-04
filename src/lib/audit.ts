@@ -1,3 +1,5 @@
+import { env } from "./env";
+
 export type AuditEvent = {
   action: string;
   actor?: string | null;
@@ -24,7 +26,7 @@ export function logAudit(event: AuditEvent): void {
     auditBuffer.length = MAX_ENTRIES;
   }
 
-  if (process.env.NODE_ENV === "production") {
+  if (env.isProd) {
     console.log("[audit]", JSON.stringify(entry));
   } else {
     console.log(
