@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { csrfFetch } from "@/lib/csrf-client";
+import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 import {
   Select,
   SelectContent,
@@ -37,22 +38,26 @@ function BookForm() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (expertNameParam) {
-      setExpertName(expertNameParam);
-      return;
-    }
-    if (!expertId) return;
+    // Deferred so initial data loading doesn't setState synchronously in the effect.
     let active = true;
-    fetch("/api/experts")
-      .then((r) => r.json())
-      .then((list: { id: string; user?: { name?: string }; name?: string }[]) => {
-        if (!active) return;
-        const found = list.find((e) => e.id === expertId);
-        if (found) setExpertName(found.user?.name || found.name || expertId);
-      })
-      .catch(() => {});
+    const id = window.setTimeout(() => {
+      if (expertNameParam) {
+        if (active) setExpertName(expertNameParam);
+        return;
+      }
+      if (!expertId) return;
+      fetch("/api/experts")
+        .then((r) => r.json())
+        .then((list: { id: string; user?: { name?: string }; name?: string }[]) => {
+          if (!active) return;
+          const found = list.find((e) => e.id === expertId);
+          if (found) setExpertName(found.user?.name || found.name || expertId);
+        })
+        .catch(() => {});
+    }, 0);
     return () => {
       active = false;
+      window.clearTimeout(id);
     };
   }, [expertId, expertNameParam]);
 
@@ -172,6 +177,9 @@ function BookForm() {
           <div className="space-y-2">
             <Label htmlFor="expert">Expert</Label>
             <Input id="expert" value={expertName || expertId} readOnly disabled />
+            <p className="text-xs text-muted-foreground">
+              Consultation fee: <span className="font-semibold text-foreground">{EXPERT_CONSULTATION_FEE_LABEL}</span> — same for every expert.
+            </p>
           </div>
 
           <div className="space-y-2">

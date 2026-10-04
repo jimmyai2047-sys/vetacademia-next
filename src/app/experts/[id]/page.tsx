@@ -10,7 +10,8 @@ import { getSignedUrl } from "@/lib/blob";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Star, Clock, BookOpen, ChevronRight, MapPin, GraduationCap, Briefcase, Phone, Mail, Award } from "lucide-react";
+import { ArrowLeft, Star, Clock, IndianRupee, BookOpen, ChevronRight, MapPin, GraduationCap, Briefcase, Phone, Mail, Award } from "lucide-react";
+import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
 export const dynamic = "force-dynamic";
 
@@ -252,13 +253,24 @@ export default async function ExpertDetailPage({
             </div>
           )}
 
-          <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-              <Clock className="h-5 w-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground">Total Sessions</p>
-              <p className="font-semibold">{expert._count.consultations}</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                <IndianRupee className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Consultation Fee</p>
+                <p className="font-semibold">{EXPERT_CONSULTATION_FEE_LABEL}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                <Clock className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Total Sessions</p>
+                <p className="font-semibold">{expert._count.consultations}</p>
+              </div>
             </div>
           </div>
 

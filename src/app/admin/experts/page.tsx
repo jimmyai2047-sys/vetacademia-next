@@ -31,6 +31,7 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
+import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
 type Qualification = {
   id?: string;
@@ -1019,6 +1020,7 @@ export default function AdminExpertsPage({
                           </div>
                         )}
                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                          <span className="font-medium text-foreground">{EXPERT_CONSULTATION_FEE_LABEL}</span>
                           <span className="flex items-center gap-1">
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                             {e.rating} ({e.totalReviews})
