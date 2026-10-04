@@ -23,6 +23,7 @@ const HomeVideoTestimonials = dynamicImport(
 );
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
+import type { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
 import {
@@ -240,7 +241,7 @@ const getHomeStats = unstable_cache(
         prisma.user.count().catch(() => 10000),
         prisma.subject.count().catch(() => 100),
         prisma.programme.count().catch(() => 4),
-        prisma.user.count({ where: { role: { in: ["EXPERT", "VET", "ADMIN"] } } }).catch(() => 50),
+        prisma.user.count({ where: { role: { in: ["EXPERT", "VET", "ADMIN"] as Role[] } } }).catch(() => 50),
       ]);
       return {
         programmes: String(programmesCount || 4),
