@@ -24,6 +24,7 @@ import {
   Activity,
   ClipboardList,
   ScrollText,
+  Inbox,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -43,6 +44,7 @@ const sidebarItems = [
   { name: "Study Notes (UG/PG)", href: "/admin/study-materials", icon: NotebookPen },
   { name: "Animal Owner Content", href: "/admin/farmers", icon: Tractor },
   { name: "Vet Proformas", href: "/admin/vet-proformas", icon: ScrollText },
+  { name: "Vet Cases", href: "/admin/vet-cases", icon: Inbox },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Activity Log", href: "/admin/activity-log", icon: Activity },
   { name: "Admission Enquiries", href: "/admin/admissions", icon: ClipboardList },
@@ -104,7 +106,7 @@ export default function AdminSidebar() {
       <div className="relative p-3 border-t bg-gradient-to-r from-muted/30 via-white to-muted/20">
         <div className="rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 p-3 mb-3">
           <p className="text-xs font-bold text-amber-800 flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" /> Royal Admin</p>
-          <p className="text-[11px] text-amber-700/70 mt-1">Highly decorative • Secure • Fast</p>
+          <p className="text-[11px] text-amber-700/70 mt-1">Structured • Secure • Fast</p>
         </div>
         <Link href="/">
           <Button variant="outline" className="w-full justify-start gap-2 rounded-xl border-primary/10 bg-white hover:bg-primary hover:text-white hover:border-primary group">

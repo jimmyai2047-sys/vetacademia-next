@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { ok, fail } from "@/lib/api-response";
 import { put } from "@vercel/blob";
+import { sendPushToUser } from "@/lib/push";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -112,6 +113,37 @@ export async function POST(req: NextRequest) {
       },
       select: { id: true },
     });
+
+    // Notify admins (in-app + push). Best-effort: never fail the submission.
+    try {
+      const admins = await prisma.user.findMany({
+        where: { role: "ADMIN", banned: false },
+        select: { id: true },
+      });
+      const submitter = session.user.name || session.user.email || "A user";
+      if (admins.length > 0) {
+        await prisma.notification.createMany({
+          data: admins.map((a) => ({
+            userId: a.id,
+            title: "New vet case submitted",
+            body: `${parsed.data.species} case from ${submitter} needs review.`,
+            type: "VET_CASE",
+          })),
+        });
+        await Promise.allSettled(
+          admins.map((a) =>
+            sendPushToUser(
+              a.id,
+              "New vet case",
+              `${parsed.data.species} case needs review`
+            )
+          )
+        );
+      }
+    } catch (notifyErr) {
+      console.error("[vet-cases] notify error:", notifyErr);
+    }
+
     return ok({ id: created.id }, { status: 201 });
   } catch (err) {
     console.error("[vet-cases] POST error:", err);
