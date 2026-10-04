@@ -299,7 +299,7 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
                 {(presets[dSpecies] ?? presets[dSpecies.charAt(0).toUpperCase() + dSpecies.slice(1)] ?? []).length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {(presets[dSpecies] ?? presets[dSpecies.charAt(0).toUpperCase() + dSpecies.slice(1)] ?? []).map((w) => (
-                      <Button key={w} size="sm" variant="outline" className="h-6 rounded-full px-2 text-xs" onClick={() => setDWt(String(w))}>{w}</Button>
+                      <Button key={w} size="sm" variant="outline" className="min-h-[36px] rounded-full px-2 text-xs" onClick={() => setDWt(String(w))}>{w}</Button>
                     ))}
                   </div>
                 )}
@@ -412,7 +412,7 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
       )}
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        <a href="/samples/sample-drug-guide.pdf" target="_blank" rel="noopener" className="font-semibold text-emerald-700 underline">Download print-ready sample PDF</a>
+        <a href="/api/resources/drug-guide/sample" target="_blank" rel="noopener" className="font-semibold text-emerald-700 underline">Download print-ready sample PDF</a>
         {" "}• Full drug PDF guide (print-ready) coming soon. What else do you need as {roleInfo.label}? <Link href="/contact" className="underline">Contact</Link>
       </p>
       <div className="mt-4 flex justify-center">
