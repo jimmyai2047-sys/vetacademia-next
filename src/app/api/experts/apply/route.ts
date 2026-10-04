@@ -1,62 +1,93 @@
 ﻿import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { validateCsrf } from "@/lib/csrf";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { expertProformaSchema } from "@/lib/expert-proforma";
 
-const applySchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  specialization: z.string().min(2, "Specialization is required"),
-  experienceYears: z.coerce.number().int().min(0).max(80).optional(),
-  bio: z.string().optional(),
-  certificateUrl: z.string().url().optional().or(z.literal("")),
-});
+function isSameOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  const host = req.headers.get("host");
+  if (!origin || !host) return false;
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
 
+// Public expert proforma (circulated link: /experts/apply). Anonymous
+// submissions are stored as ExpertApplication rows with status PENDING —
+// nothing appears on the expert pages until an admin approves them.
 export async function POST(req: NextRequest) {
   try {
-    if (!validateCsrf(req)) {
-      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    if (!isSameOrigin(req)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
     }
     const rl = await rateLimit(`experts-apply:${clientIp(req)}`, 5, 60_000);
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
     }
     const body = await req.json();
-    const data = applySchema.parse(body);
+    const data = expertProformaSchema.parse(body);
 
-    const message = [
-      "Expert Application",
-      `Specialization: ${data.specialization}`,
-      data.experienceYears != null
-        ? `Experience: ${data.experienceYears} years`
-        : null,
-      data.bio ? `Bio: ${data.bio}` : null,
-      data.certificateUrl ? `Certificate: ${data.certificateUrl}` : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    const existingPending = await prisma.expertApplication.findFirst({
+      where: { email: data.email, status: "PENDING" },
+      select: { id: true },
+    });
+    if (existingPending) {
+      return NextResponse.json(
+        {
+          error:
+            "An application with this email is already under review. Our team will contact you once it is approved.",
+        },
+        { status: 409 }
+      );
+    }
 
-    const enquiry = await prisma.enquiry.create({
+    const application = await prisma.expertApplication.create({
       data: {
-        fullName: data.name,
+        fullName: data.fullName,
+        designation: data.designation,
+        gender: data.gender || null,
+        dob: data.dob || null,
         email: data.email,
-        studentMobile: data.phone || null,
-        programme: data.specialization,
-        message,
-        status: "NEW",
+        phone: data.phone,
+        presentPosting: data.presentPosting,
+        specialization: data.specialization,
+        fieldCategory: data.fieldCategory || null,
+        experienceYears: data.experienceYears ?? null,
+        bio: data.bio || null,
+        awards: data.awards || null,
+        photoUrl: data.photoUrl || null,
+        certificateUrl: data.certificateUrl || null,
+        qualifications: JSON.stringify(
+          data.qualifications.map((q) => ({
+            degree: q.degree,
+            year: q.year,
+            institution: q.institution || "",
+          }))
+        ),
+        showContact: data.showContact ?? false,
+        status: "PENDING",
       },
+      select: { id: true },
     });
 
     return NextResponse.json(
-      { id: enquiry.id, message: "Application received" },
+      {
+        id: application.id,
+        message:
+          "Proforma received. It will appear on the Experts page after admin approval.",
+      },
       { status: 201 }
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       const message = error.issues
-        .map((i) => i.message)
+        .map((i) => `${i.path.join(".") || "field"}: ${i.message}`)
         .filter(Boolean)
         .join("; ");
       return NextResponse.json(
@@ -64,10 +95,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error("Expert apply error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error("Expert proforma apply error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

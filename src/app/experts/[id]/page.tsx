@@ -10,7 +10,7 @@ import { getSignedUrl } from "@/lib/blob";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Star, Clock, IndianRupee, BookOpen, ChevronRight } from "lucide-react";
+import { ArrowLeft, Star, Clock, IndianRupee, BookOpen, ChevronRight, MapPin, GraduationCap, Briefcase, Phone, Mail, Award } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +27,7 @@ export default async function ExpertDetailPage({
       where: { id },
       include: {
         user: { select: { name: true, email: true } },
+        qualifications: { orderBy: { order: "asc" } },
         _count: { select: { consultations: true } },
       },
     });
@@ -56,6 +57,8 @@ export default async function ExpertDetailPage({
       review: true,
     },
   });
+
+  const showContact = expert.showContact;
 
   return (
     <div className="container mx-auto px-4 py-5 max-w-6xl">
@@ -102,7 +105,20 @@ export default async function ExpertDetailPage({
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <CardTitle className="text-2xl tracking-tight">{expert.user.name}</CardTitle>
+                  {expert.designation && (
+                    <p className="mt-0.5 font-medium text-foreground/80">{expert.designation}</p>
+                  )}
                   <p className="text-muted-foreground mt-1">{expert.specialization}</p>
+                  {(expert.fieldCategory || expert.gender) && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {expert.fieldCategory && (
+                        <Badge variant="outline" className="rounded-full">{expert.fieldCategory}</Badge>
+                      )}
+                      {expert.gender && (
+                        <Badge variant="outline" className="rounded-full">{expert.gender}</Badge>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-2 h-1 w-12 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
                 </div>
                 {expert.isAvailable ? (
@@ -136,11 +152,103 @@ export default async function ExpertDetailPage({
         </CardHeader>
         <CardContent className="space-y-5 relative">
           <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+
+          {/* Approved proforma details */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            {expert.presentPosting && (
+              <div className="flex items-start gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                  <MapPin className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">Present Posting</p>
+                  <p className="font-semibold text-sm leading-snug">{expert.presentPosting}</p>
+                </div>
+              </div>
+            )}
+            {(expert.experienceYears != null || expert.specialization) && (
+              <div className="flex items-start gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                  <Briefcase className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">Specialization{expert.experienceYears != null ? " • Experience" : ""}</p>
+                  <p className="font-semibold text-sm leading-snug">
+                    {expert.specialization}
+                    {expert.experienceYears != null ? ` • ${expert.experienceYears} yrs` : ""}
+                  </p>
+                </div>
+              </div>
+            )}
+            {showContact && expert.contactPhone && (
+              <a href={`tel:${expert.contactPhone.replace(/\s/g, "")}`} className="flex items-start gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03] hover:border-primary/30 transition-colors">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                  <Phone className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">Contact Number</p>
+                  <p className="font-semibold text-sm">{expert.contactPhone}</p>
+                </div>
+              </a>
+            )}
+            {showContact && (
+              <a href={`mailto:${expert.user.email}`} className="flex items-start gap-3 p-3 rounded-2xl border border-primary/10 bg-primary/[0.03] hover:border-primary/30 transition-colors">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                  <Mail className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">Email ID</p>
+                  <p className="font-semibold text-sm break-all">{expert.user.email}</p>
+                </div>
+              </a>
+            )}
+          </div>
+
+          {/* Qualifications with year of completion */}
+          {expert.qualifications.length > 0 && (
+            <div>
+              <h3 className="font-semibold mb-1 flex items-center gap-1.5">
+                <GraduationCap className="h-4 w-4 text-primary" /> Qualifications
+              </h3>
+              <div className="mb-2 h-0.5 w-8 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
+              <div className="overflow-x-auto rounded-2xl border border-primary/10">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-primary/[0.04] text-left">
+                      <th className="px-4 py-2.5 font-semibold">Qualification</th>
+                      <th className="px-4 py-2.5 font-semibold whitespace-nowrap">Year of Completion</th>
+                      <th className="px-4 py-2.5 font-semibold">Institution</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expert.qualifications.map((q) => (
+                      <tr key={q.id} className="border-t border-primary/5 last:border-0">
+                        <td className="px-4 py-2.5 font-medium flex items-center gap-1.5">
+                          <Award className="h-3.5 w-3.5 text-[#d4a843] shrink-0" /> {q.degree}
+                        </td>
+                        <td className="px-4 py-2.5 text-muted-foreground">{q.year || "—"}</td>
+                        <td className="px-4 py-2.5 text-muted-foreground">{q.institution || "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {expert.bio && (
             <div>
               <h3 className="font-semibold mb-1">About</h3>
               <div className="mb-2 h-0.5 w-8 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
               <p className="text-muted-foreground leading-relaxed">{expert.bio}</p>
+            </div>
+          )}
+
+          {expert.awards && (
+            <div>
+              <h3 className="font-semibold mb-1">Awards / Publications</h3>
+              <div className="mb-2 h-0.5 w-8 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{expert.awards}</p>
             </div>
           )}
 

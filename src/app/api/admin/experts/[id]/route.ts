@@ -64,12 +64,48 @@ export async function PUT(
       where: { id },
       data: {
         specialization,
+        fieldCategory: body.fieldCategory || null,
+        designation: body.designation || null,
+        gender: body.gender || null,
+        dob: body.dob || null,
+        presentPosting: body.presentPosting || null,
+        contactPhone: body.contactPhone || null,
+        showContact: body.showContact === true,
+        experienceYears:
+          body.experienceYears === "" || body.experienceYears == null
+            ? null
+            : Number(body.experienceYears) || null,
         bio: body.bio || null,
+        awards: body.awards || null,
         photoUrl: body.photoUrl || null,
         hourlyRate,
         isAvailable: body.isAvailable !== false,
       },
     });
+
+    if (Array.isArray(body.qualifications)) {
+      const quals = body.qualifications
+        .filter(
+          (q: unknown) =>
+            q && typeof (q as { degree?: unknown }).degree === "string" && String((q as { degree: string }).degree).trim()
+        )
+        .slice(0, 10)
+        .map((q: { degree: string; year?: string; institution?: string }, i: number) => ({
+          degree: String(q.degree).slice(0, 150),
+          year: q.year ? String(q.year).slice(0, 10) : null,
+          institution: q.institution ? String(q.institution).slice(0, 200) : null,
+          order: i,
+        }));
+      await prisma.expertQualification.deleteMany({ where: { expertId: id } });
+      if (quals.length) {
+        await prisma.expertQualification.createMany({
+          data: quals.map((q: { degree: string; year: string | null; institution: string | null; order: number }) => ({
+            expertId: id,
+            ...q,
+          })),
+        });
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -16,49 +16,81 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight, MapPin, GraduationCap, Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { signBlobViewerUrl } from "@/lib/blob-token";
+import { EXPERT_FIELD_CATEGORIES, qualificationSummary } from "@/lib/expert-proforma";
 
 export const dynamic = "force-dynamic";
 
 function proxyUrl(blobUrl: string): string {
-  return `/api/blob?url=${encodeURIComponent(blobUrl)}`;
+  // Tokenized because /api/blob requires auth; only blob hosts go through
+  // the proxy, anything else is returned as-is.
+  if (blobUrl.includes("blob.vercel-storage.com")) {
+    return signBlobViewerUrl(blobUrl);
+  }
+  return blobUrl;
 }
 
-async function getExperts() {
+async function getExperts(q: string, field: string) {
+  const where: Record<string, unknown> = {};
+  if (field) where.fieldCategory = field;
+  if (q) {
+    where.OR = [
+      { specialization: { contains: q, mode: "insensitive" } },
+      { designation: { contains: q, mode: "insensitive" } },
+      { presentPosting: { contains: q, mode: "insensitive" } },
+      { user: { name: { contains: q, mode: "insensitive" } } },
+    ];
+  }
   return prisma.expert.findMany({
+    where,
     include: {
       user: { select: { name: true } },
+      qualifications: { orderBy: { order: "asc" } },
       _count: { select: { consultations: true } },
     },
     orderBy: { createdAt: "asc" },
   });
 }
 
-export default async function ExpertsPage() {
-  const experts = await getExperts().catch(() => []);
+export default async function ExpertsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; field?: string }>;
+}) {
+  const { q = "", field = "" } = await searchParams;
+  const experts = await getExperts(q.trim(), field.trim()).catch(() => []);
 
   const cards = experts.map((e: typeof experts[number]) => {
-      const photo = e.photoUrl ? proxyUrl(e.photoUrl) : null;
-      return {
-        id: e.id,
-        name: e.user?.name ?? "Expert",
-        specialization: e.specialization,
-        bio: e.bio,
-        photoUrl: photo,
-        hourlyRate: e.hourlyRate,
-        isAvailable: e.isAvailable,
-        rating: e.rating,
-        reviews: e.totalReviews,
-        sessions: e._count.consultations,
-      };
-    });
+    const photo = e.photoUrl ? proxyUrl(e.photoUrl) : null;
+    return {
+      id: e.id,
+      name: e.user?.name ?? "Expert",
+      designation: e.designation,
+      specialization: e.specialization,
+      fieldCategory: e.fieldCategory,
+      presentPosting: e.presentPosting,
+      qualificationLine: qualificationSummary(
+        e.qualifications.map((x) => ({ degree: x.degree, year: x.year ?? "", institution: x.institution ?? "" }))
+      ),
+      experienceYears: e.experienceYears,
+      bio: e.bio,
+      photoUrl: photo,
+      hourlyRate: e.hourlyRate,
+      isAvailable: e.isAvailable,
+      rating: e.rating,
+      reviews: e.totalReviews,
+      sessions: e._count.consultations,
+    };
+  });
 
   return (
     <div className="container mx-auto px-4 py-5">
       <DecorativePageHeader
-        badge="Expert Network • 50+ Verified Professionals"
+        badge="Expert Network • Verified Professionals"
         title="Expert"
         titleHighlight="Consultations"
         description="Book one-on-one sessions with veterinary experts and professionals — get guidance on syllabus, clinical cases, career and research."
@@ -66,11 +98,11 @@ export default async function ExpertsPage() {
         actions={
           <>
             <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
-              <Users className="h-3.5 w-3.5" /> {cards.length} experts listed
+              <Users className="h-3.5 w-3.5" /> {cards.length} expert{cards.length === 1 ? "" : "s"} listed
             </Badge>
             <Link href="/experts/apply">
               <Button variant="secondary" size="sm" className="rounded-full gap-1.5 bg-white text-blue-600 hover:bg-white/90">
-                Apply as Expert <Award className="h-3.5 w-3.5" />
+                Submit Expert Proforma <Award className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </>
@@ -96,11 +128,40 @@ export default async function ExpertsPage() {
                 <Sparkles className="h-3.5 w-3.5" /> Trusted Mentorship
               </div>
               <p className="mt-1 text-sm font-semibold text-foreground">1:1 doubt sessions • Career guidance • Case discussions</p>
-              <p className="text-xs text-muted-foreground">Rated 4.8/5 by 2k+ students — highly decorative, highly effective</p>
+              <p className="text-xs text-muted-foreground">Rated 4.8/5 by 2k+ students — structured, exam-focused and effective</p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Search / field filter */}
+      <form action="/experts" method="get" className="mt-6 flex flex-col sm:flex-row gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            name="q"
+            defaultValue={q}
+            placeholder="Search name, specialization, designation or posting…"
+            className="rounded-xl pl-9 bg-white"
+          />
+        </div>
+        <select
+          name="field"
+          defaultValue={field}
+          className="rounded-xl border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="">All fields</option>
+          {EXPERT_FIELD_CATEGORIES.map((f) => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+        <Button type="submit" className="rounded-xl">Search</Button>
+        {(q || field) && (
+          <Link href="/experts">
+            <Button type="button" variant="outline" className="rounded-xl w-full sm:w-auto">Clear</Button>
+          </Link>
+        )}
+      </form>
 
       <div className="va-divider-dots my-5"><span /></div>
 
@@ -110,8 +171,10 @@ export default async function ExpertsPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Users className="h-6 w-6" />
             </div>
-            <p className="mt-3 font-medium">No experts listed yet</p>
-            <p className="text-sm text-muted-foreground">Check back soon — new mentors join weekly.</p>
+            <p className="mt-3 font-medium">No experts found</p>
+            <p className="text-sm text-muted-foreground">
+              {q || field ? "Try a different search — or check back soon." : "Check back soon — new mentors join weekly."}
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -144,9 +207,9 @@ export default async function ExpertsPage() {
                       {expert.name}
                     </CardTitle>
                     <CardDescription className="truncate">
-                      {expert.specialization}
+                      {[expert.designation, expert.specialization].filter(Boolean).join(" • ") || expert.specialization}
                     </CardDescription>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                       {expert.reviews > 0 ? (
                         <>
                           <div className="flex items-center gap-1 rounded-full bg-yellow-400/15 border border-yellow-400/20 px-2 py-0.5">
@@ -173,8 +236,23 @@ export default async function ExpertsPage() {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 relative">
-                <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+              <CardContent className="flex-1 relative space-y-2">
+                {expert.fieldCategory && (
+                  <Badge variant="outline" className="rounded-full text-xs">{expert.fieldCategory}</Badge>
+                )}
+                {expert.qualificationLine && (
+                  <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                    <GraduationCap className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
+                    <span className="line-clamp-2">{expert.qualificationLine}</span>
+                  </p>
+                )}
+                {expert.presentPosting && (
+                  <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
+                    <span className="line-clamp-1">{expert.presentPosting}</span>
+                  </p>
+                )}
+                <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
                   {expert.bio || "Experienced veterinary professional."}
                 </p>
                 <div className="mt-4 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
@@ -221,11 +299,11 @@ export default async function ExpertsPage() {
             <h3 className="mt-3 text-2xl font-bold">Become an Expert</h3>
             <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#d4a843]" />
             <p className="mx-auto mt-3 max-w-xl text-white/80">
-              Share your knowledge and help veterinary students succeed — highly decorative, highly rewarding.
+              Fill the expert proforma with your designation, qualifications, posting and specialization — our admin team verifies and publishes your profile.
             </p>
             <Link href="/experts/apply" className="inline-block mt-6">
               <Button variant="secondary" size="lg" className="rounded-xl gap-2 bg-white text-primary hover:bg-white/90 shadow-lg">
-                Apply as Expert <ArrowRight className="h-4 w-4" />
+                Fill Expert Proforma <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </CardContent>

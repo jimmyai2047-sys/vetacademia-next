@@ -13,7 +13,10 @@ export async function GET() {
     }
 
     const experts = await prisma.expert.findMany({
-      include: { user: { select: { id: true, name: true, email: true } } },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        qualifications: { orderBy: { order: "asc" } },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -28,6 +31,16 @@ export async function GET() {
           name: e.user.name,
           email: e.user.email,
           specialization: e.specialization,
+          fieldCategory: e.fieldCategory,
+          designation: e.designation,
+          gender: e.gender,
+          dob: e.dob,
+          awards: e.awards,
+          presentPosting: e.presentPosting,
+          contactPhone: e.contactPhone,
+          showContact: e.showContact,
+          experienceYears: e.experienceYears,
+          qualifications: e.qualifications,
           bio: e.bio,
           photoUrl: signed,
           photoUrlBase: e.photoUrl,
@@ -96,14 +109,44 @@ export async function POST(req: Request) {
       },
     });
 
+    const qualifications = Array.isArray(body.qualifications)
+      ? body.qualifications
+          .filter(
+            (q: unknown) =>
+              q && typeof (q as { degree?: unknown }).degree === "string"
+          )
+          .slice(0, 10)
+          .map((q: { degree: string; year?: string; institution?: string }, i: number) => ({
+            degree: String(q.degree).slice(0, 150),
+            year: q.year ? String(q.year).slice(0, 10) : null,
+            institution: q.institution ? String(q.institution).slice(0, 200) : null,
+            order: i,
+          }))
+      : [];
+
     const expert = await prisma.expert.create({
       data: {
         userId: user.id,
         specialization,
+        fieldCategory: body.fieldCategory || null,
+        designation: body.designation || null,
+        gender: body.gender || null,
+        dob: body.dob || null,
+        presentPosting: body.presentPosting || null,
+        contactPhone: body.contactPhone || null,
+        showContact: body.showContact === true,
+        experienceYears:
+          body.experienceYears === "" || body.experienceYears == null
+            ? null
+            : Number(body.experienceYears) || null,
         bio: body.bio || null,
+        awards: body.awards || null,
         photoUrl: body.photoUrl || null,
         hourlyRate,
         isAvailable: body.isAvailable !== false,
+        qualifications: qualifications.length
+          ? { create: qualifications }
+          : undefined,
       },
     });
 
