@@ -6,7 +6,7 @@ import {
   validateSettingKey,
   validateSettingValue,
 } from "@/lib/admin-api";
-import { setMaintenanceMode } from "@/proxy";
+import { setMaintenanceMode } from "@/lib/maintenance";
 
 const DEFAULTS: Record<string, string> = {
   siteName: "VetAcademia",
@@ -32,7 +32,7 @@ export async function GET(req: Request) {
       settings[row.key] = row.value;
     }
     if (settings.maintenanceMode === "true") {
-      setMaintenanceMode(true);
+      await setMaintenanceMode(true);
     }
     return NextResponse.json(settings);
   } catch (error) {
@@ -85,7 +85,7 @@ export async function PUT(req: NextRequest) {
 
     const maintenanceEntry = entries.find(([key]) => key === "maintenanceMode");
     if (maintenanceEntry) {
-      setMaintenanceMode(maintenanceEntry[1] === "true");
+      await setMaintenanceMode(maintenanceEntry[1] === "true");
     }
 
     return NextResponse.json({ ok: true });

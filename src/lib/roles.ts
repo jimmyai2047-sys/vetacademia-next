@@ -10,8 +10,9 @@
 //      • Agricultural Research Scientist (scientists)
 //      • Field Veterinarian            (veterinary officers / directors)
 //
-// `User.role` is a plain String (no DB enum), so the role values below are the
-// exact strings persisted on the user row.
+// `User.role` is a native Postgres enum (see schema.prisma `enum Role`), so the
+// role values below are the exact strings persisted on the user row.
+// "EXPERT" is a legacy value kept in the enum for old rows.
 
 export const STUDENT = "STUDENT";
 export const ANIMAL_OWNER = "ANIMAL_OWNER";

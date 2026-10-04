@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/mobileAuth";
-import { prisma } from "@/lib/prisma";
+import { removeBookmark } from "@/lib/bookmarks-service";
 
 export async function DELETE(
   req: Request,
@@ -11,7 +11,7 @@ export async function DELETE(
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await ctx.params;
-    await prisma.bookmark.deleteMany({ where: { id, userId } });
+    await removeBookmark({ userId, id });
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Mobile bookmark DELETE error:", error);

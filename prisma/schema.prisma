@@ -6,6 +6,95 @@ datasource db {
   provider = "postgresql"
 }
 
+// ==================== NATIVE ENUMS ====================
+// Closed value sets enforced at the DB level (typos fail fast instead of
+// silently corrupting filters). Open-ended slugs (tracks, exams, categories)
+// stay String on purpose.
+
+enum Role {
+  STUDENT
+  ANIMAL_OWNER
+  ADMIN
+  GUEST
+  EXPERT
+  TEACHING_ASSOCIATE
+  ASSISTANT_PROFESSOR
+  ASSOCIATE_PROFESSOR
+  PROFESSOR
+  SCIENTIST
+  SENIOR_SCIENTIST
+  PRINCIPAL_SCIENTIST
+  VETERINARY_OFFICER
+  SENIOR_VETERINARY_OFFICER
+  DEPUTY_DIRECTOR
+  JOINT_DIRECTOR
+  ADDITIONAL_DIRECTOR
+  DIRECTOR
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum ConsultationStatus {
+  PENDING
+  CANCELLED
+  COMPLETED
+}
+
+enum DoubtStatus {
+  OPEN
+  ANSWERED
+}
+
+enum LiveClassStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELLED
+}
+
+enum PlanType {
+  COURSE
+  EXAM
+}
+
+enum ReportAnimalType {
+  GOAT
+  SHEEP
+  PIG
+  POULTRY
+  DAIRY
+  CATTLE
+  BUFFALO
+}
+
+enum ReportStatus {
+  DRAFT
+  PAID
+}
+
+enum ExpertApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MockTestKind {
+  MOCK
+  ADAPTIVE
+  PREVIOUS_YEAR
+}
+
+enum VetCaseStatus {
+  OPEN
+  REVIEWED
+  CLOSED
+}
+
 // ==================== AUTH & USERS ====================
 
 model User {
@@ -13,7 +102,7 @@ model User {
   name          String
   email         String    @unique
   password      String
-  role          String    @default("STUDENT")
+  role          Role      @default(STUDENT)
   deviceTokens  DeviceToken[]
   banned        Boolean   @default(false)
   emailVerified      Boolean  @default(false)
@@ -45,6 +134,7 @@ model User {
   chatMessages      ChatMessage[]
   bookmarks         Bookmark[]
   doubts            Doubt[]
+  vetCases          VetCase[]
 
   @@index([role])
 }
@@ -278,7 +368,7 @@ model MockTest {
   exam        String? // exam key the test belongs to (psc | icar-entrance | net | ars | other)
   track       String? // granular content track (veterinary-officer | livestock-assistant | icar-pre | icar-mains | ...)
   isAdaptive  Boolean  @default(false) // true => adaptive test (vs standard mock test)
-  kind        String   @default("MOCK") // MOCK | ADAPTIVE | PREVIOUS_YEAR
+  kind        MockTestKind   @default(MOCK) // MOCK | ADAPTIVE | PREVIOUS_YEAR
   year        String?  // exam year for PREVIOUS_YEAR papers (e.g. "2023")
   examSubjectSlug String? // discipline/subject tag for exam-prep mock tests
   planSlug    String?  // if set, the test is premium and requires this paid plan
@@ -294,6 +384,7 @@ model MockTest {
   @@index([planSlug])
   @@index([exam])
   @@index([track])
+  @@index([kind])
 }
 
 // ==================== GENERIC POSTS (Farmers / Vets / Advisory / Previous Year Papers) ====================
@@ -312,11 +403,12 @@ model Post {
   examSubjectSlug String? // discipline/subject within the exam (e.g. veterinary-anatomy)
   published Boolean  @default(true)
   createdAt DateTime @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@index([category])
   @@index([exam])
   @@index([track])
+  @@index([category, published])
 }
 
 // ==================== FARMERS CONTENT ====================
@@ -506,7 +598,7 @@ model Doubt {
   userId     String
   subject    String?
   question   String
-  status     String   @default("OPEN") // OPEN | ANSWERED
+  status     DoubtStatus   @default(OPEN) // OPEN | ANSWERED
   answer     String?
   answeredBy String?
   createdAt  DateTime @default(now())
@@ -515,6 +607,26 @@ model Doubt {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ==================== VET CLINICAL CASES ====================
+// Cases submitted by users from the Vets page for expert review.
+model VetCase {
+  id        String   @id @default(cuid())
+  userId    String
+  species   String
+  age       String?
+  contact   String
+  history   String
+  photoUrls String[]
+  status    VetCaseStatus   @default(OPEN) // OPEN | REVIEWED | CLOSED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
 }
 
 // ==================== ADMISSION ENQUIRIES ====================
@@ -620,7 +732,7 @@ model ExpertApplication {
   certificateUrl  String?
   qualifications  String    @default("[]") // JSON: [{ degree, year, institution }]
   showContact     Boolean   @default(false)
-  status          String    @default("PENDING") // PENDING | APPROVED | REJECTED
+  status          ExpertApplicationStatus    @default(PENDING) // PENDING | APPROVED | REJECTED
   adminNote       String?
   reviewedAt      DateTime?
   createdAt       DateTime  @default(now())
@@ -690,7 +802,7 @@ model Consultation {
   expertId    String
   slot        DateTime
   duration    Int
-  status      String    @default("PENDING")
+  status      ConsultationStatus    @default(PENDING)
   notes       String?
   rating      Int?
   review      String?
@@ -710,7 +822,7 @@ model Plan {
   id            String   @id @default(cuid())
   slug          String   @unique
   name          String
-  type          String // COURSE | EXAM
+  type          PlanType // COURSE | EXAM
   description   String?
   price         Int      @default(0) // in INR
   validityDays  Int? // access duration in days; null = lifetime access
@@ -736,7 +848,7 @@ model Payment {
   userId    String
   amount    Int
   currency  String   @default("INR")
-  status    String   @default("PENDING") // PENDING | PAID | FAILED | CANCELLED
+  status    PaymentStatus    @default(PENDING) // PENDING | PAID | FAILED | CANCELLED
   method    String? // TEST | RAZORPAY
   orderId   String?
   paymentId String?
@@ -753,6 +865,7 @@ model Payment {
   @@index([orderId])
   @@index([planSlug])
   @@index([expiresAt])
+  @@index([userId, planSlug, status])
 }
 
 // ==================== GENERATED PROJECT REPORTS (farmer report builder) ====================
@@ -761,14 +874,14 @@ model Payment {
 model GeneratedReport {
   id          String   @id @default(cuid())
   userId      String
-  animalType  String   // GOAT | SHEEP | CATTLE | BUFFALO | PIG | POULTRY
+  animalType  ReportAnimalType   // GOAT | SHEEP | CATTLE | BUFFALO | PIG | POULTRY | DAIRY
   title       String
   language    String   @default("en") // en | hi
   inputJson   String   // form inputs (amounts regenerate deterministically)
   blobUrl     String?  // final PDF on private Blob (set after payment)
   paymentId   String?  // Payment.id once PAID
   amount      Int      @default(2500)
-  status      String   @default("DRAFT") // DRAFT | PAID
+  status      ReportStatus   @default(DRAFT) // DRAFT | PAID
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -825,7 +938,7 @@ model LiveClass {
   youtubeUrl   String?  // YouTube Live embed URL (for video stream)
   scheduledAt  DateTime // when the class is scheduled
   duration     Int      @default(60) // minutes
-  status       String   @default("SCHEDULED") // SCHEDULED | LIVE | ENDED | CANCELLED
+  status       LiveClassStatus   @default(SCHEDULED) // SCHEDULED | LIVE | ENDED | CANCELLED
   recordingUrl String?  // YouTube recorded video URL (populated after live ends)
   thumbnailUrl String?
   isDemo       Boolean  @default(false)

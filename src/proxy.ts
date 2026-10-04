@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { isMaintenanceOn } from "@/lib/maintenance";
 
 const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   // NOTE: /api/auth/login is deprecated (410, see its route file) — web login
@@ -10,15 +11,6 @@ const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   "/api/auth/forgot-password": { limit: 5, windowMs: 60_000 },
   "/api/auth/reset-password": { limit: 10, windowMs: 60_000 },
 };
-
-let maintenanceMode = false;
-let maintenanceCheckedAt = 0;
-const MAINTENANCE_CHECK_INTERVAL = 30_000;
-
-export function setMaintenanceMode(value: boolean) {
-  maintenanceMode = value;
-  maintenanceCheckedAt = Date.now();
-}
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -49,7 +41,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (
-    maintenanceMode &&
+    (await isMaintenanceOn()) &&
     !pathname.startsWith("/api/admin") &&
     !pathname.startsWith("/api/auth") &&
     !pathname.startsWith("/admin") &&

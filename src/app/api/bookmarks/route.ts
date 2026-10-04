@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
+import { listBookmarks, toggleBookmark } from "@/lib/bookmarks-service";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,10 +10,7 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const bookmarks = await prisma.bookmark.findMany({
-      where: { userId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
+    const bookmarks = await listBookmarks({ userId: session.user.id });
     return NextResponse.json({ bookmarks });
   } catch (error) {
     console.error("Bookmarks GET error:", error);
@@ -47,26 +44,17 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const existing = await prisma.bookmark.findFirst({
-      where: { userId: session.user.id, type, refId },
+    const { bookmark, created } = await toggleBookmark({
+      userId: session.user.id,
+      type,
+      refId,
+      title,
+      url,
+      note,
     });
-    if (existing) {
-      const updated = await prisma.bookmark.update({
-        where: { id: existing.id },
-        data: { title, url, note: note ?? existing.note },
-      });
-      return NextResponse.json({ bookmark: updated });
+    if (!created) {
+      return NextResponse.json({ bookmark });
     }
-    const bookmark = await prisma.bookmark.create({
-      data: {
-        userId: session.user.id,
-        type,
-        refId,
-        title,
-        url,
-        note: note ?? null,
-      },
-    });
     return NextResponse.json({ bookmark }, { status: 201 });
   } catch (error) {
     console.error("Bookmarks POST error:", error);

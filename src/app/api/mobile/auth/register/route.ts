@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { signToken } from "@/lib/mobileAuth";
 import { SELF_REGISTERABLE_ROLES } from "@/lib/roles";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import type { Role } from "@prisma/client";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
         name: data.name,
         email,
         password: hashed,
-        role: requestedRole,
+        role: requestedRole as Role,
         programme: data.programme,
       },
     });

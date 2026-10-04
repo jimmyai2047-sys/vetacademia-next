@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
-import Razorpay from "razorpay";
 import { verifyToken } from "@/lib/mobileAuth";
-import { prisma } from "@/lib/prisma";
-import { isRazorpayLive } from "@/lib/razorpay-config";
-import { computeExpiresAt } from "@/lib/plan-validity";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
-
-const keyId = process.env.RAZORPAY_KEY_ID;
-const keySecret = process.env.RAZORPAY_KEY_SECRET;
+import { verifyRazorpayPayment, PaymentsServiceError } from "@/lib/payments-service";
 
 export async function POST(req: Request) {
   try {
@@ -22,76 +15,24 @@ export async function POST(req: Request) {
         { status: 429 }
       );
     }
-    if (!keySecret)
-      return NextResponse.json(
-        { error: "Payments are not configured" },
-        { status: 400 }
-      );
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       await req.json();
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return NextResponse.json(
-        { error: "Missing payment details" },
-        { status: 400 }
-      );
-    }
-
-    const expected = crypto
-      .createHmac("sha256", keySecret)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
-      .digest();
-    const provided = Buffer.from(razorpay_signature, "hex");
-    const signatureValid =
-      expected.length === provided.length &&
-      crypto.timingSafeEqual(expected, provided);
-
-    if (!signatureValid) {
-      return NextResponse.json(
-        { error: "Invalid payment signature" },
-        { status: 400 }
-      );
-    }
-
-    const payment = await prisma.payment.findFirst({
-      where: { orderId: razorpay_order_id, userId },
+    const result = await verifyRazorpayPayment(userId, {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
     });
-    if (!payment)
-      return NextResponse.json(
-        { error: "Payment not found" },
-        { status: 404 }
-      );
 
-    if (payment.status === "PAID")
+    if (result.alreadyPaid)
       return NextResponse.json({ success: true, alreadyPaid: true });
 
-    if (isRazorpayLive()) {
-      const razorpay = new Razorpay({ key_id: keyId!, key_secret: keySecret });
-      const order = await razorpay.orders.fetch(razorpay_order_id);
-      if (Number(order.amount) !== payment.amount * 100)
-        return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
-    }
-
-    const plan = payment.planSlug
-      ? await prisma.plan.findUnique({
-          where: { slug: payment.planSlug },
-          select: { validityDays: true },
-        })
-      : null;
-
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        status: "PAID",
-        method: "RAZORPAY",
-        paymentId: razorpay_payment_id,
-        expiresAt: computeExpiresAt(payment.createdAt, plan?.validityDays ?? null),
-      },
-    });
-
-    return NextResponse.json({ success: true, status: "PAID" });
+    return NextResponse.json({ success: true, status: result.status });
   } catch (error) {
+    if (error instanceof PaymentsServiceError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Payment verification error:", error);
     return NextResponse.json(
       { error: "Verification failed" },

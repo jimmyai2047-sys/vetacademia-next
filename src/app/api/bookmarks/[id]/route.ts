@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
+import { removeBookmark } from "@/lib/bookmarks-service";
 
 export async function DELETE(
   _req: NextRequest,
@@ -20,9 +20,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
-    await prisma.bookmark.deleteMany({
-      where: { id, userId: session.user.id },
-    });
+    await removeBookmark({ userId: session.user.id, id });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Bookmark DELETE error:", error);

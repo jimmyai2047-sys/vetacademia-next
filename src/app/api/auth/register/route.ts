@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import { verifyVerificationToken } from "@/lib/otp";
+import type { Role } from "@prisma/client";
 import {
   SELF_REGISTERABLE_ROLES,
   ANIMAL_OWNER,
@@ -198,7 +199,7 @@ export async function POST(req: NextRequest) {
         surname: validatedData.surname,
         email: validatedData.email,
         password: hashedPassword,
-        role: validatedData.role,
+        role: validatedData.role as Role,
         programme: validatedData.programme,
         year: validatedData.year,
         institution: validatedData.institution,

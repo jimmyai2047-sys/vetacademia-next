@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/mobileAuth";
-import { prisma } from "@/lib/prisma";
+import {
+  createConsultation,
+  listConsultations,
+  ConsultationServiceError,
+} from "@/lib/consultations-service";
 
 export async function POST(req: Request) {
   try {
@@ -20,23 +24,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Valid slot required" }, { status: 400 });
     }
 
-    const expert = await prisma.expert.findUnique({ where: { id: body.expertId } });
-    if (!expert || !expert.isAvailable) {
-      return NextResponse.json({ error: "Expert not available" }, { status: 404 });
-    }
-
-    const consultation = await prisma.consultation.create({
-      data: {
-        studentId: userId,
-        expertId: body.expertId,
-        slot: new Date(body.slot),
-        duration: Math.min(Math.max(Number(body.duration) || 30, 15), 120),
-        notes: body.notes || null,
-        status: "PENDING",
-      },
+    const consultation = await createConsultation({
+      studentId: userId,
+      expertId: body.expertId,
+      slot: new Date(body.slot),
+      duration: body.duration,
+      notes: body.notes || null,
+      requireAvailableExpert: true,
     });
     return NextResponse.json({ consultation }, { status: 201 });
   } catch (error) {
+    if (error instanceof ConsultationServiceError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Mobile consultations POST error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -46,11 +46,7 @@ export async function GET(req: Request) {
   try {
     const userId = verifyToken(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const consultations = await prisma.consultation.findMany({
-      where: { studentId: userId },
-      orderBy: { createdAt: "desc" },
-      include: { expert: { include: { user: { select: { name: true } } } } },
-    });
+    const consultations = await listConsultations({ userId, orderBy: "createdAt" });
     return NextResponse.json({ consultations });
   } catch (error) {
     console.error("Mobile consultations GET error:", error);

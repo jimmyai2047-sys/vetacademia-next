@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { STUDENT, ANIMAL_OWNER, GUEST, ADMIN, EXPERT_ROLES } from "@/lib/roles";
 import { requireAdminApi } from "@/lib/admin-api";
 import { logAudit } from "@/lib/audit";
+import type { Role } from "@prisma/client";
 
 const VALID_ROLES = new Set<string>([
   STUDENT,
@@ -36,7 +37,7 @@ export async function PATCH(
   }
 
   try {
-    const updated = await prisma.user.update({ where: { id }, data: { role } });
+    const updated = await prisma.user.update({ where: { id }, data: { role: role as Role } });
     logAudit({
       action: "user.role_change",
       actor: auth.session!.user.id,
@@ -86,11 +87,49 @@ export async function DELETE(
   }
 
   try {
-    await prisma.user.delete({ where: { id } });
+    // Soft-delete: ban + anonymize PII, but KEEP the row so the money/audit
+    // ledger (payments, attempts, consultations, reports) stays intact.
+    // Hard-deleting would cascade-wipe the user's entire history.
+    const anonEmail = `deleted_${id}@deleted.local`;
+    await prisma.user.update({
+      where: { id },
+      data: {
+        banned: true,
+        name: "Deleted User",
+        email: anonEmail,
+        password: `deleted:${Date.now()}:${id}`,
+        phone: null,
+        avatar: null,
+        institution: null,
+        programme: null,
+        year: null,
+        surname: null,
+        college: null,
+        university: null,
+        address: null,
+        highestDegree: null,
+        expertDesignation: null,
+        subjectDepartment: null,
+        specialization: null,
+      },
+    });
+    await prisma.expert.updateMany({
+      where: { userId: id },
+      data: {
+        contactPhone: null,
+        dob: null,
+        photoUrl: null,
+        presentPosting: null,
+        bio: null,
+        awards: null,
+        isAvailable: false,
+      },
+    });
     logAudit({
       action: "user.delete",
       actor: auth.session!.user.id,
       target: id,
+      meta: { mode: "soft" },
     });
     return NextResponse.json({ ok: true });
   } catch {

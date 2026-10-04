@@ -2,19 +2,15 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
-
-const MODES = ["VIDEO", "CHAT", "CALL"] as const;
-
-const bookingSchema = z.object({
-  expertId: z.string().min(1, "Expert is required"),
-  scheduledAt: z.string().optional(),
-  mode: z.enum(MODES).default("CHAT"),
-  topic: z.string().optional(),
-  message: z.string().optional(),
-});
+import {
+  bookingSchema,
+  buildConsultationNotes,
+  createConsultation,
+  listConsultations,
+  ConsultationServiceError,
+} from "@/lib/consultations-service";
 
 export async function GET() {
   try {
@@ -23,12 +19,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const consultations = await prisma.consultation.findMany({
-      where: { studentId: session.user.id },
-      include: {
-        expert: { include: { user: { select: { name: true } } } },
-      },
-      orderBy: { slot: "desc" },
+    const consultations = await listConsultations({
+      userId: session.user.id,
+      role: session.user.role,
+      orderBy: "slot",
     });
 
     return NextResponse.json(consultations);
@@ -55,32 +49,20 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = bookingSchema.parse(body);
 
-    const expert = await prisma.expert.findUnique({
-      where: { id: data.expertId },
-      select: { id: true },
-    });
-    if (!expert) {
-      return NextResponse.json({ error: "Expert not found" }, { status: 404 });
-    }
-
     const slot = data.scheduledAt ? new Date(data.scheduledAt) : new Date();
-    const notes = [
-      `Mode: ${data.mode}`,
-      data.topic ? `Topic: ${data.topic}` : null,
-      data.message || null,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    const notes = buildConsultationNotes({
+      mode: data.mode,
+      topic: data.topic,
+      message: data.message,
+    });
 
-    const consultation = await prisma.consultation.create({
-      data: {
-        studentId: session.user.id,
-        expertId: data.expertId,
-        slot,
-        duration: 30,
-        status: "PENDING",
-        notes: notes || null,
-      },
+    const consultation = await createConsultation({
+      studentId: session.user.id,
+      expertId: data.expertId,
+      slot,
+      duration: 30,
+      notes,
+      requireAvailableExpert: false,
     });
 
     return NextResponse.json({ id: consultation.id }, { status: 201 });
@@ -94,6 +76,9 @@ export async function POST(req: NextRequest) {
         { error: message || "Validation failed", details: error.issues },
         { status: 400 }
       );
+    }
+    if (error instanceof ConsultationServiceError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
     }
     console.error("Consultation POST error:", error);
     return NextResponse.json(
