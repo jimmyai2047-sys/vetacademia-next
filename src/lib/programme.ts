@@ -24,6 +24,8 @@ const PROGRAMME_NAME_TO_SLUG: Record<string, string> = {
   DLE: "ahdp",
   VLDD: "ahdp",
   DAH: "ahdp",
+  "DAH-GJ": "ahdp",
+  "DAH (GJ)": "ahdp",
   DVPLE: "ahdp",
   DVSAHT: "ahdp",
   DVLD: "ahdp",

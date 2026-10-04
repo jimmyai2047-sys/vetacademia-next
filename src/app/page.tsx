@@ -500,7 +500,7 @@ export default async function HomePage() {
                       Try before you enroll — free sample study material, mock tests, adaptive tests, PYQs &amp; flashcards
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      AHDP • Diploma basket (9 tracks) • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
+                      AHDP • Diploma basket (10 tracks) • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
                     </p>
                   </div>
                 </div>
@@ -595,7 +595,7 @@ export default async function HomePage() {
               Our <span className="va-gradient-text">Programmes</span>
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground">Diploma basket (9 tracks) + degrees — one platform from paravet to Ph.D</p>
+            <p className="text-muted-foreground">Diploma basket (10 tracks) + degrees — one platform from paravet to Ph.D</p>
           </div>
           {/* Diploma hub — full-width card */}
           <Link href={DIPLOMA_UMBRELLA.href} className="group mt-10 block">
@@ -633,7 +633,7 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-3 flex items-end justify-between gap-3">
                     <p className="max-w-2xl text-sm text-white/85">
-                      AHDP (RJ) • VLDD (HR) • DAH (MP) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 9 state posts.
+                      AHDP (RJ) • VLDD (HR) • DAH (MP) • DAH (GJ) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 10 state posts.
                     </p>
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
                       <ArrowRight className="h-5 w-5" />
@@ -651,7 +651,7 @@ export default async function HomePage() {
                   </p>
                 </div>
                 <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-3 text-sm font-bold text-white shadow-md">
-                  Explore 9 Diplomas <ArrowRight className="h-4 w-4" />
+                  Explore 10 Diplomas <ArrowRight className="h-4 w-4" />
                 </span>
               </CardContent>
             </Card>

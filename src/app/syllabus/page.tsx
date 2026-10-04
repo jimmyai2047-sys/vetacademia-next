@@ -69,13 +69,13 @@ export default async function SyllabusPage() {
         badge="VCI MSVE-2016 • ICAR Approved"
         title="Syllabus"
         titleHighlight="Explorer"
-        description="Explore the complete curriculum for all veterinary programmes — Diploma basket (AHDP + 8 tracks), B.V.Sc & A.H., M.V.Sc, Ph.D in one place."
+        description="Explore the complete curriculum for all veterinary programmes — Diploma basket (AHDP + 9 tracks), B.V.Sc & A.H., M.V.Sc, Ph.D in one place."
         variant="primary"
       />
       <div className="va-divider-dots my-8 max-w-[200px] mx-auto"><span /></div>
 
       {programmes.length === 0 && <p>No programmes yet</p>}
-      {/* Diploma basket hub — AHDP live, 8 tracks share the core */}
+      {/* Diploma basket hub — AHDP live, 9 tracks share the core */}
       <Link href="/diplomas" className="group mb-6 block">
         <Card className="overflow-hidden rounded-[1.75rem] border border-emerald-600/20 bg-gradient-to-r from-emerald-50 via-white to-teal-50/40 p-0 shadow-sm hover:shadow-xl hover:border-emerald-600/40 transition-all">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 md:p-6">
@@ -85,11 +85,11 @@ export default async function SyllabusPage() {
             <span className="flex-1">
               <span className="flex flex-wrap items-center gap-2">
                 <span className="text-base font-extrabold group-hover:text-emerald-700">Diploma in Veterinary & Animal Husbandry</span>
-                <Badge className="rounded-full bg-emerald-600 text-white border-0 text-[10px]">9 tracks</Badge>
+                <Badge className="rounded-full bg-emerald-600 text-white border-0 text-[10px]">10 tracks</Badge>
                 <Badge variant="secondary" className="rounded-full text-[10px]">AHDP + DVP (UP) live</Badge>
               </span>
               <span className="mt-1 block text-sm text-muted-foreground">
-                AHDP (RJ) • VLDD (HR) • DAH (MP) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 9 state posts. Open the hub for authority, post & track details.
+                AHDP (RJ) • VLDD (HR) • DAH (MP) • DAH (GJ) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 10 state posts. Open the hub for authority, post & track details.
               </span>
             </span>
             <span className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-md group-hover:bg-emerald-700">

@@ -71,8 +71,8 @@ const diplomaHrefFor = (slug: string) => {
 };
 
 const examCategories = [
-  // Paravet state jobs — 9 states, one hub
-  { name: "Paravet State Jobs (9 States)", href: "/examinations/paravet-jobs", icon: Tractor, desc: "LSA • VLDA • AVFO • Pharmacist • VFA — pick your state" },
+  // Paravet state jobs — 10 states, one hub
+  { name: "Paravet State Jobs (10 States)", href: "/examinations/paravet-jobs", icon: Tractor, desc: "LSA • VLDA • AVFO • Pharmacist • VFA — pick your state" },
   // PSC — अलग-अलग plate
   { name: "V.O. / V.S. (PSC)", href: "/examinations/psc#veterinary-officer", icon: Stethoscope, desc: "PSC — B.V.Sc • V.O. / V.S." },
   { name: "UP Pharmacist", href: "/examinations/up-pharmacist", icon: Pill, desc: "UP • DVP syllabus + UP GK • UPSSSC" },
@@ -91,7 +91,7 @@ const examCategories = [
 
 const prepCategories = [
   { name: "Veterinary Officer", href: "/prepare?tab=VO", icon: Stethoscope, desc: "VO/VS" },
-  { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA • 9 state posts • common core" },
+  { name: "Livestock Assistant", href: "/prepare?tab=LSA", icon: BookOpen, desc: "LSA • 10 state posts • common core" },
   { name: "UP Pharmacist", href: "/prepare?tab=UP_PHARMACIST", icon: Pill, desc: "UP • DVP subjects • UPSSSC" },
   { name: "ARS / NET", href: "/prepare?tab=ARS", icon: Beaker, desc: "ARS & NET" },
   { name: "ICAR Entrance", href: "/prepare?tab=ICAR_ENTRANCE", icon: BookMarked, desc: "JRF / SRF" },
@@ -277,7 +277,7 @@ export default function Navbar() {
                     </span>
                     <div>
                       <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-primary">Academic Programmes <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
-                      <p className="text-xs text-muted-foreground">Diploma basket (9 states) + 3 Degrees</p>
+                      <p className="text-xs text-muted-foreground">Diploma basket (10 states) + 3 Degrees</p>
                     </div>
                   </div>
                   <Link href={DIPLOMA_UMBRELLA.href} onClick={closeAllMenus} className="hidden sm:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold text-white hover:bg-primary/90 transition-colors">
@@ -294,7 +294,7 @@ export default function Navbar() {
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block text-sm font-bold group-hover/umb:text-primary">{DIPLOMA_UMBRELLA.title}</span>
-                      <span className="block text-[11px] text-muted-foreground">9 states • AHDP live • common core + state GK</span>
+                      <span className="block text-[11px] text-muted-foreground">10 states • AHDP live • common core + state GK</span>
                     </span>
                     <ArrowRight className="h-3.5 w-3.5 text-primary" />
                   </Link>
@@ -351,7 +351,7 @@ export default function Navbar() {
                     </Link>
                   ))}
                   <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors">
-                    <Tractor className="h-3.5 w-3.5" /> Diploma → 9 state posts (LSA • VLDA • AVFO…)
+                    <Tractor className="h-3.5 w-3.5" /> Diploma → 10 state posts (LSA • VLDA • AVFO…)
                   </Link>
                 </div>
               </div>
@@ -504,7 +504,7 @@ export default function Navbar() {
               </div>
               <div className="relative p-2.5 bg-gradient-to-r from-primary/[0.04] via-blue-50/20 to-transparent border-t border-primary/5 space-y-2">
                 <p className="rounded-xl bg-teal-50 border border-teal-200 px-3 py-2 text-[11px] font-medium text-teal-800">
-                  Diploma? <Link href="/diplomas" onClick={closeAllMenus} className="font-bold underline">9 state diplomas</Link> → <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="font-bold underline">9 state posts</Link> (LSA • VLDA • AVFO • Pharmacist • VFA) — one common core.
+                  Diploma? <Link href="/diplomas" onClick={closeAllMenus} className="font-bold underline">10 state diplomas</Link> → <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="font-bold underline">10 state posts</Link> (LSA • VLDA • AVFO • Pharmacist • VFA) — one common core.
                 </p>
                 <Link href="/examinations" onClick={closeAllMenus} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
                   <FileCheck className="h-3.5 w-3.5" /> View All Examinations

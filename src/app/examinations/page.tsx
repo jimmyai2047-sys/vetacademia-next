@@ -52,15 +52,15 @@ const examinations: Array<{
   // ── PSC ──
   {
     id: "paravet-jobs",
-    title: "Paravet State Jobs (9 States)",
+    title: "Paravet State Jobs (10 States)",
     subtitle: "LSA • VLDA • AVFO • Pharmacist • VFA",
     description:
-      "State-wise government posts for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, UP / Punjab / HP / UK / J&K Pharmacist, Bihar VFA. Common core + state GK.",
+      "State-wise government posts for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, Gujarat Pashudhan Nirikshak, UP / Punjab / HP / UK / J&K Pharmacist, Bihar VFA. Common core + state GK.",
     icon: Tractor,
     color: "bg-teal-600",
     lightColor: "bg-teal-50",
     textColor: "text-teal-600",
-    badge: "9 States • Diploma",
+    badge: "10 States • Diploma",
     papers: 50,
     mockTests: 20,
     href: "/examinations/paravet-jobs",

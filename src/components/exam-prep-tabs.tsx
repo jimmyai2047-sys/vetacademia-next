@@ -292,7 +292,7 @@ export default function ExamPrepTabs({
           ) : (
             <div className="mb-5 rounded-2xl border border-primary/10 bg-muted/30 p-4">
               <p className="text-xs text-muted-foreground">
-                <span className="font-bold text-foreground">Common core for all 9 states.</span> Pick your state for post, board & GK details:{" "}
+                <span className="font-bold text-foreground">Common core for all 10 states.</span> Pick your state for post, board & GK details:{" "}
                 <Link href="/examinations/paravet-jobs" className="font-bold text-primary hover:underline">
                   Paravet State Jobs hub →
                 </Link>

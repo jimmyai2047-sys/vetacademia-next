@@ -11,6 +11,10 @@
 // reuse the AHDP core (subjects overlap ~80%) and are marked "coming-soon"
 // until their specialization modules are authored.
 //
+// NOTE: Gujarat runs a 3-YEAR Polytechnic in Animal Husbandry (after 10th
+// SSC) under Kamdhenu University — longer than the 2-year 10+2 diplomas
+// elsewhere — leading to Pashudhan Nirikshak / Livestock Inspector (GPSSB).
+//
 // Add a new state diploma here (and its job in state-jobs.ts) and it
 // automatically appears in:
 //  • Navbar → Student Corner dropdown (Diploma group, state-tagged)
@@ -50,7 +54,7 @@ export const DIPLOMA_UMBRELLA = {
   title: "Diploma in Veterinary & Animal Husbandry",
   short: "Diploma Programmes",
   description:
-    "Same paravet level, different name in each state — 9 state-recognized diploma tracks for paravets, pharmacists, extension workers and lab technicians. One common science core (AHDP syllabus) + state GK for the job exam.",
+    "Same paravet level, different name in each state — 10 state-recognized diploma tracks for paravets, pharmacists, extension workers and lab technicians. One common science core (AHDP syllabus) + state GK for the job exam.",
   href: "/diplomas",
 } as const;
 
@@ -113,6 +117,28 @@ export const DIPLOMA_TRACKS: DiplomaTrack[] = [
     status: "coming-soon",
     syllabusHref: "/syllabus/ahdp",
     badge: "Same core as AHDP",
+  },
+  {
+    slug: "dah-gj",
+    short: "DAH",
+    fullName: "Diploma in Animal Husbandry (Polytechnic in Animal Husbandry)",
+    state: "Gujarat",
+    stateCode: "GJ",
+    authority: "Kamdhenu University, Gandhinagar",
+    jobPost: "Pashudhan Nirikshak / Livestock Inspector (Class-3)",
+    jobShort: "Pashudhan Nirikshak",
+    recruitingBody: "GPSSB",
+    jobNote:
+      "GPSSB Advt. 02/2026-27: 112 Pashudhan Nirikshak (Class-3) posts, age 18–33. Needs 3-yr Diploma in Animal Husbandry (regular mode) + computer knowledge + Gujarati/Hindi. GSSSB also recruits Livestock Inspectors for the state Animal Husbandry Dept.",
+    duration: "3 Years",
+    eligibility: "10th (SSC, 45%+)",
+    focus: ["Livestock management", "Breeding & AI", "Nutrition & fodder", "Health & first-aid", "Dairy extension"],
+    careers: ["Pashudhan Nirikshak (GPSSB)", "Livestock Inspector", "Dairy farm supervisor"],
+    examLink: "/examinations/paravet-jobs#gujarat",
+    examLabel: "Pashudhan Nirikshak • GPSSB",
+    status: "coming-soon",
+    syllabusHref: "/syllabus/ahdp",
+    badge: "3-yr Polytechnic",
   },
   {
     slug: "dvp",

@@ -4,7 +4,7 @@ import SocialLinks from "@/components/social-icons";
 
 const footerLinks = {
   programmes: [
-    { name: "Diploma Basket (9 states)", href: "/diplomas" },
+    { name: "Diploma Basket (10 states)", href: "/diplomas" },
     { name: "A.H.D.P.", href: "/syllabus/ahdp" },
     { name: "B.V.Sc & A.H.", href: "/syllabus/bvsc" },
     { name: "M.V.Sc", href: "/syllabus/mvsc" },
@@ -74,7 +74,7 @@ export default function Footer() {
                 <Sparkles className="h-3.5 w-3.5 text-[#d4a843] animate-pulse" />
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">
-                India&apos;s most loved veterinary education platform — for Diploma (AHDP + 8 tracks), B.V.Sc &amp; A.H., M.V.Sc, Ph.D.
+                India&apos;s most loved veterinary education platform — for Diploma (AHDP + 9 tracks), B.V.Sc &amp; A.H., M.V.Sc, Ph.D.
               </p>
             </div>
             <div className="space-y-2.5 pt-2">

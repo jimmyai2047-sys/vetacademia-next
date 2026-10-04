@@ -22,15 +22,16 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia | Diploma in Veterinary & Animal Husbandry — state-wise: Rajasthan AHDP, Haryana VLDD, MP DAH, UP DVP & more",
+  title: "VetAcademia | Diploma in Veterinary & Animal Husbandry — state-wise: Rajasthan AHDP, Haryana VLDD, MP DAH, Gujarat DAH, UP DVP & more",
   description:
-    "State-wise veterinary diplomas — Rajasthan AHDP (RAJUVAS → LSA), Haryana VLDD (LUVAS → VLDA), MP DAH (NDVSU → AVFO), UP DVP, Punjab DVSAHT, HP, Uttarakhand DVPLE, J&K, Bihar DVLD. Syllabus, authority, job post & preparation.",
+    "State-wise veterinary diplomas — Rajasthan AHDP (RAJUVAS → LSA), Haryana VLDD (LUVAS → VLDA), MP DAH (NDVSU → AVFO), Gujarat DAH (Kamdhenu University → Pashudhan Nirikshak), UP DVP, Punjab DVSAHT, HP, Uttarakhand DVPLE, J&K, Bihar DVLD. Syllabus, authority, job post & preparation.",
 };
 
 const STATE_ANCHOR: Record<string, string> = {
   Rajasthan: "rajasthan",
   Haryana: "haryana",
   "Madhya Pradesh": "madhya-pradesh",
+  Gujarat: "gujarat",
   "Uttar Pradesh": "uttar-pradesh",
   Punjab: "punjab",
   "Himachal Pradesh": "himachal-pradesh",
@@ -48,6 +49,7 @@ const iconFor = (slug: string) => {
   switch (slug) {
     case "ahdp":
     case "dah":
+    case "dah-gj":
       return Tractor;
     case "dvp":
     case "dvph":
@@ -70,7 +72,7 @@ export default function DiplomasPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
-        badge="Diploma Basket • 9 States + Lab Tech"
+        badge="Diploma Basket • 10 States + Lab Tech"
         title="Diploma in Veterinary"
         titleHighlight="& Animal Husbandry"
         description={`${DIPLOMA_UMBRELLA.description} AHDP content is live today — every other track starts from the same core and adds its specialization next.`}
@@ -212,7 +214,7 @@ export default function DiplomasPage() {
         </span>
       </div>
       <p className="mb-5 max-w-3xl text-sm text-muted-foreground">
-        VLDD, DAH, DVSAHT, DVPLE, DVLD and DVLT share ~80% of the Rajasthan AHDP core (anatomy, physiology,
+        VLDD, DAH (MP), DAH (GJ), DVSAHT, DVPLE, DVLD and DVLT share ~80% of the Rajasthan AHDP core (anatomy, physiology,
         nutrition, reproduction, medicine, pharmacy basics, extension). Start with a live syllabus now — AHDP or{" "}
         <Link href="/syllabus/dvp" className="font-bold text-primary hover:underline">DVP (Uttar Pradesh)</Link> —{" "}
         track-specific modules (e.g. dispensing for DVP-HP, microscopy for DVLT) plus your state&apos;s GK unlock next.

@@ -19,14 +19,14 @@ import {
 export const metadata = {
   title: "VetAcademia | Paravet State Jobs — LSA, VLDA, AVFO, Pharmacist, VFA preparation",
   description:
-    "State-wise government job preparation for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, UP / Punjab / HP / Uttarakhand / J&K Pharmacist, Bihar VFA. Common core + state GK.",
+    "State-wise government job preparation for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, Gujarat Pashudhan Nirikshak, UP / Punjab / HP / Uttarakhand / J&K Pharmacist, Bihar VFA. Common core + state GK.",
 };
 
 export default function ParavetJobsPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
-        badge="Diploma → Sarkari Naukri • 9 States"
+        badge="Diploma → Sarkari Naukri • 10 States"
         title="Paravet State Jobs"
         titleHighlight="Preparation Hub"
         description="Same paravet level, different post in each state. Strategy everywhere: COMMON CORE (live AHDP syllabus — 80% of every paper) + STATE GK (your state's General Knowledge paper). Pick your state below."
@@ -158,7 +158,7 @@ export default function ParavetJobsPage() {
             </Button>
           </Link>
           <Link href="/diplomas">
-            <Button variant="outline">Compare all 9 diplomas</Button>
+            <Button variant="outline">Compare all 10 diplomas</Button>
           </Link>
         </div>
       </div>
