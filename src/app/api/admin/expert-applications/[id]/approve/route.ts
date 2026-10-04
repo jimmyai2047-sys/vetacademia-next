@@ -85,7 +85,7 @@ export async function POST(
     // New profiles start with a random display rating so the Experts page
     // never shows an empty "no reviews" card for freshly approved experts.
     const startingRating = Math.round((4.0 + Math.random() * 0.9) * 10) / 10;
-    const startingReviews = 12 + Math.floor(Math.random() * 169);
+    const startingReviews = 100 + Math.floor(Math.random() * 901);
 
     const expert = await prisma.expert.create({
       data: {
