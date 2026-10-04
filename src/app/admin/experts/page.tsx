@@ -18,7 +18,6 @@ import {
   Image as ImageIcon,
   X,
   Star,
-  IndianRupee,
   Crown,
   Sparkles,
   Users,
@@ -118,7 +117,6 @@ export default function AdminExpertsPage({
   const [notice, setNotice] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [approving, setApproving] = useState<Application | null>(null);
-  const [approveRate, setApproveRate] = useState("0");
   const [approveAvailable, setApproveAvailable] = useState(true);
   const [reviewing, setReviewing] = useState(false);
   const [rejectNote, setRejectNote] = useState("");
@@ -160,7 +158,6 @@ export default function AdminExpertsPage({
     specialization: "",
     bio: "",
     awards: "",
-    hourlyRate: "",
     isAvailable: true,
     photoUrl: "" as string | null,
   });
@@ -228,7 +225,6 @@ export default function AdminExpertsPage({
       specialization: "",
       bio: "",
       awards: "",
-      hourlyRate: "",
       isAvailable: true,
       photoUrl: null,
     });
@@ -254,7 +250,6 @@ export default function AdminExpertsPage({
       specialization: e.specialization,
       bio: e.bio || "",
       awards: e.awards || "",
-      hourlyRate: String(e.hourlyRate),
       isAvailable: e.isAvailable,
       photoUrl: e.photoUrlBase ?? null,
     });
@@ -313,7 +308,6 @@ export default function AdminExpertsPage({
         specialization: form.specialization,
         bio: form.bio,
         awards: form.awards || undefined,
-        hourlyRate: Number(form.hourlyRate) || 0,
         isAvailable: form.isAvailable,
         photoUrl: form.photoUrl,
       };
@@ -371,7 +365,7 @@ export default function AdminExpertsPage({
       const res = await fetch(`/api/admin/expert-applications/${approving.id}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hourlyRate: Number(approveRate) || 0, isAvailable: approveAvailable }),
+        body: JSON.stringify({ isAvailable: approveAvailable }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -793,10 +787,6 @@ export default function AdminExpertsPage({
                         <div className="pt-1">
                           {approving?.id === a.id ? (
                             <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 flex flex-col sm:flex-row gap-2 sm:items-end">
-                              <div>
-                                <label className="text-xs font-medium">Hourly rate (₹)</label>
-                                <Input type="number" min={0} value={approveRate} onChange={(e) => setApproveRate(e.target.value)} className="rounded-xl mt-1 w-36 bg-white" />
-                              </div>
                               <label className="flex items-center gap-2 text-sm pb-2">
                                 <input type="checkbox" checked={approveAvailable} onChange={(e) => setApproveAvailable(e.target.checked)} className="rounded" />
                                 Available for consultation
@@ -810,7 +800,7 @@ export default function AdminExpertsPage({
                             </div>
                           ) : (
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" onClick={() => { setApproving(a); setApproveRate("0"); setApproveAvailable(true); }} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 gap-1">
+                              <Button size="sm" onClick={() => { setApproving(a); setApproveAvailable(true); }} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 gap-1">
                                 <CheckCircle className="h-3.5 w-3.5" /> Approve & Publish
                               </Button>
                               <Button size="sm" variant="outline" onClick={() => openEditApp(a)} className="rounded-xl gap-1">
@@ -898,10 +888,6 @@ export default function AdminExpertsPage({
                     <div>
                       <label className="text-sm font-medium">Experience (years)</label>
                       <Input type="number" min={0} max={80} value={form.experienceYears} onChange={(e) => setForm({ ...form, experienceYears: e.target.value })} className="rounded-xl mt-1" />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Hourly Rate (₹)</label>
-                      <Input type="number" value={form.hourlyRate} onChange={(e) => setForm({ ...form, hourlyRate: e.target.value })} className="rounded-xl mt-1" />
                     </div>
                   </div>
 
@@ -1033,10 +1019,6 @@ export default function AdminExpertsPage({
                           </div>
                         )}
                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <IndianRupee className="h-3 w-3" />
-                            {e.hourlyRate}/hr
-                          </span>
                           <span className="flex items-center gap-1">
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                             {e.rating} ({e.totalReviews})

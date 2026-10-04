@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight, MapPin, GraduationCap, Search } from "lucide-react";
+import { Star, Clock, Sparkles, Users, Award, ArrowRight, MapPin, GraduationCap, Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { signBlobViewerUrl } from "@/lib/blob-token";
@@ -255,19 +255,15 @@ export default async function ExpertsPage({
                 <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
                   {expert.bio || "Experienced veterinary professional."}
                 </p>
-                <div className="mt-4 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-                <div className="mt-3 flex items-center gap-3 text-sm">
-                  <div className="flex items-center gap-1.5 rounded-full bg-primary/5 px-2.5 py-1">
-                    <IndianRupee className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-semibold">₹{expert.hourlyRate}/hour</span>
-                  </div>
-                  {expert.sessions > 0 && (
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                {expert.sessions > 0 && (
+                  <>
+                    <div className="mt-4 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                    <div className="mt-3 flex items-center gap-1.5 text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
                       <span className="text-xs">{expert.sessions} sessions</span>
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
               </CardContent>
               <CardFooter className="relative">
                 {expert.isAvailable ? (
