@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { ExpertApplicationStatus } from "@prisma/client";
 import { requireAdminApi } from "@/lib/admin-api";
 
 // Admin inbox for public expert-proforma submissions.
@@ -12,7 +11,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const status = (searchParams.get("status") || "PENDING").toUpperCase();
     const where =
-      status === "ALL" ? {} : { status: (["PENDING", "APPROVED", "REJECTED"].includes(status) ? status : "PENDING") as ExpertApplicationStatus };
+      status === "ALL" ? {} : { status: ["PENDING", "APPROVED", "REJECTED"].includes(status) ? status : "PENDING" };
 
     const applications = await prisma.expertApplication.findMany({
       where,

@@ -2,7 +2,6 @@
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import type { Role } from "@prisma/client";
 import { signToken } from "@/lib/mobileAuth";
 import { SELF_REGISTERABLE_ROLES } from "@/lib/roles";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
         name: data.name,
         email,
         password: hashed,
-        role: requestedRole as Role,
+        role: requestedRole,
         programme: data.programme,
       },
     });

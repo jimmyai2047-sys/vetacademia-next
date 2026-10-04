@@ -1,7 +1,6 @@
 import { validateCsrf } from "@/lib/csrf";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { Role } from "@prisma/client";
 import { STUDENT, ANIMAL_OWNER, GUEST, ADMIN, EXPERT_ROLES } from "@/lib/roles";
 import { requireAdminApi } from "@/lib/admin-api";
 import { logAudit } from "@/lib/audit";
@@ -37,7 +36,7 @@ export async function PATCH(
   }
 
   try {
-    const updated = await prisma.user.update({ where: { id }, data: { role: role as Role } });
+    const updated = await prisma.user.update({ where: { id }, data: { role } });
     logAudit({
       action: "user.role_change",
       actor: auth.session!.user.id,
