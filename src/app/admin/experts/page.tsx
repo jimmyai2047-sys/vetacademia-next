@@ -31,6 +31,7 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
+import { csrfFetch } from "@/lib/csrf-client";
 import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
 type Qualification = {
@@ -314,7 +315,7 @@ export default function AdminExpertsPage({
       };
 
       const res = editing
-        ? await fetch(`/api/admin/experts/${editing.id}`, {
+        ? await csrfFetch(`/api/admin/experts/${editing.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -347,7 +348,7 @@ export default function AdminExpertsPage({
     if (!confirm(`Delete expert "${e.name}"? This also removes their login. This cannot be undone.`))
       return;
     try {
-      const res = await fetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
       if (res.ok) fetchExperts();
       else {
         const d = await res.json().catch(() => ({}));
