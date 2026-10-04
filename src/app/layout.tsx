@@ -9,6 +9,8 @@ import FloatingWhatsApp from "@/components/floating-whatsapp";
 import PwaRegister from "@/components/pwa-register";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -22,9 +24,12 @@ const noto = Noto_Sans({
   display: "swap",
 });
 
-// Per-page `force-dynamic` controls caching; the layout stays static-friendly
-// so public pages can be prerendered/ISR-cached instead of forcing the whole
-// app dynamic.
+// The nonce-based Content-Security-Policy (see src/proxy.ts) requires every
+// page to render per request: statically prerendered/ISR HTML ships inline
+// scripts WITHOUT a nonce, browsers block them, and hydration never
+// completes (page stuck on the loading spinner). So the whole app is forced
+// dynamic here — per Next.js docs, nonce CSP and static/ISR caching are
+// mutually exclusive. Data-level caching (unstable_cache etc.) is unaffected.
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vetacademia.in"),
@@ -88,16 +93,40 @@ export const viewport: Viewport = {
   themeColor: "#005f48",
 };
 
-const organizationSchema = {
+const ORGANIZATION_ID = "https://vetacademia.in/#organization";
+
+const siteSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "VetAcademia",
-  url: "https://vetacademia.in",
-  logo: "https://vetacademia.in/favicon-512x512.png",
-  description: "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
-  sameAs: [
-    "https://www.facebook.com/profile.php?id=61593778203571",
-    "https://www.instagram.com/vetacademia.india/",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": ORGANIZATION_ID,
+      name: "VetAcademia",
+      url: "https://vetacademia.in",
+      logo: "https://vetacademia.in/favicon-512x512.png",
+      description:
+        "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
+      sameAs: [
+        "https://www.facebook.com/profile.php?id=61593778203571",
+        "https://www.instagram.com/vetacademia.india/",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://vetacademia.in/#website",
+      url: "https://vetacademia.in",
+      name: "VetAcademia",
+      inLanguage: "en",
+      publisher: { "@id": ORGANIZATION_ID },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://vetacademia.in/search?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
   ],
 };
 
@@ -111,7 +140,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col overflow-x-hidden">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
         />
         <TooltipProvider>
           <Providers>
