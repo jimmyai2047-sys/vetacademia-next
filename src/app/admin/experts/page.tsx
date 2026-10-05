@@ -272,7 +272,7 @@ export default function AdminExpertsPage({
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await csrfFetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (res.ok) {
         setForm((f) => ({ ...f, photoUrl: data.url }));
@@ -320,7 +320,7 @@ export default function AdminExpertsPage({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch("/api/admin/experts", {
+        : await csrfFetch("/api/admin/experts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -364,7 +364,7 @@ export default function AdminExpertsPage({
     setReviewing(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/expert-applications/${approving.id}/approve`, {
+      const res = await csrfFetch(`/api/admin/expert-applications/${approving.id}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isAvailable: approveAvailable }),
@@ -398,7 +398,7 @@ export default function AdminExpertsPage({
     setReviewing(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/expert-applications/${app.id}/reject`, {
+      const res = await csrfFetch(`/api/admin/expert-applications/${app.id}/reject`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ adminNote: note.slice(0, 500) }),
@@ -482,7 +482,7 @@ export default function AdminExpertsPage({
             institution: (q.institution || "").trim(),
           })),
       };
-      const res = await fetch(`/api/admin/expert-applications/${editingApp.id}`, {
+      const res = await csrfFetch(`/api/admin/expert-applications/${editingApp.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
