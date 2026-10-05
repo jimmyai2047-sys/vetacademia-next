@@ -240,7 +240,7 @@ const getHomeStats = unstable_cache(
         prisma.user.count().catch(() => 10000),
         prisma.subject.count().catch(() => 100),
         prisma.programme.count().catch(() => 4),
-        prisma.user.count({ where: { role: { in: ["EXPERT", "VET", "ADMIN"] } } }).catch(() => 50),
+        prisma.user.count({ where: { role: { notIn: ["STUDENT", "ANIMAL_OWNER", "GUEST"] } } }).catch(() => 50),
       ]);
       return {
         programmes: String(programmesCount || 4),
