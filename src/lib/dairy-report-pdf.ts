@@ -6,8 +6,7 @@
 import "regenerator-runtime/runtime";
 import { PDFDocument, StandardFonts, rgb, degrees, PDFFont, PDFPage, PDFImage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import * as fs from "fs";
-import * as path from "path";
+import { loadDevanagariBold, loadDevanagariRegular, loadReportLogo, loadReportSketch } from "./pdf-static-assets";
 import { getDairyDefaults, DairyProjectInput, DairyFlockYear, dairyCosts, dairyFinance } from "./dairy-engine";
 import { appraise, breakEven, loanSchedule, LoanScheduleRow, LOAN_INTEREST_RATE } from "./project-finance";
 import { findBreed } from "./livestock-breeds";
@@ -151,42 +150,21 @@ class Ctx {
     let hi = reg;
     let hiBold = bold;
     let hasHindi = false;
-    const candidates = [
-      path.join(process.cwd(), "public", "fonts", "NotoSansDevanagari-Regular.ttf"),
-      "C:\\Windows\\Fonts\\KOKILA.TTF",
-    ];
-    const candidatesB = [
-      path.join(process.cwd(), "public", "fonts", "NotoSansDevanagari-Bold.ttf"),
-      "C:\\Windows\\Fonts\\KOKILAB.TTF",
-    ];
+    // Static asset loads only (no loops/arrays over paths) so Vercel's file
+    // tracer resolves just these files instead of the whole project.
     try {
-      for (let i = 0; i < candidates.length; i++) {
-        if (fs.existsSync(candidates[i])) {
-          hi = await this.doc.embedFont(fs.readFileSync(candidates[i]));
-          break;
-        }
-      }
-      for (let j = 0; j < candidatesB.length; j++) {
-        if (fs.existsSync(candidatesB[j])) {
-          hiBold = await this.doc.embedFont(fs.readFileSync(candidatesB[j]));
-          break;
-        }
-      }
+      const regularBytes = loadDevanagariRegular();
+      if (regularBytes) hi = await this.doc.embedFont(regularBytes);
+      const boldBytes = loadDevanagariBold();
+      if (boldBytes) hiBold = await this.doc.embedFont(boldBytes);
       hasHindi = hi !== reg;
     } catch {
       hasHindi = false;
     }
     this.fonts = { reg: reg, bold: bold, hi: hi, hiBold: hiBold, hasHindi: hasHindi };
-    const logoPaths = [
-      path.join(process.cwd(), "public", "logo-vetacademia.png"),
-    ];
     try {
-      for (let li = 0; li < logoPaths.length; li++) {
-        if (fs.existsSync(logoPaths[li])) {
-          this.logo = await this.doc.embedPng(fs.readFileSync(logoPaths[li]));
-          break;
-        }
-      }
+      const logoBytes = loadReportLogo();
+      if (logoBytes) this.logo = await this.doc.embedPng(logoBytes);
     } catch {
       this.logo = null;
     }
@@ -618,11 +596,10 @@ export async function buildDairyReport(input: DairyReportInput): Promise<Uint8Ar
   ctx.centered("Application for assistance in establishing " + unitLabel + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
   // Pencil sketch - cattle vs buffalo (shared Livestock_Pencil_Sketches artwork)
-  const sketchFile = species === "BUFFALO" ? "buffalo.png" : "cattle.png";
   try {
-    const sketchPath = path.join(process.cwd(), "assets", "sketches", sketchFile);
-    if (fs.existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
+    const sketchBytes = loadReportSketch(species === "BUFFALO" ? "buffalo" : "cattle");
+    if (sketchBytes) {
+      const png = await ctx.doc.embedPng(sketchBytes);
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
@@ -1275,7 +1252,10 @@ export function sampleDairyInput(): DairyReportInput {
 }
 export async function buildSampleDairyPdf(outPath: string): Promise<{ pages: number; bytes: number }> {
   const bytes = await buildDairyReport(sampleDairyInput() as any);
-  fs.writeFileSync(outPath, bytes);
+  // Dev-only sample writer: dynamic import keeps this caller-supplied path
+  // out of Vercel's static file tracing.
+  const { writeFileSync } = await import("node:fs");
+  writeFileSync(outPath, bytes);
   const doc = await PDFDocument.load(bytes);
   return { pages: doc.getPageCount(), bytes: bytes.length };
 }

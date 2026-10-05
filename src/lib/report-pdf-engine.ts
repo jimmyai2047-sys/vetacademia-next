@@ -5,8 +5,7 @@
 import "regenerator-runtime/runtime";
 import { PDFDocument, StandardFonts, rgb, degrees, PDFFont, PDFPage, PDFImage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import * as fs from "fs";
-import * as path from "path";
+import { loadDevanagariBold, loadDevanagariRegular, loadReportLogo } from "./pdf-static-assets";
 
 export interface ReportAddress {
   villagePost: string;
@@ -129,38 +128,21 @@ export class Ctx {
     let hi = reg;
     let hiBold = bold;
     let hasHindi = false;
-    const candidates = [
-      path.join(process.cwd(), "public", "fonts", "NotoSansDevanagari-Regular.ttf"),
-      "C:\\Windows\\Fonts\\KOKILA.TTF",
-    ];
-    const candidatesB = [
-      path.join(process.cwd(), "public", "fonts", "NotoSansDevanagari-Bold.ttf"),
-      "C:\\Windows\\Fonts\\KOKILAB.TTF",
-    ];
+    // Static asset loads only (no loops/arrays over paths) so Vercel's file
+    // tracer resolves just these files instead of the whole project.
     try {
-      for (let i = 0; i < candidates.length; i++) {
-        if (fs.existsSync(candidates[i])) {
-          hi = await this.doc.embedFont(fs.readFileSync(candidates[i]));
-          break;
-        }
-      }
-      for (let j = 0; j < candidatesB.length; j++) {
-        if (fs.existsSync(candidatesB[j])) {
-          hiBold = await this.doc.embedFont(fs.readFileSync(candidatesB[j]));
-          break;
-        }
-      }
+      const regularBytes = loadDevanagariRegular();
+      if (regularBytes) hi = await this.doc.embedFont(regularBytes);
+      const boldBytes = loadDevanagariBold();
+      if (boldBytes) hiBold = await this.doc.embedFont(boldBytes);
       hasHindi = hi !== reg;
     } catch {
       hasHindi = false;
     }
     this.fonts = { reg: reg, bold: bold, hi: hi, hiBold: hiBold, hasHindi: hasHindi };
-    // Static path (not a loop variable) so Vercel traces just this file.
-    const logoPath = path.join(process.cwd(), "public", "logo-vetacademia.png");
     try {
-      if (fs.existsSync(logoPath)) {
-        this.logo = await this.doc.embedPng(fs.readFileSync(logoPath));
-      }
+      const logoBytes = loadReportLogo();
+      if (logoBytes) this.logo = await this.doc.embedPng(logoBytes);
     } catch {
       this.logo = null;
     }

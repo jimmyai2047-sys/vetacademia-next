@@ -4,8 +4,6 @@
 // Reuses the shared Ctx engine from processing-report-pdf.ts.
 import "regenerator-runtime/runtime";
 import { rgb } from "pdf-lib";
-import * as fs from "fs";
-import * as path from "path";
 import {
   DRUG_MASTER, DRUGS_OF_CHOICE, BANNED_DRUGS, DRUG_NOTES, DRUG_CATEGORIES, DRUG_COUNT,
   type DrugEntry,

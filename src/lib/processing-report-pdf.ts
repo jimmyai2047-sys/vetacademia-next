@@ -6,8 +6,7 @@
 import "regenerator-runtime/runtime";
 import { PDFDocument, StandardFonts, rgb, degrees, PDFFont, PDFPage, PDFImage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import * as fs from "fs";
-import * as path from "path";
+import { loadReportSketch } from "./pdf-static-assets";
 import { PROCESSING_DEFAULTS, ProcessingProjectInput, processingCosts, processingFinance } from "./processing-engine";
 import { appraise, breakEven, loanSchedule, LoanScheduleRow, LOAN_INTEREST_RATE } from "./project-finance";
 import {
@@ -134,9 +133,9 @@ export async function buildProcessingReport(input: ProcessingReportInput): Promi
   ctx.y -= 18;
   // Pencil sketch from Livestock_Pencil_Sketches.docx - double size, just below heading
   try {
-    const sketchPath = path.join(process.cwd(), "assets", "sketches", "processing.png");
-    if (fs.existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
+    const sketchBytes = loadReportSketch("processing");
+    if (sketchBytes) {
+      const png = await ctx.doc.embedPng(sketchBytes);
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
@@ -690,7 +689,10 @@ export function sampleProcessingInput(): ProcessingReportInput {
 }
 export async function buildSampleProcessingPdf(outPath: string): Promise<{ pages: number; bytes: number }> {
   const bytes = await buildProcessingReport(sampleProcessingInput() as any);
-  fs.writeFileSync(outPath, bytes);
+  // Dev-only sample writer: dynamic import keeps this caller-supplied path
+  // out of Vercel's static file tracing.
+  const { writeFileSync } = await import("node:fs");
+  writeFileSync(outPath, bytes);
   const doc = await PDFDocument.load(bytes);
   return { pages: doc.getPageCount(), bytes: bytes.length };
 }

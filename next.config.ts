@@ -16,6 +16,24 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp", "@prisma/adapter-pg", "pg"],
+  // PDF report routes read fonts/logo/sketches from disk at runtime.
+  // The loaders in src/lib/pdf-static-assets.ts use only static literal
+  // paths (Vercel-safe), and these includes guarantee the files are
+  // packaged with the serverless functions.
+  outputFileTracingIncludes: {
+    "/api/reports/preview": [
+      "./public/fonts/NotoSansDevanagari-Regular.ttf",
+      "./public/fonts/NotoSansDevanagari-Bold.ttf",
+      "./public/logo-vetacademia.png",
+      "./assets/sketches/*.png",
+    ],
+    "/api/reports/finalize": [
+      "./public/fonts/NotoSansDevanagari-Regular.ttf",
+      "./public/fonts/NotoSansDevanagari-Bold.ttf",
+      "./public/logo-vetacademia.png",
+      "./assets/sketches/*.png",
+    ],
+  },
   experimental: {
     // Disable Turbopack's persistent filesystem cache for builds. The cache
     // uses RocksDB SST files which fail to write under paths containing

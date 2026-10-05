@@ -6,8 +6,7 @@
 // Language: 'en' | 'hi' (headings/labels/cover bilingual; body prose EN).
 import "regenerator-runtime/runtime";
 import { rgb } from "pdf-lib";
-import * as fs from "fs";
-import * as path from "path";
+import { loadReportSketch } from "./pdf-static-assets";
 import { MEAT_DEFAULTS, MeatProjectInput, MeatSpecies, getMeatDefaults, meatCosts, meatFinance } from "./meat-engine";
 import { appraise, breakEven, loanSchedule, LoanScheduleRow, LOAN_INTEREST_RATE } from "./project-finance";
 import {
@@ -143,9 +142,10 @@ export async function buildMeatReport(input: MeatReportInput): Promise<Uint8Arra
   ctx.centered("Application for assistance in establishing " + unitLabel0 + " under " + input.schemeShort, 15, true);
   ctx.y -= 18;
   try {
-    const sketchPath = path.join(process.cwd(), "assets", "sketches", SPECIES_SKETCH[species] ?? "sheep_goat.png");
-    if (fs.existsSync(sketchPath)) {
-      const png = await ctx.doc.embedPng(fs.readFileSync(sketchPath));
+    const sketchName = species === "BUFFALO" ? "buffalo" : species === "PIG" ? "pig" : species === "POULTRY" ? "poultry_broiler" : "sheep_goat";
+    const sketchBytes = loadReportSketch(sketchName);
+    if (sketchBytes) {
+      const png = await ctx.doc.embedPng(sketchBytes);
       const maxW = 440;
       const maxH = 280;
       const scale = Math.min(maxW / png.width, maxH / png.height, 0.9);
@@ -543,6 +543,9 @@ export function sampleMeatInput(): MeatReportInput {
 
 export async function buildSampleMeatPdf(outPath: string): Promise<{ pages: number; bytes: number }> {
   const bytes = await buildMeatReport(sampleMeatInput() as any);
-  fs.writeFileSync(outPath, bytes);
+  // Dev-only sample writer: dynamic import keeps this caller-supplied path
+  // out of Vercel's static file tracing.
+  const { writeFileSync } = await import("node:fs");
+  writeFileSync(outPath, bytes);
   return { pages: 0, bytes: bytes.length };
 }
