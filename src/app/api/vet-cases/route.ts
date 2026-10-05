@@ -114,11 +114,11 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
 
-    // Notify admins (in-app + push). Best-effort: never fail the submission.
+    // Notify admins (in-app + push + email). Best-effort: never fail the submission.
     try {
       const admins = await prisma.user.findMany({
         where: { role: "ADMIN", banned: false },
-        select: { id: true },
+        select: { id: true, email: true },
       });
       const submitter = session.user.name || session.user.email || "A user";
       if (admins.length > 0) {
@@ -139,6 +139,16 @@ export async function POST(req: NextRequest) {
             )
           )
         );
+        const adminEmails = admins.map((a) => a.email).filter(Boolean);
+        if (adminEmails.length > 0) {
+          const { sendEmail } = await import("@/lib/email");
+          await sendEmail({
+            to: adminEmails,
+            subject: `New vet case: ${parsed.data.species} — review needed`,
+            html: `<p>A new clinical case was submitted on VetAcademia and needs expert review.</p><ul><li><strong>Species:</strong> ${parsed.data.species}</li><li><strong>Age:</strong> ${parsed.data.age || "-"}</li><li><strong>Contact:</strong> ${parsed.data.contact}</li><li><strong>Submitted by:</strong> ${submitter}</li></ul><p><strong>History:</strong></p><p>${parsed.data.history.replace(/\n/g, "<br>")}</p><p>Review it in the <a href="https://vetacademia.in/admin/vet-cases">case inbox</a>.</p>`,
+            text: `New vet case (${parsed.data.species}) from ${submitter}. Contact: ${parsed.data.contact}. History: ${parsed.data.history}. Review: https://vetacademia.in/admin/vet-cases`,
+          });
+        }
       }
     } catch (notifyErr) {
       console.error("[vet-cases] notify error:", notifyErr);

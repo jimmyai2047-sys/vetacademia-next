@@ -30,6 +30,8 @@ export const env = {
   RAZORPAY_KEY_ID: v("RAZORPAY_KEY_ID"),
   RAZORPAY_KEY_SECRET: v("RAZORPAY_KEY_SECRET"),
   RAZORPAY_WEBHOOK_SECRET: v("RAZORPAY_WEBHOOK_SECRET"),
+  RESEND_API_KEY: v("RESEND_API_KEY"),
+  EMAIL_FROM: v("EMAIL_FROM"),
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   /** Upstash Redis (Marketplace) with legacy Vercel-KV names as fallback. */

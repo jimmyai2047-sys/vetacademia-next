@@ -43,6 +43,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "regenerator-runtime": "^0.14.1",
+    "resend": "^6.32.0",
     "sanitize-html": "^2.17.7",
     "shadcn": "^4.16.2",
     "sonner": "^2.0.8",
