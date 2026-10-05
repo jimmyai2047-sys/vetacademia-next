@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createHash } from "crypto";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 import {
   FARMER_LANG_NAME_EN,
   normalizeFarmerLang,
@@ -9,7 +10,7 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const MODEL = env.GEMINI_MODEL;
 
 // ---- tiny in-process cache (per lambda instance) ----
 declare global {
@@ -32,10 +33,8 @@ function memSet(k: string, v: string) {
 // ---- optional Upstash Redis cache (shared across instances) ----
 async function redisGet(key: string): Promise<string | null> {
   try {
-    const url =
-      process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || "";
-    const token =
-      process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || "";
+    const url = env.REDIS_URL;
+    const token = env.REDIS_TOKEN;
     if (!url || !token) return null;
     const res = await fetch(`${url}/get/${encodeURIComponent(key)}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -51,10 +50,8 @@ async function redisGet(key: string): Promise<string | null> {
 
 async function redisSet(key: string, value: string) {
   try {
-    const url =
-      process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || "";
-    const token =
-      process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || "";
+    const url = env.REDIS_URL;
+    const token = env.REDIS_TOKEN;
     if (!url || !token) return;
     // 30-day expiry, best-effort
     await fetch(
@@ -141,7 +138,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ translations: out, cached: true });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json({
       translations: texts,

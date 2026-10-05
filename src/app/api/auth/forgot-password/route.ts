@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { signResetToken } from "@/lib/reset-token";
 import { validateCsrf } from "@/lib/csrf";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     if (user) {
       const token = signResetToken(user.email);
-      const resetUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+      const resetUrl = `${env.NEXTAUTH_URL}/reset-password?token=${token}`;
       // In production the link would be emailed. Surface it only outside prod
       // so the flow is testable without an email provider.
       if (process.env.NODE_ENV !== "production") {

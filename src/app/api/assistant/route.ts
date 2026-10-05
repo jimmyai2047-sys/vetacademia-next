@@ -1,10 +1,11 @@
 ﻿import { NextResponse, type NextRequest } from "next/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const MODEL = env.GEMINI_MODEL;
 
 const SYSTEM = `You are "VetAcademia Assistant", the friendly, knowledgeable help desk for VetAcademia â€” India's dedicated e-learning platform for veterinary and animal-husbandry students and professionals.
 
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const key = process.env.GEMINI_API_KEY;
+  const key = env.GEMINI_API_KEY;
   if (!key) return NextResponse.json({ fallback: true }, { status: 200 });
 
   let body: { messages?: InMsg[] };

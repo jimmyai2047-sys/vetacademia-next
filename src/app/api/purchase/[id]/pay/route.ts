@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isRazorpayLive } from "@/lib/razorpay-config";
 import { validateCsrf } from "@/lib/csrf";
+import { env } from "@/lib/env";
 
 export async function POST(
   req: NextRequest,
@@ -47,7 +48,7 @@ export async function POST(
     // Test mode may ONLY be used when explicitly enabled (e.g. local dev).
     // In any other environment (notably production without live Razorpay),
     // never grant free access — require the real payment flow instead.
-    if (process.env.ALLOW_TEST_PAYMENTS !== "true") {
+    if (!env.ALLOW_TEST_PAYMENTS) {
       return NextResponse.json(
         {
           error:

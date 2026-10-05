@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { detectFileType } from "@/lib/file-type";
 import { validateCsrf } from "@/lib/csrf";
+import { env } from "@/lib/env";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `chapter-content/${chapterId}/${Date.now()}-${safeName}`;
 
-    const blob = await putWithFallback(path, file, process.env.BLOB_READ_WRITE_TOKEN);
+    const blob = await putWithFallback(path, file, env.BLOB_READ_WRITE_TOKEN);
 
     const content = await prisma.chapterContent.create({
       data: {

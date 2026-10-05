@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { signResetToken } from "@/lib/reset-token";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 export async function POST(req: Request) {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
       // Surface the link only outside prod so the flow stays testable
       // without an email provider (matches web forgot-password).
       if (process.env.NODE_ENV !== "production") {
-        const resetUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+        const resetUrl = `${env.NEXTAUTH_URL}/reset-password?token=${token}`;
         return NextResponse.json({ ...base, resetUrl });
       }
     }

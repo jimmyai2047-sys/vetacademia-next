@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { isMaintenanceOn } from "@/lib/maintenance";
+import { env } from "@/lib/env";
 
 const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   // NOTE: /api/auth/login is deprecated (410, see its route file) — web login
@@ -57,7 +58,7 @@ export async function proxy(req: NextRequest) {
   const nonce = Array.from(crypto.getRandomValues(new Uint8Array(18)))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-  const isDev = process.env.NODE_ENV === "development";
+  const isDev = env.NODE_ENV === "development";
 
   // script-src is locked to 'self' + the per-request nonce; 'unsafe-inline'
   // is removed so injected scripts are rejected. Razorpay's checkout script is

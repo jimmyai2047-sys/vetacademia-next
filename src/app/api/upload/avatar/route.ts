@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSignedUrl } from "@/lib/blob";
 import { validateCsrf } from "@/lib/csrf";
+import { env } from "@/lib/env";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
 
     const blob = await put(path, file, {
       access: "private",
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: env.BLOB_READ_WRITE_TOKEN,
       addRandomSuffix: false,
       multipart: true,
     });

@@ -2,6 +2,7 @@ import { put } from "@vercel/blob";
 import { NextResponse, NextRequest } from "next/server";
 import { getSignedUrl } from "@/lib/blob";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     const blob = await put(path, file, {
       access: "private",
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: env.BLOB_READ_WRITE_TOKEN,
       addRandomSuffix: true,
       multipart: true,
     });

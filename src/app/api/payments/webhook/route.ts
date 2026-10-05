@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { computeExpiresAt } from "@/lib/plan-validity";
+import { env } from "@/lib/env";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,7 @@ export const runtime = "nodejs";
  * never calls /api/payments/verify.
  */
 export async function POST(req: Request) {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  const secret = env.RAZORPAY_WEBHOOK_SECRET;
   if (!secret) {
     console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set - refusing to process");
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });

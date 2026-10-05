@@ -32,6 +32,10 @@ export const env = {
   RAZORPAY_WEBHOOK_SECRET: v("RAZORPAY_WEBHOOK_SECRET"),
   RESEND_API_KEY: v("RESEND_API_KEY"),
   EMAIL_FROM: v("EMAIL_FROM"),
+  GEMINI_MODEL: v("GEMINI_MODEL") || "gemini-3.5-flash",
+  GEMINI_API_KEY: v("GEMINI_API_KEY"),
+  NEXTAUTH_URL: v("NEXTAUTH_URL") || "http://localhost:3000",
+  ALLOW_TEST_PAYMENTS: v("ALLOW_TEST_PAYMENTS") === "true",
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   /** Upstash Redis (Marketplace) with legacy Vercel-KV names as fallback. */

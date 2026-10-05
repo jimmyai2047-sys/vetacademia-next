@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import { getSignedUrl } from "@/lib/blob";
+import { env } from "@/lib/env";
 import { reportInputSchema } from "@/lib/report-input";
 import { buildGoatReport } from "@/lib/goat-report-pdf";
 import { buildSheepReport } from "@/lib/sheep-report-pdf";
@@ -179,7 +180,7 @@ export async function POST(req: NextRequest) {
     const blob = await put(`reports/${session.user.id}/${report.id}.pdf`, Buffer.from(bytes), {
       access: "private",
       contentType: "application/pdf",
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: env.BLOB_READ_WRITE_TOKEN,
       addRandomSuffix: false,
       multipart: true,
     });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 // Must evaluate at request time: if this route were statically prerendered at
 // build, `{ google: false }` would be baked in forever even after keys are added.
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 // to the default `/api/auth/signin` page). Hence the distinct name.
 export async function GET() {
   const google = Boolean(
-    process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
   );
   return NextResponse.json({ google });
 }
