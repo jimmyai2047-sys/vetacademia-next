@@ -60,7 +60,7 @@ import {
 export const metadata = {
   title: "VetAcademia — Veterinary Exam Preparation Across India | LSA, AHDP, VO, ICAR",
   description:
-    "Veterinary exam preparation for every Indian state — LSA & paravet syllabi (incl. RAJUVAS-pattern AHDP, RSSB Rajasthan), AHDP mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, VO, ICAR-JRF/SRF, NET and ARS. Starting from ₹499.",
+    "Veterinary exam preparation for every Indian state — LSA & paravet syllabi, diploma mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, Veterinary Officer, ICAR-JRF/SRF, NET and ARS. Starting from ₹499.",
   openGraph: {
     title: "VetAcademia — Veterinary Exam Preparation Across India",
     description:
@@ -156,21 +156,9 @@ const blogGradients = [
   "from-rose-600 to-rose-400",
 ];
 
+// National and international bodies first — state bodies follow. The ticker
+// serves students from every state, so no single state leads the row.
 const importantLinks = [
-  {
-    name: "RUVAS",
-    href: "https://ruvasjaipur.rajasthan.gov.in/",
-    logo: "/logos/ruvas.webp",
-    short: "RU",
-    color: "#1d4ed8",
-  },
-  {
-    name: "RAJUVAS",
-    href: "https://rajuvas.org",
-    logo: "/logos/rajuvas.webp",
-    short: "RA",
-    color: "#16a34a",
-  },
   {
     name: "ICAR",
     href: "https://icar.org.in",
@@ -233,6 +221,20 @@ const importantLinks = [
     logo: "/logos/fao.svg",
     short: "FA",
     color: "#15803d",
+  },
+  {
+    name: "RUVAS",
+    href: "https://ruvasjaipur.rajasthan.gov.in/",
+    logo: "/logos/ruvas.webp",
+    short: "RU",
+    color: "#1d4ed8",
+  },
+  {
+    name: "RAJUVAS",
+    href: "https://rajuvas.org",
+    logo: "/logos/rajuvas.webp",
+    short: "RA",
+    color: "#16a34a",
   },
 ];
 
@@ -310,16 +312,16 @@ const FALLBACK_TESTIMONIALS = [
   {
     id: "fallback-1",
     name: "Rohitash Gurjar",
-    exam: "LSA (RSSB) — Selected 2024",
-    programme: "AHDP",
+    exam: "Livestock Assistant — State PSC, Selected 2024",
+    programme: "Animal Husbandry Diploma",
     quote:
-      "AHDP mock tests with rank analytics showed exactly where I stood. Revised the weak chapters twice and cleared LSA in my first attempt.",
+      "Diploma mock tests with rank analytics showed exactly where I stood. Revised the weak chapters twice and cleared LSA in my first attempt.",
     rating: 5,
   },
   {
     id: "fallback-2",
     name: "Sunita Choudhary",
-    exam: "VO (RPSC) — Selected 2023",
+    exam: "Veterinary Officer — State PSC, Selected 2023",
     programme: "B.V.Sc & A.H.",
     quote:
       "Syllabus-mapped notes plus PYQs saved me months. The expert doubt sessions before mains made the difference.",
@@ -739,7 +741,7 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-3 flex items-end justify-between gap-3">
                     <p className="max-w-2xl text-sm text-white/85">
-                      AHDP (RJ) • VLDD (HR) • DAH (MP) • DAH (GJ) • DVP (UP) • DVSAHT (PB) • DVPLE (UK) • VFA (BR) + more — one common core, 10 state posts.
+                      AHDP • VLDD • DAH • DVP • DVSAHT • DVPLE • VFA + more — one common core, 10 state boards across India.
                     </p>
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
                       <ArrowRight className="h-5 w-5" />
@@ -754,8 +756,8 @@ export default async function HomePage() {
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {DIPLOMA_UMBRELLA.description} Start with a live syllabus today —{" "}
-                    <span className="font-semibold text-emerald-700">AHDP (Rajasthan)</span> or{" "}
-                    <span className="font-semibold text-emerald-700">DVP (Uttar Pradesh)</span>.
+                    <span className="font-semibold text-emerald-700">AHDP</span> or{" "}
+                    <span className="font-semibold text-emerald-700">DVP</span> tracks, with more state boards on the way.
                   </p>
                 </div>
                 <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-3 text-sm font-bold text-white shadow-md">
@@ -815,8 +817,8 @@ export default async function HomePage() {
       </section>
 
       {/* Exam preparation across India — state-wise tracks plus national exams.
-          RAJUVAS / RSSB / LSA / AHDP keywords stay for search, framed as live
-          examples inside all-India coverage, never as the whole offering. */}
+          Exam keywords (LSA / AHDP / VO / ICAR) stay for search; no state or
+          university names in headings or descriptions. */}
       <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Exam preparation across India">
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
@@ -827,14 +829,14 @@ export default async function HomePage() {
               Veterinary Exam Preparation, Wherever in India You Are
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground">Your state, your exam pattern — syllabus, previous-year papers and timed mocks, mapped and ready. Live in Rajasthan &amp; UP today, expanding state by state.</p>
+            <p className="text-muted-foreground">Your state, your exam pattern — syllabus, previous-year papers and timed mocks, mapped and ready. First tracks live now, more state boards on the way.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             <Link href="/examinations/paravet-jobs" className="group">
               <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">State Paravet Jobs: LSA, VLDA, AVFO &amp; More</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">LSA exam syllabus and paravet posts across 10 states — live example: Rajasthan LSA (RSSB) with RAJUVAS-pattern AHDP core plus state GK, PYQs and timed mocks.</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">LSA exam syllabus and paravet posts across 10 states — diploma core plus your state GK, PYQs and timed mocks.</p>
                   <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Find your state <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </CardContent>
               </Card>
@@ -843,7 +845,7 @@ export default async function HomePage() {
               <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">Diploma Programmes, State by State</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">AHDP mock tests with rank analytics and chapter-wise retests — live for Rajasthan (AHDP) and UP (DVP), with more state boards on the way.</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Diploma mock tests with rank analytics and chapter-wise retests — AHDP and DVP tracks live now, more state boards on the way.</p>
                   <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Explore diplomas <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </CardContent>
               </Card>
@@ -859,7 +861,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Popular right now: <Link href="/examinations/lsa" className="font-semibold text-primary hover:underline">LSA (RSSB Rajasthan)</Link>
+            Popular right now: <Link href="/examinations/lsa" className="font-semibold text-primary hover:underline">LSA preparation</Link>
             {" • "}<Link href="/examinations/veterinary-officer" className="font-semibold text-primary hover:underline">Veterinary Officer</Link>
             {" • "}<Link href="/examinations" className="font-semibold text-primary hover:underline">all exams</Link>
           </p>
@@ -1346,7 +1348,7 @@ export default async function HomePage() {
           {posts.length === 0 ? (
             <div className="grid gap-6 md:grid-cols-3">
               {[
-                { title: "RAJUVAS LSA 2026: syllabus, pattern & 90-day plan", tag: "LSA", href: "/examinations/psc#livestock-assistant" },
+                { title: "LSA 2026: state syllabus, pattern & 90-day plan", tag: "LSA", href: "/examinations/psc#livestock-assistant" },
                 { title: "AHDP mock tests: how rank analytics finds weak chapters", tag: "AHDP", href: "/syllabus/ahdp" },
                 { title: "ICAR AIEEA PG (JRF): eligibility, pattern & PYQs", tag: "ICAR-JRF", href: "/examinations/icar-jrf" },
               ].map((f) => (
