@@ -31,6 +31,7 @@ const HomeLinksTicker = dynamicImport(() => import("@/components/home-links-tick
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { signBlobViewerUrl } from "@/lib/blob-token";
 import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -355,10 +356,10 @@ const getCheapestPlan = unstable_cache(
 const getHomeExperts = unstable_cache(
   async () => {
     try {
-      return await prisma.expert.findMany({
+      const rows = await prisma.expert.findMany({
         where: { isAvailable: true },
         orderBy: { rating: "desc" },
-        take: 3,
+        take: 6,
         select: {
           id: true,
           designation: true,
@@ -368,6 +369,18 @@ const getHomeExperts = unstable_cache(
           user: { select: { name: true } },
         },
       });
+      // Homepage must show faces: experts with a photo first, then by rating.
+      // Blob-hosted photos need a signed viewer URL (same as /experts page).
+      return rows
+        .map((e) => ({
+          ...e,
+          photoUrl:
+            e.photoUrl && e.photoUrl.includes("blob.vercel-storage.com")
+              ? signBlobViewerUrl(e.photoUrl)
+              : e.photoUrl,
+        }))
+        .sort((a, b) => Number(!!b.photoUrl) - Number(!!a.photoUrl))
+        .slice(0, 3);
     } catch {
       return [];
     }
@@ -1167,9 +1180,20 @@ export default async function HomePage() {
               <Link key={e.id} href={`/experts/${e.id}`} className="group">
                 <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl">
                   <CardContent className="p-5">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white font-bold shadow-md" aria-hidden="true">
-                      {(e.user?.name ?? "E").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
-                    </div>
+                    {e.photoUrl ? (
+                      <Image
+                        src={e.photoUrl}
+                        alt={e.user?.name ?? "Veterinary expert"}
+                        width={96}
+                        height={96}
+                        loading="lazy"
+                        className="h-12 w-12 rounded-xl object-cover shadow-md ring-1 ring-primary/10"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white font-bold shadow-md" aria-hidden="true">
+                        {(e.user?.name ?? "E").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
+                      </div>
+                    )}
                     <h3 className="mt-3 font-bold text-[16px] group-hover:text-primary transition-colors">{e.user?.name ?? "Expert"}</h3>
                     <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
                       {[e.designation, e.specialization].filter(Boolean).join(" • ") || "Veterinary expert"}
