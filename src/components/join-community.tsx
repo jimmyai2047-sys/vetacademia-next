@@ -24,7 +24,7 @@ const channels = [
   },
   {
     name: "Instagram",
-    desc: "Reels, topper stories & daily quiz",
+    desc: "Reels, success stories & daily quiz",
     cta: "Follow",
     href: SOCIAL_LINKS.instagram,
     external: true,
@@ -76,7 +76,7 @@ export default function JoinCommunity() {
           </h2>
           <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Facebook aur Instagram par follow karo — WhatsApp aur Telegram groups me apne programme ke students se judo.
+            Follow us on Facebook and Instagram — then join your programme&apos;s WhatsApp and Telegram study groups.
           </p>
         </div>
 

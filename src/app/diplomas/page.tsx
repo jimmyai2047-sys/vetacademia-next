@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import NotifyMe from "@/components/notify-me";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
 import {
@@ -289,6 +290,9 @@ export default function DiplomasPage() {
                       {d.examLabel.split("•")[0].trim()} <ChevronRight className="h-3 w-3 ml-0.5" />
                     </Button>
                   </Link>
+                </div>
+                <div className="mt-2">
+                  <NotifyMe track={d.short} state={d.state} />
                 </div>
               </CardContent>
             </Card>

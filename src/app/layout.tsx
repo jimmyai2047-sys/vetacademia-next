@@ -33,6 +33,7 @@ const noto = Noto_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vetacademia.in"),
+  alternates: { canonical: "https://vetacademia.in" },
   title: {
     default: "VetAcademia | Unified Veterinary Education Portal",
     template: "%s | VetAcademia",

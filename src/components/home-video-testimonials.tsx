@@ -16,10 +16,10 @@ export default function HomeVideoTestimonials() {
       {videos.map((v) => (
         <Card key={v.name} className="overflow-hidden rounded-[1.5rem] border-primary/5 bg-white shadow-sm group hover:shadow-xl transition-all">
           <div className="relative h-48 bg-black/5 overflow-hidden">
-            <Image src={v.thumb} alt={v.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <Image src={v.thumb} alt={`Video testimonial by ${v.name} — ${v.exam}`} fill sizes="(max-width: 768px) 100vw, 50vw" loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            <button className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-primary shadow-lg group-hover:bg-white group-hover:scale-105 transition-all">
-              <Play className="h-5 w-5 fill-primary ml-0.5" />
+            <button type="button" aria-label={`Play video testimonial by ${v.name}, ${v.exam}`} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-primary shadow-lg group-hover:bg-white group-hover:scale-105 transition-all">
+              <Play className="h-5 w-5 fill-primary ml-0.5" aria-hidden="true" />
             </button>
             <Badge className="absolute left-3 top-3 rounded-full bg-white/90 text-primary border-0 text-xs">Video</Badge>
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">

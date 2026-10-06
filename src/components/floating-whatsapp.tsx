@@ -1,16 +1,26 @@
 "use client";
 
-import { SOCIAL_LINKS } from "@/lib/social";
+import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { WhatsAppIcon } from "@/components/social-icons";
+
+const WA_NUMBER = "918949929291";
 
 /**
  * Floating WhatsApp chat button — visible on every page (bottom-right).
- * Opens wa.me chat in a new tab.
+ * Pre-fills the chat with the page the user is on so support knows the
+ * context. Opens wa.me chat in a new tab.
  */
 export default function FloatingWhatsApp() {
+  const pathname = usePathname();
+  const href = useMemo(() => {
+    const page = pathname && pathname !== "/" ? pathname : "the homepage";
+    const msg = `Hi VetAcademia, I need help with my preparation (page: ${page})`;
+    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }, [pathname]);
   return (
     <a
-      href={SOCIAL_LINKS.whatsapp}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with VetAcademia on WhatsApp"

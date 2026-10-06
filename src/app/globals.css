@@ -547,7 +547,9 @@
   animation: va-marquee 32s linear infinite;
   will-change: transform;
 }
-.va-marquee:hover {
+.va-marquee:hover,
+.va-marquee:focus-within,
+.va-marquee[data-paused="true"] {
   animation-play-state: paused;
 }
 .va-marquee-mask {

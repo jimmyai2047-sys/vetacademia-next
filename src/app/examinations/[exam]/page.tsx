@@ -1,7 +1,68 @@
-﻿export const metadata = {
-  title: "VetAcademia | Exam Preparation",
-  description: "Subjects and resources for this veterinary examination on VetAcademia.",
+﻿const examSeo: Record<string, { title: string; description: string }> = {
+  psc: {
+    title: "PSC Veterinary Exams: VO & LSA Syllabus, Papers & Mock Tests | VetAcademia",
+    description:
+      "PSC preparation for Veterinary Officer (B.V.Sc) and Livestock Assistant (AHDP + Rajasthan GK, RSSB pattern) — syllabus, previous-year papers, mock tests and live classes.",
+  },
+  "icar-jrf": {
+    title: "ICAR AIEEA PG (JRF) Preparation: Syllabus, PYQs & Mock Tests | VetAcademia",
+    description:
+      "ICAR AIEEA PG / JRF entrance for veterinary PG admission with fellowship — chapter-wise syllabus, previous-year papers, JRF mock tests and rank analytics.",
+  },
+  "icar-srf": {
+    title: "ICAR SRF Preparation: Syllabus, Papers & Mock Tests | VetAcademia",
+    description:
+      "ICAR SRF entrance for Ph.D. admission (M.V.Sc level) — discipline-wise syllabus, previous-year papers and SRF mock tests.",
+  },
+  "icar-entrance": {
+    title: "ICAR Entrance (JRF & SRF): Syllabus, Papers & Mocks | VetAcademia",
+    description:
+      "ICAR JRF & SRF entrance preparation for veterinary sciences — syllabus, previous-year papers and mock tests.",
+  },
+  net: {
+    title: "NET Preparation (ICAR / CSIR / UGC): Syllabus & Mock Tests | VetAcademia",
+    description:
+      "NET preparation for Lectureship & JRF — ICAR (ASRB), CSIR and UGC tracks with syllabus, papers and mock tests.",
+  },
+  "net-icar": {
+    title: "ICAR-NET (ASRB) Preparation: Syllabus, Papers & Mocks | VetAcademia",
+    description:
+      "ICAR-NET by ASRB for Assistant Professor eligibility — discipline-wise syllabus, previous-year papers and mock tests.",
+  },
+  "net-csir": {
+    title: "CSIR-NET Life Sciences: Syllabus, Papers & Mocks | VetAcademia",
+    description: "CSIR-NET JRF & Lectureship preparation — syllabus, previous-year papers and mock tests.",
+  },
+  "net-ugc": {
+    title: "UGC-NET Preparation: Syllabus, Papers & Mocks | VetAcademia",
+    description: "UGC-NET Assistant Professor & JRF preparation — syllabus, papers and mock tests.",
+  },
+  ars: {
+    title: "ARS (ASRB) Preparation: Syllabus, Papers & Mock Tests | VetAcademia",
+    description:
+      "Agricultural Research Scientist (ARS) exam by ASRB — syllabus, previous-year papers and mock tests.",
+  },
+  "up-pharmacist": {
+    title: "UP Veterinary Pharmacist (UPSSSC): DVP Syllabus & Mocks | VetAcademia",
+    description:
+      "UPSSSC Veterinary Pharmacist preparation — 24 DVP subjects, UP GK, previous-year papers and mock tests.",
+  },
+  other: {
+    title: "Other Veterinary Exams: Syllabus, Papers & Mocks | VetAcademia",
+    description: "State-level and institutional veterinary entrance preparation on VetAcademia.",
+  },
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ exam: string }> }) {
+  const { exam } = await params;
+  const seo = examSeo[exam];
+  if (!seo) return { title: "VetAcademia | Exam Preparation" };
+  return {
+    title: seo.title,
+    description: seo.description,
+    openGraph: { title: seo.title, description: seo.description, type: "website" },
+  };
+}
 
 import Link from "next/link";
 import { notFound } from "next/navigation";

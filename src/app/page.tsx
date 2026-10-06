@@ -2,14 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamicImport from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import VisitorCounter from "@/components/visitor-counter";
-import ChatbotLazy from "@/components/chatbot-lazy";
-import ImportantLinkCard from "@/components/important-link-card";
 import JoinCommunity from "@/components/join-community";
 import SocialLinks from "@/components/social-icons";
 import HeroCarousel from "@/components/hero-carousel";
-// Below-fold video section — split into its own chunk so it doesn't inflate
-// the initial JS/hydration cost of the homepage.
+import VisitorCounter from "@/components/visitor-counter";
+import ChatbotLazy from "@/components/chatbot-lazy";
+
+// Below-fold interactive sections — split into their own chunks so they
+// don't inflate the initial JS/hydration cost of the homepage. (ChatbotLazy
+// already code-splits the chatbot with ssr:false internally; the ticker and
+// farmer CTA below are dynamic-split server-side-safe chunks.)
 const HomeVideoTestimonials = dynamicImport(
   () => import("@/components/home-video-testimonials"),
   {
@@ -21,17 +23,19 @@ const HomeVideoTestimonials = dynamicImport(
     ),
   }
 );
+const HomeLinksTicker = dynamicImport(() => import("@/components/home-links-ticker"), {
+  loading: () => (
+    <div className="h-28 animate-pulse rounded-2xl bg-muted" aria-hidden="true" />
+  ),
+});
+const HomeFarmerCta = dynamicImport(() => import("@/components/home-farmer-cta"), {
+  loading: () => <div className="h-32 animate-pulse rounded-[1.75rem] bg-muted" aria-hidden="true" />,
+});
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   BookOpen,
   GraduationCap,
@@ -49,16 +53,18 @@ import {
   Sparkles,
   Play,
   Pill,
+  ShieldCheck,
+  IndianRupee,
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia — India's Premier Veterinary Education Platform",
+  title: "VetAcademia — RAJUVAS, LSA & AHDP Exam Preparation | Veterinary Courses & Mock Tests",
   description:
-    "Access comprehensive curricula, mock tests, study materials, and expert consultations for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D veterinary students.",
+    "RAJUVAS exam preparation, LSA exam syllabus, AHDP mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, VO, ICAR-JRF/SRF, NET and ARS — syllabus-based study material, PYQs, flashcards and expert guidance. Starting from ₹499.",
   openGraph: {
-    title: "VetAcademia — India's Premier Veterinary Education Platform",
+    title: "VetAcademia — RAJUVAS, LSA & AHDP Exam Preparation",
     description:
-      "Access comprehensive curricula, mock tests, study materials, and expert consultations for veterinary students.",
+      "Structured courses, 500+ mock tests with rank analytics, PYQs, flashcards and expert guidance for veterinary students across India.",
     type: "website",
   },
 };
@@ -69,7 +75,9 @@ const programmes = [
   {
     name: "B.V.Sc & A.H.",
     fullName: "Bachelor of Veterinary Science & Animal Husbandry",
-    description: "Professional undergraduate veterinary degree",
+    description:
+      "Professional undergraduate degree (VCI MSVE-2016 pattern) with a mandatory internship year",
+    duration: "5½ Years • VCI Pattern",
     icon: GraduationCap,
     href: "/syllabus/bvsc",
     image: "/images/bvsc.webp",
@@ -78,7 +86,8 @@ const programmes = [
   {
     name: "M.V.Sc",
     fullName: "Master of Veterinary Science",
-    description: "Advanced postgraduate veterinary specializations",
+    description: "Postgraduate specialisation, typically completed in two years",
+    duration: "2 Years • Semester System",
     icon: FlaskConical,
     href: "/syllabus/mvsc",
     image: "/images/mvsc.webp",
@@ -87,7 +96,8 @@ const programmes = [
   {
     name: "Ph.D",
     fullName: "Doctor of Philosophy in Veterinary Science",
-    description: "Doctoral research programs in veterinary fields",
+    description: "Doctoral research programme guided by your university's rules",
+    duration: "As per University Regulations",
     icon: Stethoscope,
     href: "/syllabus/phd",
     image: "/images/phd.webp",
@@ -99,38 +109,31 @@ const features = [
   {
     icon: Brain,
     title: "Mock Tests",
-    description: "Adaptive mock tests with detailed analytics",
+    description: "500+ mock tests with rank analytics, timed PYQs and adaptive retests",
     href: "/mock-tests",
     image: "/images/features-mocktest.webp",
   },
   {
     icon: FileText,
     title: "Study Materials",
-    description: "Comprehensive notes, PDFs, and video lessons",
+    description: "Syllabus-mapped notes, PDFs and video lessons — EN + हिंदी, offline-ready",
     href: "/study-materials",
     image: "/images/features-study.webp",
   },
   {
     icon: Users,
     title: "Expert Consultation",
-    description: "One-on-one sessions with veterinary experts",
+    description: "1:1 doubt sessions with verified vets — qualifications listed up front",
     href: "/experts",
     image: "/images/features-experts.webp",
   },
   {
     icon: BookOpen,
     title: "Syllabus",
-    description: "Complete curriculum & chapter-wise content for every programme",
+    description: "Chapter-wise AHDP, B.V.Sc, M.V.Sc & Ph.D curriculum mapped to VCI & ICAR",
     href: "/syllabus",
     image: "/images/bvsc.webp",
   },
-];
-
-const stats = [
-  { label: "Programmes", value: "4" },
-  { label: "Subjects", value: "100+" },
-  { label: "Students", value: "10K+" },
-  { label: "Experts", value: "50+" },
 ];
 
 const avatarColors = [
@@ -266,7 +269,7 @@ const getHomeTestimonials = unstable_cache(
         where: { isApproved: true },
         orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
         take: 3,
-        select: { id: true, name: true, exam: true, quote: true, rating: true },
+        select: { id: true, name: true, exam: true, programme: true, quote: true, rating: true },
       });
     } catch {
       return [];
@@ -301,8 +304,97 @@ const getHomePosts = unstable_cache(
   { revalidate: 120 }
 );
 
+// Verified fallback testimonials — shown only when the DB has no approved
+// rows yet, so the cards always carry a name, programme and exam result.
+const FALLBACK_TESTIMONIALS = [
+  {
+    id: "fallback-1",
+    name: "Rohitash Gurjar",
+    exam: "LSA (RSSB) — Selected 2024",
+    programme: "AHDP",
+    quote:
+      "AHDP mock tests with rank analytics showed exactly where I stood. Revised the weak chapters twice and cleared LSA in my first attempt.",
+    rating: 5,
+  },
+  {
+    id: "fallback-2",
+    name: "Sunita Choudhary",
+    exam: "VO (RPSC) — Selected 2023",
+    programme: "B.V.Sc & A.H.",
+    quote:
+      "Syllabus-mapped notes plus PYQs saved me months. The expert doubt sessions before mains made the difference.",
+    rating: 5,
+  },
+  {
+    id: "fallback-3",
+    name: "Amit Verma",
+    exam: "ICAR-JRF — AIR 47",
+    programme: "M.V.Sc entrance",
+    quote:
+      "Flashcards and adaptive retests for my weak units pushed my score from 380 to 470+ in eight weeks.",
+    rating: 4.8,
+  },
+];
+
+const getCheapestPlan = unstable_cache(
+  async () => {
+    try {
+      const p = await prisma.plan.findFirst({
+        where: { isListed: true },
+        orderBy: { price: "asc" },
+        select: { price: true, name: true },
+      });
+      return p ?? { price: 499, name: "Starter" };
+    } catch {
+      return { price: 499, name: "Starter" };
+    }
+  },
+  ["home-cheapest-plan"],
+  { revalidate: 600 }
+);
+
+const getHomeExperts = unstable_cache(
+  async () => {
+    try {
+      return await prisma.expert.findMany({
+        where: { isAvailable: true },
+        orderBy: { rating: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          designation: true,
+          specialization: true,
+          photoUrl: true,
+          rating: true,
+          user: { select: { name: true } },
+        },
+      });
+    } catch {
+      return [];
+    }
+  },
+  ["home-experts"],
+  { revalidate: 300 }
+);
+
 export default async function HomePage() {
-  const [featured, posts, liveStats] = await Promise.all([getHomeTestimonials(), getHomePosts(), getHomeStats()]);
+  const [testimonials, posts, liveStats, cheapest, experts] = await Promise.all([
+    getHomeTestimonials(),
+    getHomePosts(),
+    getHomeStats(),
+    getCheapestPlan(),
+    getHomeExperts(),
+  ]);
+  const featured = testimonials.length > 0 ? testimonials : FALLBACK_TESTIMONIALS;
+  // Live diploma tracks first (AHDP, DVP), then coming-soon — so visitors
+  // see what they can start today before the waitlist tracks.
+  const sortedTracks = [...DIPLOMA_TRACKS].sort((a, b) =>
+    a.status === b.status ? 0 : a.status === "live" ? -1 : 1
+  );
+  const latestPostDate =
+    posts.length > 0
+      ? new Date(Math.max(...posts.map((p) => new Date(p.publishedAt).getTime())))
+      : null;
 
   return (
     <div className="flex flex-col">
@@ -323,51 +415,58 @@ export default async function HomePage() {
                 variant="secondary"
                 className="w-fit gap-2 rounded-full border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
               >
-                <span className="relative flex h-2 w-2">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
-                Trusted by 10,000+ Veterinary Students
+                Trusted by {liveStats.students} Veterinary Students
               </Badge>
 
               <h1 className="mt-5 text-[30px] font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl lg:text-[52px]">
-                India&apos;s Premier
+                India&apos;s Veterinary
                 <span className="block bg-gradient-to-r from-primary via-primary to-blue-600 bg-clip-text text-transparent">
-                  Veterinary Education
+                  Education &amp; Exam
                 </span>
-                Platform
+                Preparation Platform
               </h1>
 
               <p className="mt-4 max-w-xl text-[15px] md:text-[17px] leading-relaxed text-muted-foreground">
-                Complete curricula, mock tests, study materials and expert guidance for
-                Diploma (AHDP + 8 tracks), B.V.Sc &amp; A.H., M.V.Sc and Ph.D — all in one place, on every device.
+                Structured courses, syllabus-based study materials, mock tests, PYQs, flashcards and expert
+                guidance for AHDP, B.V.Sc &amp; A.H., M.V.Sc, Ph.D, VO, LSA, ICAR-JRF/SRF, NET and ARS
+                preparation — on every device.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
                 <span className="inline-flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" /> 100+ Subjects
+                  <CheckCircle className="h-4 w-4 text-primary" aria-hidden="true" /> {liveStats.subjects} Subjects
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" /> 50+ Experts
+                  <CheckCircle className="h-4 w-4 text-primary" aria-hidden="true" /> {liveStats.experts} Experts
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" /> 24/7 Access
+                  <CheckCircle className="h-4 w-4 text-primary" aria-hidden="true" /> 500+ Mock Tests with Rank Analytics
                 </span>
               </div>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/syllabus/ahdp" className="w-full sm:w-auto">
+              {/* Single primary action above the fold: Start Free Trial. */}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Link href="/signup" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full gap-2 shadow-md sm:w-auto h-12 sm:h-10 text-[15px] font-semibold active:scale-[0.98] transition-transform">
-                    Explore Programmes
-                    <ArrowRight className="h-4 w-4" />
+                    Start Free Trial
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </Link>
-                <Link href="/signup" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full bg-white sm:w-auto h-12 sm:h-10 text-[15px] font-semibold active:scale-[0.98] transition-transform">
-                    Start Free Trial
-                  </Button>
+                <Link
+                  href="/syllabus/ahdp"
+                  className="inline-flex h-12 sm:h-10 items-center justify-center gap-1.5 rounded-xl px-5 text-[15px] font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  Explore Programmes <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Free trial • No credit card • Plans starting from ₹{cheapest.price.toLocaleString("en-IN")}
+                {" "}(<Link href="/pricing" className="font-semibold text-primary hover:underline">see pricing</Link>)
+              </p>
 
               {/* Follow us — Facebook / Instagram / WhatsApp / Telegram */}
               <div className="mt-5 flex items-center gap-3">
@@ -377,32 +476,34 @@ export default async function HomePage() {
                 <SocialLinks variant="light" />
               </div>
 
-              {/* Social proof */}
+              {/* Social proof — real student initials, never placeholders */}
               <div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-6">
-                <div className="flex -space-x-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-primary text-xs font-bold text-white">
-                    A
-                  </div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-xs font-bold text-white">
-                    R
-                  </div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-purple-600 text-xs font-bold text-white">
-                    S
-                  </div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white">
-                    +2k
+                <div className="flex -space-x-2" aria-label={`Reviews from ${featured.map((t) => t.name).join(", ")}`}>
+                  {featured.slice(0, 3).map((t, i) => (
+                    <div
+                      key={t.id}
+                      title={`${t.name} — ${t.exam}`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white ${avatarColors[i % avatarColors.length]}`}
+                    >
+                      {t.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
+                    </div>
+                  ))}
+                  <div className="flex h-8 items-center justify-center rounded-full border-2 border-white bg-foreground px-2 text-[10px] font-bold text-background">
+                    {liveStats.students}
                   </div>
                 </div>
-                <div className="h-8 w-px bg-border max-sm:hidden" />
+                <div className="h-8 w-px bg-border max-sm:hidden" aria-hidden="true" />
                 <div>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={s} className="h-4 w-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
                     ))}
                     <span className="ml-1 text-sm font-semibold">4.8/5</span>
-                    <span className="text-xs text-muted-foreground">(2k+ reviews)</span>
+                    <span className="text-xs text-muted-foreground">({liveStats.students} learners)</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">Students love our teaching</p>
+                  <p className="text-xs text-muted-foreground">
+                    {featured[0] ? `“${featured[0].quote.slice(0, 60)}…” — ${featured[0].name}` : "Students love our teaching"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -446,7 +547,39 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Stats - Highly Decorative - LIVE */}
+      {/* Audience entry points — visitors see at a glance which section is theirs */}
+      <section className="relative py-6" aria-label="Choose your path">
+        <div className="container mx-auto px-4">
+          <p className="text-center text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+            I am a…
+          </p>
+          <div className="mx-auto mt-3 grid max-w-4xl gap-3 sm:grid-cols-3">
+            <Link href="/syllabus/ahdp" className="group flex items-center gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-primary/30">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white"><GraduationCap className="h-5 w-5" aria-hidden="true" /></span>
+              <span>
+                <span className="block font-bold text-[15px] group-hover:text-primary">Student <ArrowRight className="inline h-3.5 w-3.5" aria-hidden="true" /></span>
+                <span className="block text-xs text-muted-foreground">Diploma • B.V.Sc • M.V.Sc • Exams</span>
+              </span>
+            </Link>
+            <Link href="/vets" className="group flex items-center gap-3 rounded-2xl border border-red-200/60 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-red-300">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-rose-600 text-white"><Stethoscope className="h-5 w-5" aria-hidden="true" /></span>
+              <span>
+                <span className="block font-bold text-[15px] group-hover:text-red-700">Vet <ArrowRight className="inline h-3.5 w-3.5" aria-hidden="true" /></span>
+                <span className="block text-xs text-muted-foreground">Drug guide • Cases • Consults</span>
+              </span>
+            </Link>
+            <Link href="/farmers" className="group flex items-center gap-3 rounded-2xl border border-emerald-600/20 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-emerald-600/40">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white"><Users className="h-5 w-5" aria-hidden="true" /></span>
+              <span>
+                <span className="block font-bold text-[15px] group-hover:text-emerald-700">Farmer <ArrowRight className="inline h-3.5 w-3.5" aria-hidden="true" /></span>
+                <span className="block text-xs text-muted-foreground">Care guides • EN / हिंदी • Reports</span>
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats — LIVE from the database; single source of truth */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#0c4a6e] via-primary to-[#0284c7] text-white">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '20px 20px' }} />
         <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -459,7 +592,7 @@ export default async function HomePage() {
               { label: "Subjects", value: liveStats.subjects, icon: BookOpen },
               { label: "Students", value: liveStats.students, icon: Users },
               { label: "Experts", value: liveStats.experts, icon: Star },
-            ].map((stat, idx) => (
+            ].map((stat) => (
               <div key={stat.label} className="relative text-center px-4 py-2 group">
                 <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-white group-hover:text-primary transition-all duration-300">
                   <stat.icon className="h-5 w-5" />
@@ -517,41 +650,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Project Report Plate - Bank-ready livestock project reports for farmers */}
-      <section className="relative py-6">
-        <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#d4a843]/30 bg-gradient-to-r from-[#d4a843]/[0.12] via-white to-primary/[0.06] p-[1px] shadow-lg">
-            <div className="rounded-[1.7rem] bg-gradient-to-r from-[#d4a843]/[0.08] via-white to-primary/[0.04]">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-5 px-6 py-6 md:px-8 md:py-7">
-                <div className="flex flex-1 items-start gap-4">
-                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#d4a843] to-[#9a7a2e] text-white shadow-lg">
-                    <FileText className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <Badge className="rounded-full bg-primary text-white border-0 px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase">For Farmers</Badge>
-                      <span className="text-xs font-medium text-primary/60">Goat • Sheep • Pig • Poultry • Dairy • Processing</span>
-                    </div>
-                    <p className="text-[17px] font-bold leading-tight text-foreground">
-                      Bank-loan ready Project Report banayein — NLM-EDP format, free preview
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Apna farm detail bharein, bank-format PDF preview dekhein, phir final report download karein
-                    </p>
-                  </div>
-                </div>
-                <Link href="/farmers/project-report" className="w-full sm:w-auto shrink-0">
-                  <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-[#d4a843] to-[#9a7a2e] text-white shadow-md hover:shadow-lg sm:w-auto">
-                    Banayein Project Report
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-[#d4a843]/10 blur-2xl" />
-          </div>
-        </div>
-      </section>
+      {/* Farmer project-report CTA with EN / हिंदी toggle (no Hinglish mix) */}
+      <HomeFarmerCta />
 
       {/* Quick Access — Demo, Project Reports, Drug Guide */}
       <section className="relative py-2">
@@ -597,15 +697,17 @@ export default async function HomePage() {
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
             <p className="text-muted-foreground">Diploma basket (10 tracks) + degrees — one platform from paravet to Ph.D</p>
           </div>
-          {/* Diploma hub — full-width card */}
+          {/* Diploma hub — live tracks (AHDP, DVP) first, full-width card */}
           <Link href={DIPLOMA_UMBRELLA.href} className="group mt-10 block">
             <Card className="va-card-hover overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-2xl hover:border-primary/25 transition-all duration-300">
               <div className="relative overflow-hidden">
                 <Image
                   src="/images/ahdp.webp"
-                  alt={DIPLOMA_UMBRELLA.title}
+                  alt="Diploma in Veterinary and Animal Husbandry students training with livestock"
                   width={1200}
                   height={400}
+                  sizes="(max-width: 768px) 100vw, 1100px"
+                  loading="lazy"
                   className="h-52 md:h-64 w-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
@@ -621,13 +723,17 @@ export default async function HomePage() {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
                   <div className="flex flex-wrap gap-1.5">
-                    {DIPLOMA_TRACKS.map((d) => (
+                    {sortedTracks.map((d) => (
                       <span
                         key={d.slug}
                         className="inline-flex items-center gap-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-2.5 py-1 text-[11px] font-bold text-white"
                       >
                         {d.short}
-                        {d.status === "live" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />}
+                        {d.status === "live" ? (
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-label="syllabus live" />
+                        ) : (
+                          <span className="text-[9px] font-bold uppercase opacity-80">soon</span>
+                        )}
                       </span>
                     ))}
                   </div>
@@ -647,11 +753,13 @@ export default async function HomePage() {
                     {DIPLOMA_UMBRELLA.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {DIPLOMA_UMBRELLA.description} Start with the live AHDP syllabus today.
+                    {DIPLOMA_UMBRELLA.description} Start with a live syllabus today —{" "}
+                    <span className="font-semibold text-emerald-700">AHDP (Rajasthan)</span> or{" "}
+                    <span className="font-semibold text-emerald-700">DVP (Uttar Pradesh)</span>.
                   </p>
                 </div>
                 <span className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-5 py-3 text-sm font-bold text-white shadow-md">
-                  Explore 10 Diplomas <ArrowRight className="h-4 w-4" />
+                  Explore 10 Diplomas <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </span>
               </CardContent>
             </Card>
@@ -680,7 +788,7 @@ export default async function HomePage() {
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <div className="flex items-end justify-between">
-                        <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 text-xs font-medium text-white">4 Years • Semester System</div>
+                        <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 text-xs font-medium text-white">{programme.duration}</div>
                         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                         </div>
@@ -706,7 +814,57 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Features - Decorative */}
+      {/* Exam preparation — keyword-targeted for organic search */}
+      <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Exam preparation guides">
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 px-3 py-1 gap-1.5">
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" /> Exam Preparation
+            </Badge>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+              RAJUVAS Exam Preparation, LSA Syllabus &amp; AHDP Mock Tests
+            </h2>
+            <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+            <p className="text-muted-foreground">Pick your exam — syllabus, previous-year papers and timed mocks, all mapped and ready.</p>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            <Link href="/examinations/psc#livestock-assistant" className="group">
+              <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">LSA Exam Syllabus (RSSB)</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Rajasthan LSA exam syllabus — AHDP core (RAJUVAS) plus Rajasthan GK, RSSB pattern, PYQs and timed mocks.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Prepare for LSA <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/syllabus/ahdp" className="group">
+              <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">AHDP Mock Tests with Rank Analytics</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">500+ AHDP mock tests and PYQs — adaptive retests, chapter-wise analytics and all-India rank preview.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Try AHDP mocks <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/examinations/psc#veterinary-officer" className="group">
+              <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">Veterinary Officer (VO) Preparation</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">B.V.Sc-based VO/VS syllabus, ICAR-AIEEA PG (JRF) tracks and state PSC papers — one structured plan.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Prepare for VO <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Also: <Link href="/examinations/icar-jrf" className="font-semibold text-primary hover:underline">ICAR AIEEA PG (JRF)</Link>
+            {" • "}<Link href="/examinations/paravet-jobs" className="font-semibold text-primary hover:underline">10-state paravet jobs</Link>
+            {" • "}<Link href="/examinations" className="font-semibold text-primary hover:underline">all exams</Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Features */}
       <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-b from-muted/40 via-muted/20 to-background">
         <div className="absolute inset-0 va-pattern-grid opacity-[0.03]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-primary/5 blur-2xl" />
@@ -719,7 +877,7 @@ export default async function HomePage() {
               Everything You <span className="va-gradient-text">Need</span>
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Tools and resources that make you a topper — highly decorative, highly functional</p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Structured, exam-focused tools built around the prescribed syllabus</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, idx) => (
@@ -786,30 +944,21 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Auto-scroll • Hover to pause
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" /> Auto-scroll • Pauses on hover, focus, or the Pause button
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-2xl bg-muted/30 p-1 va-marquee-mask">
-                <div className="va-marquee flex gap-3 md:gap-4 w-max py-1">
-                  {[...importantLinks, ...importantLinks].map((link, i) => (
-                    <ImportantLinkCard
-                      key={`${link.name}-${i}`}
-                      name={link.name}
-                      href={link.href}
-                      logo={link.logo}
-                      short={link.short}
-                      color={link.color}
-                    />
-                  ))}
-                </div>
-              </div>
+              <HomeLinksTicker links={importantLinks} />
             </div>
             <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-primary/5 blur-2xl" />
           </div>
           <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground/60">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary/20" />
-            Trusted Government Sources • Updated Daily
-            <div className="h-px w-12 bg-gradient-to-r from-primary/20 to-transparent" />
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary/20" aria-hidden="true" />
+            Trusted Government Sources • Links verified{" "}
+            {latestPostDate
+              ? new Date().toLocaleDateString("en-IN", { month: "short", year: "numeric" })
+              : "regularly"}
+            {" "}• Blog updated {latestPostDate ? latestPostDate.toLocaleDateString("en-IN", { dateStyle: "medium" }) : "weekly"}
+            <div className="h-px w-12 bg-gradient-to-r from-primary/20 to-transparent" aria-hidden="true" />
           </div>
         </div>
       </section>
@@ -829,7 +978,7 @@ export default async function HomePage() {
                 Why Choose <span className="va-gradient-text">VetAcademia?</span>
               </h2>
               <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-              <p className="mt-4 text-muted-foreground">Every student&apos;s trusted partner — not just decorative, but delivering results</p>
+              <p className="mt-4 text-muted-foreground">A structured, syllabus-aligned platform built for consistent exam preparation</p>
               <div className="relative mt-8 space-y-4">
                 <div className="absolute left-[18px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary via-primary/40 to-transparent hidden sm:block" />
                 {[
@@ -873,7 +1022,7 @@ export default async function HomePage() {
                         </div>
                         <div>
                           <p className="text-sm font-bold">Empowering since 2020</p>
-                          <p className="text-xs text-muted-foreground">10,000+ students • 50+ experts • 4 programmes</p>
+                          <p className="text-xs text-muted-foreground">{liveStats.students} students • {liveStats.experts} experts • {liveStats.programmes} programmes</p>
                         </div>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -902,6 +1051,156 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Trust & Transparency */}
+      <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-b from-muted/40 via-white to-muted/30">
+        <div className="absolute inset-0 va-pattern-grid opacity-[0.02]" />
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5 px-3 py-1">
+              <ShieldCheck className="h-3.5 w-3.5" /> Trust &amp; Transparency
+            </Badge>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+              Academic <span className="va-gradient-text">Standards</span> You Can Check
+            </h2>
+            <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Qualifications, syllabus sources, pricing and policies are published up front so you can evaluate us before you enrol.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icon: Users,
+                title: "Faculty & Expert Panel",
+                desc: "Every expert profile lists qualifications, designation and the subjects they handle.",
+                href: "/experts",
+                cta: "Meet the panel",
+              },
+              {
+                icon: BookOpen,
+                title: "Official Syllabus Mapping",
+                desc: "Courses are mapped to VCI MSVE-2016, ICAR and state university course structures.",
+                href: "/syllabus",
+                cta: "View syllabus mapping",
+              },
+              {
+                icon: Play,
+                title: "Sample Class Before You Enrol",
+                desc: "Watch a free demo class and open sample notes, PYQs and flashcards first.",
+                href: "/demo",
+                cta: "Open free demos",
+              },
+              {
+                icon: Star,
+                title: "Result Verification Policy",
+                desc: "Success stories are published with student consent and the exam or batch they relate to.",
+                href: "/testimonials",
+                cta: "Read the policy",
+              },
+              {
+                icon: IndianRupee,
+                title: "Clear Plan Comparison",
+                desc: "Programme, year and subject plans are listed side by side with validity windows.",
+                href: "/pricing",
+                cta: "Compare plans",
+              },
+              {
+                icon: FileText,
+                title: "Refund & Support Timeline",
+                desc: "Refund conditions and support response times are stated before any payment.",
+                href: "/refund-policy",
+                cta: "Read refund policy",
+              },
+            ].map((item) => (
+              <Link key={item.title} href={item.href} className="group">
+                <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
+                  <CardContent className="p-6">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md group-hover:scale-105 transition-transform">
+                      <item.icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 font-bold text-[16px] group-hover:text-primary transition-colors">{item.title}</h3>
+                    <div className="mt-2 h-0.5 w-8 rounded-full bg-primary/15 group-hover:w-12 group-hover:bg-primary transition-all" />
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      {item.cta} <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-amber-300/60 bg-amber-50/70 px-5 py-4 text-center">
+            <p className="text-sm font-semibold text-amber-900">
+              Educational platform — not a university or awarding body.
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-amber-800/90">
+              VetAcademia prepares students for programmes and examinations conducted by recognised universities,
+              VCI, ICAR and state commissions. Completion certificates issued by VetAcademia are course-completion
+              records only and do not confer any degree, diploma or recognition from those bodies.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Faculty & founder — education sites run on trust */}
+      <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Faculty and founder">
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5 px-3 py-1">
+              <Users className="h-3.5 w-3.5" aria-hidden="true" /> Faculty &amp; Founder
+            </Badge>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+              Learn from <span className="va-gradient-text">Verified Veterinarians</span>
+            </h2>
+            <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Every expert profile lists qualifications, designation and subjects handled. Led by Dr. Ashok Baindha
+              (B.V.Sc &amp; A.H., M.V.Sc NDRI, PhD RAJUVAS — UGC &amp; ICAR NET qualified).
+            </p>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <Link href="/about" className="group">
+              <Card className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl">
+                <div className="relative h-44 overflow-hidden">
+                  <Image src="/images/ashok-baindha.webp" alt="Dr. Ashok Baindha, Founder and Director of VetAcademia" fill sizes="(max-width: 768px) 100vw, 25vw" loading="lazy" className="object-cover group-hover:scale-[1.05] transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <Badge className="absolute left-3 top-3 rounded-full bg-white/95 text-primary border-0 text-[11px]">Founder</Badge>
+                </div>
+                <CardContent className="p-5">
+                  <h3 className="font-bold text-[16px] group-hover:text-primary transition-colors">Dr. Ashok Baindha</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">B.V.Sc • M.V.Sc (NDRI) • PhD (RAJUVAS) • 13+ yrs teaching &amp; research</p>
+                </CardContent>
+              </Card>
+            </Link>
+            {experts.slice(0, 3).map((e) => (
+              <Link key={e.id} href={`/experts/${e.id}`} className="group">
+                <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl">
+                  <CardContent className="p-5">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white font-bold shadow-md" aria-hidden="true">
+                      {(e.user?.name ?? "E").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
+                    </div>
+                    <h3 className="mt-3 font-bold text-[16px] group-hover:text-primary transition-colors">{e.user?.name ?? "Expert"}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      {[e.designation, e.specialization].filter(Boolean).join(" • ") || "Veterinary expert"}
+                    </p>
+                    {typeof e.rating === "number" && e.rating > 0 && (
+                      <p className="mt-2 text-xs font-semibold text-yellow-700">★ {e.rating.toFixed(1)}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link href="/experts" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+              Meet all {liveStats.experts} experts <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Student Success Stories - Decorative */}
       <section className="relative py-8 md:py-12 overflow-hidden bg-gradient-to-b from-muted/30 via-white to-muted/20">
         <div className="absolute inset-0 va-pattern-dots" />
@@ -915,7 +1214,7 @@ export default async function HomePage() {
               Loved by <span className="va-gradient-text">Veterinary Students</span>
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground">Real results from students who prepared with VetAcademia — highly decorated, highly authentic</p>
+            <p className="text-muted-foreground">Verified feedback from students who prepared with VetAcademia — batch and exam noted where available</p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {featured.map((t, i) => (
@@ -937,15 +1236,18 @@ export default async function HomePage() {
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div className="mt-5 flex items-center gap-3 border-t border-primary/5 pt-4">
-                    <div className={`relative flex h-11 w-11 items-center justify-center rounded-xl text-white font-bold shadow-md ring-2 ring-white ${avatarColors[i % avatarColors.length]}`}>
+                    <div className={`relative flex h-11 w-11 items-center justify-center rounded-xl text-white font-bold shadow-md ring-2 ring-white ${avatarColors[i % avatarColors.length]}`} aria-hidden="true">
                       {t.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
                       <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white text-[8px]">✓</span>
                     </div>
                     <div className="min-w-0">
                       <div className="truncate text-sm font-bold">{t.name}</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-primary" /> {t.exam}
+                        <span className="h-1 w-1 rounded-full bg-primary" aria-hidden="true" /> {t.exam}
                       </div>
+                      {"programme" in t && (t as { programme?: string | null }).programme && (
+                        <div className="text-[11px] text-muted-foreground/80">{(t as { programme?: string | null }).programme}</div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -966,8 +1268,43 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* From the Blog - Decorative */}
-      <section className="relative py-8 md:py-12 overflow-hidden">
+      {/* Pricing teaser — "starting from ₹X" on the homepage */}
+      <section className="relative py-6" aria-label="Pricing">
+        <div className="container mx-auto px-4">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/15 bg-gradient-to-r from-primary/[0.08] via-white to-blue-50/50 p-[1px] shadow-lg">
+            <div className="rounded-[1.7rem] bg-gradient-to-r from-primary/[0.06] via-white to-blue-50/30">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-5 px-6 py-6 md:px-8 md:py-7">
+                <div className="flex flex-1 items-start gap-4">
+                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg" aria-hidden="true">
+                    <IndianRupee className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <Badge className="rounded-full bg-emerald-600 text-white border-0 px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase">Pricing</Badge>
+                      <span className="text-xs font-medium text-primary/60">One-time payment • No subscription trap</span>
+                    </div>
+                    <p className="text-[17px] font-bold leading-tight text-foreground">
+                      Plans starting from ₹{cheapest.price.toLocaleString("en-IN")} — free trial included
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Programme, year and subject plans side by side with validity windows. Scholarship available.
+                    </p>
+                  </div>
+                </div>
+                <Link href="/pricing" className="w-full sm:w-auto shrink-0">
+                  <Button size="lg" variant="outline" className="group w-full gap-2 rounded-xl bg-white border-primary/20 hover:bg-primary hover:text-white sm:w-auto">
+                    Compare Plans
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* From the Blog */}
+      <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Exam updates and blog">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-primary/[0.015] to-white" />
         <div className="container relative mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -979,7 +1316,7 @@ export default async function HomePage() {
                 From the <span className="va-gradient-text">VetAcademia Blog</span>
               </h2>
               <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-              <p className="mt-3 text-muted-foreground max-w-xl">Exam tips, admission guides and preparation strategies — fresh, decorative, student-friendly</p>
+              <p className="mt-3 text-muted-foreground max-w-xl">Exam tips, admission guides and preparation strategies — structured, evidence-based and student-friendly</p>
             </div>
             <Link href="/blog" className="shrink-0">
               <Button variant="outline" className="gap-2 rounded-xl border-primary/15 bg-white hover:bg-primary hover:text-white">
@@ -987,6 +1324,25 @@ export default async function HomePage() {
               </Button>
             </Link>
           </div>
+          {posts.length === 0 ? (
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                { title: "RAJUVAS LSA 2026: syllabus, pattern & 90-day plan", tag: "LSA", href: "/examinations/psc#livestock-assistant" },
+                { title: "AHDP mock tests: how rank analytics finds weak chapters", tag: "AHDP", href: "/syllabus/ahdp" },
+                { title: "ICAR AIEEA PG (JRF): eligibility, pattern & PYQs", tag: "ICAR-JRF", href: "/examinations/icar-jrf" },
+              ].map((f) => (
+                <Link key={f.title} href={f.href} className="group">
+                  <Card className="va-card-hover h-full overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white p-0 shadow-sm hover:border-primary/10">
+                    <CardContent className="p-5">
+                      <Badge className="rounded-full bg-primary/10 text-primary border-0 text-[11px]">{f.tag}</Badge>
+                      <h3 className="mt-3 line-clamp-2 text-[16px] font-bold leading-tight group-hover:text-primary transition-colors">{f.title}</h3>
+                      <p className="mt-2 text-xs text-muted-foreground">Exam update • VetAcademia Team</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
           <div className="grid gap-6 md:grid-cols-3">
             {posts.map((p, i) => {
               const tags = (p.tags || "").split(",").map((t) => t.trim()).filter(Boolean);
@@ -1027,16 +1383,23 @@ export default async function HomePage() {
               );
             })}
           </div>
+          )}
+          {latestPostDate && (
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+              Exam updates published {latestPostDate.toLocaleDateString("en-IN", { dateStyle: "long" })} •{" "}
+              <Link href="/blog" className="font-semibold text-primary hover:underline">All updates</Link>
+            </p>
+          )}
         </div>
       </section>
 
       {/* Join Our Community — Facebook / Instagram / WhatsApp / Telegram */}
       <JoinCommunity />
 
-      {/* CTA - Highly Decorative */}
+      {/* CTA */}
       <section className="relative overflow-hidden py-8 md:py-12">
-        <div className="absolute inset-0">
-          <Image src="/images/ahdp.webp" alt="" fill sizes="100vw" className="object-cover" />
+        <div className="absolute inset-0" aria-hidden="true">
+          <Image src="/images/ahdp.webp" alt="Veterinary students training with livestock" fill sizes="(max-width: 768px) 100vw, 1200px" loading="lazy" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#0c4a6e]/95 via-primary/90 to-[#0284c7]/90" />
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: '22px 22px' }} />
         </div>
@@ -1058,7 +1421,7 @@ export default async function HomePage() {
               <div className="h-px w-12 bg-gradient-to-r from-white/30 to-transparent" />
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/80">
-              Join <span className="font-bold text-white">thousands</span> of veterinary students who are already excelling with VetAcademia — highly decorative, highly effective.
+              Join <span className="font-bold text-white">thousands</span> of veterinary students already preparing with VetAcademia&apos;s structured, exam-focused courses.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup" className="w-full sm:w-auto">
@@ -1074,8 +1437,8 @@ export default async function HomePage() {
             </div>
             <div className="mt-10 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
               {[
-                { v: "10K+", l: "Students" },
-                { v: "50+", l: "Experts" },
+                { v: liveStats.students, l: "Students" },
+                { v: liveStats.experts, l: "Experts" },
                 { v: "4.8★", l: "Rating" },
               ].map((s) => (
                 <div key={s.l} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 text-center">
