@@ -227,7 +227,7 @@
   font-size: 1rem;
   line-height: 1.85;
   color: var(--foreground);
-  word-break: break-word;
+  word-break: normal;
   overflow-wrap: break-word;
 }
 .chapter-content > *:first-child { margin-top: 0; }
@@ -395,16 +395,27 @@
   margin: 1em 0;
   font-size: 1em;
   display: table;
-  table-layout: auto;
+  /* Auto layout lets each column take only what its words need, so a whole
+     word always fits — fixed layout would squeeze columns and cut words.
+     !important beats any inline style pasted from Word/editors. */
+  table-layout: auto !important;
 }
-.chapter-content table-wrap {
+/* Neutralize inline column widths pasted from Word/editors — the browser's
+   auto layout distributes columns by word length instead of squeezing them. */
+.chapter-content table[style*="width"],
+.chapter-content td[style*="width"],
+.chapter-content th[style*="width"],
+.chapter-content col[style*="width"] {
+  width: auto !important;
+}
+.chapter-content .table-wrap {
   overflow-x: auto;
   margin: 1em 0;
   border-radius: 8px;
   border: 1px solid var(--border);
   -webkit-overflow-scrolling: touch;
 }
-.chapter-content table-wrap table {
+.chapter-content .table-wrap table {
   margin: 0;
   border: none;
 }
@@ -425,6 +436,30 @@
   color: var(--foreground);
   line-height: 1.45;
   font-size: 1em;
+  /* Never split a word across two lines inside table columns — a whole
+     word always moves to the next line (fixes "dis-ease", "septi-caemia",
+     "quar-ter", "rumi-nants" style breaks in every programme). */
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+  -webkit-hyphens: none;
+  white-space: normal;
+}
+/* Paragraphs pasted from Word/DOCX inside table cells must NOT inherit the
+   justified + auto-hyphenated book typography — keep them left-aligned so
+   narrow columns never stretch gaps or hyphenate disease names. */
+.chapter-content td p,
+.chapter-content th p,
+.chapter-content td li,
+.chapter-content th li,
+.chapter-content td div,
+.chapter-content th div {
+  text-align: left;
+  hyphens: none;
+  -webkit-hyphens: none;
+  word-break: normal;
+  overflow-wrap: break-word;
+  margin: 0.3em 0;
 }
 /* Neutralize any smaller inline font sizes pasted from Word/editors so every
    cell matches the main text size. */
@@ -450,12 +485,19 @@
   background: rgba(0,0,0,0.06);
 }
 
-/* On small phones, let wide tables scroll instead of getting clipped */
+/* On small phones, let wide tables scroll sideways inside their wrapper
+   instead of squeezing columns (squeezed columns force mid-word breaks). */
 @media (max-width: 640px) {
-  .chapter-content table {
-    display: block;
+  .chapter-content .table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+  .chapter-content table {
+    min-width: 560px;
+  }
+  .chapter-content th,
+  .chapter-content td {
+    min-width: 88px;
   }
 }
 
