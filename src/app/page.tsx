@@ -58,11 +58,11 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia — RAJUVAS, LSA & AHDP Exam Preparation | Veterinary Courses & Mock Tests",
+  title: "VetAcademia — Veterinary Exam Preparation Across India | LSA, AHDP, VO, ICAR",
   description:
-    "RAJUVAS exam preparation, LSA exam syllabus, AHDP mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, VO, ICAR-JRF/SRF, NET and ARS — syllabus-based study material, PYQs, flashcards and expert guidance. Starting from ₹499.",
+    "Veterinary exam preparation for every Indian state — LSA & paravet syllabi (incl. RAJUVAS-pattern AHDP, RSSB Rajasthan), AHDP mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, VO, ICAR-JRF/SRF, NET and ARS. Starting from ₹499.",
   openGraph: {
-    title: "VetAcademia — RAJUVAS, LSA & AHDP Exam Preparation",
+    title: "VetAcademia — Veterinary Exam Preparation Across India",
     description:
       "Structured courses, 500+ mock tests with rank analytics, PYQs, flashcards and expert guidance for veterinary students across India.",
     type: "website",
@@ -814,51 +814,53 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Exam preparation — keyword-targeted for organic search */}
-      <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Exam preparation guides">
+      {/* Exam preparation across India — state-wise tracks plus national exams.
+          RAJUVAS / RSSB / LSA / AHDP keywords stay for search, framed as live
+          examples inside all-India coverage, never as the whole offering. */}
+      <section className="relative py-8 md:py-12 overflow-hidden" aria-label="Exam preparation across India">
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/15 px-3 py-1 gap-1.5">
-              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" /> Exam Preparation
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" /> Exam Preparation • All India
             </Badge>
             <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
-              RAJUVAS Exam Preparation, LSA Syllabus &amp; AHDP Mock Tests
+              Veterinary Exam Preparation, Wherever in India You Are
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-            <p className="text-muted-foreground">Pick your exam — syllabus, previous-year papers and timed mocks, all mapped and ready.</p>
+            <p className="text-muted-foreground">Your state, your exam pattern — syllabus, previous-year papers and timed mocks, mapped and ready. Live in Rajasthan &amp; UP today, expanding state by state.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
-            <Link href="/examinations/psc#livestock-assistant" className="group">
+            <Link href="/examinations/paravet-jobs" className="group">
               <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">LSA Exam Syllabus (RSSB)</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Rajasthan LSA exam syllabus — AHDP core (RAJUVAS) plus Rajasthan GK, RSSB pattern, PYQs and timed mocks.</p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Prepare for LSA <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">State Paravet Jobs: LSA, VLDA, AVFO &amp; More</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">LSA exam syllabus and paravet posts across 10 states — live example: Rajasthan LSA (RSSB) with RAJUVAS-pattern AHDP core plus state GK, PYQs and timed mocks.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Find your state <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </CardContent>
               </Card>
             </Link>
-            <Link href="/syllabus/ahdp" className="group">
+            <Link href="/diplomas" className="group">
               <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">AHDP Mock Tests with Rank Analytics</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">500+ AHDP mock tests and PYQs — adaptive retests, chapter-wise analytics and all-India rank preview.</p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Try AHDP mocks <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">Diploma Programmes, State by State</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">AHDP mock tests with rank analytics and chapter-wise retests — live for Rajasthan (AHDP) and UP (DVP), with more state boards on the way.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Explore diplomas <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </CardContent>
               </Card>
             </Link>
-            <Link href="/examinations/psc#veterinary-officer" className="group">
+            <Link href="/examinations/icar-jrf" className="group">
               <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">Veterinary Officer (VO) Preparation</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">B.V.Sc-based VO/VS syllabus, ICAR-AIEEA PG (JRF) tracks and state PSC papers — one structured plan.</p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Prepare for VO <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                  <h3 className="font-bold text-[17px] group-hover:text-primary transition-colors">National Exams: ICAR, NET, ARS &amp; VO</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">One structured plan for ICAR AIEEA PG (JRF), SRF, NET/ARS and B.V.Sc-based Veterinary Officer papers — same for every state.</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Prepare nationally <ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </CardContent>
               </Card>
             </Link>
           </div>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Also: <Link href="/examinations/icar-jrf" className="font-semibold text-primary hover:underline">ICAR AIEEA PG (JRF)</Link>
-            {" • "}<Link href="/examinations/paravet-jobs" className="font-semibold text-primary hover:underline">10-state paravet jobs</Link>
+            Popular right now: <Link href="/examinations/lsa" className="font-semibold text-primary hover:underline">LSA (RSSB Rajasthan)</Link>
+            {" • "}<Link href="/examinations/veterinary-officer" className="font-semibold text-primary hover:underline">Veterinary Officer</Link>
             {" • "}<Link href="/examinations" className="font-semibold text-primary hover:underline">all exams</Link>
           </p>
         </div>
