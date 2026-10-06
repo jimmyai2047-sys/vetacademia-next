@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const BASE = "https://vetacademia.in";
+// Canonical host is www (edge redirects apex -> www).
+const BASE = "https://www.vetacademia.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -85,14 +85,10 @@ const nextConfig: NextConfig = {
     return [
       // Expert Advisory merged into the Animal Owner Corner.
       { source: "/advisory", destination: "/farmers", permanent: true },
-      // Canonical host: always serve the apex domain. www -> apex 301 so
-      // search engines see a single origin and the canonical tag matches.
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.vetacademia.in" }],
-        destination: "https://vetacademia.in/:path*",
-        permanent: true,
-      },
+      // NOTE: do NOT add a www<->apex redirect here. The canonical host is
+      // www (Vercel already 308-redirects apex -> www at the edge). A
+      // www -> apex rule here creates a www<->apex redirect loop that takes
+      // the whole site down (incident Oct 2026).
     ];
   },
 };

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const SITE = "https://vetacademia.in";
+// Canonical host is www (edge redirects apex -> www).
+const SITE = "https://www.vetacademia.in";
 
 export default function robots(): MetadataRoute.Robots {
   return {

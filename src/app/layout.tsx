@@ -32,8 +32,10 @@ const noto = Noto_Sans({
 // mutually exclusive. Data-level caching (unstable_cache etc.) is unaffected.
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vetacademia.in"),
-  alternates: { canonical: "https://vetacademia.in" },
+  // Canonical host is www — the edge 308-redirects apex -> www, so the
+  // canonical tag must match www (never apex, or crawlers see a mismatch).
+  metadataBase: new URL("https://www.vetacademia.in"),
+  alternates: { canonical: "https://www.vetacademia.in" },
   title: {
     default: "VetAcademia | Unified Veterinary Education Portal",
     template: "%s | VetAcademia",
@@ -59,7 +61,7 @@ export const metadata: Metadata = {
     title: "VetAcademia | Unified Veterinary Education Portal",
     description:
       "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
-    url: "https://vetacademia.in",
+    url: "https://www.vetacademia.in",
     type: "website",
     siteName: "VetAcademia",
     locale: "en_IN",
@@ -94,7 +96,7 @@ export const viewport: Viewport = {
   themeColor: "#005f48",
 };
 
-const ORGANIZATION_ID = "https://vetacademia.in/#organization";
+const ORGANIZATION_ID = "https://www.vetacademia.in/#organization";
 
 const siteSchema = {
   "@context": "https://schema.org",
@@ -103,8 +105,8 @@ const siteSchema = {
       "@type": "Organization",
       "@id": ORGANIZATION_ID,
       name: "VetAcademia",
-      url: "https://vetacademia.in",
-      logo: "https://vetacademia.in/favicon-512x512.png",
+      url: "https://www.vetacademia.in",
+      logo: "https://www.vetacademia.in/favicon-512x512.png",
       description:
         "India's comprehensive veterinary education platform for A.H.D.P., B.V.Sc & A.H., M.V.Sc, and Ph.D students.",
       sameAs: [
@@ -114,8 +116,8 @@ const siteSchema = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://vetacademia.in/#website",
-      url: "https://vetacademia.in",
+      "@id": "https://www.vetacademia.in/#website",
+      url: "https://www.vetacademia.in",
       name: "VetAcademia",
       inLanguage: "en",
       publisher: { "@id": ORGANIZATION_ID },
@@ -123,7 +125,7 @@ const siteSchema = {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
-          urlTemplate: "https://vetacademia.in/search?q={search_term_string}",
+          urlTemplate: "https://www.vetacademia.in/search?q={search_term_string}",
         },
         "query-input": "required name=search_term_string",
       },
