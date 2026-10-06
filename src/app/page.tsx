@@ -1105,19 +1105,29 @@ export default async function HomePage() {
             ))}
           </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 rounded-2xl border border-amber-300/60 bg-amber-50/70 px-5 py-4 sm:text-left text-center">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-700" aria-hidden="true">
-              <ShieldCheck className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-amber-900">
-                Educational platform — not a university or awarding body.
-              </p>
-              <p className="mt-0.5 text-xs leading-relaxed text-amber-800/90">
-                VetAcademia prepares students for programmes and examinations conducted by recognised universities,
-                VCI, ICAR and state commissions. Our certificates are course-completion records only — they do not
-                confer any degree, diploma or recognition from those bodies.
-              </p>
+          <div className="relative mt-8 overflow-hidden rounded-[1.5rem] border border-amber-200/70 bg-gradient-to-br from-amber-50 via-[#fdf9ef] to-orange-50/70 px-5 py-5 sm:px-6 shadow-sm">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 via-[#d4a843] to-amber-500" aria-hidden="true" />
+            <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#d4a843]/10 blur-2xl" aria-hidden="true" />
+            <div className="relative flex flex-col sm:flex-row sm:items-start gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-[#b8912f] text-white shadow-md" aria-hidden="true">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1 text-center sm:text-left">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700/80">
+                  Transparency note
+                </p>
+                <p className="mt-1 text-[15px] font-bold text-amber-950">
+                  An educational platform — not a university or awarding body.
+                </p>
+                <p className="mt-1 text-[13px] leading-relaxed text-amber-900/80">
+                  VetAcademia prepares students for programmes and examinations conducted by recognised universities,
+                  VCI, ICAR and state commissions. Our certificates are course-completion records only — they do not
+                  confer any degree, diploma or recognition from those bodies.
+                </p>
+              </div>
+              <Link href="/about" className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-bold text-amber-800 hover:bg-white hover:border-amber-400 transition-colors">
+                Our story <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
