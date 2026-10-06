@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, BookOpen, X } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { postProcessContent } from "@/lib/dom-utils";
+import ChapterImageZoom from "@/components/chapter-image-zoom";
 
 interface ChapterReaderProps {
   title: string;
@@ -163,6 +164,8 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
         ref={containerRef}
         className="flex-1 overflow-y-auto relative"
         onClick={(e) => {
+          // Image taps open the zoom lightbox instead of turning the page.
+          if ((e.target as HTMLElement).closest?.("img")) return;
           const rect = containerRef.current?.getBoundingClientRect();
           if (!rect) return;
           const x = e.clientX - rect.left;
@@ -198,6 +201,8 @@ export default function ChapterReader({ title, html, onClose, isLSA }: ChapterRe
           </div>
         )}
       </div>
+
+      <ChapterImageZoom containerRef={contentRef} />
 
       {/* Bottom navigation */}
       <div className="border-t border-amber-200/50 dark:border-slate-700/50 bg-[#f5e6c8]/80 dark:bg-[#16213e]/80 backdrop-blur-sm">

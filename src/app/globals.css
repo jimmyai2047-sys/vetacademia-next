@@ -285,8 +285,8 @@
 
 /* ── Images & Figures — compact for readability ──────────────────────── */
 .chapter-content img {
-  max-width: 62%;
-  max-height: 360px;
+  max-width: 85%;
+  max-height: 500px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -297,11 +297,12 @@
   border: 1px solid var(--border);
   background: white;
   padding: 4px;
+  cursor: zoom-in;
 }
 .chapter-content figure {
   margin: 1.6em auto;
   text-align: center;
-  max-width: 72%;
+  max-width: 92%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -314,28 +315,28 @@
 .chapter-content figure img {
   margin: 0 auto;
   max-width: 92%;
-  max-height: 300px;
+  max-height: 420px;
   width: auto;
   height: auto;
   object-fit: contain;
   border: 1px solid var(--border);
   border-radius: 8px;
 }
-/* Maps (India/Rajasthan) — 20% bigger than normal diagrams */
+/* Maps (India/Rajasthan) — a touch bigger than normal diagrams */
 .chapter-content img[alt*="Map"],
 .chapter-content img[alt*="map"],
 .chapter-content img[alt*="MAP"],
 .chapter-content img[src*="private.blob"],
 .chapter-content img[src*="vercel-storage"] {
-  max-width: 74% !important;
-  max-height: 430px !important;
+  max-width: 90% !important;
+  max-height: 560px !important;
 }
 .chapter-content figure:has(img[alt*="Map"]),
 .chapter-content figure:has(img[alt*="map"]),
 .chapter-content figure:has(img[alt*="MAP"]),
 .chapter-content figure:has(img[src*="private.blob"]),
 .chapter-content figure:has(img[src*="vercel-storage"]) {
-  max-width: 86% !important;
+  max-width: 96% !important;
 }
 .chapter-content figure:has(img[alt*="Map"]) img,
 .chapter-content figure:has(img[alt*="map"]) img,
@@ -343,7 +344,7 @@
 .chapter-content figure:has(img[src*="private.blob"]) img,
 .chapter-content figure:has(img[src*="vercel-storage"]) img {
   max-width: 100% !important;
-  max-height: 420px !important;
+  max-height: 540px !important;
 }
 @media (max-width: 768px) {
   .chapter-content img,
@@ -793,5 +794,10 @@
   .chapter-content pre,
   .chapter-content .table-wrap {
     page-break-inside: avoid;
+  }
+  /* Big inline diagrams must not overflow the printed page */
+  .chapter-content img {
+    max-width: 100% !important;
+    max-height: 420px !important;
   }
 }

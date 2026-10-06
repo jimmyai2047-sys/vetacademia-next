@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import DOMPurify, { type Config } from "dompurify";
 import { postProcessContent } from "@/lib/dom-utils";
+import ChapterImageZoom from "@/components/chapter-image-zoom";
 
 const SANITIZE_OPTS: Config = {
   USE_PROFILES: { html: true },
@@ -22,6 +23,7 @@ const SANITIZE_OPTS: Config = {
 
 export default function ProtectedHtml({ html }: { html: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current || !html) return;
@@ -31,14 +33,17 @@ export default function ProtectedHtml({ html }: { html: string }) {
   }, [html]);
 
   return (
-    <div
-      ref={ref}
-      className="chapter-content"
-      style={{ userSelect: "none", WebkitUserSelect: "none" }}
-      onContextMenu={(e) => e.preventDefault()}
-      onCopy={(e) => e.preventDefault()}
-      onCut={(e) => e.preventDefault()}
-      onDragStart={(e) => e.preventDefault()}
-    />
+    <div ref={wrapRef}>
+      <div
+        ref={ref}
+        className="chapter-content"
+        style={{ userSelect: "none", WebkitUserSelect: "none" }}
+        onContextMenu={(e) => e.preventDefault()}
+        onCopy={(e) => e.preventDefault()}
+        onCut={(e) => e.preventDefault()}
+        onDragStart={(e) => e.preventDefault()}
+      />
+      <ChapterImageZoom containerRef={wrapRef} />
+    </div>
   );
 }
