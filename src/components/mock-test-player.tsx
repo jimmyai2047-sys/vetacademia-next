@@ -244,6 +244,7 @@ export default function MockTestPlayer({
   }, [secondsLeft]);
 
   const attempted = Object.keys(answers).length;
+  const skipped = Math.max(0, questions.length - attempted);
   const correct = submitted
     ? questions.filter((q) => answers[q.id] === correctAnswerOf(q)).length
     : 0;
@@ -258,7 +259,24 @@ export default function MockTestPlayer({
   function select(qid: string, idx: number) {
     if (submitted) return;
     setAnswers((prev) => ({ ...prev, [qid]: idx }));
+    setConfirming(false);
   }
+
+  // Un-attempt a question (leave it blank). Skipped questions score 0 and
+  // never block submission.
+  function clear(qid: string) {
+    if (submitted) return;
+    setAnswers((prev) => {
+      const next = { ...prev };
+      delete next[qid];
+      return next;
+    });
+    setConfirming(false);
+  }
+
+  // Two-step submit: first click arms a confirm when questions are skipped,
+  // second click submits. Full attempts submit immediately.
+  const [confirming, setConfirming] = useState(false);
 
   async function submit() {
     setSubmitted(true);
@@ -526,9 +544,21 @@ export default function MockTestPlayer({
                       <span className="flex-1 min-w-0 pt-0.5">
                         <QuestionText text={q.text} />
                       </span>
-                      <Badge variant="outline" className="shrink-0 rounded-full border-primary/15 bg-primary/5 text-primary text-[11px] px-2 py-0.5">
-                        {q.marks} mark{q.marks !== 1 ? "s" : ""}
-                      </Badge>
+                      <span className="shrink-0 flex items-center gap-1.5">
+                        {!submitted && chosen !== undefined && (
+                          <button
+                            type="button"
+                            onClick={() => clear(q.id)}
+                            aria-label={`Clear answer for question ${i + 1}`}
+                            className="rounded-full border border-primary/15 bg-white px-2 py-0.5 text-[11px] font-semibold text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                          >
+                            Clear
+                          </button>
+                        )}
+                        <Badge variant="outline" className="rounded-full border-primary/15 bg-primary/5 text-primary text-[11px] px-2 py-0.5">
+                          {q.marks} mark{q.marks !== 1 ? "s" : ""}
+                        </Badge>
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -590,15 +620,25 @@ export default function MockTestPlayer({
             <div className="mt-6">
               <Button
                 size="lg"
-                onClick={submit}
-                disabled={Object.keys(answers).length < questions.length}
+                onClick={() => {
+                  if (skipped > 0 && !confirming) {
+                    setConfirming(true);
+                    return;
+                  }
+                  submit();
+                }}
               >
-                Submit Test
+                {confirming && skipped > 0
+                  ? `Submit Anyway (${skipped} skipped)`
+                  : "Submit Test"}
               </Button>
-              {Object.keys(answers).length < questions.length && (
-                <span className="mt-2 block text-xs text-muted-foreground sm:ml-3 sm:inline">
-                  Answer all questions to submit (
-                  {Object.keys(answers).length}/{questions.length})
+              <span className="mt-2 block text-xs text-muted-foreground sm:ml-3 sm:inline">
+                Attempted {attempted}/{questions.length}
+                {skipped > 0 && ` • ${skipped} skipped (scores 0)`}
+              </span>
+              {confirming && skipped > 0 && (
+                <span className="mt-2 block text-xs font-semibold text-amber-700 sm:ml-3 sm:inline">
+                  You left {skipped} question{skipped !== 1 ? "s" : ""} unattempted — click again to submit, or keep answering.
                 </span>
               )}
             </div>
