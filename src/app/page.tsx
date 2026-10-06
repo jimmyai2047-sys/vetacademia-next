@@ -1066,7 +1066,7 @@ export default async function HomePage() {
             </h2>
             <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Qualifications, syllabus sources, pricing and policies are published up front so you can evaluate us before you enrol.
+              Qualifications, syllabus sources, pricing and policies are published up front so you can evaluate us before you enroll.
             </p>
           </div>
 
@@ -1074,58 +1074,70 @@ export default async function HomePage() {
             {[
               {
                 icon: Users,
+                tile: "from-primary to-[#0284c7]",
+                bar: "from-primary to-[#0284c7]",
                 title: "Faculty & Expert Panel",
-                desc: "Every expert profile lists qualifications, designation and the subjects they handle.",
+                desc: `Meet ${liveStats.experts} verified veterinarians — qualifications, posting and subjects on every profile.`,
                 href: "/experts",
                 cta: "Meet the panel",
               },
               {
                 icon: BookOpen,
+                tile: "from-emerald-600 to-teal-600",
+                bar: "from-emerald-600 to-teal-600",
                 title: "Official Syllabus Mapping",
-                desc: "Courses are mapped to VCI MSVE-2016, ICAR and state university course structures.",
+                desc: `Courses mapped to VCI, ICAR and state boards — ${liveStats.subjects} subjects you can browse before paying.`,
                 href: "/syllabus",
                 cta: "View syllabus mapping",
               },
               {
                 icon: Play,
-                title: "Sample Class Before You Enrol",
-                desc: "Watch a free demo class and open sample notes, PYQs and flashcards first.",
+                tile: "from-violet-600 to-purple-600",
+                bar: "from-violet-600 to-purple-600",
+                title: "Try Before You Enroll",
+                desc: "Watch a free demo class and open sample notes, PYQs and flashcards — no account needed.",
                 href: "/demo",
                 cta: "Open free demos",
               },
               {
                 icon: Star,
-                title: "Result Verification Policy",
-                desc: "Success stories are published with student consent and the exam or batch they relate to.",
+                tile: "from-amber-500 to-[#d4a843]",
+                bar: "from-amber-500 to-[#d4a843]",
+                title: "Verified Student Results",
+                desc: "Success stories publish only with student consent, naming the exam cleared and the batch.",
                 href: "/testimonials",
-                cta: "Read the policy",
+                cta: "See verified stories",
               },
               {
                 icon: IndianRupee,
+                tile: "from-blue-600 to-indigo-600",
+                bar: "from-blue-600 to-indigo-600",
                 title: "Clear Plan Comparison",
-                desc: "Programme, year and subject plans are listed side by side with validity windows.",
+                desc: `Programme, year and subject plans side by side with validity — starting ₹${cheapest.price.toLocaleString("en-IN")}.`,
                 href: "/pricing",
                 cta: "Compare plans",
               },
               {
                 icon: FileText,
-                title: "Refund & Support Timeline",
-                desc: "Refund conditions and support response times are stated before any payment.",
+                tile: "from-rose-600 to-red-500",
+                bar: "from-rose-600 to-red-500",
+                title: "Refunds Stated Up Front",
+                desc: "7-day review window for genuine access issues; failed payments auto-refund in 5–7 working days.",
                 href: "/refund-policy",
                 cta: "Read refund policy",
               },
             ].map((item) => (
               <Link key={item.title} href={item.href} className="group">
                 <Card className="va-card-hover h-full rounded-[1.5rem] border border-primary/10 bg-white p-0 shadow-sm hover:shadow-xl hover:border-primary/25 transition-all">
-                  <CardContent className="p-6">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md group-hover:scale-105 transition-transform">
+                  <CardContent className="flex h-full flex-col p-6">
+                    <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${item.tile} text-white shadow-md group-hover:scale-105 transition-transform`} aria-hidden="true">
                       <item.icon className="h-5 w-5" />
                     </span>
                     <h3 className="mt-4 font-bold text-[16px] group-hover:text-primary transition-colors">{item.title}</h3>
-                    <div className="mt-2 h-0.5 w-8 rounded-full bg-primary/15 group-hover:w-12 group-hover:bg-primary transition-all" />
+                    <div className={`mt-2 h-0.5 w-8 rounded-full bg-gradient-to-r ${item.bar} opacity-40 group-hover:w-12 group-hover:opacity-100 transition-all`} aria-hidden="true" />
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.cta} <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-xs font-semibold text-primary">
+                      {item.cta} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                     </span>
                   </CardContent>
                 </Card>
@@ -1133,15 +1145,20 @@ export default async function HomePage() {
             ))}
           </div>
 
-          <div className="mt-8 rounded-2xl border border-amber-300/60 bg-amber-50/70 px-5 py-4 text-center">
-            <p className="text-sm font-semibold text-amber-900">
-              Educational platform — not a university or awarding body.
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-amber-800/90">
-              VetAcademia prepares students for programmes and examinations conducted by recognised universities,
-              VCI, ICAR and state commissions. Completion certificates issued by VetAcademia are course-completion
-              records only and do not confer any degree, diploma or recognition from those bodies.
-            </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 rounded-2xl border border-amber-300/60 bg-amber-50/70 px-5 py-4 sm:text-left text-center">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-700" aria-hidden="true">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-amber-900">
+                Educational platform — not a university or awarding body.
+              </p>
+              <p className="mt-0.5 text-xs leading-relaxed text-amber-800/90">
+                VetAcademia prepares students for programmes and examinations conducted by recognised universities,
+                VCI, ICAR and state commissions. Our certificates are course-completion records only — they do not
+                confer any degree, diploma or recognition from those bodies.
+              </p>
+            </div>
           </div>
         </div>
       </section>
