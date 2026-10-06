@@ -28,9 +28,6 @@ const HomeLinksTicker = dynamicImport(() => import("@/components/home-links-tick
     <div className="h-28 animate-pulse rounded-2xl bg-muted" aria-hidden="true" />
   ),
 });
-const HomeFarmerCta = dynamicImport(() => import("@/components/home-farmer-cta"), {
-  loading: () => <div className="h-32 animate-pulse rounded-[1.75rem] bg-muted" aria-hidden="true" />,
-});
 import { Badge } from "@/components/ui/badge";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
@@ -616,45 +613,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Free Demo Banner - Decorative */}
-      <section className="relative py-6">
-        <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/15 bg-gradient-to-r from-primary/[0.08] via-white to-blue-50/50 p-[1px] shadow-lg">
-            <div className="rounded-[1.7rem] bg-gradient-to-r from-primary/[0.06] via-white to-blue-50/30">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-5 px-6 py-6 md:px-8 md:py-7">
-                <div className="flex flex-1 items-start gap-4">
-                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
-                    <Star className="h-6 w-6 fill-white/20" />
-                  </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <Badge className="rounded-full bg-[#d4a843] text-white border-0 px-2.5 py-0.5 text-[11px] font-bold tracking-widest uppercase">Free Access</Badge>
-                      <span className="text-xs font-medium text-primary/60">No credit card required</span>
-                    </div>
-                    <p className="text-[17px] font-bold leading-tight text-foreground">
-                      Try before you enroll — free sample study material, mock tests, adaptive tests, PYQs &amp; flashcards
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      AHDP • Diploma basket (10 tracks) • B.V.Sc &amp; A.H. • M.V.Sc • Ph.D • LSA / VO / ICAR — all demos in one place
-                    </p>
-                  </div>
-                </div>
-                <Link href="/demo" className="w-full sm:w-auto shrink-0">
-                  <Button size="lg" className="group w-full gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-md hover:shadow-lg sm:w-auto">
-                    Explore Free Demos
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
-          </div>
-        </div>
-      </section>
-
-      {/* Farmer project-report CTA with EN / हिंदी toggle (no Hinglish mix) */}
-      <HomeFarmerCta />
-
       {/* Quick Access — Demo, Project Reports, Drug Guide */}
       <section className="relative py-2">
         <div className="container mx-auto px-4">
@@ -663,7 +621,7 @@ export default async function HomePage() {
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#2a8a5b] text-white"><Play className="h-5 w-5" /></span>
               <span>
                 <span className="block font-bold text-[15px]">Free Demo <ArrowRight className="inline h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
-                <span className="block text-xs text-muted-foreground">Try a class free before you enrol</span>
+                <span className="block text-xs text-muted-foreground">Try a class free before you enroll</span>
               </span>
             </Link>
             <Link href="/farmers/project-report" className="group rounded-2xl border border-[#d4a843]/25 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-[#d4a843]/50 flex items-center gap-3">
