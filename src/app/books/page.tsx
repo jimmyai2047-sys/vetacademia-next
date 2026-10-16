@@ -7,9 +7,9 @@ import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const metadata = {
-  title: "VetAcademia | Recommended Books by Level (AHDP to PhD)",
+  title: "VetAcademia | Recommended Books (AHDP to PhD)",
   description:
-    "Level-appropriate recommended books for every veterinary subject — from A.H.D.P. and B.V.Sc to M.V.Sc and Ph.D. Find the right book for your academic stage.",
+    "Level-appropriate recommended books for every veterinary subject — from A.H.D.P., DVP and B.V.Sc to M.V.Sc and Ph.D. Find the right book for your academic stage.",
 };
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,7 @@ export const dynamic = "force-dynamic";
 const LEVELS = [
   { value: "All", label: "All Levels" },
   { value: "AHDP", label: "A.H.D.P." },
+  { value: "DVP", label: "DVP (UP)" },
   { value: "BVSc", label: "B.V.Sc & A.H." },
   { value: "MVSc", label: "M.V.Sc" },
   { value: "PhD", label: "Ph.D" },
@@ -25,10 +26,11 @@ const LEVELS = [
 
 const LEVEL_ORDER: Record<string, number> = {
   AHDP: 0,
-  BVSc: 1,
-  MVSc: 2,
-  PhD: 3,
-  General: 4,
+  DVP: 1,
+  BVSc: 2,
+  MVSc: 3,
+  PhD: 4,
+  General: 5,
 };
 
 const bookGradients = [
@@ -93,10 +95,10 @@ export default async function BooksPage({
       {/* Decorative Header */}
       <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader
-          badge="AHDP • BVSc • MVSc • PhD • Curated Library"
+          badge="AHDP • DVP • BVSc • MVSc • PhD • Curated Library"
           title="Recommended Books"
           titleHighlight="by Level"
-          description="The right book for the right stage — from A.H.D.P. and B.V.Sc to M.V.Sc and Ph.D. Level-appropriate recommendations for every veterinary subject."
+          description="The right book for the right stage — from A.H.D.P., DVP and B.V.Sc to M.V.Sc and Ph.D. Level-appropriate recommendations for every veterinary subject."
           variant="amber"
           actions={
             <>

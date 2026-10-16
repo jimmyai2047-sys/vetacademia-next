@@ -16,6 +16,13 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { activeAccessFilter, formatValidity } from "@/lib/plan-validity";
 import { ArrowLeft, ShieldCheck, Wallet } from "lucide-react";
 
+export const metadata = {
+  title: "Checkout — Complete Your Enrollment | VetAcademia",
+  description:
+    "Review your VetAcademia plan, confirm the billing details and pay securely via UPI, card or net banking. Refund and support timelines are shown before payment.",
+  robots: { index: false, follow: true },
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function CheckoutPage({

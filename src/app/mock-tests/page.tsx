@@ -1,6 +1,7 @@
 export const metadata = {
   title: "VetAcademia | Mock Tests",
-  description: "Practice mock tests with performance analytics on VetAcademia.",
+  description:
+    "Attempt veterinary mock tests with rank analytics — VO, LSA, ICAR-JRF/SRF, NET and ARS papers with instant evaluation and performance tracking.",
 };
 
 import Link from "next/link";
@@ -18,6 +19,10 @@ import { Brain, Clock, FileText, Download, Sparkles, Trophy } from "lucide-react
 import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import MockAnalytics from "@/components/mock-analytics";
+import { computeAnalytics, type MockAnalyticsData } from "@/lib/mock-analytics-core";
+import { signBlobViewerUrl } from "@/lib/blob-token";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -119,6 +124,32 @@ const CATEGORIES: CategoryDef[] = [
   },
 ];
 
+async function buildAnalytics(userId: string | null): Promise<MockAnalyticsData> {
+  if (!userId) return computeAnalytics([], false);
+
+  const attempts = await prisma.mockTestAttempt
+    .findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+      select: {
+        score: true,
+        totalMarks: true,
+        mockTest: { select: { subject: { select: { name: true } } } },
+      },
+    })
+    .catch(() => []);
+
+  return computeAnalytics(
+    attempts.map((a) => ({
+      score: a.score,
+      totalMarks: a.totalMarks,
+      subjectName: a.mockTest?.subject?.name ?? null,
+    })),
+    true,
+  );
+}
+
 export default async function MockTestsPage() {
   const tests = await prisma.mockTest.findMany({
     orderBy: { createdAt: "desc" },
@@ -140,12 +171,13 @@ export default async function MockTestsPage() {
 
   // Download links go through the /api/blob proxy (which signs server-side on
   // demand) instead of pre-signing 200 URLs at render time — keeps the HTML
-  // small and avoids 200 signing calls per page load.
+  // small and avoids 200 signing calls per page load. Each link carries a
+  // short-lived token because /api/blob requires auth (session or token).
   function linkFor(fileUrl: string | null | undefined): string {
     if (!fileUrl) return "";
     if (fileUrl.startsWith("/")) return fileUrl;
     if (fileUrl.includes("blob.vercel-storage.com")) {
-      return `/api/blob?url=${encodeURIComponent(fileUrl)}`;
+      return signBlobViewerUrl(fileUrl);
     }
     return fileUrl;
   }
@@ -153,6 +185,9 @@ export default async function MockTestsPage() {
   const testsWithLinks = tests.map((t) => ({
     ...t,
     signedUrl: linkFor(t.fileUrl),
+    // SEO/payload: cards show ~2 lines, so ship only a snippet. Full rich-text
+    // descriptions × 200 tests were bloating the HTML + flight payload.
+    description: t.description ? t.description.slice(0, 160) : t.description,
   }));
 
   // Categorise — chronologically sorted within each category (oldest → newest)
@@ -165,6 +200,10 @@ export default async function MockTestsPage() {
   const matchedIds = new Set(categorized.flatMap((c) => c.tests.map((t) => t.id)));
   const otherTests = sortChronologically(testsWithLinks.filter((t) => !matchedIds.has(t.id)));
 
+  const analytics = await buildAnalytics(
+    (await getServerSession(authOptions))?.user?.id ?? null,
+  );
+
   return (
     <div className="container mx-auto px-4 py-5">
       <DecorativePageHeader
@@ -176,7 +215,7 @@ export default async function MockTestsPage() {
       />
 
       <div className="mt-6">
-        <MockAnalytics />
+        <MockAnalytics data={analytics} />
       </div>
 
       {tests.length === 0 ? (

@@ -23,9 +23,10 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia | Diploma in Veterinary & Animal Husbandry — state-wise: Rajasthan AHDP, Haryana VLDD, MP DAH, Gujarat DAH, UP DVP & more",
+  title: "VetAcademia | Veterinary Diplomas: AHDP, VLDD, DAH, DVP",
+  alternates: { canonical: "https://www.vetacademia.in/diplomas" },
   description:
-    "State-wise veterinary diplomas — Rajasthan AHDP (RAJUVAS → LSA), Haryana VLDD (LUVAS → VLDA), MP DAH (NDVSU → AVFO), Gujarat DAH (Kamdhenu University → Pashudhan Nirikshak), UP DVP, Punjab DVSAHT, HP, Uttarakhand DVPLE, J&K, Bihar DVLD. Syllabus, authority, job post & preparation.",
+    "State-wise veterinary diplomas — Rajasthan AHDP, Haryana VLDD, MP & Gujarat DAH, UP DVP and more. Syllabus, authority, job post and preparation in one place.",
 };
 
 const STATE_ANCHOR: Record<string, string> = {

@@ -28,6 +28,7 @@ export async function generateMetadata({
   return {
     title: `VetAcademia | ${post.title}`,
     description: post.excerpt || post.title,
+    alternates: { canonical: `https://www.vetacademia.in/blog/${slug}` },
   };
 }
 

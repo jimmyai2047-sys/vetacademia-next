@@ -1,6 +1,7 @@
 ﻿export const metadata = {
-  title: "VetAcademia | FAQs",
-  description: "Frequently asked questions about VetAcademia courses, exams, and subscriptions.",
+  title: "VetAcademia | FAQs — Courses, Exams & Refunds",
+  description:
+    "Answers to common questions about VetAcademia programmes, mock test syllabus alignment, expert consultations, payments, Hindi content, refunds and certificates.",
 };
 
 import Link from "next/link";
@@ -68,15 +69,29 @@ const faqs = [
   },
 ];
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export default function FaqsPage() {
   return (
     <div className="flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="container mx-auto px-4 pt-8 md:pt-12 max-w-3xl">
         <DecorativePageHeader
           badge="FAQs • Quick Answers • Updated Weekly"
           title="Frequently Asked"
           titleHighlight="Questions"
-          description="Find quick, decorative answers to common questions about VetAcademia — courses, exams, subscriptions and bilingual content."
+          description="Find quick, clear answers to common questions about VetAcademia — courses, exams, subscriptions and bilingual content."
           variant="primary"
           actions={
             <>

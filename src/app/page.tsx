@@ -56,9 +56,10 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia — Veterinary Exam Preparation Across India | LSA, AHDP, VO, ICAR",
+  title: "VetAcademia — Vet Exam Prep: LSA, AHDP, VO, ICAR",
   description:
     "Veterinary exam preparation for every Indian state — LSA & paravet syllabi, diploma mock tests with rank analytics, B.V.Sc & A.H., M.V.Sc, Ph.D, Veterinary Officer, ICAR-JRF/SRF, NET and ARS. Starting from ₹499.",
+  alternates: { canonical: "https://www.vetacademia.in" },
   openGraph: {
     title: "VetAcademia — Veterinary Exam Preparation Across India",
     description:

@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "OTP sent. Check the server console (dev mode).",
+      message: "OTP sent to your email.",
       devCode: result.devCode,
     });
     } catch (error) {

@@ -1,6 +1,7 @@
 ﻿export const metadata = {
   title: "VetAcademia | Pricing",
   description: "Affordable subscription plans for veterinary students, farmers, and exam aspirants on VetAcademia.",
+  alternates: { canonical: "https://www.vetacademia.in/pricing" },
 };
 
 import Link from "next/link";
@@ -96,6 +97,13 @@ export default async function PricingPage({
     plans = [];
     subjects = [];
   }
+
+  // SEO/payload: cards visually line-clamp descriptions to 2 lines, so ship
+  // only a snippet — full rich text × hundreds of subject plans bloats HTML.
+  plans = plans.map((p) => ({
+    ...p,
+    description: p.description ? p.description.slice(0, 160) : p.description,
+  }));
 
   const allSubjectNames = new Set(subjects.map((s) => s.name));
 
@@ -218,7 +226,7 @@ export default async function PricingPage({
           badge="Affordable • One-Time • Lifetime Access"
           title="Plans &"
           titleHighlight="Pricing"
-          description="Choose a programme or exam preparation track and unlock complete study material, previous year papers, mock tests and resources — decorative pricing, serious value."
+          description="Choose a programme or exam preparation track and unlock complete study material, previous year papers, mock tests and resources — clear pricing, serious value."
           variant="primary"
           actions={
             <>

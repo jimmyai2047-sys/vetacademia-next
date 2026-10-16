@@ -6,7 +6,8 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { ArrowRight, BookOpen, Brain, FileText, Tractor } from "lucide-react";
 
 export const metadata = {
-  title: "LSA Exam Preparation (RSSB): Syllabus, AHDP Core, PYQs & Mock Tests | VetAcademia",
+  title: "LSA Exam (RSSB): Syllabus, PYQs & Mock Tests | VetAcademia",
+  alternates: { canonical: "https://www.vetacademia.in/examinations/lsa" },
   description:
     "Rajasthan LSA (Livestock Assistant) exam preparation — RAJUVAS AHDP core syllabus, Rajasthan GK, RSSB pattern, previous-year papers and timed mock tests with rank analytics.",
   openGraph: {

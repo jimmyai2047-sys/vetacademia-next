@@ -6,7 +6,8 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { ArrowRight, BookOpen, Brain, FileText, Stethoscope } from "lucide-react";
 
 export const metadata = {
-  title: "Veterinary Officer (VO) Exam Preparation: Syllabus, Papers & Mocks | VetAcademia",
+  title: "VO Exam: Syllabus, Papers & Mocks | VetAcademia",
+  alternates: { canonical: "https://www.vetacademia.in/examinations/veterinary-officer" },
   description:
     "Veterinary Officer / Veterinary Surgeon (PSC) preparation — B.V.Sc & A.H. syllabus, General Knowledge, previous-year papers, mock tests and expert guidance.",
   openGraph: {

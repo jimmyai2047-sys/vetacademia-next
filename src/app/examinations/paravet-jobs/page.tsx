@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia | Paravet State Jobs — LSA, VLDA, AVFO, Pharmacist, VFA preparation",
+  title: "VetAcademia | Paravet State Jobs — LSA, VLDA & More",
+  alternates: { canonical: "https://www.vetacademia.in/examinations/paravet-jobs" },
   description:
     "State-wise government job preparation for diploma holders — Rajasthan LSA, Haryana VLDA, MP AVFO, Gujarat Pashudhan Nirikshak, UP / Punjab / HP / Uttarakhand / J&K Pharmacist, Bihar VFA. Common core + state GK.",
 };

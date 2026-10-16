@@ -5,7 +5,7 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { ReceiptText, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Refund & Cancellation Policy",
+  title: "Refund & Cancellation Policy | VetAcademia",
   description:
     "VetAcademia refund and cancellation policy for course enrollments, failed payments, and technical issues.",
 };

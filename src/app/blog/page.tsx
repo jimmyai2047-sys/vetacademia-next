@@ -9,7 +9,8 @@ import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const metadata = {
-  title: "VetAcademia | Blog — Veterinary Exam Tips, Admission & Career Guides",
+  title: "VetAcademia | Blog: Vet Exam Tips & Career Guides",
+  alternates: { canonical: "https://www.vetacademia.in/blog" },
   description:
     "Veterinary exam preparation tips, admission guides, syllabus breakdowns and career advice for BVSc, ICAR, Veterinary Officer and ARS aspirants.",
 };
@@ -100,7 +101,7 @@ export default async function BlogPage() {
               Fresh <span className="va-gradient-text">Insights</span> for Aspirants
             </h2>
             <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843] mx-auto" />
-            <p className="mt-3 text-sm text-muted-foreground">Decorative, readable, exam-focused — every article mapped to your journey.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Clear, readable, exam-focused — every article mapped to your journey.</p>
           </div>
 
           {posts.length === 0 ? (

@@ -1,6 +1,8 @@
 ﻿export const metadata = {
-  title: "VetAcademia | Syllabus",
-  description: "Browse B.V.Sc, M.V.Sc, Ph.D and AHDP curricula, subjects, and course content on VetAcademia.",
+  title: "VetAcademia | Syllabus: BVSc, MVSc, PhD, AHDP",
+  alternates: { canonical: "https://www.vetacademia.in/syllabus" },
+  description:
+    "Browse B.V.Sc & A.H. (VCI MSVE-2016 pattern), M.V.Sc, Ph.D and AHDP diploma curricula — subjects, courses and course content mapped unit-wise on VetAcademia.",
 };
 
 import Link from "next/link";
@@ -35,9 +37,12 @@ const colorMap: Record<string, string> = {
 const descriptionMap: Record<string, string> = {
   ahdp: "Comprehensive diploma in animal husbandry practices covering all essential aspects of livestock management.",
   dvp: "DUVASU Mathura Diploma in Veterinary Pharmacy (Uttar Pradesh) — 24 courses across 4 semesters with theory + practical topics.",
-  bvsc: "Professional undergraduate degree in veterinary science and animal husbandry as per VCI MSVE-2016 regulations.",
-  mvsc: "Advanced postgraduate specializations in various veterinary disciplines with departmental structure.",
-  phd: "Doctoral research programs in various veterinary specializations across 18 departments.",
+  bvsc:
+    "Professional undergraduate degree (5½ years including internship) in veterinary science and animal husbandry as per VCI MSVE-2016 regulations.",
+  mvsc:
+    "Postgraduate specialisation, usually completed in two years on a semester pattern, with departmental structure.",
+  phd:
+    "Doctoral research programme completed as per university regulations across 18 departments.",
 };
 
 export default async function SyllabusPage() {
@@ -66,7 +71,7 @@ export default async function SyllabusPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <DecorativePageHeader
-        badge="VCI MSVE-2016 • ICAR Approved"
+        badge="Based on VCI MSVE-2016 • ICAR Course Structure"
         title="Syllabus"
         titleHighlight="Explorer"
         description="Explore the complete curriculum for all veterinary programmes — Diploma basket (AHDP + 9 tracks), B.V.Sc & A.H., M.V.Sc, Ph.D in one place."

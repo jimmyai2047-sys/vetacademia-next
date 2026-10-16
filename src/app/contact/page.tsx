@@ -1,6 +1,7 @@
 ﻿export const metadata = {
-  title: "VetAcademia | Contact Us",
-  description: "Get in touch with the VetAcademia team for support and inquiries.",
+  title: "VetAcademia | Contact Us — Support & Office",
+  description:
+    "Reach the VetAcademia team by email, phone or WhatsApp. Office address, working hours (Mon–Sat, 10 AM–6 PM IST) and help-centre links for students across India.",
 };
 
 import Link from "next/link";
@@ -19,7 +20,7 @@ export default function ContactPage() {
           badge="Contact • Support • 24/7 Help"
           title="Contact"
           titleHighlight="Us"
-          description="We're here to help. Reach out to the VetAcademia team through any of the channels below — fast, friendly, decorative support."
+          description="We're here to help. Reach out to the VetAcademia team through any of the channels below — fast, friendly, student-first support."
           variant="primary"
           actions={
             <>
@@ -43,7 +44,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 va-pattern-grid opacity-[0.02] pointer-events-none" />
         <div className="container relative mx-auto px-4 max-w-7xl pb-8">
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 opacity-60 group-hover:opacity-100 transition-opacity" />
               <CardContent className="p-6 flex items-start gap-4 relative">
@@ -90,9 +91,37 @@ export default function ContactPage() {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-semibold">Address</p>
-                  <p className="text-sm text-muted-foreground">India</p>
+                  <p className="font-semibold">Office Address</p>
+                  <p className="text-sm text-muted-foreground">
+                    VetAcademia Academic Office
+                    <br />
+                    Rajasthan, India
+                    <br />
+                    <span className="text-xs italic">
+                      Building, locality, city and PIN are being finalised and will be published here shortly.
+                    </span>
+                  </p>
                   <div className="mt-2 h-0.5 w-8 rounded-full bg-amber-500/20 group-hover:w-12 group-hover:bg-amber-500 transition-all" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="va-card-hover group relative overflow-hidden rounded-[1.5rem] border border-primary/5 bg-white shadow-sm hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 via-cyan-500 to-sky-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+              <CardContent className="p-6 flex items-start gap-4 relative">
+                <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-sky-100 blur-2xl opacity-60 pointer-events-none" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white shadow-md group-hover:scale-105 transition-transform">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="font-semibold">Working Hours</p>
+                  <p className="text-sm text-muted-foreground">
+                    Monday – Saturday
+                    <br />
+                    10:00 AM – 6:00 PM IST
+                    <br />
+                    <span className="text-xs">Sunday: closed (WhatsApp messages queued)</span>
+                  </p>
+                  <div className="mt-2 h-0.5 w-8 rounded-full bg-sky-500/20 group-hover:w-12 group-hover:bg-sky-500 transition-all" />
                 </div>
               </CardContent>
             </Card>
@@ -178,7 +207,7 @@ export default function ContactPage() {
                 <Badge className="rounded-full bg-primary/10 text-primary border-primary/15 gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Need quick help?</Badge>
                 <p className="font-semibold mt-3 text-lg">Looking for quick answers?</p>
                 <div className="mx-auto mt-2 h-0.5 w-10 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
-                <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">Check our FAQs or visit the Help Center — decorative, searchable, instant answers.</p>
+                <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">Check our FAQs or visit the Help Center — searchable, step-by-step answers.</p>
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="/faqs"

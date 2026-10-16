@@ -41,6 +41,7 @@ import { cn } from "@/lib/utils";
 
 const PROGRAMMES = [
   { value: "AHDP", label: "A.H.D.P." },
+  { value: "DVP", label: "DVP (Diploma in Veterinary Pharmacy — UP)" },
   { value: "BVSC", label: "B.V.Sc & A.H." },
   { value: "MVSC", label: "M.V.Sc" },
   { value: "PHD", label: "Ph.D" },
@@ -277,6 +278,22 @@ function SignupInner() {
         redirect: false,
       });
       if (login?.error) {
+        router.push(`/login?registered=true&redirect=${encodeURIComponent(redirect)}`);
+        return;
+      }
+      // P0: confirm the session cookie actually landed before leaving this
+      // page. Without this check a slow/missing session drops the new user
+      // on the homepage logged-out, which looks exactly like a failed signup.
+      let sessionOk = false;
+      try {
+        const sess = await fetch("/api/auth/session", { cache: "no-store" }).then((r) =>
+          r.json()
+        );
+        sessionOk = Boolean(sess?.user);
+      } catch {
+        sessionOk = false;
+      }
+      if (!sessionOk) {
         router.push(`/login?registered=true&redirect=${encodeURIComponent(redirect)}`);
         return;
       }
@@ -889,6 +906,9 @@ function SignupInner() {
               "Continue as Guest"
             )}
           </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            Browse free demos as a guest — sign in to save progress and buy.
+          </p>
         </div>
       </form>
     </AuthShell>

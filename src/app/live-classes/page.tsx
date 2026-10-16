@@ -43,7 +43,17 @@ function formatDt(d: Date) {
   });
 }
 
-export default async function LiveClassesPage() {
+export default async function LiveClassesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ exam?: string }>;
+}) {
+  const { exam: examParam } = await searchParams;
+  // ?exam=<key> actually filters the list (previously the query string was
+  // silently ignored and every value returned the same page). Unknown values
+  // fall back to the full list instead of 404 — a filter typo shouldn't read
+  // as a missing page.
+  const activeExam = examParam && EXAM_LABELS[examParam] ? examParam : null;
   const classes = await prisma.liveClass
     .findMany({
       where: { status: { in: ["SCHEDULED", "LIVE", "ENDED"] } },
@@ -66,14 +76,17 @@ export default async function LiveClassesPage() {
       return [];
     });
 
-  const live = classes.filter((c) => c.status === "LIVE");
-  const upcoming = classes
+  const visible = activeExam
+    ? classes.filter((c) => c.exam === activeExam)
+    : classes;
+
+  const live = visible.filter((c) => c.status === "LIVE");
+  const upcoming = visible
     .filter((c) => c.status === "SCHEDULED")
     .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime());
-  const recordings = classes
+  const recordings = visible
     .filter((c) => c.status === "ENDED")
     .sort((a, b) => b.scheduledAt.getTime() - a.scheduledAt.getTime());
-
   function ClassRow({ c }: { c: (typeof classes)[number] }) {
     return (
       <Link href={`/examinations/${c.exam}/live/${c.id}`}>
@@ -131,7 +144,7 @@ export default async function LiveClassesPage() {
           badge="Live & Recorded"
           title="Live Classes"
           titleHighlight="& Recorded Sessions"
-          description="Attend free demo live classes and recorded sessions for BVSc, ICAR, Veterinary Officer, ARS and more — anytime, anywhere. Highly decorative, live & on-demand."
+          description="Attend free demo live classes and recorded sessions for BVSc, ICAR, Veterinary Officer, ARS and more — learn live with faculty or watch recordings anytime."
           variant="primary"
         />
         {/* Hero visual strip */}
@@ -155,6 +168,45 @@ export default async function LiveClassesPage() {
           </div>
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
         </div>
+      </div>
+
+      {/* Exam filter (?exam=…) */}
+      <div className="container mx-auto px-4 mt-5">
+        <div className="flex flex-wrap gap-2" aria-label="Filter classes by exam">
+          <Link
+            href="/live-classes"
+            aria-current={!activeExam ? "page" : undefined}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              !activeExam
+                ? "bg-primary text-white shadow"
+                : "border border-primary/15 bg-white hover:bg-primary/5"
+            }`}
+          >
+            All
+          </Link>
+          {Object.entries(EXAM_LABELS).map(([key, label]) => (
+            <Link
+              key={key}
+              href={`/live-classes?exam=${key}`}
+              aria-current={activeExam === key ? "page" : undefined}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                activeExam === key
+                  ? "bg-primary text-white shadow"
+                  : "border border-primary/15 bg-white hover:bg-primary/5"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+        {activeExam && visible.length === 0 && (
+          <p className="mt-3 text-sm text-muted-foreground">
+            No classes under {EXAM_LABELS[activeExam]} yet.{" "}
+            <Link href="/live-classes" className="text-primary hover:underline">
+              Clear filter
+            </Link>
+          </p>
+        )}
       </div>
 
       {/* Lists */}

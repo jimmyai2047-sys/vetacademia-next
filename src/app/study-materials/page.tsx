@@ -1,6 +1,7 @@
 ﻿export const metadata = {
   title: "VetAcademia | Study Materials",
-  description: "Curated study materials, notes, and resources for veterinary students.",
+  description:
+    "Curated veterinary study materials — subject notes, PPTs, PDFs and videos for diploma, B.V.Sc, M.V.Sc and exam preparation.",
 };
 
 import { prisma } from "@/lib/prisma";

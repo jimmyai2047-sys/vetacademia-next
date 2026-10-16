@@ -1,6 +1,7 @@
 ﻿export const metadata = {
-  title: "VetAcademia | Help Center",
-  description: "Guides and support to help you get the most out of VetAcademia.",
+  title: "VetAcademia | Help Center — Guides & Support",
+  description:
+    "Step-by-step guides for browsing syllabi, taking mock tests, downloading previous year papers, consulting experts and managing your VetAcademia account.",
 };
 
 import Link from "next/link";
@@ -72,7 +73,7 @@ export default function HelpPage() {
           badge="Help Center • Guides • Support"
           title="Help"
           titleHighlight="Center"
-          description="Everything you need to get the most out of VetAcademia — decorative guides, quick links and expert support in one hub."
+          description="Everything you need to get the most out of VetAcademia — step-by-step guides, quick links and expert support in one hub."
           variant="primary"
           actions={
             <>

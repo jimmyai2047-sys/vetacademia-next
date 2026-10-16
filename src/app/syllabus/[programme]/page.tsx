@@ -1,7 +1,74 @@
-﻿export const metadata = {
-  title: "VetAcademia | Programme Syllabus",
-  description: "Subject-wise syllabus and course content for veterinary programmes on VetAcademia.",
+﻿import type { Metadata } from "next";
+
+const programmeSeo: Record<string, { title: string; description: string; reference: string }> = {
+  bvsc: {
+    title: "B.V.Sc & A.H. Syllabus — VCI MSVE-2016 Pattern",
+    description:
+      "Subject-wise B.V.Sc & A.H. syllabus mapped to the VCI MSVE-2016 course structure, with year-wise courses, notes and mock tests.",
+    reference: "Based on VCI MSVE-2016",
+  },
+  mvsc: {
+    title: "M.V.Sc Syllabus — Course-wise Study Material",
+    description:
+      "M.V.Sc syllabus by discipline and course (typically two years, semester pattern) with notes, PYQs and mock tests for ICAR-SRF and NET.",
+    reference: "ICAR PG Course Structure",
+  },
+  phd: {
+    title: "Ph.D Veterinary Syllabus — Coursework & Research",
+    description:
+      "Ph.D veterinary coursework and research-methods syllabus, offered as per university regulations, with reading lists and review material.",
+    reference: "As per University Regulations",
+  },
+  ahdp: {
+    title: "AHDP Syllabus — Diploma in Veterinary & Animal Husbandry",
+    description:
+      "Complete AHDP (Rajasthan) diploma syllabus — subject-wise units, bilingual notes, previous year papers and mock tests.",
+    reference: "State Diploma Curriculum",
+  },
+  dvp: {
+    title: "DVP Syllabus — Diploma in Veterinary Pharmacy (UP)",
+    description:
+      "Complete DVP (Uttar Pradesh) diploma syllabus — subject-wise units, bilingual notes, previous year papers and mock tests for UPSSSC Pharmacist.",
+    reference: "UP Diploma Curriculum",
+  },
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ programme: string }>;
+}): Promise<Metadata> {
+  const { programme: slug } = await params;
+  // "Soon" diploma tracks (VLDD, DAH, …) get their own coming-soon metadata
+  // (noindex) instead of inheriting AHDP's — duplicate content across URLs.
+  const soonTrack = getDiploma(slug);
+  if (soonTrack && soonTrack.status !== "live") {
+    const t = `${soonTrack.short} (${soonTrack.state}) — Syllabus Coming Soon | VetAcademia`;
+    return {
+      title: t,
+      description: `The ${soonTrack.fullName} syllabus for ${soonTrack.state} (${soonTrack.authority}) is being prepared. Get notified at launch, or study the shared AHDP core meanwhile.`,
+      robots: { index: false, follow: true },
+      alternates: { canonical: `https://www.vetacademia.in/syllabus/${slug}` },
+      openGraph: { title: t, type: "website" },
+    };
+  }
+  const seo = programmeSeo[slug];
+  if (!seo) {
+    return {
+      title: "VetAcademia | Programme Syllabus",
+      description:
+        "Subject-wise syllabus, courses and chapter content for veterinary programmes on VetAcademia.",
+    };
+  }
+  // Page titles carry the brand once (root template is "%s" — it appends nothing).
+  const branded = `${seo.title} | VetAcademia`;
+  return {
+    title: branded,
+    description: seo.description,
+    alternates: { canonical: `https://www.vetacademia.in/syllabus/${slug}` },
+    openGraph: { title: branded, description: seo.description, type: "website" },
+  };
+}
 
 import Link from "next/link";
 import Image from "next/image";
@@ -14,7 +81,8 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, Sparkles
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import { slugToProgrammeName } from "@/lib/programme";
-import { getDiploma } from "@/lib/diplomas";
+import { getDiploma, type DiplomaTrack } from "@/lib/diplomas";
+import NotifyMe from "@/components/notify-me";
 import SyllabusProgress from "@/components/syllabus-progress";
 import SyllabusDarkToggle from "@/components/syllabus-dark-toggle";
 import SyllabusBookmarkButton from "@/components/syllabus-bookmark-button";
@@ -37,6 +105,88 @@ const colorMap: Record<string, string> = {
   phd: "text-orange-600",
 };
 
+// Distinct page for diploma tracks whose syllabus isn't authored yet (VLDD,
+// DAH, DVSAHT, …). Previously these URLs re-rendered the AHDP syllabus —
+// duplicate content under many URLs. This renders track-specific content
+// with HTTP 200 (and noindex metadata above).
+function TrackComingSoon({ track }: { track: DiplomaTrack }) {
+  return (
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+      <Link
+        href="/diplomas"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Diplomas
+      </Link>
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 bg-white shadow-xl p-6 md:p-8">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <Badge className="rounded-full bg-amber-100 text-amber-800 border-amber-200">
+            Coming Soon
+          </Badge>
+          <Badge variant="outline" className="rounded-full">
+            {track.stateCode} • {track.state}
+          </Badge>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+          {track.fullName} ({track.short})
+        </h1>
+        <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-[#d4a843]" />
+        <p className="mt-4 text-muted-foreground leading-relaxed">
+          The {track.short} syllabus for {track.state} ({track.authority}) is
+          being prepared — units, bilingual notes and mock tests will appear
+          here at launch.
+        </p>
+        <div className="mt-6 grid sm:grid-cols-2 gap-3 text-sm">
+          <div className="rounded-xl border bg-muted/40 p-3">
+            <div className="font-semibold">Duration</div>
+            <div className="text-muted-foreground">{track.duration}</div>
+          </div>
+          <div className="rounded-xl border bg-muted/40 p-3">
+            <div className="font-semibold">Eligibility</div>
+            <div className="text-muted-foreground">{track.eligibility}</div>
+          </div>
+          <div className="rounded-xl border bg-muted/40 p-3">
+            <div className="font-semibold">Job post</div>
+            <div className="text-muted-foreground">{track.jobPost}</div>
+          </div>
+          <div className="rounded-xl border bg-muted/40 p-3">
+            <div className="font-semibold">Recruiting body</div>
+            <div className="text-muted-foreground">{track.recruitingBody}</div>
+          </div>
+        </div>
+        {track.focus.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {track.focus.map((f) => (
+              <Badge key={f} variant="outline" className="rounded-full">
+                {f}
+              </Badge>
+            ))}
+          </div>
+        )}
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="sm:w-56">
+            <NotifyMe track={track.short} state={track.state} />
+          </div>
+          <Link
+            href={track.examLink}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
+          >
+            <BookOpen className="h-4 w-4" /> {track.examLabel} prep
+          </Link>
+          <Link
+            href="/syllabus/ahdp"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
+          >
+            Study the shared AHDP core
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 
 export default async function ProgrammePage({
@@ -46,13 +196,15 @@ export default async function ProgrammePage({
 }) {
   const { programme: slug } = await params;
 
-  // Diploma-basket tracks without their own programme reuse the live AHDP
-  // core (see src/lib/diplomas.ts). Tracks with status "live" (AHDP, DVP)
-  // query their own DB programme.
+  // Diploma-basket tracks without authored syllabi (status "coming-soon")
+  // render a distinct coming-soon page — never the AHDP syllabus (that was
+  // duplicate content under many URLs). Unknown slugs fall through to the
+  // DB lookup below and 404 there.
   const diplomaTrack = getDiploma(slug);
-  const isDiplomaFallback = !!diplomaTrack && diplomaTrack.status !== "live";
-  const dbSlug = isDiplomaFallback ? "ahdp" : slug;
-  const dbName = slugToProgrammeName(dbSlug);
+  if (diplomaTrack && diplomaTrack.status !== "live") {
+    return <TrackComingSoon track={diplomaTrack} />;
+  }
+  const dbName = slugToProgrammeName(slug);
 
   const programme = await unstable_cache(
     () =>
@@ -246,8 +398,46 @@ export default async function ProgrammePage({
     );
   };
 
+  // Course structured data for the subject cards rendered below. Only fields
+  // that are actually visible on this page are emitted.
+  const reference = programmeSeo[slug]?.reference;
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `https://vetacademia.in/syllabus/${slug}`,
+    url: `https://vetacademia.in/syllabus/${slug}`,
+    name: programme.name,
+    description: programmeSeo[slug]?.description ?? programme.fullName,
+    inLanguage: "en",
+    isPartOf: { "@type": "WebSite", "@id": "https://vetacademia.in/#website" },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: allSubjects.length,
+      itemListElement: allSubjects.map((s, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Course",
+          name: s.name,
+          description:
+            `${s.name} — ${s._count.chapters} course${s._count.chapters === 1 ? "" : "s"} ` +
+            `in ${programme.name}, mapped unit-wise` +
+            (reference ? ` to ${reference}.` : "."),
+          url: `https://vetacademia.in/syllabus/${slug}/${s.id}`,
+          inLanguage: "en",
+          provider: { "@id": "https://vetacademia.in/#organization" },
+          hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
+        },
+      })),
+    },
+  };
+
   return (
     <div className="min-h-screen flex">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }}
+      />
       <CurriculumSidebar data={curriculum} />
       <div className="flex-1 min-w-0">
       <div className="container mx-auto px-4 py-4">
@@ -257,25 +447,6 @@ export default async function ProgrammePage({
           </Link>
           <SyllabusDarkToggle />
         </div>
-        {isDiplomaFallback && diplomaTrack && (
-          <div className="mb-5 rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50/40 p-4 md:p-5 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Badge className="rounded-full bg-primary text-white border-0">{diplomaTrack.short}</Badge>
-                <span className="text-sm font-bold">{diplomaTrack.fullName}</span>
-              </div>
-              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 w-fit">
-                Core syllabus = AHDP (live) • specialization soon
-              </span>
-              <Link href={`/diplomas#diploma-${diplomaTrack.slug}`} className="sm:ml-auto text-sm font-bold text-primary hover:underline shrink-0">
-                Track details, eligibility & careers →
-              </Link>
-            </div>
-            <p className="mt-2 text-[13px] text-muted-foreground">
-              {diplomaTrack.short} shares ~80% of the AHDP core below. Study it now for {diplomaTrack.examLabel}; {diplomaTrack.short}-specific modules (e.g. {diplomaTrack.focus.slice(0, 2).join(", ")}) unlock next.
-            </p>
-          </div>
-        )}
         <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/10 shadow-xl mb-5">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0284c7] to-[#0c4a6e]" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`, backgroundSize: "20px 20px" }} />
@@ -299,7 +470,7 @@ export default async function ProgrammePage({
                     <Users className="h-3.5 w-3.5" /> {totalCourses} Courses
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#d4a843] px-3 py-1 text-xs font-bold text-[#0c4a6e]">
-                    VCI MSVE-2016
+                    {programmeSeo[slug]?.reference ?? "VetAcademia course mapping"}
                   </span>
                 </div>
               </div>

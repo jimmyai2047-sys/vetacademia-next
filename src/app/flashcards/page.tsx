@@ -1,6 +1,7 @@
 export const metadata = {
   title: "VetAcademia | Flashcards",
-  description: "Revision flashcards to reinforce key veterinary concepts.",
+  description:
+    "Revise faster with veterinary flashcards — key concepts, drug doses and diagrams with spaced repetition across every subject.",
 };
 
 import { prisma } from "@/lib/prisma";
@@ -42,7 +43,7 @@ export default async function FlashcardsPage() {
         badge="Quick Revision"
         title="Flash"
         titleHighlight="cards"
-        description="Quick-revision flashcards built from real practice questions. Reveal the answer, then move through the deck at your own pace — highly decorative, highly retentive."
+        description="Quick-revision flashcards built from real practice questions. Reveal the answer, then move through the deck at your own pace — structured for fast, lasting retention."
         variant="primary"
       />
       <div className="mt-4 flex justify-end">

@@ -1,7 +1,7 @@
 ﻿import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { verifyResetToken } from "@/lib/reset-token";
+import { verifyResetToken, decodeResetTokenEmail } from "@/lib/reset-token";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
@@ -24,16 +24,27 @@ export async function POST(req: Request) {
       );
     }
 
-    const email = verifyResetToken(token);
-    if (!email)
+    // Case-insensitive lookup, then verify against the CURRENT password hash
+    // (single-use: a successful reset kills all older links).
+    const claimedEmail = decodeResetTokenEmail(token);
+    if (!claimedEmail)
       return NextResponse.json(
         { error: "Invalid or expired reset link" },
         { status: 400 }
       );
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: claimedEmail, mode: "insensitive" } },
+    });
     if (!user)
       return NextResponse.json({ error: "Invalid reset link" }, { status: 400 });
+
+    const email = verifyResetToken(token, user.password);
+    if (!email)
+      return NextResponse.json(
+        { error: "Invalid or expired reset link" },
+        { status: 400 }
+      );
 
     const hashed = await bcrypt.hash(password, 12);
     await prisma.user.update({

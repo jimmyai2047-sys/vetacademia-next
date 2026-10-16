@@ -16,8 +16,8 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const m = await prisma.examMaterial.findUnique({ where: { id }, select: { title: true, subject: true } });
-  if (!m) return { title: "Material not found" };
-  return { title: `VetAcademia | ${m.title}`, description: m.subject || "Exam preparation material" };
+  if (!m) return { title: "Material not found | VetAcademia" };
+  return { title: `VetAcademia | ${m.title}`, description: m.subject || "Exam preparation material", alternates: { canonical: `https://www.vetacademia.in/prepare/material/${id}` } };
 }
 
 export default async function MaterialReadPage({ params }: { params: Promise<{ id: string }> }) {

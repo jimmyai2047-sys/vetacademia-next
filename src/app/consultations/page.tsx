@@ -11,7 +11,7 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Calendar, Clock, Sparkles, Video, Users, CheckCircle } from "lucide-react";
 
 export const metadata = {
-  title: "VetAcademia | My Consultations — Book & Manage Expert Sessions",
+  title: "VetAcademia | My Consultations — Book Experts",
   description:
     "View, confirm, reschedule or cancel your one-on-one consultation sessions with veterinary experts on VetAcademia, with timing and status in one dashboard.",
 };

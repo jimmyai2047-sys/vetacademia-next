@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign in",
-  description: "Sign in to your VetAcademia account.",
+  title: "Sign in | VetAcademia",
+  description:
+    "Sign in to VetAcademia for mock tests, syllabus notes, previous year papers and expert guidance — your veterinary preparation in one place.",
   robots: { index: false, follow: false },
 };
 

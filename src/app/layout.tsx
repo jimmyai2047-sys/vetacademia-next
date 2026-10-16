@@ -4,12 +4,20 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "@/components/providers";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import FooterSwitch from "@/components/layout/footer-switch";
 import FloatingWhatsApp from "@/components/floating-whatsapp";
 import PwaRegister from "@/components/pwa-register";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
-export const dynamic = "force-dynamic";
+// Rendering strategy (hosting cost): pages are NOT forced dynamic here.
+// - Static marketing pages (about, contact, …) prerender at build time.
+//   The proxy serves them a nonce-free CSP with 'unsafe-inline' scripts so
+//   their inline bootstrap scripts run (see STATIC_CSP_PATHS in proxy.ts).
+//   Next.js auto-applies the nonce only on dynamically rendered pages.
+// - Dynamic pages opt in themselves: dozens carry their own force-dynamic,
+//   auth/admin/checkout read the session (auto-dynamic), DB pages use
+//   unstable_cache. Self-canonicals live per page (hardcoded on static
+//   pages, params-built in dynamic generateMetadata) — the root must NOT
+//   read headers(), or every page goes dynamic again.
 
 const inter = Inter({
   variable: "--font-sans",
@@ -24,21 +32,16 @@ const noto = Noto_Sans({
   display: "swap",
 });
 
-// The nonce-based Content-Security-Policy (see src/proxy.ts) requires every
-// page to render per request: statically prerendered/ISR HTML ships inline
-// scripts WITHOUT a nonce, browsers block them, and hydration never
-// completes (page stuck on the loading spinner). So the whole app is forced
-// dynamic here — per Next.js docs, nonce CSP and static/ISR caching are
-// mutually exclusive. Data-level caching (unstable_cache etc.) is unaffected.
-
+// Static base metadata (no canonical here — the root must stay static, so
+// self-canonicals are declared per page instead). Canonical host is www
+// everywhere (edge 308-redirects apex -> www, or crawlers see a mismatch).
 export const metadata: Metadata = {
-  // Canonical host is www — the edge 308-redirects apex -> www, so the
-  // canonical tag must match www (never apex, or crawlers see a mismatch).
   metadataBase: new URL("https://www.vetacademia.in"),
-  alternates: { canonical: "https://www.vetacademia.in" },
   title: {
     default: "VetAcademia | Unified Veterinary Education Portal",
-    template: "%s | VetAcademia",
+    // Page titles already carry the brand once ("VetAcademia | X"), so the
+    // template must NOT append it again (was "%s | VetAcademia" → doubled).
+    template: "%s",
   },
   description:
     "India's comprehensive veterinary education platform. Access B.V.Sc & A.H., M.V.Sc, Ph.D curricula, mock tests, study materials, and expert consultations for veterinary students and professionals.",
@@ -155,10 +158,9 @@ export default function RootLayout({
             </a>
             <Navbar />
             <main id="main-content" className="flex-1">{children}</main>
-            <Footer />
+            <FooterSwitch />
             <FloatingWhatsApp />
             <PwaRegister />
-            <SpeedInsights />
           </Providers>
         </TooltipProvider>
       </body>

@@ -5,7 +5,7 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Lock, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy | VetAcademia",
   description:
     "How VetAcademia collects, uses, protects, and shares your information, and your rights over your data.",
 };

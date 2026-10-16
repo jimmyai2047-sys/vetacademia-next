@@ -13,6 +13,34 @@ const AUTH_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   "/api/auth/reset-password": { limit: 10, windowMs: 60_000 },
 };
 
+// Exact paths of statically prerendered pages (see classifier note in
+// src/app/layout.tsx). They get a nonce-free CSP — keep in sync when a page
+// flips between static and dynamic.
+const STATIC_CSP_PATHS = new Set([
+  "/",
+  "/about",
+  "/admission",
+  "/blog",
+  "/catalog",
+  "/consultations/book",
+  "/contact",
+  "/diplomas",
+  "/examinations",
+  "/examinations/lsa",
+  "/examinations/paravet-jobs",
+  "/examinations/veterinary-officer",
+  "/experts/apply",
+  "/faqs",
+  "/help",
+  "/m",
+  "/m/checkout",
+  "/maintenance",
+  "/privacy",
+  "/refund-policy",
+  "/saved",
+  "/terms",
+]);
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -55,20 +83,28 @@ export async function proxy(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // Statically prerendered pages have no per-request nonce (Next.js only
+  // auto-tags its inline scripts on dynamically rendered pages), so they get
+  // a nonce-free CSP with 'unsafe-inline' scripts. Everywhere else the strict
+  // per-request nonce CSP applies. Exact paths only (query strings ignored —
+  // pathname never includes them).
+  const cleanPath = pathname === "/" ? "/" : pathname.replace(/\/+$/, "");
+  const isStaticCsp = STATIC_CSP_PATHS.has(cleanPath);
+
   const nonce = Array.from(crypto.getRandomValues(new Uint8Array(18)))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
   const isDev = env.NODE_ENV === "development";
 
-  // script-src is locked to 'self' + the per-request nonce; 'unsafe-inline'
-  // is removed so injected scripts are rejected. Razorpay's checkout script is
-  // loaded via a direct <script src>, so its host is allow-listed explicitly
-  // (strict-dynamic would otherwise block it). style-src keeps 'unsafe-inline'
-  // because React renders many inline style="" attributes that would otherwise
-  // be blocked.
+  // script-src is locked to 'self' + the per-request nonce on dynamic pages;
+  // 'unsafe-inline' is removed so injected scripts are rejected. Static pages
+  // (set above) allow 'unsafe-inline' instead — they have no nonce. Razorpay's
+  // checkout script is loaded via a direct <script src>, so its host is
+  // allow-listed explicitly. style-src keeps 'unsafe-inline' because React
+  // renders many inline style="" attributes that would otherwise be blocked.
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://checkout.razorpay.com${
+    `script-src 'self' ${isStaticCsp ? "'unsafe-inline'" : `'nonce-${nonce}'`} https://checkout.razorpay.com${
       isDev ? " 'unsafe-eval'" : ""
     }`,
     "style-src 'self' 'unsafe-inline'",

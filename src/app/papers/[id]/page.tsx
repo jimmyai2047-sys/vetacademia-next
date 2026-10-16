@@ -8,6 +8,25 @@ import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const test = await prisma.mockTest.findUnique({
+    where: { id, kind: "PREVIOUS_YEAR" },
+    select: { title: true, year: true },
+  });
+  if (!test) return { title: "Previous Year Paper | VetAcademia" };
+  const paperTitle = test.year ? `${test.title} (${test.year})` : test.title;
+  return {
+    title: `${paperTitle} — Previous Year Paper | VetAcademia`,
+    description: `Attempt the ${paperTitle} previous year paper on VetAcademia with full solutions and instant self-check.`,
+    alternates: { canonical: `https://www.vetacademia.in/papers/${id}` },
+  };
+}
+
 export default async function PreviousYearPaperPage({
   params,
 }: {

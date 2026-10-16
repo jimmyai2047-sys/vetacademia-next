@@ -1,6 +1,7 @@
 ﻿export const metadata = {
   title: "VetAcademia | Examinations",
   description: "Exam preparation hubs for ICAR, PSC, NET, ARS and other veterinary exams on VetAcademia.",
+  alternates: { canonical: "https://www.vetacademia.in/examinations" },
 };
 
 import Link from "next/link";
@@ -248,7 +249,7 @@ export default function ExaminationsPage() {
         badge="Examinations"
         title="Exams"
         titleHighlight="Hub"
-        description="Comprehensive preparation for all major veterinary competitive examinations — ICAR, PSC, NET, ARS and beyond. Decorative, structured, exam-ready."
+        description="Comprehensive preparation for all major veterinary competitive examinations — ICAR, PSC, NET, ARS and beyond. Structured, exam-ready and fully mapped."
         variant="primary"
       />
 

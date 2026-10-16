@@ -74,6 +74,22 @@ function SigninInner() {
         return;
       }
 
+      // P0: confirm the session cookie actually landed before leaving this
+      // page — otherwise the user drops on the homepage logged-out, which
+      // looks exactly like a failed sign-in.
+      try {
+        const sess = await fetch("/api/auth/session", { cache: "no-store" }).then((r) =>
+          r.json()
+        );
+        if (!sess?.user) {
+          setError("Signed in but the session did not start. Please try again.");
+          return;
+        }
+      } catch {
+        setError("Signed in but the session did not start. Please try again.");
+        return;
+      }
+
       try {
         if (remember) localStorage.setItem(REMEMBER_KEY, normalizedEmail);
         else localStorage.removeItem(REMEMBER_KEY);
@@ -257,6 +273,9 @@ function SigninInner() {
             "Continue as Guest"
           )}
         </Button>
+        <p className="text-center text-xs text-muted-foreground">
+          Browse free demos as a guest — sign in to save progress and buy.
+        </p>
       </form>
     </AuthShell>
   );

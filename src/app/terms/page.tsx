@@ -5,7 +5,7 @@ import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { ScrollText, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: "Terms of Service | VetAcademia",
   description:
     "The rules for using VetAcademia, including accounts, content usage, paid services, and disclaimers.",
 };

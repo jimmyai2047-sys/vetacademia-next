@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
+import { sendEmail } from "@/lib/email";
 
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const VERIFY_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes
@@ -32,24 +33,30 @@ function hashOtp(code: string): string {
     .digest("hex");
 }
 
-// Pluggable sender. Today it only logs to the server console (dev mode);
-// swap this for an email/SMS provider later without touching the rest.
+// Delivered by email (Resend). sendEmail is fail-soft: without RESEND_API_KEY
+// it logs and reports sent:false instead of throwing — the dev console log
+// below keeps the flow testable locally, and prod gets a loud warn.
 async function sendOtp(
   contact: string,
   code: string,
   purpose: string
 ): Promise<void> {
-  const isProd = env.isProd;
-  if (isProd) {
-    // No provider configured yet â€” fail loudly so we never silently skip sending.
-    console.warn(
-      `[otp] Production sender not configured for purpose=${purpose}. OTP for ${contact} was NOT delivered.`
+  const { sent } = await sendEmail({
+    to: contact,
+    subject: "Your VetAcademia verification code",
+    text: `Your VetAcademia verification code is ${code}. It expires in 10 minutes. Never share it with anyone.`,
+    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#111"><h2 style="margin:0 0 12px">Your verification code</h2><p style="font-size:28px;font-weight:bold;letter-spacing:6px;margin:12px 0">${code}</p><p style="color:#555">Valid for 10 minutes. Never share it with anyone.</p></div>`,
+  });
+  if (!sent && !env.isProd) {
+    console.log(
+      `\n[OTP] purpose=${purpose} contact=${contact} code=${code} (valid ${OTP_TTL_MS / 60000} min)\n`
     );
-    return;
   }
-  console.log(
-    `\n[OTP] purpose=${purpose} contact=${contact} code=${code} (valid ${OTP_TTL_MS / 60000} min)\n`
-  );
+  if (!sent && env.isProd) {
+    console.warn(
+      `[otp] OTP email NOT delivered to ${contact} (purpose=${purpose}) — RESEND_API_KEY missing or send failed.`
+    );
+  }
 }
 
 export async function createOtpChallenge(
