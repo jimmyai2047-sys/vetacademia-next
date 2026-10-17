@@ -71,11 +71,16 @@ export default async function PreviousYearPaperPage({
   let hasAccess: boolean;
   if (test.isDemo) {
     hasAccess = true;
+  } else if (test.planSlug) {
+    // Explicit plan lock (matches mockTestAllowed in src/lib/access.ts).
+    hasAccess = access.isAdmin || access.planSlugs.has(test.planSlug);
   } else if (test.kind === "PREVIOUS_YEAR") {
     // Previous year papers are free study resources for everyone.
     hasAccess = true;
   } else if (test.exam) {
-    hasAccess = examOwned;
+    // "other" is a catch-all exam category — open to any signed-in member,
+    // matching the mock-tests page and the attempt API's gating.
+    hasAccess = examOwned || (test.exam === "other" && access.isAuthed);
   } else if (progSlug) {
     hasAccess = programmeOwned || yearOwned || subjectOwned;
   } else {

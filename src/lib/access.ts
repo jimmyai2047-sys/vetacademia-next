@@ -136,10 +136,27 @@ async function mockTestAllowed(
     subjectId?: string | null;
     exam?: string | null;
     isDemo?: boolean;
+    kind?: string | null;
+    planSlug?: string | null;
   }
 ): Promise<boolean> {
   // Demo tests are free for everyone (no purchase required).
   if (test.isDemo) return true;
+
+  // Explicit plan lock: when a test is tagged with a planSlug, only an owner
+  // of that plan (or an admin) may take it. This is the strongest gate after
+  // demo — it deliberately overrides the generic exam/subject/PYQ rules below
+  // so an admin's explicit intent always wins.
+  if (test.planSlug) {
+    return access.isAdmin || access.planSlugs.has(test.planSlug);
+  }
+
+  // Previous-year papers are free study material for everyone — this mirrors
+  // the /mock-tests/[id] and /papers/[id] pages, which render PYQ questions
+  // without a gate. Anonymous users get a non-persisted guest attempt, same as
+  // other open tests. (Without this the pages showed PYQ free but the attempt
+  // API 403'd exam/subject-tagged papers.)
+  if (test.kind === "PREVIOUS_YEAR") return true;
 
   if (!access.isAuthed) return false;
 
@@ -176,6 +193,8 @@ export async function canAccessMockTest(test: {
   subjectId?: string | null;
   exam?: string | null;
   isDemo?: boolean;
+  kind?: string | null;
+  planSlug?: string | null;
 }): Promise<boolean> {
   return mockTestAllowed(await getAccess(), test);
 }
@@ -187,6 +206,8 @@ export async function canAccessMockTestForUser(
     subjectId?: string | null;
     exam?: string | null;
     isDemo?: boolean;
+    kind?: string | null;
+    planSlug?: string | null;
   }
 ): Promise<boolean> {
   return mockTestAllowed(await getAccessForUser(userId), test);

@@ -59,6 +59,9 @@ export default async function MockTestAttemptPage({
   let hasAccess: boolean;
   if (test.isDemo) {
     hasAccess = true;
+  } else if (test.planSlug) {
+    // Explicit plan lock (matches mockTestAllowed in src/lib/access.ts).
+    hasAccess = access.isAdmin || access.planSlugs.has(test.planSlug);
   } else if (test.kind === "PREVIOUS_YEAR") {
     // Previous year papers are free for everyone (browsable as mock tests)
     hasAccess = true;
