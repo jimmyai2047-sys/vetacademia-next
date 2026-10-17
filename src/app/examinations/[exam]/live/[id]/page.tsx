@@ -9,6 +9,25 @@ import EnrollCta from "@/components/enroll-cta";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ exam: string; id: string }>;
+}) {
+  const { exam, id } = await params;
+  const liveClass = await prisma.liveClass.findUnique({
+    where: { id },
+    select: { title: true, description: true, exam: true },
+  });
+  if (!liveClass || liveClass.exam !== exam) return { title: "Live Class" };
+  return {
+    title: `${liveClass.title} — Live Class`,
+    description:
+      liveClass.description?.slice(0, 160) ||
+      `Watch the ${liveClass.title} live class and recording on VetAcademia.`,
+  };
+}
+
 export default async function LiveClassPage({
   params,
 }: {

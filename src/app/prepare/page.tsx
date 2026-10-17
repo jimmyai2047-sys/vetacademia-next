@@ -81,14 +81,14 @@ export default async function PreparePage({
           <h2 className="mt-4 text-2xl font-bold">Log in to access exam preparation</h2>
           <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Structured tracks, previous year papers, and mock tests are available to enrolled members. Highly decorative, highly focused preparation.
+            Structured tracks, previous year papers, and mock tests are available to enrolled members — exam-focused, syllabus-aligned preparation.
           </p>
           <Link href={`/login?redirect=${encodeURIComponent(tab ? `/prepare?tab=${tab}${state ? `&state=${state}` : ""}` : state ? `/prepare?state=${state}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
             <Sparkles className="h-4 w-4" /> Log In
           </Link>
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
-            Secure • Personalized • Decorative
+            Secure • Personalized • Exam-focused
             <span className="h-px w-8 bg-gradient-to-r from-primary/20 to-transparent" />
           </div>
         </div>

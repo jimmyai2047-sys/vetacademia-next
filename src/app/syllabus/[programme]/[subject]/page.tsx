@@ -141,8 +141,30 @@ export default async function SubjectPage({
     activeSubjectId: subject.id,
   });
 
+  // Course structured data — mirrors the header and course list on this page.
+  const canonicalUrl = `https://vetacademia.in/syllabus/${progSlug}/${subject.id}`;
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "@id": canonicalUrl,
+    url: canonicalUrl,
+    name: subject.name,
+    description:
+      subject.description ||
+      `${subject.name} — ${subject.chapters.length} course${
+        subject.chapters.length === 1 ? "" : "s"
+      } in ${subject.programme.name} on VetAcademia.`,
+    inLanguage: "en",
+    provider: { "@id": "https://vetacademia.in/#organization" },
+    hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
+  };
+
   return (
     <div className="min-h-screen flex">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }}
+      />
       {/* Sidebar */}
       <CurriculumSidebar data={curriculum} activeSubjectId={subject.id} />
 

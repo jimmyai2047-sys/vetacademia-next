@@ -73,7 +73,7 @@ export default function SavedPage() {
           badge="Revision • Bookmarks"
           title="Saved"
           titleHighlight="Items"
-          description="Chapters, study materials, and papers you saved for quick revision — all in one decorative shelf."
+          description="Chapters, study materials, and papers you saved for quick revision — all in one place."
           variant="primary"
           actions={
             <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">

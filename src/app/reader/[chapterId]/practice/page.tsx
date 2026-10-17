@@ -6,6 +6,13 @@ import { programmeNameToSlug } from "@/lib/programme";
 import MockTestPlayer from "@/components/mock-test-player-lazy";
 import EnrollCta from "@/components/enroll-cta";
 
+export const metadata = {
+  title: "Chapter Practice | VetAcademia",
+  description:
+    "Practise chapter-level questions with instant scoring and explanations, mapped to your veterinary syllabus.",
+  robots: { index: false, follow: true },
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function PracticeRoute({

@@ -11,6 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { FileText, Download, ArrowLeft } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
 
+export const metadata = {
+  title: "Study Material | VetAcademia",
+  description:
+    "Read and download a published VetAcademia study material — notes, advisories and reference documents for veterinary students.",
+  robots: { index: false, follow: true },
+};
+
 export const dynamic = "force-dynamic";
 
 const CATEGORY_META: Record<string, { label: string; className: string }> = {

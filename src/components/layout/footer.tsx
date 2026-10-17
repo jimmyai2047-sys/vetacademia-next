@@ -81,7 +81,7 @@ export default function Footer() {
               {[
                 { icon: Mail, text: "contact@vetacademia.in" },
                 { icon: Phone, text: "+91-89499 29291" },
-                { icon: MapPin, text: "Rajasthan • India" },
+                { icon: MapPin, text: "Rajasthan • India • Mon–Sat, 10 AM–6 PM IST" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="group flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all">
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#d4a843]/20 text-[#d4a843] group-hover:bg-[#d4a843] group-hover:text-[#0c4a6e] transition-colors">
@@ -196,7 +196,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <p className="flex items-center gap-2 text-white/60">
-              <span>&copy; 2018 VetAcademia.</span>
+              <span>&copy; 2018 VetAcademia &mdash; founded 2018, serving students since 2020.</span>
               <span className="hidden sm:inline">Crafted with</span>
               <Heart className="h-3.5 w-3.5 fill-red-400 text-red-400 animate-pulse" />
               <span className="hidden sm:inline">for veterinary students.</span>

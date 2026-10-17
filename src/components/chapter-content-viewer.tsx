@@ -11,6 +11,7 @@ interface ContentFile {
   fileType: string;
   fileName: string;
   url: string;
+  viewerUrl?: string | null;
   size: number | null;
 }
 
@@ -26,15 +27,40 @@ function formatSize(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function PptViewer({ url, title }: { url: string; title: string }) {
-  const [proxied, setProxied] = useState("");
+function PptViewer({ url, viewerUrl, title }: { url: string; viewerUrl?: string | null; title: string }) {
+  const [proxied, setProxied] = useState(viewerUrl || "");
+  const [denied, setDenied] = useState(false);
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setProxied(
-        `${window.location.origin}/api/blob?url=${encodeURIComponent(url)}`
-      );
+    if (viewerUrl) {
+      setProxied(viewerUrl);
+      return;
     }
-  }, [url]);
+    // No server-minted URL (e.g. admin preview): mint one via the authed
+    // endpoint. /api/blob requires a session or token, and external viewers
+    // fetch without cookies, so an untokenized URL would fail there.
+    let cancelled = false;
+    (async () => {
+      try {
+        const { csrfFetch } = await import("@/lib/csrf-client");
+        const res = await csrfFetch("/api/blob", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        if (!res.ok) {
+          if (!cancelled) setDenied(true);
+          return;
+        }
+        const data = await res.json();
+        if (!cancelled && typeof data.url === "string") setProxied(data.url);
+      } catch {
+        if (!cancelled) setDenied(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [url, viewerUrl]);
 
   // External viewers (Office/Google) fetch the URL server-side, so they need a
   // publicly reachable URL. The proxy streams our private blob. We use Google's
@@ -78,6 +104,10 @@ function PptViewer({ url, title }: { url: string; title: string }) {
             title={title}
             allowFullScreen
           />
+        ) : denied ? (
+          <div className="p-6 text-sm text-muted-foreground">
+            Viewer ke liye login zaroori hai. <a href="/login" className="underline text-primary">Login karein</a>
+          </div>
         ) : (
           <div className="p-6 text-sm text-muted-foreground">
             Loading viewer…
@@ -229,7 +259,7 @@ export default function ChapterContentViewer({
         {activeTab === "ppt" && hasPpt && (
           <div className="space-y-6">
             {ppts.map((ppt) => (
-              <PptViewer key={ppt.id} url={ppt.url} title={ppt.title} />
+              <PptViewer key={ppt.id} url={ppt.url} viewerUrl={ppt.viewerUrl} title={ppt.title} />
             ))}
           </div>
         )}

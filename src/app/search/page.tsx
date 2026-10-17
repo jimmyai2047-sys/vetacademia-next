@@ -55,7 +55,7 @@ export default async function SearchPage({
         badge="Search"
         title="Search"
         titleHighlight="Subjects"
-        description="Find subjects across all programmes — AHDP, B.V.Sc, M.V.Sc and Ph.D. Highly decorative, highly searchable."
+        description="Find subjects across all programmes — AHDP, B.V.Sc, M.V.Sc and Ph.D. Indexed, fast and fully searchable."
         variant="primary"
       />
 
@@ -136,7 +136,7 @@ export default async function SearchPage({
         <div className="text-center py-6">
           <div className="mx-auto max-w-md rounded-[1.5rem] border border-dashed border-primary/15 bg-primary/[0.03] p-6">
             <p className="text-sm text-muted-foreground">
-              Type a subject name above to search. Explore highly decorative programme-wise syllabi.
+              Type a subject name above to search. Explore programme-wise syllabi.
             </p>
             <div className="mt-3 flex flex-wrap justify-center gap-2">
               {["Anatomy", "Physiology", "Pathology"].map((s) => (

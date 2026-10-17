@@ -41,7 +41,7 @@ export default async function PapersPage() {
         badge="Previous Year Papers"
         title="Previous Year"
         titleHighlight="Papers"
-        description="Solve actual past-question papers online. Your answers are saved and the correct answer is revealed after you submit — decorative, focused, exam-realistic."
+        description="Solve actual past-question papers online. Your answers are saved and the correct answer is revealed after you submit — structured, focused, exam-realistic."
         variant="primary"
       />
 

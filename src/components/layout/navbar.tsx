@@ -70,6 +70,17 @@ const diplomaHrefFor = (slug: string) => {
   return t && t.status === "live" ? `/syllabus/${slug}` : `/diplomas#diploma-${slug}`;
 };
 
+// Practitioner ("Vet Corner") destinations — shown in place of Student Corner
+// when the nav audience toggle is set to Vet. UI preference only.
+const vetCornerLinks = [
+  { href: "/vets", label: "Clinical Reference", desc: "Dose calculators, tools & guides", icon: HeartPulse },
+  { href: "/drug-guide", label: "Drug & Dose Guide", desc: "Indications, doses & interactions", icon: Pill },
+  { href: "/consultations", label: "Consultations", desc: "Book or manage expert sessions", icon: Stethoscope },
+  { href: "/experts", label: "Expert Directory", desc: "Browse veterinary specialists", icon: Award },
+  { href: "/community", label: "Peer Community", desc: "Ask questions & discuss cases", icon: Users },
+  { href: "/diary", label: "Farm Diary", desc: "Herd, case & production records", icon: BookMarked },
+];
+
 const examCategories = [
   // Paravet state jobs — 10 states, one hub
   { name: "Paravet State Jobs (10 States)", href: "/examinations/paravet-jobs", icon: Tractor, desc: "LSA • VLDA • AVFO • Pharmacist • VFA — pick your state" },
@@ -165,6 +176,7 @@ export default function Navbar() {
 
   // Close all dropdowns on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- menus are cleared in response to navigation
     closeAllMenus();
   }, [pathname]);
   const { data: session, status } = useSession();
@@ -176,6 +188,30 @@ export default function Navbar() {
   const isAnimalOwner = role === "ANIMAL_OWNER";
   const isExpert = isExpertRole(role);
   const isGuest = role === "GUEST";
+
+  // UI-only audience mode: "student" (default) or "vet" (practitioner).
+  // It reorders the corner menu in the nav and is remembered per browser —
+  // it never changes the signed-in account role or permissions.
+  const [navMode, setNavMode] = useState<"student" | "vet">("student");
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("va-nav-mode");
+      if (saved === "student" || saved === "vet")
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after hydration to avoid a server/client mismatch
+        setNavMode(saved);
+    } catch {
+      /* storage blocked - keep default */
+    }
+  }, []);
+  function changeNavMode(mode: "student" | "vet") {
+    setNavMode(mode);
+    closeAllMenus();
+    try {
+      window.localStorage.setItem("va-nav-mode", mode);
+    } catch {
+      /* storage blocked - session-only preference */
+    }
+  }
 
   const roleLinks = isAdmin
     ? []
@@ -251,7 +287,42 @@ export default function Navbar() {
             <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
           </Link>
 
-          {/* Programmes */}
+          {/* Audience toggle: Student <-> Vet (practitioner). UI preference only. */}
+          <div
+            role="group"
+            aria-label="Navigation mode"
+            className="hidden xl:flex items-center rounded-full border border-primary/15 bg-muted/60 p-0.5 ml-1 shrink-0"
+          >
+            <button
+              type="button"
+              onClick={() => changeNavMode("student")}
+              aria-pressed={navMode === "student"}
+              title="Student navigation"
+              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition-colors ${
+                navMode === "student"
+                  ? "bg-white text-primary shadow-sm ring-1 ring-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => changeNavMode("vet")}
+              aria-pressed={navMode === "vet"}
+              title="Practitioner (vet) navigation"
+              className={`rounded-full px-2.5 py-1 text-[12px] font-bold transition-colors ${
+                navMode === "vet"
+                  ? "bg-white text-red-600 shadow-sm ring-1 ring-red-200"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Vet
+            </button>
+          </div>
+
+          {/* Programmes - Student Corner, hidden while the toggle is on Vet */}
+          {navMode === "student" && (
           <div
             className="group relative"
             onMouseEnter={() => setMenu("programmes", true)}
@@ -373,6 +444,65 @@ export default function Navbar() {
             </div>
           </div>
           </div>
+          )}
+
+          {/* Vet Corner - practitioner menu shown while the toggle is on Vet */}
+          {navMode === "vet" && (
+          <div
+            className="group relative"
+            onMouseEnter={() => setMenu("vetcorner", true)}
+            onMouseLeave={() => setMenu("vetcorner", false)}
+            onFocus={() => setMenu("vetcorner", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("vetcorner", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["vetcorner"]}>
+              <HeartPulse className="h-4 w-4" />
+              Vet Corner
+            </Button>
+            <div onClick={closeAllMenus} className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[400px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["vetcorner"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}>
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-600 via-[#d4a843] to-primary" />
+              <div className="relative bg-gradient-to-br from-red-50 via-white to-primary/5 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-md">
+                    <Stethoscope className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-bold tracking-[0.14em] uppercase text-red-700">Practitioner Corner <Sparkles className="h-3 w-3 text-[#d4a843]" /></p>
+                    <p className="text-xs text-muted-foreground">Clinical tools, drugs, experts &amp; cases</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1">
+                {vetCornerLinks.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={closeAllMenus}
+                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-red-50/50 hover:to-primary/5 hover:shadow-sm transition-all"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-primary/10 shadow-sm text-primary group-hover/item:bg-gradient-to-br group-hover/item:from-red-600 group-hover/item:to-rose-600 group-hover/item:text-white group-hover/item:border-transparent transition-all">
+                      <l.icon className="h-4 w-4" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold group-hover/item:text-red-700 transition-colors">
+                        {l.label}
+                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-primary" />
+                      </div>
+                      <div className="text-xs text-muted-foreground">{l.desc}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="relative p-2.5 bg-gradient-to-r from-red-50/60 to-transparent border-t border-primary/5">
+                <p className="text-[11px] text-muted-foreground">
+                  Navigation mode only — it does not change your account role or permissions.
+                </p>
+              </div>
+            </div>
+          </div>
+          )}
 
           {/* Prepare */}
           <div
@@ -777,6 +907,41 @@ export default function Navbar() {
                 </form>
               </div>
 
+              {/* Audience toggle (mobile) - UI preference only */}
+              <div role="group" aria-label="Navigation mode" className="px-3 pt-3">
+                <div className="flex items-center rounded-full border border-primary/15 bg-muted/60 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => changeNavMode("student")}
+                    aria-pressed={navMode === "student"}
+                    className={`flex-1 rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+                      navMode === "student"
+                        ? "bg-white text-primary shadow-sm ring-1 ring-primary/20"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => changeNavMode("vet")}
+                    aria-pressed={navMode === "vet"}
+                    className={`flex-1 rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+                      navMode === "vet"
+                        ? "bg-white text-red-600 shadow-sm ring-1 ring-red-200"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Vet
+                  </button>
+                </div>
+                <p className="mt-1.5 px-1 text-[11px] text-muted-foreground">
+                  {navMode === "vet"
+                    ? "Practitioner links shown below."
+                    : "Student links shown below."}
+                </p>
+              </div>
+
               <div className="space-y-1.5">
                 <Link
                   href="/"
@@ -809,6 +974,7 @@ export default function Navbar() {
                   Vets
                 </Link>
 
+                {navMode === "student" && (
                 <MobileNavSection
                   title="Student Corner"
                   icon={GraduationCap}
@@ -870,6 +1036,36 @@ export default function Navbar() {
                     View All Syllabus
                   </Link>
                 </MobileNavSection>
+                )}
+
+                {navMode === "vet" && (
+                <div className="space-y-1">
+                  <p className="px-3 pt-1 text-[10px] font-bold tracking-[0.14em] uppercase text-muted-foreground/70">
+                    Vet Corner
+                  </p>
+                  {vetCornerLinks.map((l) => (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-600/10 text-red-600">
+                        <l.icon className="h-4 w-4" />
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        {l.label}
+                        <span className="block text-[11px] font-normal text-muted-foreground truncate">
+                          {l.desc}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                  <p className="px-3 pt-1 text-[11px] text-muted-foreground">
+                    Navigation mode only — your account role is unchanged.
+                  </p>
+                </div>
+                )}
 
                 <MobileNavSection
                   title="Prepare"

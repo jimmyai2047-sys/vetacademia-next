@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { ArrowLeft, Download, FileText } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
+import { signBlobViewerUrl } from "@/lib/blob-token";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +24,10 @@ export default async function PostViewerPage({
 
   // Proxy private blobs through /api/blob so they render inline (Content-
   // Disposition: inline) inside the in-site viewer iframe and can be served
-  // with a proper filename on download.
+  // with a proper filename on download. The URL carries a short-lived token
+  // because /api/blob requires auth (session or token).
   const viewUrl = post.fileUrl
-    ? `/api/blob?url=${encodeURIComponent(post.fileUrl)}`
+    ? signBlobViewerUrl(post.fileUrl)
     : null;
 
   return (

@@ -1,27 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { getSignedUrl } from "@/lib/blob";
+import { signBlobViewerUrl, verifyBlobViewerToken } from "@/lib/blob-token";
+import { verifyToken } from "@/lib/mobileAuth";
+import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
+
+function blobHostAllowed(target: string): URL | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(target);
+  } catch {
+    return null;
+  }
+  if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) return null;
+  return parsed;
+}
 
 // Serves a private Vercel Blob object to external viewers (Office Online /
 // Google Docs) which fetch the URL server-side and cannot use private/blob
 // tokens. We fetch the (re-signed) blob server-side and stream it back with a
 // public, CORS-enabled response. Only our own Blob store host is allowed.
+//
+// Auth: the caller must EITHER hold a valid session (browser fetches send
+// cookies) OR present a short-lived HMAC token (minted server-side by pages
+// that already enforce their own paywall, or via POST /api/blob). Without
+// this, anyone with a leaked blob URL could stream private files forever.
 export async function GET(req: NextRequest) {
+  // Generous limit: external viewers (Google/Office) fetch from shared egress
+  // IPs, so per-IP throttling must not break legit concurrent viewers. The
+  // HMAC token / session check above is the real protection.
+  const rl = await rateLimit(`blob:${clientIp(req)}`, 300, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
   const target = req.nextUrl.searchParams.get("url");
   if (!target) {
     return NextResponse.json({ error: "Missing url" }, { status: 400 });
   }
 
-  let parsed: URL;
-  try {
-    parsed = new URL(target);
-  } catch {
-    return NextResponse.json({ error: "Invalid url" }, { status: 400 });
+  const parsed = blobHostAllowed(target);
+  if (!parsed) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const session = await getServerSession(authOptions);
+  const authed =
+    !!session?.user ||
+    verifyBlobViewerToken(
+      target,
+      req.nextUrl.searchParams.get("exp"),
+      req.nextUrl.searchParams.get("sig")
+    );
+  if (!authed) {
+    return NextResponse.json({ error: "Login required" }, { status: 401 });
   }
 
   try {
@@ -79,4 +118,41 @@ export async function GET(req: NextRequest) {
     console.error("Blob proxy error:", err);
     return NextResponse.json({ error: "Error" }, { status: 500 });
   }
+}
+
+// Mints a short-lived tokenized viewer URL for a blob. Requires auth: either
+// a mobile Bearer token (CSRF-exempt, header can't be forged cross-site) or a
+// web session + valid CSRF token. Used by client components (e.g. the chapter
+// PPT viewer) that cannot mint server-side.
+export async function POST(req: NextRequest) {
+  const rl = await rateLimit(`blob-mint:${clientIp(req)}`, 30, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
+  const bearer = req.headers.get("authorization");
+  if (bearer && bearer.startsWith("Bearer ")) {
+    if (!verifyToken(req)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } else {
+    if (!validateCsrf(req)) {
+      return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+    }
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
+  const body = await req.json().catch(() => ({}));
+  const url = typeof body?.url === "string" ? body.url : "";
+  if (!url || !blobHostAllowed(url)) {
+    return NextResponse.json({ error: "Invalid url" }, { status: 400 });
+  }
+
+  return NextResponse.json({ url: signBlobViewerUrl(url) });
 }

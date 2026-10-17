@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/mobileAuth";
+import { canAccessMockTestForUser } from "@/lib/access";
 
 export async function POST(req: Request) {
   try {
@@ -38,6 +39,17 @@ export async function POST(req: Request) {
     });
     if (!test) {
       return NextResponse.json({ error: "Test not found" }, { status: 404 });
+    }
+
+    // Premium gating (mirrors the web attempt API): paid tests require a
+    // matching plan, otherwise any logged-in user could attempt paid tests
+    // for free and harvest correct answers from scoring.
+    const allowed = await canAccessMockTestForUser(userId, test);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "This test requires a paid plan", code: "PAYMENT_REQUIRED" },
+        { status: 403 }
+      );
     }
 
     // Recompute the score server-side from stored correct answers so the

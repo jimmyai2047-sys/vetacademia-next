@@ -60,7 +60,7 @@ export default function VetReference() {
         <div className="relative p-8 text-white">
           <div className="flex items-center gap-3 mb-2">
             <Stethoscope className="h-8 w-8" />
-            <h1 className="text-3xl font-bold">Veterinary Reference Guide</h1>
+            <h2 className="text-3xl font-bold">Veterinary Reference Guide</h2>
           </div>
           <p className="text-sm text-white/90 max-w-2xl">
             Quick reference for normal physiological parameters and blood profiles of domestic animals.

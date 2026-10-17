@@ -25,8 +25,8 @@ import {
 const stats = [
   { value: "4", label: "Programmes Covered", icon: GraduationCap, grad: "from-primary to-emerald-600" },
   { value: "1000+", label: "Study Chapters", icon: BookOpen, grad: "from-blue-600 to-indigo-600" },
-  { value: "50+", label: "Mock Tests", icon: Microscope, grad: "from-purple-600 to-violet-600" },
-  { value: "10k+", label: "Active Learners", icon: Users, grad: "from-amber-600 to-orange-600" },
+  { value: "500+", label: "Mock Tests & PYQs", icon: Microscope, grad: "from-purple-600 to-violet-600" },
+  { value: "10K+", label: "Active Learners", icon: Users, grad: "from-amber-600 to-orange-600" },
 ];
 
 const values = [
@@ -56,7 +56,7 @@ export default function AboutPage() {
           badge="About VetAcademia • Since 2020 • Trusted by 10K+"
           title="About"
           titleHighlight="VetAcademia"
-          description="India's unified veterinary education portal — bringing structured, exam-ready learning to A.H.D.P., B.V.Sc & A.H., M.V.Sc and Ph.D students under one decorative, powerful roof."
+          description="India's unified veterinary education portal — bringing structured, exam-ready learning to A.H.D.P., B.V.Sc & A.H., M.V.Sc and Ph.D students under one structured, exam-ready roof."
           variant="primary"
         />
       </div>

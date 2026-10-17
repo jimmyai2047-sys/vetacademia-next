@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "VetAcademia | Admission & Enrollment",
+  title: "VetAcademia | Admission, Counselling & Enrolment",
   description:
-    "Apply for A.H.D.P., B.V.Sc & A.H., M.V.Sc and Ph.D programmes at VetAcademia. Submit your admission enquiry and our team will guide you through enrollment, fees and onboarding.",
+    "Apply for A.H.D.P., B.V.Sc & A.H., M.V.Sc and Ph.D preparation on VetAcademia. Submit an admission enquiry and our team provides counselling and enrolment support after verification.",
 };
 
 import Link from "next/link";
@@ -35,8 +35,8 @@ const steps = [
   },
   {
     icon: IdCard,
-    title: "Enroll & Onboard",
-    desc: "Complete enrollment, receive your login and start learning instantly.",
+    title: "Counselling & Enrolment",
+    desc: "After verification we confirm your plan, share the fee structure and activate your account.",
   },
 ];
 
@@ -63,7 +63,7 @@ export default function AdmissionPage() {
                 <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> No application fee
               </Badge>
               <Badge className="rounded-full bg-white text-primary border-0 px-3 py-1.5 gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5" /> Instant onboarding
+                <CheckCircle className="h-3.5 w-3.5" /> Counselling &amp; enrolment support
               </Badge>
             </>
           }

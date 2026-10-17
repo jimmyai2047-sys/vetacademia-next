@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyToken } from "@/lib/mobileAuth";
+import { canAccessMockTestForUser } from "@/lib/access";
 
 function parseOptions(raw: string): string[] {
   try {
@@ -33,6 +35,24 @@ export async function GET(
       return NextResponse.json(
         { error: "Test not found" },
         { status: 404 }
+      );
+    }
+
+    // Premium gating (mirrors the web attempt API): demo tests are public,
+    // paid tests require a logged-in user with a matching plan. Without this
+    // anyone could dump the full paid question bank.
+    const userId = verifyToken(req);
+    const allowed = test.isDemo
+      ? true
+      : userId
+        ? await canAccessMockTestForUser(userId, test)
+        : false;
+    if (!allowed) {
+      return NextResponse.json(
+        userId
+          ? { error: "This test requires a paid plan", code: "PAYMENT_REQUIRED" }
+          : { error: "Login to view this test", code: "LOGIN_REQUIRED" },
+        { status: userId ? 403 : 401 }
       );
     }
 
