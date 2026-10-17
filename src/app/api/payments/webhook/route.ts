@@ -107,6 +107,11 @@ export async function POST(req: Request) {
     }
   } catch (err) {
     console.error("[webhook] processing error:", err);
+    // Return 5xx so Razorpay RETRIES a transient failure (DB blip etc.).
+    // Acking 2xx here would permanently strand a payment that should have
+    // been marked PAID. Intentional guards above (no payment, amount
+    // mismatch, missing entity) still return 2xx — only real errors retry.
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 
   // Razorpay expects a 2xx to stop retrying.

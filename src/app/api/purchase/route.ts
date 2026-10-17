@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { validateCsrf } from "@/lib/csrf";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 import {
   createPurchaseOrder,
   PaymentsServiceError,
@@ -13,6 +14,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Invalid CSRF token" },
         { status: 403 }
+      );
+    }
+    const rl = await rateLimit(`purchase:${clientIp(req)}`, 20, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": "60" } }
       );
     }
     const session = await getServerSession(authOptions);

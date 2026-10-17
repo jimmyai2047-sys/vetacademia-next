@@ -301,3 +301,87 @@ export async function verifyRazorpayPayment(
 
   return { alreadyPaid: false, status: updated.status };
 }
+
+export interface ReconcileResult {
+  checked: number;
+  flipped: number;
+}
+
+/**
+ * Safety net for payments left stuck in PENDING when the Razorpay webhook is
+ * unreachable or RAZORPAY_WEBHOOK_SECRET is not configured in this environment.
+ * Called opportunistically from server pages right after checkout
+ * (`/pricing?success=1`) so a missed webhook still unlocks the purchase.
+ *
+ * Best-effort and never throws. It only flips PENDING -> PAID after Razorpay
+ * itself reports the order as paid AND the amount matches — it never grants
+ * access on its own, so a forged/local call cannot bypass payment.
+ */
+export async function reconcilePendingPayments(
+  userId: string,
+  opts: { limit?: number; windowMs?: number } = {}
+): Promise<ReconcileResult> {
+  const { limit = 3, windowMs = 24 * 60 * 60 * 1000 } = opts;
+  const result: ReconcileResult = { checked: 0, flipped: 0 };
+  if (!isRazorpayLive()) return result;
+
+  try {
+    const pending = await prisma.payment.findMany({
+      where: {
+        userId,
+        status: "PENDING",
+        method: "RAZORPAY",
+        orderId: { not: null },
+        createdAt: { gte: new Date(Date.now() - windowMs) },
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+    if (pending.length === 0) return result;
+
+    const razorpay = new Razorpay({
+      key_id: env.RAZORPAY_KEY_ID!,
+      key_secret: env.RAZORPAY_KEY_SECRET!,
+    });
+
+    for (const payment of pending) {
+      if (!payment.orderId) continue;
+      result.checked++;
+      const order = await razorpay.orders.fetch(payment.orderId);
+      if (order.status !== "paid") continue;
+      if (Number(order.amount) !== payment.amount * 100) {
+        console.error("[reconcile] amount mismatch - not flipping", {
+          paymentId: payment.id,
+          orderId: payment.orderId,
+          razorpayAmount: order.amount,
+          expected: payment.amount * 100,
+        });
+        continue;
+      }
+      const plan = payment.planSlug
+        ? await prisma.plan.findUnique({
+            where: { slug: payment.planSlug },
+            select: { validityDays: true },
+          })
+        : null;
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: "PAID",
+          method: "RAZORPAY",
+          expiresAt: computeExpiresAt(payment.createdAt, plan?.validityDays ?? null),
+        },
+      });
+      result.flipped++;
+      logAudit({
+        action: "payment.reconciled",
+        actor: null,
+        target: payment.id,
+        meta: { planSlug: payment.planSlug, orderId: payment.orderId },
+      });
+    }
+  } catch (err) {
+    console.error("[reconcile] pending payment reconcile failed:", err);
+  }
+  return result;
+}

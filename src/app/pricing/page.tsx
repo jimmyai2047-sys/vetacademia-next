@@ -6,8 +6,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
+import { reconcilePendingPayments } from "@/lib/payments-service";
 import { getExamKeysForPlan } from "@/lib/plans";
 import { getProgrammeImage, getExamImage, getSubjectImage, getProgrammeYearImage } from "@/lib/subject-images";
 import {
@@ -43,9 +46,22 @@ function contentLinkForPlan(plan: {
 export default async function PricingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string }>;
+  searchParams: Promise<{ plan?: string; success?: string }>;
 }) {
-  const { plan: highlight } = await searchParams;
+  const { plan: highlight, success } = await searchParams;
+
+  // Post-payment landing (/pricing?success=1): reconcile any order Razorpay
+  // captured but the webhook missed BEFORE access is computed, so a stuck
+  // PENDING flips to PAID and the page shows the enrolment immediately.
+  if (success === "1") {
+    try {
+      const session = await getServerSession(authOptions);
+      if (session?.user?.id) await reconcilePendingPayments(session.user.id);
+    } catch {
+      // best-effort: never block the success page on a reconcile failure
+    }
+  }
+
   let plans: {
     slug: string;
     name: string;
@@ -241,6 +257,27 @@ export default async function PricingPage({
         />
       </div>
 
+      {success === "1" && (
+        <div className="container mx-auto px-4 mt-6">
+          <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+            <Check className="h-5 w-5 mt-0.5 text-emerald-600 shrink-0" />
+            <div>
+              <p className="font-semibold">Payment successful — you're enrolled!</p>
+              <p className="text-emerald-700">
+                Your content is unlocked on your account right away. Head to your
+                dashboard to start studying.
+              </p>
+              <Link
+                href="/dashboard"
+                className="mt-2 inline-flex items-center gap-1 font-medium text-emerald-700 underline underline-offset-2"
+              >
+                Go to dashboard <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 mt-6">
         <div className="va-divider-dots"><span /></div>
       </div>
@@ -340,7 +377,7 @@ export default async function PricingPage({
             <div className="flex items-start gap-2 justify-center text-sm text-muted-foreground bg-white border border-primary/10 rounded-2xl px-5 py-3 shadow-sm max-w-2xl">
               <Check className="h-4 w-4 mt-0.5 text-emerald-600 shrink-0" />
               <p className="text-center">
-                Secure one-time payment. After enrollment the content is unlocked on your account immediately. (Test payments are enabled until Razorpay goes live.)
+                Secure one-time payment. After enrollment the content is unlocked on your account immediately.
               </p>
             </div>
           </div>

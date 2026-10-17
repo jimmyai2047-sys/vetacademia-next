@@ -56,9 +56,23 @@ npx tsx prisma/seeds/seed.ts
 ```env
 RAZORPAY_KEY_ID=rzp_test_XXXXXXXXXXXXXXX
 RAZORPAY_KEY_SECRET=XXXXXXXXXXXXXXXXXXXXXXXX
+RAZORPAY_WEBHOOK_SECRET=your-webhook-secret
 ```
 
-### Step 4: Test Card Details
+### Step 4: Webhook Configure Karo (Live payments ke liye zaroori)
+1. Razorpay Dashboard mein **Settings > Webhooks** pe jao
+2. **Add New Webhook** click karo
+3. URL: `https://your-app.vercel.app/api/payments/webhook`
+4. Secret: ek naya random string banao (alag KEY_SECRET se)
+5. Events: `payment.captured`, `payment.failed`, `order.paid` select karo
+6. Yehi secret `RAZORPAY_WEBHOOK_SECRET` mein daalo
+
+Webhook isliye zaroori hai kyunki kabhi-kabhi client verify call miss ho
+jati hai — webhook server-side payment ko PAID mark karta hai. Agar webhook
+secret set na ho to app post-checkout reconcile se bhi payment unlock karta
+hai, lekin failure/dispute events miss ho sakte hain.
+
+### Step 5: Test Card Details
 | Card Number | Expiry | CVV | Result |
 |-------------|--------|-----|--------|
 | 4111 1111 1111 1111 | Any future | Any | Success |
@@ -95,6 +109,7 @@ Vercel Dashboard > Settings > Environment Variables:
 | NEXTAUTH_URL | https://your-app.vercel.app |
 | RAZORPAY_KEY_ID | rzp_test_... |
 | RAZORPAY_KEY_SECRET | ... |
+| RAZORPAY_WEBHOOK_SECRET | from Razorpay > Settings > Webhooks |
 | NEXT_PUBLIC_APP_URL | https://your-app.vercel.app |
 
 ### Step 4: Vercel Postgres (Recommended)
