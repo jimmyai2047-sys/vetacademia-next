@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ exam: str
     title: seo.title,
     description: seo.description,
     alternates: { canonical: `https://www.vetacademia.in/examinations/${exam}` },
-    openGraph: { title: seo.title, description: seo.description, type: "website" },
+    openGraph: { title: seo.title, description: seo.description, type: "website", images: [{ url: "https://www.vetacademia.in/images/hero-vet-v2.webp", width: 1200, height: 800, alt: "Veterinarian caring for cattle — VetAcademia" }] },
   };
 }
 

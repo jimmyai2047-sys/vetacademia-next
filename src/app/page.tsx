@@ -65,6 +65,14 @@ export const metadata = {
     description:
       "Structured courses, 500+ mock tests with rank analytics, PYQs, flashcards and expert guidance for veterinary students across India.",
     type: "website",
+    images: [
+      {
+        url: "https://www.vetacademia.in/images/hero-vet-v2.webp",
+        width: 1200,
+        height: 800,
+        alt: "Veterinarian caring for cattle — VetAcademia",
+      },
+    ],
   },
 };
 

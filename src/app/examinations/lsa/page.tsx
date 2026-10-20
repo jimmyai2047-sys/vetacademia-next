@@ -10,12 +10,13 @@ export const metadata = {
   alternates: { canonical: "https://www.vetacademia.in/examinations/lsa" },
   description:
     "Rajasthan LSA (Livestock Assistant) exam preparation — RAJUVAS AHDP core syllabus, Rajasthan GK, RSSB pattern, previous-year papers and timed mock tests with rank analytics.",
-  openGraph: {
-    title: "LSA Exam Preparation (RSSB): Syllabus, PYQs & Mock Tests",
-    description:
-      "AHDP core + Rajasthan GK for the RSSB Livestock Assistant exam — syllabus, PYQs, mock tests and live classes.",
-    type: "website",
-  },
+    openGraph: {
+      title: "LSA Exam Preparation (RSSB): Syllabus, PYQs & Mock Tests",
+      description:
+        "AHDP core + Rajasthan GK for the RSSB Livestock Assistant exam — syllabus, PYQs, mock tests and live classes.",
+      type: "website",
+      images: [{ url: "https://www.vetacademia.in/images/hero-vet-v2.webp", width: 1200, height: 800, alt: "Veterinarian caring for cattle — VetAcademia" }],
+    },
 };
 
 const syllabus = [

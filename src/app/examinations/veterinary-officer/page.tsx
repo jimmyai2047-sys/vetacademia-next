@@ -10,12 +10,13 @@ export const metadata = {
   alternates: { canonical: "https://www.vetacademia.in/examinations/veterinary-officer" },
   description:
     "Veterinary Officer / Veterinary Surgeon (PSC) preparation — B.V.Sc & A.H. syllabus, General Knowledge, previous-year papers, mock tests and expert guidance.",
-  openGraph: {
-    title: "Veterinary Officer (VO) Exam Preparation",
-    description:
-      "B.V.Sc-based VO/VS syllabus, PSC papers, timed mocks and 1:1 expert sessions.",
-    type: "website",
-  },
+    openGraph: {
+      title: "Veterinary Officer (VO) Exam Preparation",
+      description:
+        "B.V.Sc-based VO/VS syllabus, PSC papers, timed mocks and 1:1 expert sessions.",
+      type: "website",
+      images: [{ url: "https://www.vetacademia.in/images/hero-vet-v2.webp", width: 1200, height: 800, alt: "Veterinarian caring for cattle — VetAcademia" }],
+    },
 };
 
 export default function VeterinaryOfficerLandingPage() {

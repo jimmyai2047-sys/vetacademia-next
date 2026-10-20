@@ -68,12 +68,21 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "VetAcademia",
     locale: "en_IN",
+    images: [
+      {
+        url: "https://www.vetacademia.in/images/hero-vet-v2.webp",
+        width: 1200,
+        height: 800,
+        alt: "Veterinarian caring for cattle — VetAcademia",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "VetAcademia | Unified Veterinary Education Portal",
     description:
       "India's comprehensive veterinary education platform for veterinary students and professionals.",
+    images: ["https://www.vetacademia.in/images/hero-vet-v2.webp"],
   },
   icons: {
     icon: [
