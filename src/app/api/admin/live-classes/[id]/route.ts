@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(
   _req: Request,
@@ -58,7 +59,15 @@ export async function PUT(
     if (typeof body.youtubeUrl === "string") data.youtubeUrl = body.youtubeUrl?.trim() || null;
     if (body.scheduledAt) data.scheduledAt = new Date(body.scheduledAt);
     if (typeof body.duration === "number") data.duration = body.duration;
-    if (typeof body.status === "string") data.status = body.status;
+    if (typeof body.status === "string") {
+      // Guard the enum: an unknown value would otherwise fail deep inside
+      // Prisma and surface as a generic 500.
+      if (["SCHEDULED", "LIVE", "ENDED", "CANCELLED"].includes(body.status)) {
+        data.status = body.status;
+      } else {
+        return NextResponse.json({ error: "Unknown status value" }, { status: 400 });
+      }
+    }
     if (typeof body.recordingUrl === "string") data.recordingUrl = body.recordingUrl?.trim() || null;
     if (typeof body.thumbnailUrl === "string") data.thumbnailUrl = body.thumbnailUrl?.trim() || null;
     if (typeof body.isDemo === "boolean") data.isDemo = body.isDemo;
@@ -66,6 +75,20 @@ export async function PUT(
     if (typeof body.order === "number") data.order = body.order;
 
     const updated = await prisma.liveClass.update({ where: { id }, data });
+    logAudit({
+      action: "liveClass.update",
+      actor: session.user.id,
+      target: id,
+      meta: {
+        title: updated.title,
+        ...(liveClass.status !== updated.status
+          ? { statusFrom: liveClass.status, statusTo: updated.status }
+          : {}),
+        ...(liveClass.isDemo !== updated.isDemo
+          ? { demoFrom: liveClass.isDemo, demoTo: updated.isDemo }
+          : {}),
+      },
+    });
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Live class update error:", error);
@@ -87,7 +110,20 @@ export async function DELETE(
     }
 
     const { id } = await ctx.params;
+    const existing = await prisma.liveClass.findUnique({
+      where: { id },
+      select: { title: true, status: true },
+    });
     await prisma.liveClass.delete({ where: { id } });
+    logAudit({
+      action: "liveClass.delete",
+      actor: session.user.id,
+      target: id,
+      meta: {
+        title: existing?.title ?? "unknown",
+        status: existing?.status ?? "unknown",
+      },
+    });
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Live class delete error:", error);

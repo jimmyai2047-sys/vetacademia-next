@@ -37,12 +37,16 @@ export async function PATCH(
   }
 
   try {
+    const before = await prisma.user.findUnique({
+      where: { id },
+      select: { role: true },
+    });
     const updated = await prisma.user.update({ where: { id }, data: { role: role as Role } });
     logAudit({
       action: "user.role_change",
       actor: auth.session!.user.id,
       target: id,
-      meta: { newRole: role },
+      meta: { previousRole: before?.role ?? null, newRole: role },
     });
     return NextResponse.json({ id: updated.id, role: updated.role });
   } catch {

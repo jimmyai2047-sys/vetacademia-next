@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdminApi } from "@/lib/admin-api";
 import { expertProformaSchema } from "@/lib/expert-proforma";
+import { logAudit } from "@/lib/audit";
 
 // Admin correction of a received proforma. Only PENDING applications can be
 // edited — once approved, the Expert profile itself is the record to edit.
@@ -69,6 +70,13 @@ export async function PUT(
         ),
         showContact: data.showContact ?? false,
       },
+    });
+
+    logAudit({
+      action: "expertApplication.updated",
+      actor: auth.session!.user.id,
+      target: id,
+      meta: { email: updated.email, status: updated.status },
     });
 
     return NextResponse.json(updated);

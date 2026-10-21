@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
   try {
@@ -85,6 +86,17 @@ export async function POST(req: NextRequest) {
         userId: null,
         isDemo: isDemo ?? false,
         isPublic: isPublic ?? true,
+      },
+    });
+    logAudit({
+      action: "studyMaterial.create",
+      actor: session.user.id,
+      target: material.id,
+      meta: {
+        title: material.title,
+        type: material.type,
+        isPublic: material.isPublic,
+        isDemo: material.isDemo,
       },
     });
     return NextResponse.json(material, { status: 201 });

@@ -2,6 +2,7 @@ import { validateCsrf } from "@/lib/csrf";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminApi } from "@/lib/admin-api";
+import { logAudit } from "@/lib/audit";
 
 // Reject a proforma application (optionally with a note). Rejected entries
 // stay in the inbox for record-keeping and never reach the expert pages.
@@ -32,6 +33,13 @@ export async function POST(
     await prisma.expertApplication.update({
       where: { id },
       data: { status: "REJECTED", reviewedAt: new Date(), adminNote },
+    });
+
+    logAudit({
+      action: "expertApplication.rejected",
+      actor: auth.session!.user.id,
+      target: id,
+      meta: { adminNote: adminNote || null },
     });
 
     return NextResponse.json({ success: true });

@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { logAudit } from "@/lib/audit";
 
 export async function PUT(
   req: NextRequest,
@@ -87,6 +88,18 @@ export async function PUT(
         isPublic: isPublic !== undefined ? isPublic : existing.isPublic,
       },
     });
+    logAudit({
+      action: "studyMaterial.update",
+      actor: session.user.id,
+      target: id,
+      meta: {
+        title: material.title,
+        wasPublic: existing.isPublic,
+        nowPublic: material.isPublic,
+        wasDemo: existing.isDemo,
+        nowDemo: material.isDemo,
+      },
+    });
     return NextResponse.json(material);
   } catch (error) {
     console.error("Study material update error:", error);
@@ -107,7 +120,17 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
     }
     const { id } = await params;
+    const existing = await prisma.studyMaterial.findUnique({
+      where: { id },
+      select: { title: true },
+    });
     await prisma.studyMaterial.delete({ where: { id } });
+    logAudit({
+      action: "studyMaterial.delete",
+      actor: session.user.id,
+      target: id,
+      meta: { title: existing?.title ?? "unknown" },
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Study material delete error:", error);

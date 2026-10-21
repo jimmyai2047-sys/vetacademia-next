@@ -5,6 +5,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdminApi } from "@/lib/admin-api";
 import { parseQualifications } from "@/lib/expert-proforma";
+import { logAudit } from "@/lib/audit";
 
 const approveSchema = z.object({
   hourlyRate: z.coerce.number().int().min(0).max(100000).optional().default(0),
@@ -123,6 +124,14 @@ export async function POST(
     await prisma.expertApplication.update({
       where: { id },
       data: { status: "APPROVED", reviewedAt: new Date(), adminNote: null },
+    });
+
+    // Role change + public profile publication — audit without any credential.
+    logAudit({
+      action: "expertApplication.approved",
+      actor: auth.session!.user.id,
+      target: id,
+      meta: { email, userId, expertId: expert.id, newRole: "PROFESSOR" },
     });
 
     // In-app notice for the expert (shown in their notifications). Best-effort:

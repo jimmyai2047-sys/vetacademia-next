@@ -5,6 +5,7 @@ import { getSignedUrl } from "@/lib/blob";
 import bcrypt from "bcryptjs";
 import { requireAdminApi } from "@/lib/admin-api";
 import { getAdminSession } from "@/lib/admin";
+import { logAudit } from "@/lib/audit";
 
 export async function GET() {
   try {
@@ -150,6 +151,15 @@ export async function POST(req: NextRequest) {
           ? { create: qualifications }
           : undefined,
       },
+    });
+
+    // Creates a PROFESSOR account + public profile — audit the publication,
+    // never the credential.
+    logAudit({
+      action: "expertProfile.create",
+      actor: auth.session!.user.id,
+      target: expert.id,
+      meta: { email, name, specialization, newRole: "PROFESSOR" },
     });
 
     return NextResponse.json(

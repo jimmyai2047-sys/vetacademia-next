@@ -7,6 +7,7 @@ import {
   validateSettingValue,
 } from "@/lib/admin-api";
 import { setMaintenanceMode } from "@/lib/maintenance";
+import { logAudit } from "@/lib/audit";
 
 const DEFAULTS: Record<string, string> = {
   siteName: "VetAcademia",
@@ -73,6 +74,13 @@ export async function PUT(req: NextRequest) {
       }
     }
 
+    const keys = entries.map(([key]) => key);
+    const before = await prisma.setting.findMany({
+      where: { key: { in: keys } },
+      select: { key: true, value: true },
+    });
+    const beforeMap = new Map(before.map((r) => [r.key, r.value]));
+
     await Promise.all(
       entries.map(([key, value]) =>
         prisma.setting.upsert({
@@ -82,6 +90,20 @@ export async function PUT(req: NextRequest) {
         })
       )
     );
+
+    logAudit({
+      action: "settings.update",
+      actor: auth.session!.user.id,
+      target: keys.join(","),
+      meta: {
+        keys,
+        changes: entries.map(([key, value]) => ({
+          key,
+          from: beforeMap.get(key) ?? null,
+          to: String(value),
+        })),
+      },
+    });
 
     const maintenanceEntry = entries.find(([key]) => key === "maintenanceMode");
     if (maintenanceEntry) {

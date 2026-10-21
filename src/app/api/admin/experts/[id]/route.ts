@@ -3,6 +3,7 @@ import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
 import bcrypt from "bcryptjs";
+import { logAudit } from "@/lib/audit";
 
 export async function PUT(
   req: NextRequest,
@@ -107,6 +108,18 @@ export async function PUT(
       }
     }
 
+    logAudit({
+      action: "expertProfile.update",
+      actor: session.user.id,
+      target: id,
+      meta: {
+        email,
+        specialization,
+        // "loginReset" (not the literal word password) survives meta scrubbing.
+        loginReset: Boolean(body.password),
+      },
+    });
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Experts PUT error:", error);
@@ -128,13 +141,23 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    const expert = await prisma.expert.findUnique({ where: { id } });
+    const expert = await prisma.expert.findUnique({
+      where: { id },
+      include: { user: { select: { email: true } } },
+    });
     if (!expert) {
       return NextResponse.json({ error: "Expert not found" }, { status: 404 });
     }
 
     // Deleting the user cascades to the expert profile
     await prisma.user.delete({ where: { id: expert.userId } });
+
+    logAudit({
+      action: "expertProfile.delete",
+      actor: session.user.id,
+      target: id,
+      meta: { email: expert.user.email, userId: expert.userId },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
