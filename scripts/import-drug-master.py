@@ -119,7 +119,7 @@ def main():
         if len(r) < 5 or not r[0] or not r[0][0].isdigit():
             continue
         choices.append({"condition": clean(r[1]), "species": clean(r[2]), "drugs": clean(r[3]), "notes": clean(r[4])})
-    # Banned
+    # India sheet parsed before the flag refinement below (drugs loop is above).
     ws = wb["Banned-Restricted-Drugs-India"]
     rows = [[(str(c).strip() if c is not None else "") for c in r] for r in ws.iter_rows(values_only=True)]
     hdr = next((i for i, r in enumerate(rows) if r and r[0].lower().startswith("s.no")), None)
@@ -130,12 +130,29 @@ def main():
         banned.append({"drug": clean(r[1]), "status": clean(r[2]),
                        "reason": clean(r[3]) if len(r) > 3 else "",
                        "alternative": clean(r[4]) if len(r) > 4 else ""})
+    # Refine the per-drug `banned` flag. The UI copy for it says
+    # "BANNED/RESTRICTED in India", but the raw row heuristic (any "banned"
+    # mention, e.g. "banned in several countries") overclaims — keep the flag
+    # only when the drug appears in the India sheet or the row names India.
+    def base_key(s):
+        return re.sub(r"\s*\(.*?\)", "", s).split("/")[0].strip().lower()
+    india_text = " | ".join(b["drug"].lower() for b in banned)
+    for d in drugs:
+        if not d["banned"]:
+            continue
+        n = base_key(d["name"])
+        row = (d["withdrawalRaw"] + " " + d["contraindications"] + " " + d["precautions"]).lower()
+        in_sheet = bool(n) and n in india_text
+        mentions_india = re.search(r"\bindia\b|\bindian\b", row) is not None
+        d["banned"] = in_sheet or mentions_india
     # Notes: keep only real glossary rows (short term + non-empty meaning).
+    # Skip the sheet header row ("Abbreviation | Meaning").
     ws = wb["Notes-Abbreviations"]
     rows = [[(str(c).strip() if c is not None else "") for c in r] for r in ws.iter_rows(values_only=True)]
     notes = [{"term": clean(r[0]), "meaning": clean(r[1]) if len(r) > 1 else ""}
              for r in rows
-             if clean(r[0]) and len(r) > 1 and clean(r[1]) and len(clean(r[0])) <= 15]
+             if clean(r[0]) and len(r) > 1 and clean(r[1]) and len(clean(r[0])) <= 15
+             and clean(r[1]).lower() != "meaning"]
 
     def ts_str(s):
         return json.dumps(s, ensure_ascii=False)
