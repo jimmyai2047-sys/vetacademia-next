@@ -8,6 +8,7 @@
     "build:with-migrate": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
+    "seed:demo": "node scripts/seed-demo.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -24,7 +25,6 @@
     "@types/pg": "^8.21.0",
     "@upstash/redis": "^1.38.4",
     "@vercel/blob": "^2.8.0",
-    "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -46,15 +46,12 @@
     "resend": "^6.32.0",
     "sanitize-html": "^2.17.7",
     "shadcn": "^4.16.2",
-    "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
     "tw-animate-css": "^1.4.0",
     "xlsx": "^0.18.5",
-    "zod": "^4.4.3",
-    "zustand": "^5.0.14"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@anthropic-ai/sdk": "^0.65.0",
     "@google/generative-ai": "^0.21.0",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.22",
