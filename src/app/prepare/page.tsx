@@ -6,6 +6,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
 import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
+import { isStudyToolSubject } from "@/lib/subjects";
 import ExamPrepTabs from "@/components/exam-prep-tabs";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -51,8 +52,20 @@ type PreparedCategory = {
     questions: number;
     duration: number;
   }[];
-  lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
-  dvpSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
+  lsaSubjects?: {
+    id: string;
+    name: string;
+    code: string | null;
+    chapterCount: number;
+    materialCount: number;
+  }[];
+  dvpSubjects?: {
+    id: string;
+    name: string;
+    code: string | null;
+    chapterCount: number;
+    materialCount: number;
+  }[];
 };
 
 export default async function PreparePage({
@@ -101,7 +114,7 @@ export default async function PreparePage({
     categories = await Promise.all(
       EXAM_PREP_CATEGORIES.map(async (c) => {
       const materials = await prisma.examMaterial.findMany({
-        where: { category: c.key, published: true },
+        where: { category: c.key, published: true, isDemo: false },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
         take: 200,
       });
@@ -123,37 +136,55 @@ export default async function PreparePage({
       // For LSA, fetch AHDP subjects to show as plates (same subjects as AHDP programme)
       let lsaSubjects: PreparedCategory["lsaSubjects"] = undefined;
       if (c.key === "LSA") {
-        const ahdpSubjects = await prisma.subject.findMany({
-          where: { programme: { name: "A.H.D.P." } },
-          orderBy: [{ name: "asc" }],
-          select: { id: true, name: true, code: true, _count: { select: { chapters: true } } },
-        });
-        // Also count ExamMaterials per subject for LSA
+        const ahdpSubjects = (
+          await prisma.subject.findMany({
+            where: { programme: { name: "A.H.D.P." } },
+            orderBy: [{ name: "asc" }],
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              _count: { select: { chapters: { where: { status: "PUBLISHED" } } } },
+            },
+          })
+        ).filter((s) => !isStudyToolSubject(s));
+        // ExamMaterials per subject name (case-sensitive, as stored) for the
+        // exam-resource count; `chapterCount` below is the CURRICULUM count
+        // from the Chapter table — the two are tracked separately on purpose.
         const counts = new Map<string, number>();
         for (const m of materials) if ((m as any).subject) counts.set((m as any).subject, (counts.get((m as any).subject) || 0) + 1);
         lsaSubjects = ahdpSubjects.map((s) => ({
           id: s.id,
           name: s.name,
           code: s.code,
-          chapterCount: counts.get(s.name) || 0,
+          chapterCount: s._count.chapters,
+          materialCount: counts.get(s.name) || 0,
         }));
       }
 
       // For UP Pharmacist, fetch DVP (Uttar Pradesh) subjects as plates
       let dvpSubjects: PreparedCategory["dvpSubjects"] = undefined;
       if (c.key === "UP_PHARMACIST") {
-        const dvpSubs = await prisma.subject.findMany({
-          where: { programme: { name: "DVP" } },
-          orderBy: [{ code: "asc" }],
-          select: { id: true, name: true, code: true, _count: { select: { chapters: true } } },
-        });
+        const dvpSubs = (
+          await prisma.subject.findMany({
+            where: { programme: { name: "DVP" } },
+            orderBy: [{ code: "asc" }],
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              _count: { select: { chapters: { where: { status: "PUBLISHED" } } } },
+            },
+          })
+        ).filter((s) => !isStudyToolSubject(s));
         const counts = new Map<string, number>();
         for (const m of materials) if ((m as any).subject) counts.set((m as any).subject, (counts.get((m as any).subject) || 0) + 1);
         dvpSubjects = dvpSubs.map((s) => ({
           id: s.id,
           name: s.name,
           code: s.code,
-          chapterCount: counts.get(s.name) || 0,
+          chapterCount: s._count.chapters,
+          materialCount: counts.get(s.name) || 0,
         }));
       }
 

@@ -97,6 +97,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { decorateLiveClasses } from "@/lib/live-class-status";
 import { trackLabel } from "@/lib/exam-tracks";
 import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
 import { getSignedUrl } from "@/lib/blob";
@@ -315,7 +316,7 @@ export default async function ExamPage({
     (c) => c.examKey === canonicalExam
   ).map((c) => c.key);
 
-  const liveClasses = await prisma.liveClass.findMany({
+  const liveClassesRaw = await prisma.liveClass.findMany({
     where: { exam: canonicalExam, status: { in: ["SCHEDULED", "LIVE", "ENDED"] } },
     orderBy: [{ scheduledAt: "desc" }],
     take: 20,
@@ -327,15 +328,18 @@ export default async function ExamPage({
       scheduledAt: true,
       duration: true,
       status: true,
+      youtubeUrl: true,
       recordingUrl: true,
       isDemo: true,
       track: true,
     },
   });
+  // Stored status is a manual admin field and goes stale — show derived truth.
+  const liveClasses = decorateLiveClasses(liveClassesRaw);
 
   const examMaterials = examMaterialCats.length
-    ? await prisma.examMaterial.findMany({
-        where: { category: { in: examMaterialCats }, published: true },
+        ? await prisma.examMaterial.findMany({
+            where: { category: { in: examMaterialCats }, published: true, isDemo: false },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       })
     : [];
@@ -660,8 +664,8 @@ export default async function ExamPage({
                       {voLive.slice(0, 8).map((lc: any) => (
                         <Link key={lc.id} href={`/examinations/${exam}/live/${lc.id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors">
                           <div className="flex items-center gap-3 min-w-0">
-                            <span className={`w-2 h-2 rounded-full shrink-0 ${lc.status === "LIVE" ? "bg-red-500 animate-pulse" : lc.status === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"}`} />
-                            <div className="min-w-0"><div className="font-medium text-sm truncate">{lc.title}</div><div className="text-xs text-muted-foreground">{new Date(lc.scheduledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}{lc.subject && <> · {lc.subject}</>}{lc.status === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}{lc.status === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}</div></div>
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${lc.effectiveStatus === "LIVE" ? "bg-red-500 animate-pulse" : lc.effectiveStatus === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"}`} />
+                            <div className="min-w-0"><div className="font-medium text-sm truncate">{lc.title}</div><div className="text-xs text-muted-foreground">{new Date(lc.scheduledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}{lc.subject && <> · {lc.subject}</>}{lc.effectiveStatus === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}{lc.effectiveStatus === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}</div></div>
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                         </Link>
@@ -888,8 +892,8 @@ export default async function ExamPage({
                       {lsaLive.slice(0, 8).map((lc: any) => (
                         <Link key={lc.id} href={`/examinations/${exam}/live/${lc.id}`} className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors">
                           <div className="flex items-center gap-3 min-w-0">
-                            <span className={`w-2 h-2 rounded-full shrink-0 ${lc.status === "LIVE" ? "bg-red-500 animate-pulse" : lc.status === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"}`} />
-                            <div className="min-w-0"><div className="font-medium text-sm truncate">{lc.title}</div><div className="text-xs text-muted-foreground">{new Date(lc.scheduledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}{lc.subject && <> · {lc.subject}</>}{lc.status === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}{lc.status === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}</div></div>
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${lc.effectiveStatus === "LIVE" ? "bg-red-500 animate-pulse" : lc.effectiveStatus === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"}`} />
+                            <div className="min-w-0"><div className="font-medium text-sm truncate">{lc.title}</div><div className="text-xs text-muted-foreground">{new Date(lc.scheduledAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}{lc.subject && <> · {lc.subject}</>}{lc.effectiveStatus === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}{lc.effectiveStatus === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}</div></div>
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                         </Link>
@@ -1124,16 +1128,16 @@ export default async function ExamPage({
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-2 h-2 rounded-full shrink-0 ${
-                        lc.status === "LIVE" ? "bg-red-500 animate-pulse" :
-                        lc.status === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"
+                        lc.effectiveStatus === "LIVE" ? "bg-red-500 animate-pulse" :
+                        lc.effectiveStatus === "SCHEDULED" ? "bg-blue-500" : "bg-green-500"
                       }`} />
                       <div className="min-w-0">
                         <div className="font-medium text-sm truncate">{lc.title}</div>
                         <div className="text-xs text-muted-foreground">
                           {lc.scheduledAt.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
                           {lc.subject && <> &middot; {lc.subject}</>}
-                          {lc.status === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}
-                          {lc.status === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}
+                          {lc.effectiveStatus === "LIVE" && <span className="text-red-500 ml-1 font-medium">LIVE</span>}
+                          {lc.effectiveStatus === "ENDED" && <span className="text-green-600 ml-1">Recorded</span>}
                         </div>
                       </div>
                     </div>

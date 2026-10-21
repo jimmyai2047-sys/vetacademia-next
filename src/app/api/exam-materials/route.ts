@@ -7,7 +7,8 @@ export async function GET(req: Request) {
     const subject = searchParams.get("subject");
     const category = searchParams.get("category");
 
-    const where: Record<string, unknown> = { published: true };
+    // Demo fixtures (isDemo) live only on /demo — never on web or Android.
+    const where: Record<string, unknown> = { published: true, isDemo: false };
     if (subject) where.subject = subject;
     if (category) where.category = category;
 

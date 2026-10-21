@@ -1,12 +1,14 @@
 export const metadata = {
   title: "VetAcademia | Free Demo & Preview",
   description:
-    "Try free sample study material, mock tests, adaptive tests, previous year papers and flashcards before you enroll.",
+    "Try free sample study material, mock tests, adaptive tests and PYQ-style practice sets before you enroll.",
 };
 
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { programmeNameToSlug } from "@/lib/programme";
+import { getSignedUrl } from "@/lib/blob";
+import { hasReadableSource } from "@/lib/material-readiness";
 import {
   Card,
   CardContent,
@@ -27,6 +29,7 @@ import {
   GraduationCap,
   ArrowRight,
   Star,
+  Download,
 } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
@@ -36,7 +39,7 @@ const PROGRAMMES = [
   { slug: "ahdp", label: "A.H.D.P", sub: "Animal Husbandry Diploma" },
   { slug: "dvp", label: "DVP", sub: "Diploma in Veterinary Pharmacy (UP)" },
   { slug: "bvsc", label: "B.V.Sc & A.H.", sub: "Bachelor of Veterinary Science" },
-  { slug: "mvsc", label: "M.V.Sc", sub: "Postgraduate (18 departments)" },
+  { slug: "mvsc", label: "M.V.Sc", sub: "Postgraduate veterinary specialisation" },
   { slug: "phd", label: "Ph.D", sub: "Veterinary Science Research" },
 ];
 
@@ -47,9 +50,9 @@ const EXAMS = [
 ];
 
 export default async function DemoPage() {
-  const [studyMaterials, mockTests, examMaterials, flashQuestions, demoChapters] = await Promise.all([
+  const [rawStudyMaterials, mockTests, rawExamMaterials, flashQuestions, demoChapters] = await Promise.all([
     prisma.studyMaterial.findMany({
-      where: { isDemo: true },
+      where: { isDemo: true, isPublic: true },
       include: { subject: { include: { programme: true } } },
     }).catch(() => []),
     prisma.mockTest.findMany({
@@ -59,7 +62,7 @@ export default async function DemoPage() {
         subject: { include: { programme: true } },
       },
     }).catch(() => []),
-    prisma.examMaterial.findMany({ where: { isDemo: true } }).catch(() => []),
+    prisma.examMaterial.findMany({ where: { isDemo: true, published: true } }).catch(() => []),
     prisma.question.findMany({
       where: { mockTest: { isDemo: true, kind: { not: "PREVIOUS_YEAR" } } },
       include: {
@@ -68,7 +71,7 @@ export default async function DemoPage() {
       take: 40,
     }).catch(() => []),
     prisma.chapter.findMany({
-      where: { isDemo: true },
+      where: { isDemo: true, status: "PUBLISHED" },
       include: {
         subject: { include: { programme: true } },
         _count: { select: { sections: true } },
@@ -78,8 +81,26 @@ export default async function DemoPage() {
     }).catch(() => []),
   ]);
 
+  // A demo advertised to signed-out visitors must open something. Records that
+  // are flagged demo but carry no file, link or body (the "Published Handbook"
+  // placeholders) are withheld here and surfaced in the admin readiness queue
+  // instead of shipping an empty card with no way to open it.
+  const studyMaterials = rawStudyMaterials.filter((s) =>
+    hasReadableSource({ fileUrl: s.url, body: s.content })
+  );
+  const examMaterials = rawExamMaterials.filter(hasReadableSource);
+
   const progSlug = (m: { subject?: { programme?: { name: string } } | null }) =>
     m.subject?.programme ? programmeNameToSlug(m.subject.programme.name) : null;
+
+  // Demo visitors are signed out, so the preview must hand them a working
+  // asset directly (public "/..." paths pass through getSignedUrl un-signed).
+  const [examAssets, noteAssets] = await Promise.all([
+    Promise.all(examMaterials.map((m) => (m.fileUrl ? getSignedUrl(m.fileUrl) : ""))),
+    Promise.all(studyMaterials.map((s) => (s.url ? getSignedUrl(s.url) : ""))),
+  ]);
+  const examAsset = new Map(examMaterials.map((m, i) => [m.id, examAssets[i]]));
+  const noteAsset = new Map(studyMaterials.map((s, i) => [s.id, noteAssets[i]]));
 
   const mockByProg = (slug: string, filter: (t: (typeof mockTests)[number]) => boolean) =>
     mockTests.filter((t) => progSlug(t) === slug && filter(t));
@@ -90,7 +111,7 @@ export default async function DemoPage() {
         badge="Free Preview"
         title="Try VetAcademia free"
         titleHighlight="— before you enroll"
-        description="Sample study material, mock tests, adaptive tests, previous year papers and flashcards across every programme and exam. See the quality, then unlock the full library."
+        description="Sample study material, mock tests, adaptive tests and previous-year papers for our diploma, degree and exam tracks. See the quality, then unlock the full library."
         variant="primary"
         actions={
           <>
@@ -122,8 +143,10 @@ export default async function DemoPage() {
             const adaptive = mockByProg(p.slug, (t) => t.isAdaptive);
             const pyq = mockByProg(p.slug, (t) => t.kind === "PREVIOUS_YEAR");
             const flashCount = flashQuestions.filter(
-              (q) => progSlug(q.mockTest as any) === p.slug
+              (q) => q.mockTest && progSlug(q.mockTest) === p.slug
             ).length;
+            const hasPreview =
+              notes.length > 0 || mock.length > 0 || adaptive.length > 0 || pyq.length > 0 || flashCount > 0;
             return (
               <Card key={p.slug} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl bg-white">
                 <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
@@ -136,6 +159,14 @@ export default async function DemoPage() {
                   <div className="h-0.5 w-10 rounded-full bg-primary/20 group-hover:w-16 group-hover:bg-primary transition-all mt-2" />
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1">
+                  {!hasPreview && (
+                    <div className="rounded-xl border border-dashed border-primary/20 bg-muted/20 p-4 text-center">
+                      <p className="text-sm font-medium">Free preview coming soon</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Sample content for this programme is being prepared — enroll now to get full access at launch.
+                      </p>
+                    </div>
+                  )}
                   {notes.map((n) => (
                     <div key={n.id} className="rounded-xl border border-primary/5 bg-muted/20 p-3 va-card-hover">
                       <div className="flex items-center gap-2 mb-1">
@@ -148,6 +179,16 @@ export default async function DemoPage() {
                           <ProtectedHtml html={n.content} />
                         </div>
                       ) : null}
+                      {noteAsset.get(n.id) && (
+                        <a
+                          href={noteAsset.get(n.id) as string}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          <Download className="h-3.5 w-3.5" /> Open file
+                        </a>
+                      )}
                     </div>
                   ))}
 
@@ -165,7 +206,7 @@ export default async function DemoPage() {
                   />
                   <PreviewLink
                     icon={<FileText className="h-4 w-4" />}
-                    label="Previous Year Paper"
+                    label="PYQ-style Practice Set"
                     hrefBase="papers"
                     items={pyq}
                   />
@@ -175,10 +216,10 @@ export default async function DemoPage() {
                       <div className="flex items-center gap-2">
                         <Layers className="h-4 w-4 text-primary" />
                         <span className="text-sm font-medium">
-                          {flashCount} Flashcards
+                          {flashCount} practice questions
                         </span>
                       </div>
-                      <Button render={<Link href="/flashcards" />} variant="ghost" size="sm" className="rounded-xl">
+                      <Button render={<Link href="/mock-tests" />} variant="ghost" size="sm" className="rounded-xl">
                         Practice <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
@@ -225,7 +266,7 @@ export default async function DemoPage() {
                   <span className="mt-0.5 block text-xs text-muted-foreground">
                     {c.subject?.programme ? programmeNameToSlug(c.subject.programme.name).toUpperCase() + " · " : ""}
                     {c.subject?.name}
-                    {c._count ? ` · ${c._count.sections} lectures` : ""}
+                    {c._count.sections > 0 ? ` · ${c._count.sections} lecture${c._count.sections === 1 ? "" : "s"}` : ""}
                   </span>
                 </span>
                 <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
@@ -247,6 +288,7 @@ export default async function DemoPage() {
             const mats = examMaterials.filter((m) => m.category === e.category);
             const mock = mockTests.filter((t) => t.track === e.track && t.kind === "MOCK" && !t.isAdaptive);
             const pyq = mockTests.filter((t) => t.track === e.track && t.kind === "PREVIOUS_YEAR");
+            const hasPreview = mats.length > 0 || mock.length > 0 || pyq.length > 0;
             return (
               <Card key={e.slug} className="va-card-hover group relative flex flex-col overflow-hidden rounded-[1.5rem] border-primary/5 shadow-sm hover:shadow-xl bg-white">
                 <div className="h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
@@ -257,6 +299,14 @@ export default async function DemoPage() {
                   <div className="h-0.5 w-10 rounded-full bg-primary/20 group-hover:w-16 group-hover:bg-primary transition-all mt-2" />
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1">
+                  {!hasPreview && (
+                    <div className="rounded-xl border border-dashed border-primary/20 bg-muted/20 p-4 text-center">
+                      <p className="text-sm font-medium">Free preview coming soon</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Sample content for this exam is being prepared — enroll now for full access.
+                      </p>
+                    </div>
+                  )}
                   {mats.map((m) => (
                     <div key={m.id} className="rounded-xl border border-primary/5 bg-muted/20 p-3">
                       <div className="flex items-center gap-2 mb-1">
@@ -265,7 +315,10 @@ export default async function DemoPage() {
                           Study Material · {m.type}
                         </span>
                       </div>
-                      <p className="text-sm font-medium">{m.title}</p>
+                      <p className="text-sm font-medium">
+                        {/* "[DEMO]" is an admin marker; visitors see the plain title. */}
+                        {m.title.replace(/^\[DEMO\]\s*/i, "")}
+                      </p>
                       {m.description && (
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                           {m.description}
@@ -276,6 +329,17 @@ export default async function DemoPage() {
                           <ProtectedHtml html={m.body} />
                         </div>
                       ) : null}
+                      {(examAsset.get(m.id) || m.externalUrl) && (
+                        <a
+                          href={(examAsset.get(m.id) || m.externalUrl) as string}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          Open {m.externalUrl && !m.fileUrl ? "link" : m.type}
+                        </a>
+                      )}
                     </div>
                   ))}
                   <PreviewLink
@@ -286,7 +350,7 @@ export default async function DemoPage() {
                   />
                   <PreviewLink
                     icon={<FileText className="h-4 w-4" />}
-                    label="Previous Year Paper"
+                    label="PYQ-style Practice Set"
                     hrefBase="papers"
                     items={pyq}
                   />
@@ -332,14 +396,17 @@ function PreviewLink({
           key={t.id}
           className="va-card-hover flex items-center justify-between rounded-xl border border-primary/5 bg-white p-3 shadow-sm hover:border-primary/10"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <span className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">{icon}</span>
-            <span className="text-sm font-medium">{label}</span>
-            <span className="text-xs text-muted-foreground">
-              · {t._count?.questions ?? 0} Qs
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-medium">{t.title || label}</span>
+              <span className="text-xs text-muted-foreground">
+                {label}
+                {typeof t._count?.questions === "number" && ` · ${t._count.questions} Qs`}
+              </span>
             </span>
           </div>
-          <Button render={<Link href={`/${hrefBase}/${t.id}`} />} variant="ghost" size="sm" className="rounded-xl gap-1">
+          <Button render={<Link href={`/${hrefBase}/${t.id}`} />} variant="ghost" size="sm" className="rounded-xl gap-1 shrink-0">
             Open <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
