@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/mobileAuth";
 import { prisma } from "@/lib/prisma";
 import { PLANS, getExamKeysForPlan } from "@/lib/plans";
+import { EXAM_KEYS } from "@/lib/reference-dictionary";
 import { activeAccessFilter } from "@/lib/plan-validity";
 
 export async function GET(req: Request) {
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
         (p) => p.programmeSlug!
       )
     );
-    const ALL_EXAM_KEYS = new Set(["psc", "icar-entrance", "net", "ars"]);
+    const ALL_EXAM_KEYS = new Set(EXAM_KEYS);
 
     if (isAdmin) {
       return NextResponse.json({

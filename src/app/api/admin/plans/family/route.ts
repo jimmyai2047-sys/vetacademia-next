@@ -3,6 +3,8 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { deriveDurationPrices } from "@/lib/plan-validity";
+import { findDuplicateScope, validateScopeRefs } from "@/lib/plan-scope";
+import { logAudit } from "@/lib/audit";
 
 // Creates a full duration family in one click: lifetime row at `baseSlug`
 // plus 6/12/24-month rows at `{baseSlug}-6mo/-12mo/-24mo`, priced at
@@ -68,6 +70,37 @@ export async function POST(req: NextRequest) {
   }
 
   const suffix: Record<string, string> = { lifetime: "", "180": "-6mo", "365": "-12mo", "730": "-24mo" };
+
+  const refError = validateScopeRefs({
+    type,
+    programmeSlug: programmeSlug || null,
+    examSlug: examSlug || null,
+  });
+  if (refError) {
+    return NextResponse.json({ error: refError }, { status: 400 });
+  }
+
+  // Refuse to mint a family whose scope+validity rows already exist elsewhere
+  // (e.g. re-running with a different base slug for the same scope) — finding 10.
+  for (const t of tiers) {
+    const dup = await findDuplicateScope({
+      type,
+      programmeSlug: programmeSlug || null,
+      examSlug: examSlug || null,
+      year: year || null,
+      subjectId: subjectId || null,
+      validityDays: t.validityDays,
+    });
+    if (dup) {
+      return NextResponse.json(
+        {
+          error: `Scope already covered by plan "${dup.slug}" (${dup.name}) for ${t.label.toLowerCase()} — refusing to create duplicate variants`,
+        },
+        { status: 409 }
+      );
+    }
+  }
+
   const maxOrder = await prisma.plan.aggregate({ _max: { sortOrder: true } });
   let order = (maxOrder._max.sortOrder ?? 0) + 1;
 
@@ -95,6 +128,17 @@ export async function POST(req: NextRequest) {
     const created = await prisma.plan.findMany({
       where: { slug: { in: rows.map((r) => r.slug) } },
       orderBy: { price: "asc" },
+    });
+    logAudit({
+      action: "plan_family.create",
+      actor: session.user.id,
+      target: baseSlug,
+      meta: {
+        name: name.trim(),
+        type,
+        lifetimePrice: Math.round(price),
+        slugs: rows.map((r) => r.slug),
+      },
     });
     return NextResponse.json({ plans: created }, { status: 201 });
   } catch {

@@ -2,6 +2,7 @@ import { cache } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PLANS, getExamKeysForPlan } from "@/lib/plans";
+import { EXAM_KEYS } from "@/lib/reference-dictionary";
 import { programmeNameToSlug } from "@/lib/programme";
 import { activeAccessFilter } from "@/lib/plan-validity";
 
@@ -31,10 +32,18 @@ const EMPTY: AccessInfo = {
 };
 
 const ALL_PROGRAMME_SLUGS = new Set(PLANS.filter((p) => p.type === "COURSE" && p.programmeSlug).map((p) => p.programmeSlug!));
-const ALL_EXAM_KEYS = new Set(["psc", "icar-entrance", "net", "ars"]);
+// Canonical exam-key set from the reference dictionary (includes up-pharmacist
+// and other, which were missing from the previous hardcoded list).
+const ALL_EXAM_KEYS = new Set(EXAM_KEYS);
 const ALL_PLAN_SLUGS = new Set(PLANS.map((p) => p.slug));
+// Year labels actually stored on plans/subjects are "1st Year"…"4th Year";
+// keep the older roman-numeral spellings too so any legacy rows still resolve.
 const ALL_YEAR_SCOPES = new Set(
-  ["ahdp", "bvsc"].flatMap((prog) => ["I Year", "II Year", "III Year", "IV Year", "V Year"].map((y) => `${prog}:${y}`))
+  ["ahdp", "bvsc", "dvp"].flatMap((prog) =>
+    ["1st Year", "2nd Year", "3rd Year", "4th Year", "I Year", "II Year", "III Year", "IV Year", "V Year"].map(
+      (y) => `${prog}:${y}`
+    )
+  )
 );
 
 // Returns the plans the current user has PAID for, derived from Payment rows.

@@ -3,7 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    // Public catalogue: only listed plans — unlisted (off-sale) rows must not
+    // be discoverable via this endpoint (finding 10).
     const plans = await prisma.plan.findMany({
+      where: { isListed: true },
       orderBy: { sortOrder: "asc" },
     });
     return NextResponse.json({ plans });

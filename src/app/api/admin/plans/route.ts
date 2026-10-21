@@ -3,6 +3,8 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { parseValidityDays } from "@/lib/plan-validity";
+import { findDuplicateScope, validateScopeRefs } from "@/lib/plan-scope";
+import { logAudit } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   const session = await getAdminSession();
@@ -63,6 +65,34 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const refError = validateScopeRefs({
+    type,
+    programmeSlug: programmeSlug || null,
+    examSlug: examSlug || null,
+  });
+  if (refError) {
+    return NextResponse.json({ error: refError }, { status: 400 });
+  }
+
+  // Duplicate-scope guard: same programme/exam + year/subject + validity would
+  // send learners to an unintended plan variant (finding 10).
+  const dup = await findDuplicateScope({
+    type,
+    programmeSlug: programmeSlug || null,
+    examSlug: examSlug || null,
+    year: year || null,
+    subjectId: subjectId || null,
+    validityDays: validity,
+  });
+  if (dup) {
+    return NextResponse.json(
+      {
+        error: `Scope already covered by plan "${dup.slug}" (${dup.name}) — same programme/exam, year/subject and validity`,
+      },
+      { status: 409 }
+    );
+  }
+
   const maxOrder = await prisma.plan.aggregate({ _max: { sortOrder: true } });
 
   try {
@@ -79,6 +109,17 @@ export async function POST(req: NextRequest) {
         subjectId: subjectId || null,
         validityDays: validity,
         sortOrder: (maxOrder._max.sortOrder ?? 0) + 1,
+      },
+    });
+    logAudit({
+      action: "plan.create",
+      actor: session.user.id,
+      target: created.slug,
+      meta: {
+        name: created.name,
+        type: created.type,
+        price: created.price,
+        validityDays: created.validityDays,
       },
     });
     return NextResponse.json(created, { status: 201 });

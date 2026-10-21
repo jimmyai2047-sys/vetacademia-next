@@ -44,6 +44,7 @@ export default async function SubjectPage({
         include: {
           programme: { select: { id: true, name: true, fullName: true } },
           chapters: {
+            where: { status: "PUBLISHED" },
             orderBy: { unitNumber: "asc" },
             select: {
               id: true,
@@ -81,8 +82,11 @@ export default async function SubjectPage({
   if (!hasAccess) {
     if (progSlug === "bvsc" || progSlug === "ahdp") {
       if (subject.year) {
+        // Deterministic pick: listed first, then base (lifetime) slug — never
+        // an arbitrary duration variant (mirrors the programme page rule).
         const plan = await prisma.plan.findFirst({
           where: { programmeSlug: progSlug, year: subject.year },
+          orderBy: [{ isListed: "desc" }, { slug: "asc" }],
         });
         if (plan) {
           purchasePlanSlug = plan.slug;
@@ -92,6 +96,7 @@ export default async function SubjectPage({
     } else if (progSlug === "mvsc" || progSlug === "phd") {
       const plan = await prisma.plan.findFirst({
         where: { subjectId: subject.id },
+        orderBy: [{ isListed: "desc" }, { slug: "asc" }],
       });
       if (plan) {
         purchasePlanSlug = plan.slug;

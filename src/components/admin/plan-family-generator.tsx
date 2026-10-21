@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deriveDurationPrices } from "@/lib/plan-validity";
+import { PROGRAMME_REFS, EXAM_SLUG_REFS } from "@/lib/reference-dictionary";
+import { csrfFetch } from "@/lib/csrf-client";
 
-export default function PlanFamilyGenerator() {
+const YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
+
+export default function PlanFamilyGenerator({
+  subjects = [],
+}: {
+  subjects?: { id: string; name: string }[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState({
     baseSlug: "",
@@ -35,7 +43,7 @@ export default function PlanFamilyGenerator() {
     setSaving(true);
     setError(null);
     setDone(null);
-    const res = await fetch("/api/admin/plans/family", {
+    const res = await csrfFetch("/api/admin/plans/family", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -78,30 +86,55 @@ export default function PlanFamilyGenerator() {
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Type</label>
           <select value={form.type} onChange={(e) => set("type", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-            <option value="COURSE">COURSE</option>
-            <option value="EXAM">EXAM</option>
+            <option value="COURSE">Course</option>
+            <option value="EXAM">Exam</option>
           </select>
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Lifetime price (Rs.)</label>
           <Input type="number" min={1} value={form.price} onChange={(e) => set("price", e.target.value)} placeholder="e.g. 2499" />
         </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Programme slug</label>
-          <Input value={form.programmeSlug} onChange={(e) => set("programmeSlug", e.target.value)} placeholder="bvsc | ahdp | mvsc | phd" />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Exam slug</label>
-          <Input value={form.examSlug} onChange={(e) => set("examSlug", e.target.value)} placeholder="veterinary-officer | net | …" />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Year (course year plans)</label>
-          <Input value={form.year} onChange={(e) => set("year", e.target.value)} placeholder="1st Year" />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Subject ID (subject plans)</label>
-          <Input value={form.subjectId} onChange={(e) => set("subjectId", e.target.value)} placeholder="subject id" />
-        </div>
+        {form.type === "COURSE" ? (
+          <>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Programme</label>
+              <select value={form.programmeSlug} onChange={(e) => set("programmeSlug", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="">— Select programme —</option>
+                {PROGRAMME_REFS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Year scope (optional)</label>
+              <select value={form.year} onChange={(e) => set("year", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="">— None (whole programme) —</option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Subject scope (optional)</label>
+              <select value={form.subjectId} onChange={(e) => set("subjectId", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="">— None —</option>
+                {subjects.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        ) : (
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Exam</label>
+            <select value={form.examSlug} onChange={(e) => set("examSlug", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+              <option value="">— Select exam —</option>
+              {EXAM_SLUG_REFS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {preview.length > 0 && (

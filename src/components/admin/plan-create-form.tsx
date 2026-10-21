@@ -5,8 +5,18 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VALIDITY_OPTIONS } from "@/lib/plan-validity";
+import { PROGRAMME_REFS, EXAM_SLUG_REFS } from "@/lib/reference-dictionary";
+import { csrfFetch } from "@/lib/csrf-client";
 
-export default function PlanCreateForm() {
+export type SubjectOption = { id: string; name: string };
+
+const YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
+
+export default function PlanCreateForm({
+  subjects = [],
+}: {
+  subjects?: SubjectOption[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState({
     slug: "",
@@ -16,6 +26,8 @@ export default function PlanCreateForm() {
     description: "",
     programmeSlug: "",
     examSlug: "",
+    year: "",
+    subjectId: "",
     validityDays: "",
   });
   const [saving, setSaving] = useState(false);
@@ -29,7 +41,7 @@ export default function PlanCreateForm() {
     e.preventDefault();
     setSaving(true);
     setError(null);
-    const res = await fetch("/api/admin/plans", {
+    const res = await csrfFetch("/api/admin/plans", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -53,10 +65,14 @@ export default function PlanCreateForm() {
       description: "",
       programmeSlug: "",
       examSlug: "",
+      year: "",
+      subjectId: "",
       validityDays: "",
     });
     router.refresh();
   }
+
+  const selectCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm";
 
   return (
     <form
@@ -86,10 +102,10 @@ export default function PlanCreateForm() {
           <select
             value={form.type}
             onChange={(e) => set("type", e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className={selectCls}
           >
-            <option value="COURSE">COURSE</option>
-            <option value="EXAM">EXAM</option>
+            <option value="COURSE">Course</option>
+            <option value="EXAM">Exam</option>
           </select>
         </div>
         <div className="space-y-1.5">
@@ -101,28 +117,77 @@ export default function PlanCreateForm() {
             onChange={(e) => set("price", Number(e.target.value) || 0)}
           />
         </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Programme slug (courses)</label>
-          <Input
-            value={form.programmeSlug}
-            onChange={(e) => set("programmeSlug", e.target.value)}
-            placeholder="bvsc | ahdp | mvsc | phd"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium">Exam slug (exams)</label>
-          <Input
-            value={form.examSlug}
-            onChange={(e) => set("examSlug", e.target.value)}
-            placeholder="veterinary-officer | icar-jrf-srf | net | ars"
-          />
-        </div>
+        {form.type === "COURSE" ? (
+          <>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Programme</label>
+              <select
+                value={form.programmeSlug}
+                onChange={(e) => set("programmeSlug", e.target.value)}
+                className={selectCls}
+              >
+                <option value="">— None (full site) —</option>
+                {PROGRAMME_REFS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Year scope (optional)</label>
+              <select
+                value={form.year}
+                onChange={(e) => set("year", e.target.value)}
+                className={selectCls}
+              >
+                <option value="">— None (whole programme) —</option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Subject scope (optional)</label>
+              <select
+                value={form.subjectId}
+                onChange={(e) => set("subjectId", e.target.value)}
+                className={selectCls}
+              >
+                <option value="">— None —</option>
+                {subjects.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        ) : (
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Exam</label>
+            <select
+              value={form.examSlug}
+              onChange={(e) => set("examSlug", e.target.value)}
+              className={selectCls}
+            >
+              <option value="">— Select exam —</option>
+              {EXAM_SLUG_REFS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Validity</label>
           <select
             value={form.validityDays}
             onChange={(e) => set("validityDays", e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className={selectCls}
           >
             {VALIDITY_OPTIONS.map((o) => (
               <option key={o.label} value={o.value}>

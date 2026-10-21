@@ -3,6 +3,8 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { parseValidityDays } from "@/lib/plan-validity";
+import { findDuplicateScope } from "@/lib/plan-scope";
+import { logAudit } from "@/lib/audit";
 
 export async function PUT(
   req: NextRequest,
@@ -44,6 +46,32 @@ export async function PUT(
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
     }
 
+    // Changing validity moves this row to a different scope slot — refuse if
+    // another plan already owns that slot (duplicate-scope guard, finding 10).
+    if (validity !== undefined && validity !== plan.validityDays) {
+      const dup = await findDuplicateScope(
+        {
+          type: plan.type,
+          programmeSlug: plan.programmeSlug,
+          examSlug: plan.examSlug,
+          year: plan.year,
+          subjectId: plan.subjectId,
+          validityDays: validity,
+        },
+        slug
+      );
+      if (dup) {
+        return NextResponse.json(
+          {
+            error: `Scope already covered by plan "${dup.slug}" (${dup.name}) — another plan owns this validity for the same scope`,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    const isListed = typeof body?.isListed === "boolean" ? body.isListed : undefined;
+
     const updated = await prisma.plan.update({
       where: { slug },
       data: {
@@ -51,6 +79,17 @@ export async function PUT(
         description:
           typeof description === "string" ? description : plan.description,
         ...(validity !== undefined ? { validityDays: validity } : {}),
+        ...(isListed !== undefined ? { isListed } : {}),
+      },
+    });
+
+    logAudit({
+      action: "plan.update",
+      actor: session.user.id,
+      target: slug,
+      meta: {
+        before: { price: plan.price, validityDays: plan.validityDays, isListed: plan.isListed },
+        after: { price: updated.price, validityDays: updated.validityDays, isListed: updated.isListed },
       },
     });
 

@@ -25,6 +25,16 @@ export const PLANS: PlanDef[] = [
     sortOrder: 1,
   },
   {
+    slug: "dvp",
+    name: "DVP (Diploma in Veterinary Pharmacy)",
+    type: "COURSE",
+    description:
+      "DVP curriculum: syllabus, chapters and study material (year plans sold separately).",
+    defaultPrice: 1499,
+    programmeSlug: "dvp",
+    sortOrder: 5,
+  },
+  {
     slug: "bvsc",
     name: "B.V.Sc & A.H.",
     type: "COURSE",

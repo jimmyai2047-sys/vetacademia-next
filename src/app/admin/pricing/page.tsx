@@ -4,24 +4,23 @@
 
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import PlanEditor from "@/components/admin/plan-editor";
+import PlanFamilyTable from "@/components/admin/plan-family-table";
 import PlanCreateForm from "@/components/admin/plan-create-form";
 import PlanFamilyGenerator from "@/components/admin/plan-family-generator";
-import { Crown, Shield, CreditCard } from "lucide-react";
+import { Crown, Shield, CreditCard, Table2 } from "lucide-react";
 
 
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPricingPage() {
-  const plans = await prisma.plan.findMany({ orderBy: { sortOrder: "asc" } });
-
-  const fullCourses = plans.filter(
-    (p) => p.type === "COURSE" && !p.year && !p.subjectId
+  const [plans, subjects] = await Promise.all([
+    prisma.plan.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.subject.findMany({ select: { id: true, name: true } }),
+  ]);
+  const subjectNames: Record<string, string> = Object.fromEntries(
+    subjects.map((s) => [s.id, s.name])
   );
-  const yearPlans = plans.filter((p) => p.type === "COURSE" && !!p.year);
-  const subjectPlans = plans.filter((p) => p.type === "COURSE" && !!p.subjectId);
-  const exams = plans.filter((p) => p.type === "EXAM");
 
   // Generated Report price is currently REPORT_PRICE=2500 in src/lib/report-input.ts + Setting key `reportPrice` (if set)
   const reportPriceSetting = await prisma.setting.findUnique({ where: { key: "reportPrice" } }).catch(() => null);
@@ -42,7 +41,7 @@ export default async function AdminPricingPage() {
               </div>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">Pricing</h1>
               <p className="mt-1 text-white/70 flex items-center gap-2 text-sm max-w-2xl">
-                <Shield className="h-3.5 w-3.5 text-[#d4a843] shrink-0" /> Set the one-time price and description for each programme, exam preparation plan, and granular year/subject plan. Changes apply immediately on the public pricing page.
+                <Shield className="h-3.5 w-3.5 text-[#d4a843] shrink-0" /> Compare each plan family&apos;s duration variants in one row. Price, validity and listing changes apply to NEW purchases only and are written to the audit log.
               </p>
             </div>
             <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-xl bg-[#d4a843] text-[#0c4a6e] shadow-lg shrink-0">
@@ -67,102 +66,20 @@ export default async function AdminPricingPage() {
           </div>
         </section>
 
-        <PlanCreateForm />
-
-        <PlanFamilyGenerator />
-
+        {/* Compact family view: one row per scope, duration variants side by side */}
         <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60" />
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
             <span className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-[#d4a843]" />
-            Programmes (Full)
+            <Table2 className="h-4 w-4 text-primary" />
+            All plan families
           </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {fullCourses.length === 0 ? <p>No plans yet</p> : fullCourses.map((p) => (
-              <PlanEditor
-                key={p.slug}
-                plan={{
-                  slug: p.slug,
-                  name: p.name,
-                  type: p.type,
-                  description: p.description,
-                  price: p.price,
-                  validityDays: p.validityDays,
-                  isListed: p.isListed,
-                }}
-              />
-            ))}
-          </div>
+          <PlanFamilyTable plans={plans} subjectNames={subjectNames} />
         </section>
 
-      <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-primary to-emerald-500" />
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <span className="h-6 w-1 rounded-full bg-gradient-to-b from-blue-600 to-primary" />
-          Year Plans (BVSc / AHDP)
-        </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {yearPlans.length === 0 ? <p>No plans yet</p> : yearPlans.map((p) => (
-            <PlanEditor
-              key={p.slug}
-              plan={{
-                slug: p.slug,
-                name: p.name,
-                type: p.type,
-                description: p.description,
-                price: p.price,
-                validityDays: p.validityDays,
-              }}
-            />
-          ))}
-        </div>
-      </section>
+        <PlanCreateForm subjects={subjects} />
 
-      <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-primary to-amber-500" />
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <span className="h-6 w-1 rounded-full bg-gradient-to-b from-purple-600 to-amber-500" />
-          Subject Plans (M.V.Sc / Ph.D)
-        </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subjectPlans.length === 0 ? <p>No plans yet</p> : subjectPlans.map((p) => (
-            <PlanEditor
-              key={p.slug}
-              plan={{
-                slug: p.slug,
-                name: p.name,
-                type: p.type,
-                description: p.description,
-                price: p.price,
-                validityDays: p.validityDays,
-              }}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm p-5">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-[#d4a843] to-primary" />
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <span className="h-6 w-1 rounded-full bg-gradient-to-b from-amber-500 to-primary" />
-          Exam Preparation
-        </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {exams.length === 0 ? <p>No plans yet</p> : exams.map((p) => (
-            <PlanEditor
-              key={p.slug}
-              plan={{
-                slug: p.slug,
-                name: p.name,
-                type: p.type,
-                description: p.description,
-                price: p.price,
-                validityDays: p.validityDays,
-              }}
-            />
-          ))}
-        </div>
-      </section>
+        <PlanFamilyGenerator subjects={subjects} />
 
 
     </div>
