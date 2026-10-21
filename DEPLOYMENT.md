@@ -33,6 +33,7 @@ datasource db {
 npx prisma migrate dev --name init
 npx prisma generate
 npx tsx prisma/seeds/seed.ts
+npm run seed:demo   # optional: /demo preview content (runs after main seed)
 ```
 
 ---
@@ -111,6 +112,22 @@ Vercel Dashboard > Settings > Environment Variables:
 | RAZORPAY_KEY_SECRET | ... |
 | RAZORPAY_WEBHOOK_SECRET | from Razorpay > Settings > Webhooks |
 | NEXT_PUBLIC_APP_URL | https://your-app.vercel.app |
+| RESEND_API_KEY | re_xxx (from resend.com) |
+| EMAIL_FROM | VetAcademia <no-reply@vetacademia.in> |
+
+### Step 3b: Email Setup (Resend) — password reset / OTP
+Bina `RESEND_API_KEY` ke reset/OTP mails silently skip ho jate hain (fail-soft).
+1. https://resend.com pe sign up (free: 3,000 mails/month)
+2. **Domains** pe jao -> apna domain (vetacademia.in) add karo
+3. Diye gaye **DKIM/SPF DNS records** apne domain registrar par add karo
+4. Domain **Verified** hone do
+5. **API Keys** -> Create -> copy `re_...` key
+6. Vercel env mein `RESEND_API_KEY` + `EMAIL_FROM` set karo (verified domain wala sender)
+7. Redeploy
+
+> Testing ke liye `EMAIL_FROM` Resend ka default `onboarding@resend.dev` use kar
+> sakte ho, lekin woh sirf aapke Resend account email tak pahunchega. Real users
+> ke liye verified domain wala sender zaroori hai.
 
 ### Step 4: Vercel Postgres (Recommended)
 Vercel mein free PostgreSQL milta hai:
@@ -163,6 +180,10 @@ npx prisma migrate reset
 
 # Seed Database
 npx tsx prisma/seeds/seed.ts
+
+# Seed Demo Content (/demo previews — must run AFTER main seed,
+# since it reuses the main seed's programme/subject ids)
+npm run seed:demo
 ```
 
 ---

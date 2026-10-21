@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
 import { processInlineImages } from "@/lib/chapter-images";
 import { logAudit } from "@/lib/audit";
+import { ownershipInput } from "@/lib/ownership-fields";
 
 const CATEGORIES = ["BIMA", "SUBSIDY", "LOAN", "VACCINATION", "OTHER"];
 const LEVELS = ["CENTRAL", "RAJASTHAN", "ALL_STATES"];
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
     const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
     const scheme = await prisma.govtScheme.create({
       data: {
+        ...ownershipInput(body),
         title: title.trim(),
         category,
         level,

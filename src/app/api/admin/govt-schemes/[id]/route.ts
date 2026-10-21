@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
 import { processInlineImages } from "@/lib/chapter-images";
 import { logAudit } from "@/lib/audit";
+import { ownershipInput } from "@/lib/ownership-fields";
 
 const CATEGORIES = ["BIMA", "SUBSIDY", "LOAN", "VACCINATION", "OTHER"];
 const LEVELS = ["CENTRAL", "RAJASTHAN", "ALL_STATES"];
@@ -23,7 +24,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { title, category, level, summary, details, linkUrl, linkLabel, lastDate, published, order } = body as Record<string, unknown>;
 
     const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
-    const data: Record<string, unknown> = {};
+    const data: Record<string, unknown> = { ...ownershipInput(body) };
     if (typeof title === "string" && title.trim()) data.title = title.trim();
     if (typeof category === "string" && CATEGORIES.includes(category)) data.category = category;
     if (typeof level === "string" && LEVELS.includes(level)) data.level = level;

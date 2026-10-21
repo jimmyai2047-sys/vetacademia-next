@@ -4,18 +4,27 @@ export const metadata = {
 
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Crown, Sparkles, GraduationCap } from "lucide-react";
+import EnquiryManager from "@/components/admin/enquiry-manager";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdmissionsAdminPage() {
-  const enquiries = await prisma.enquiry.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
+  const [total, newCount, openCount, overdueCount] = await Promise.all([
+    prisma.enquiry.count(),
+    prisma.enquiry.count({ where: { status: "NEW" } }),
+    prisma.enquiry.count({
+      where: { status: { in: ["NEW", "CONTACTED", "FOLLOW_UP"] } },
+    }),
+    prisma.enquiry.count({
+      where: {
+        nextActionAt: { lt: new Date() },
+        status: { in: ["NEW", "CONTACTED", "FOLLOW_UP"] },
+      },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -41,79 +50,17 @@ export default async function AdmissionsAdminPage() {
               </div>
               <h1 className="text-2xl font-bold tracking-tight">Admission Enquiries</h1>
               <p className="text-white/70 text-sm flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> {enquiries.length} recent submission{enquiries.length === 1 ? "" : "s"} • Live inbox
+                <Sparkles className="h-3.5 w-3.5 text-[#d4a843]" /> {total} submission{total === 1 ? "" : "s"} • {openCount} open{overdueCount > 0 ? ` • ${overdueCount} overdue` : ""} • Live inbox
               </p>
             </div>
           </div>
           <Badge className="rounded-full bg-white text-primary hover:bg-white/90 px-3 py-1 text-sm font-bold shadow-md">
-            {enquiries.filter((e) => e.status === "NEW").length} New
+            {newCount} New
           </Badge>
         </div>
       </div>
 
-      <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-        <CardContent className="p-0 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50 text-left">
-                <th className="px-4 py-3 font-medium">Name</th>
-                <th className="px-4 py-3 font-medium">Contact</th>
-                <th className="px-4 py-3 font-medium">Programme</th>
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Received</th>
-              </tr>
-            </thead>
-            <tbody>
-              {enquiries.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
-                    No enquiries yet.
-                  </td>
-                </tr>
-              )}
-              {enquiries.map((e) => (
-                <tr key={e.id} className="border-b last:border-0 hover:bg-primary/[0.04] transition-colors">
-                  <td className="px-4 py-3 align-top">
-                    <div className="font-semibold">{e.fullName}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {e.fatherName ? `F: ${e.fatherName}` : ""}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 align-top">
-                    <div>{e.email}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {e.studentMobile || "—"}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 align-top">
-                    <div>{e.programme || "—"}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {e.yearOrSemester || ""}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 align-top">
-                    <div>{e.category || "—"}</div>
-                    <div className="text-xs text-muted-foreground">{e.tsp || ""}</div>
-                  </td>
-                  <td className="px-4 py-3 align-top">
-                    <Badge
-                      variant={e.status === "NEW" ? "default" : "secondary"}
-                      className={`text-xs rounded-full ${e.status === "NEW" ? "bg-gradient-to-br from-primary to-[#0284c7] text-white border-0 shadow-sm" : ""}`}
-                    >
-                      {e.status}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 align-top text-xs text-muted-foreground whitespace-nowrap">
-                    {new Date(e.createdAt).toLocaleString("en-IN")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+      <EnquiryManager />
     </div>
   );
 }

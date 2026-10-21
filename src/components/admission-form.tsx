@@ -233,6 +233,7 @@ export default function AdmissionForm() {
             >
               <option value="">Select</option>
               <option value="AHDP">A.H.D.P.</option>
+              <option value="DVP">DVP</option>
               <option value="B.V.Sc & A.H.">B.V.Sc &amp; A.H.</option>
               <option value="M.V.Sc">M.V.Sc</option>
               <option value="Ph.D">Ph.D</option>

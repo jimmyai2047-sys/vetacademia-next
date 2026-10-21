@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
+import { ownershipInput } from "@/lib/ownership-fields";
 
 export async function GET() {
   try {
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
 
     const item = await prisma.vaccinationSchedule.create({
       data: {
+        ...ownershipInput(body),
         disease: disease.trim(),
         animals: animals?.trim() || "",
         firstDose: firstDose?.trim() || "",

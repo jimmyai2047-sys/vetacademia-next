@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
+import { PUBLIC_HIDDEN_STATUSES } from "@/lib/proforma-status";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,10 +24,15 @@ function typeLabel(t: string) {
 
 export default async function VetProformas() {
   const items = await prisma.vetProforma.findMany({
-    where: { published: true },
+    // Lifecycle (finding 13): superseded/archived versions never surface
+    // publicly; drafts are visible but clearly labelled as unverified.
+    where: { published: true, status: { notIn: [...PUBLIC_HIDDEN_STATUSES] } },
     orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     take: 50,
-    select: { id: true, title: true, type: true, description: true, wordUrl: true, pdfUrl: true },
+    select: {
+      id: true, title: true, type: true, description: true,
+      wordUrl: true, pdfUrl: true, status: true,
+    },
   }).catch(() => []);
   if (items.length === 0) {
     return (
@@ -51,6 +57,11 @@ export default async function VetProformas() {
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"><Award className="h-4 w-4" /></span>
               <CardTitle className="text-base">{p.title}</CardTitle>
+              {p.status === "DRAFT" && (
+                <Badge className="rounded-full text-xs border-amber-300 bg-amber-50 text-amber-700" variant="outline">
+                  Draft — verify before use
+                </Badge>
+              )}
               <Badge variant="outline" className="rounded-full text-xs ml-auto">{typeLabel(p.type)}</Badge>
             </div>
             {p.description && <p className="text-xs text-muted-foreground mt-1">{p.description}</p>}

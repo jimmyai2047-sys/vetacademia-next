@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { ADMISSION_PROGRAMME_OPTIONS } from "@/lib/reference-dictionary";
 
 const enquirySchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -18,9 +19,7 @@ const enquirySchema = z.object({
     .or(z.literal("")),
   parentMobile: z.string().max(15).optional().or(z.literal("")),
   address: z.string().max(500).optional().or(z.literal("")),
-  programme: z
-    .enum(["AHDP", "B.V.Sc & A.H.", "M.V.Sc", "Ph.D", "Other"])
-    .optional(),
+  programme: z.enum(ADMISSION_PROGRAMME_OPTIONS).optional(),
   yearOrSemester: z.string().max(50).optional().or(z.literal("")),
   qualification: z.string().max(100).optional().or(z.literal("")),
   percentage: z.string().max(20).optional().or(z.literal("")),

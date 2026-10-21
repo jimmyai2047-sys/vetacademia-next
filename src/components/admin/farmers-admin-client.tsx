@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { FileDown, RefreshCw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +15,7 @@ import {
 } from "@/components/ui/tabs";
 import { FARM_TYPES } from "@/lib/farm-types";
 import FileExtractField from "@/components/file-extract-field";
+import { csrfFetch } from "@/lib/csrf-client";
 
 const API: Record<string, string> = {
   guides: "/api/admin/farm-guides",
@@ -70,16 +73,30 @@ function FarmSelect({
 export type Values = Record<string, string | number | boolean | null>;
 export type FarmItem = Values & { id: string };
 
+type ReportRow = Values & {
+  id: string;
+  animalType?: string;
+  title?: string;
+  language?: string;
+  status?: string;
+  amount?: number;
+  createdAt?: string;
+  paymentId?: string | null;
+  user?: { email: string; name: string };
+};
+
 function blankFor(kind: string): Values {
+  // Governance fields shared by all four farmer-content models (finding 13).
+  const own = { owner: "", sourceUrl: "", reviewedBy: "" };
   if (kind === "guides")
-    return { category: "DAIRY", title: "", summary: "", content: "", published: true, order: 0 };
+    return { ...own, category: "DAIRY", title: "", summary: "", content: "", published: true, order: 0 };
   if (kind === "vaccination")
-    return { disease: "", animals: "", firstDose: "", booster: "", annual: "", vaccine: "", order: 0 };
+    return { ...own, disease: "", animals: "", firstDose: "", booster: "", annual: "", vaccine: "", order: 0 };
   if (kind === "deworming")
-    return { animal: "", firstDose: "", frequency: "", bestTime: "", products: "", order: 0 };
+    return { ...own, animal: "", firstDose: "", frequency: "", bestTime: "", products: "", order: 0 };
   if (kind === "schemes")
-    return { category: "SUBSIDY", level: "RAJASTHAN", title: "", summary: "", details: "", linkUrl: "", linkLabel: "", lastDate: "", published: true, order: 0 };
-  return { title: "", published: true, order: 0 };
+    return { ...own, category: "SUBSIDY", level: "RAJASTHAN", title: "", summary: "", details: "", linkUrl: "", linkLabel: "", lastDate: "", published: true, order: 0 };
+  return { ...own, title: "", published: true, order: 0 };
 }
 
 function Editor({
@@ -221,6 +238,43 @@ function Editor({
 
 
 
+        <div className="border-t pt-3 mt-1 mb-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">
+            Source &amp; ownership (verifiability)
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Owner (person / team)">
+              <input
+                className={inputCls}
+                value={String(v.owner ?? "")}
+                onChange={(e) => set("owner", e.target.value)}
+                placeholder="e.g. Dr. Sharma"
+              />
+            </Field>
+            <Field label="Source URL (official reference)">
+              <input
+                className={inputCls}
+                value={String(v.sourceUrl ?? "")}
+                onChange={(e) => set("sourceUrl", e.target.value)}
+                placeholder="https://..."
+              />
+            </Field>
+            <Field label="Reviewed by">
+              <input
+                className={inputCls}
+                value={String(v.reviewedBy ?? "")}
+                onChange={(e) => set("reviewedBy", e.target.value)}
+                placeholder="name"
+              />
+            </Field>
+          </div>
+          {item?.reviewedAt ? (
+            <p className="text-xs text-muted-foreground">
+              Last reviewed {new Date(String(item.reviewedAt)).toLocaleDateString("en-IN")}
+            </p>
+          ) : null}
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="Sort Order">
             <input type="number" className={inputCls} value={Number(v.order)} onChange={(e) => set("order", Number(e.target.value))} />
@@ -248,6 +302,109 @@ function Editor({
   );
 }
 
+type TabBodyProps = {
+  kind: string;
+  columns: string[];
+  renderRow: (item: Values & { id: string }) => React.ReactNode;
+  list: (Values & { id: string })[];
+  edit: { kind: string; id?: string } | null;
+  adding: string | null;
+  setEdit: (v: { kind: string; id?: string } | null) => void;
+  setAdding: (v: string | null) => void;
+  apiSave: (kind: string, payload: Values, id?: string) => Promise<void>;
+  apiDelete: (kind: string, id: string) => Promise<void>;
+};
+
+function TabBody({
+  kind,
+  columns,
+  renderRow,
+  list,
+  edit,
+  adding,
+  setEdit,
+  setAdding,
+  apiSave,
+  apiDelete,
+}: TabBodyProps) {
+  const editingItem =
+    edit && edit.kind === kind
+      ? list.find((x) => x.id === edit.id) || null
+      : null;
+  const showAdd = adding === kind;
+
+  return (
+    <div>
+      <div className="flex justify-end mb-3">
+        {!showAdd && (
+          <Button variant="outline" onClick={() => setAdding(kind)} className="rounded-xl border-primary/10 hover:bg-primary hover:text-white hover:border-primary">
+            + Add {kind === "guides" ? "Guide" : kind === "vaccination" ? "Vaccination" : kind === "deworming" ? "Deworming" : kind === "schemes" ? "Scheme" : "Report"}
+          </Button>
+        )}
+      </div>
+      {showAdd && (
+        <Editor
+          kind={kind}
+          item={null}
+          onSave={(p) => apiSave(kind, p)}
+          onCancel={() => setAdding(null)}
+        />
+      )}
+      {editingItem && (
+        <Editor
+          kind={kind}
+          item={editingItem}
+          onSave={(p, id) => apiSave(kind, p, id)}
+          onCancel={() => setEdit(null)}
+        />
+      )}
+
+      <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  {columns.map((c) => (
+                    <th key={c} className="text-left p-3 font-medium">
+                      {c}
+                    </th>
+                  ))}
+                  <th className="text-right p-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length + 1} className="text-center py-8 text-muted-foreground">
+                      No items yet.
+                    </td>
+                  </tr>
+                ) : (
+                  list.map((item) => (
+                    <tr key={item.id} className="border-b last:border-0 hover:bg-primary/[0.04]">
+                      {renderRow(item)}
+                      <td className="p-3 text-right whitespace-nowrap">
+                        <Button variant="ghost" size="sm" onClick={() => setEdit({ kind, id: item.id })} className="rounded-xl hover:bg-primary/10 hover:text-primary">
+                          Edit
+                        </Button>
+                        <Button variant="ghost" size="sm" className="rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600" onClick={() => apiDelete(kind, item.id)}>
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default function FarmersAdminClient({
   guides,
   vaccination,
@@ -272,18 +429,64 @@ export default function FarmersAdminClient({
   const [edit, setEdit] = useState<{ kind: string; id?: string } | null>(null);
   const [adding, setAdding] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busyReport, setBusyReport] = useState<string | null>(null);
+
+  // Report support actions (finding 7): open the stored PDF and repair it by
+  // regenerating from saved inputs — never re-charges the customer.
+  async function openReportFile(id: string) {
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/generated-reports/${id}`);
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || !d.downloadUrl) {
+        setError(d.error || "No stored file for this report yet");
+        return;
+      }
+      window.open(d.downloadUrl, "_blank", "noopener");
+    } catch {
+      setError("Network error. Please try again.");
+    }
+  }
+
+  async function regenerateReport(id: string) {
+    if (
+      !confirm(
+        "Regenerate this PDF from its stored inputs? No charge is made, and the buyer's existing download link will serve the new file."
+      )
+    )
+      return;
+    setBusyReport(id);
+    setError(null);
+    try {
+      const res = await csrfFetch(`/api/admin/generated-reports/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(d.error || "Failed to regenerate");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setBusyReport(null);
+    }
+  }
 
   async function apiSave(kind: string, payload: Values, id?: string) {
     setError(null);
     try {
       const base = API[kind];
       const res = id
-        ? await fetch(`${base}/${id}`, {
+        ? await csrfFetch(`${base}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch(base, {
+        : await csrfFetch(base, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -309,7 +512,7 @@ export default function FarmersAdminClient({
     if (!confirm("Delete this item?")) return;
     setError(null);
     try {
-      const res = await fetch(`${API[kind]}/${id}`, { method: "DELETE" });
+      const res = await csrfFetch(`${API[kind]}/${id}`, { method: "DELETE" });
       if (!res.ok) {
         setError("Failed to delete");
         return;
@@ -323,93 +526,7 @@ export default function FarmersAdminClient({
     }
   }
 
-  function TabBody({
-    kind,
-    columns,
-    renderRow,
-  }: {
-    kind: string;
-    columns: string[];
-    renderRow: (item: Values & { id: string }) => React.ReactNode;
-  }) {
-    const list = data[kind as keyof typeof data] as (Values & { id: string })[];
-    const editingItem =
-      edit && edit.kind === kind
-        ? list.find((x) => x.id === edit.id) || null
-        : null;
-    const showAdd = adding === kind;
-
-    return (
-      <div>
-        <div className="flex justify-end mb-3">
-          {!showAdd && (
-            <Button variant="outline" onClick={() => setAdding(kind)} className="rounded-xl border-primary/10 hover:bg-primary hover:text-white hover:border-primary">
-              + Add {kind === "guides" ? "Guide" : kind === "vaccination" ? "Vaccination" : kind === "deworming" ? "Deworming" : kind === "schemes" ? "Scheme" : "Report"}
-            </Button>
-          )}
-        </div>
-        {showAdd && (
-          <Editor
-            kind={kind}
-            item={null}
-            onSave={(p) => apiSave(kind, p)}
-            onCancel={() => setAdding(null)}
-          />
-        )}
-        {editingItem && (
-          <Editor
-            kind={kind}
-            item={editingItem}
-            onSave={(p, id) => apiSave(kind, p, id)}
-            onCancel={() => setEdit(null)}
-          />
-        )}
-
-        <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/50">
-                    {columns.map((c) => (
-                      <th key={c} className="text-left p-3 font-medium">
-                        {c}
-                      </th>
-                    ))}
-                    <th className="text-right p-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.length === 0 ? (
-                    <tr>
-                      <td colSpan={columns.length + 1} className="text-center py-8 text-muted-foreground">
-                        No items yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    list.map((item) => (
-                      <tr key={item.id} className="border-b last:border-0 hover:bg-primary/[0.04]">
-                        {renderRow(item)}
-                        <td className="p-3 text-right whitespace-nowrap">
-                          <Button variant="ghost" size="sm" onClick={() => setEdit({ kind, id: item.id })} className="rounded-xl hover:bg-primary/10 hover:text-primary">
-                            Edit
-                          </Button>
-                          <Button variant="ghost" size="sm" className="rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600" onClick={() => apiDelete(kind, item.id)}>
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const reports = data.generatedReports as ReportRow[];
 
   return (
     <Tabs defaultValue="guides">
@@ -423,13 +540,20 @@ export default function FarmersAdminClient({
         <TabsTrigger value="vaccination" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Vaccination ({data.vaccination.length})</TabsTrigger>
         <TabsTrigger value="deworming" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Deworming ({data.deworming.length})</TabsTrigger>
         <TabsTrigger value="schemes" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Yojana/Bima ({data.schemes.length})</TabsTrigger>
-        <TabsTrigger value="generatedReports" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Generated Reports ({(data as any).generatedReports.length})</TabsTrigger>
+        <TabsTrigger value="generatedReports" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Generated Reports ({reports.length})</TabsTrigger>
       </TabsList>
 
       <TabsContent value="guides" className="mt-4">
         <TabBody
           kind="guides"
           columns={["Category", "Title", "Published", "Order"]}
+          list={data.guides}
+          edit={edit}
+          adding={adding}
+          setEdit={setEdit}
+          setAdding={setAdding}
+          apiSave={apiSave}
+          apiDelete={apiDelete}
           renderRow={(i) => (
             <>
               <td className="p-3">
@@ -447,6 +571,13 @@ export default function FarmersAdminClient({
         <TabBody
           kind="vaccination"
           columns={["Disease", "Animals", "Vaccine", "Order"]}
+          list={data.vaccination}
+          edit={edit}
+          adding={adding}
+          setEdit={setEdit}
+          setAdding={setAdding}
+          apiSave={apiSave}
+          apiDelete={apiDelete}
           renderRow={(i) => (
             <>
               <td className="p-3 font-medium">{i.disease}</td>
@@ -462,6 +593,13 @@ export default function FarmersAdminClient({
         <TabBody
           kind="deworming"
           columns={["Animal", "Products", "Frequency", "Order"]}
+          list={data.deworming}
+          edit={edit}
+          adding={adding}
+          setEdit={setEdit}
+          setAdding={setAdding}
+          apiSave={apiSave}
+          apiDelete={apiDelete}
           renderRow={(i) => (
             <>
               <td className="p-3 font-medium">{i.animal}</td>
@@ -477,6 +615,13 @@ export default function FarmersAdminClient({
         <TabBody
           kind="schemes"
           columns={["Category", "Title", "Level", "Published"]}
+          list={data.schemes}
+          edit={edit}
+          adding={adding}
+          setEdit={setEdit}
+          setAdding={setAdding}
+          apiSave={apiSave}
+          apiDelete={apiDelete}
           renderRow={(i) => (
             <>
               <td className="p-3">
@@ -505,20 +650,59 @@ export default function FarmersAdminClient({
                     <th className="text-left p-3">Status</th>
                     <th className="text-left p-3">Amount</th>
                     <th className="text-left p-3">Created</th>
+                    <th className="text-left p-3">Payment</th>
+                    <th className="text-left p-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(data as any).generatedReports.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">No generated reports yet — farmer builder se banenge.</td></tr>
-                  ) : ((data as any).generatedReports as (Values & { id: string; animalType?: string; title?: string; language?: string; status?: string; amount?: number; createdAt?: string; user?: { email: string; name: string } })[]).map((r) => (
+                  {reports.length === 0 ? (
+                    <tr><td colSpan={9} className="text-center py-8 text-muted-foreground">No generated reports yet — farmer builder se banenge.</td></tr>
+                  ) : reports.map((r) => (
                     <tr key={r.id} className="border-b last:border-0 hover:bg-primary/[0.04]">
-                      <td className="p-3"><Badge variant="outline" className="rounded-full">{String((r as any).animalType)}</Badge></td>
-                      <td className="p-3 font-medium">{String((r as any).title)}</td>
-                      <td className="p-3 text-xs">{(r as any).user?.email ?? "—"}</td>
-                      <td className="p-3">{String((r as any).language ?? "en")}</td>
-                      <td className="p-3">{String((r as any).status) === "PAID" ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border-emerald-200">PAID</Badge> : <Badge variant="secondary" className="rounded-full">DRAFT</Badge> as any}</td>
-                      <td className="p-3">Rs.{String((r as any).amount ?? 2500)}</td>
-                      <td className="p-3 text-xs text-muted-foreground">{(r as any).createdAt ? new Date(String((r as any).createdAt)).toLocaleDateString("en-IN") : "—"}</td>
+                      <td className="p-3"><Badge variant="outline" className="rounded-full">{String(r.animalType ?? "")}</Badge></td>
+                      <td className="p-3 font-medium">{String(r.title ?? "")}</td>
+                      <td className="p-3 text-xs">{r.user?.email ?? "—"}</td>
+                      <td className="p-3">{String(r.language ?? "en")}</td>
+                      <td className="p-3">{String(r.status) === "PAID" ? <Badge className="rounded-full bg-emerald-100 text-emerald-700 border-emerald-200">PAID</Badge> : <Badge variant="secondary" className="rounded-full">DRAFT</Badge>}</td>
+                      <td className="p-3">Rs.{String(r.amount ?? 2500)}</td>
+                      <td className="p-3 text-xs text-muted-foreground">{r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN") : "—"}</td>
+                      <td className="p-3">
+                        {r.paymentId ? (
+                          <Link
+                            href={`/admin/payments/${r.paymentId}`}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                          >
+                            Payment <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-xl"
+                            aria-label="View stored PDF"
+                            title="View stored PDF"
+                            onClick={() => openReportFile(r.id)}
+                          >
+                            <FileDown className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-xl"
+                            aria-label="Regenerate PDF (no charge)"
+                            title="Regenerate PDF from saved inputs — no charge"
+                            disabled={busyReport === r.id || String(r.status) !== "PAID"}
+                            onClick={() => regenerateReport(r.id)}
+                          >
+                            <RefreshCw className={`h-4 w-4 ${busyReport === r.id ? "animate-spin" : ""}`} />
+                          </Button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

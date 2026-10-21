@@ -6,6 +6,7 @@ import { sanitizeChapterContent } from "@/lib/content";
 import { processInlineImages } from "@/lib/chapter-images";
 import { isFarmType } from "@/lib/farm-types";
 import { logAudit } from "@/lib/audit";
+import { ownershipInput } from "@/lib/ownership-fields";
 
 export async function GET() {
   try {
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
 
     const guide = await prisma.farmGuide.create({
       data: {
+        ...ownershipInput(body),
         title: title.trim(),
         category,
         summary: summary?.trim() || null,
