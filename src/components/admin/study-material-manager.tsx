@@ -20,6 +20,7 @@ import {
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Chapter = {
   id: string;
@@ -203,7 +204,7 @@ export default function StudyMaterialManager({
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", {
+      const res = await csrfFetch("/api/admin/upload", {
         method: "POST",
         body: fd,
       });
@@ -235,7 +236,7 @@ export default function StudyMaterialManager({
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", {
+      const res = await csrfFetch("/api/admin/upload", {
         method: "POST",
         body: fd,
       });
@@ -291,12 +292,12 @@ export default function StudyMaterialManager({
         isPublic,
       };
       const res = editingId
-        ? await fetch(`/api/admin/study-materials/${editingId}`, {
+        ? await csrfFetch(`/api/admin/study-materials/${editingId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch("/api/admin/study-materials", {
+        : await csrfFetch("/api/admin/study-materials", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -317,7 +318,7 @@ export default function StudyMaterialManager({
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this study material?")) return;
-    const res = await fetch(`/api/admin/study-materials/${id}`, {
+    const res = await csrfFetch(`/api/admin/study-materials/${id}`, {
       method: "DELETE",
     });
     if (res.ok) load();

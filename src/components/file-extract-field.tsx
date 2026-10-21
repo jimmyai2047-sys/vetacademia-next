@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Upload, Loader2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 const ACCEPT = ".docx,.xlsx,.xls,.pdf,.txt,.md,.csv,.html,.htm";
 
@@ -24,7 +25,7 @@ export default function FileExtractField({
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/admin/convert-document", {
+      const res = await csrfFetch("/api/admin/convert-document", {
         method: "POST",
         body: fd,
       });

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { EXPERT_FIELD_CATEGORIES } from "@/lib/expert-proforma";
 import { Plus, Trash2, Link2, Check } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type QualificationRow = { degree: string; year: string; institution: string };
 
@@ -57,7 +58,7 @@ export default function ApplyExpertPage() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/experts/upload-photo", { method: "POST", body: fd });
+      const res = await csrfFetch("/api/experts/upload-photo", { method: "POST", body: fd });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(data.error || "Photo upload failed");
@@ -100,7 +101,7 @@ export default function ApplyExpertPage() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/experts/apply", {
+      const res = await csrfFetch("/api/experts/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

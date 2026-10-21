@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Section = {
   id: string;
@@ -40,7 +41,7 @@ export default function ChapterSectionManager({
     setError(null);
     try {
       const title = newTitle.trim() || "New Section";
-      const res = await fetch("/api/admin/chapter-sections", {
+      const res = await csrfFetch("/api/admin/chapter-sections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chapterId, title, order: sections.length }),
@@ -65,7 +66,7 @@ export default function ChapterSectionManager({
     if (!t) return;
     setBusyId(id);
     try {
-      const res = await fetch(`/api/admin/chapter-sections/${id}`, {
+      const res = await csrfFetch(`/api/admin/chapter-sections/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: t }),
@@ -88,7 +89,7 @@ export default function ChapterSectionManager({
   async function saveContent(id: string, html: string) {
     setBusyId(id);
     try {
-      const res = await fetch(`/api/admin/chapter-sections/${id}`, {
+      const res = await csrfFetch(`/api/admin/chapter-sections/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: html }),
@@ -120,12 +121,12 @@ export default function ChapterSectionManager({
     setBusyId(id);
     try {
       await Promise.all([
-        fetch(`/api/admin/chapter-sections/${a.id}`, {
+        csrfFetch(`/api/admin/chapter-sections/${a.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ order: bo }),
         }),
-        fetch(`/api/admin/chapter-sections/${b.id}`, {
+        csrfFetch(`/api/admin/chapter-sections/${b.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ order: ao }),
@@ -146,7 +147,7 @@ export default function ChapterSectionManager({
     if (!confirm("Delete this section?")) return;
     setBusyId(id);
     try {
-      const res = await fetch(`/api/admin/chapter-sections/${id}`, {
+      const res = await csrfFetch(`/api/admin/chapter-sections/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) {
@@ -172,7 +173,7 @@ export default function ChapterSectionManager({
       return;
     setBusyId("legacy");
     try {
-      const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+      const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: "" }),

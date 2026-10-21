@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { put } from "@vercel/blob";
 import { requireAdminApi } from "@/lib/admin-api";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +7,7 @@ import { env } from "@/lib/env";
 import { logAudit } from "@/lib/audit";
 import { reportInputSchema } from "@/lib/report-input";
 import { buildReportBytes } from "@/lib/report-builder";
+import { validateCsrf } from "@/lib/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -117,9 +118,10 @@ export async function GET(
 // overwrites the Blob object. Never charges, never touches Payment or the
 // report's PAID status; it is a repair action for support tickets.
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!validateCsrf(req)) return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   const guard = await requireAdminApi(req, { method: "POST" });
   if ("error" in guard) return guard.error;
 

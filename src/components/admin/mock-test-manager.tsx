@@ -18,6 +18,7 @@ import {
   ArrowRight,
   Search,
 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type MockTest = {
   id: string;
@@ -136,7 +137,7 @@ export default function MockTestManager({
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await csrfFetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Upload failed");
@@ -173,12 +174,12 @@ export default function MockTestManager({
         file,
       };
       const res = editing
-        ? await fetch(`/api/admin/mock-tests/${editing.id}`, {
+        ? await csrfFetch(`/api/admin/mock-tests/${editing.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch("/api/admin/mock-tests", {
+        : await csrfFetch("/api/admin/mock-tests", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -201,7 +202,7 @@ export default function MockTestManager({
   async function handleDelete(t: MockTest) {
     if (!confirm("Delete this test and its questions? This cannot be undone.")) return;
     try {
-      const res = await fetch(`/api/admin/mock-tests/${t.id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/mock-tests/${t.id}`, { method: "DELETE" });
       if (res.ok) {
         setTests((prev) => prev.filter((x) => x.id !== t.id));
         router.refresh();

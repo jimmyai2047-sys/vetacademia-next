@@ -5,7 +5,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Lock, CircleCheck } from "lucide-react";
-import { getCsrfToken } from "@/lib/csrf-client";
+import { csrfFetch } from "@/lib/csrf-client";
 import { PASSWORD_MIN_LENGTH } from "@/lib/password";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordField } from "@/components/auth/password-field";
@@ -47,10 +47,9 @@ function ResetInner() {
     }
     setLoading(true);
     try {
-      const csrf = await getCsrfToken();
-      const res = await fetch("/api/auth/reset-password", {
+      const res = await csrfFetch("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),
       });
       if (!res.ok) {

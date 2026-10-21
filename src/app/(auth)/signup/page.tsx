@@ -30,7 +30,7 @@ import {
 } from "@/lib/roles";
 import { startGuestSession } from "@/lib/guest";
 import { signIn } from "next-auth/react";
-import { csrfFetch, getCsrfToken } from "@/lib/csrf-client";
+import { csrfFetch } from "@/lib/csrf-client";
 import { getSafeRedirect } from "@/lib/auth-redirect";
 import { PASSWORD_MIN_LENGTH } from "@/lib/password";
 import { AuthShell } from "@/components/auth/auth-shell";
@@ -197,10 +197,9 @@ function SignupInner() {
       const res = await csrfFetch("/api/upload/avatar", { method: "POST", body: fd });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.url) return;
-      const csrf = await getCsrfToken();
-      await fetch("/api/me/avatar", {
+      await csrfFetch("/api/me/avatar", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: data.url }),
       }).catch(() => undefined);
     } finally {
@@ -258,10 +257,9 @@ function SignupInner() {
     }
 
     try {
-      const csrf = await getCsrfToken();
-      const res = await fetch("/api/auth/register", {
+      const res = await csrfFetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));

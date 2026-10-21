@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Plus, Loader2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function AddChapterButton({ subjectId }: { subjectId: string }) {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function AddChapterButton({ subjectId }: { subjectId: string }) {
 
     setAdding(true);
     try {
-      const res = await fetch("/api/admin/chapters", {
+      const res = await csrfFetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

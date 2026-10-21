@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, CircleCheck } from "lucide-react";
-import { getCsrfToken } from "@/lib/csrf-client";
+import { csrfFetch } from "@/lib/csrf-client";
 import { AuthShell } from "@/components/auth/auth-shell";
 
 function ForgotInner() {
@@ -24,10 +24,9 @@ function ForgotInner() {
     setError(null);
     setLoading(true);
     try {
-      const csrf = await getCsrfToken();
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await csrfFetch("/api/auth/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
       if (!res.ok) {

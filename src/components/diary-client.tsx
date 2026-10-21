@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFarmLanguage } from "@/components/farm-language-context";
 import { FarmText, useTranslatedList } from "@/components/farm-translated";
 import { BellRing, Milk, PawPrint, Pencil, Plus, Stethoscope, Trash2 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Due = { id: string; type: string; title: string; nextDue: string | null };
 type LastMilk = { date: string; morning: number; evening: number };
@@ -150,8 +151,8 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
         notes: f.notes.trim() || null,
       };
       const res = editing
-        ? await fetch(`/api/diary/animals/${editing.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
-        : await fetch("/api/diary/animals", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        ? await csrfFetch(`/api/diary/animals/${editing.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+        : await csrfFetch("/api/diary/animals", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (res.ok) {
         const data = await res.json();
         setShowForm(false);
@@ -164,7 +165,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
 
   async function deleteAnimal(id: string) {
     if (!window.confirm(t.diConfirmDelete)) return;
-    await fetch(`/api/diary/animals/${id}`, { method: "DELETE" });
+    await csrfFetch(`/api/diary/animals/${id}`, { method: "DELETE" });
     await refreshAnimals();
   }
 
@@ -172,7 +173,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
     if (!selectedId) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/diary/milk", {
+      const res = await csrfFetch("/api/diary/milk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ animalId: selectedId, date: mDate, morning: parseFloat(mMorning) || 0, evening: parseFloat(mEvening) || 0 }),
@@ -190,7 +191,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
     if (!selectedId || !eTitle.trim()) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/diary/events", {
+      const res = await csrfFetch("/api/diary/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ animalId: selectedId, type: eType, title: eTitle.trim(), eventDate: eDate, nextDue: eDue || null, notes: eNotes.trim() || null }),
@@ -371,7 +372,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
                 <span className="font-medium">{fmtDate(String(l.date))}</span>
                 <span className="text-muted-foreground text-xs">{l.morning.toFixed(1)} + {l.evening.toFixed(1)}</span>
                 <span className="ml-auto font-bold">{(l.morning + l.evening).toFixed(1)} L</span>
-                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-600" onClick={async () => { await fetch(`/api/diary/milk?id=${l.id}`, { method: "DELETE" }); if (selectedId) void loadDetails(selectedId); }} aria-label={t.diDelete}>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-600" onClick={async () => { await csrfFetch(`/api/diary/milk?id=${l.id}`, { method: "DELETE" }); if (selectedId) void loadDetails(selectedId); }} aria-label={t.diDelete}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -443,7 +444,7 @@ export default function DiaryClient({ initialAnimals }: { initialAnimals: Animal
               <div key={e.id} className="flex items-center gap-2 rounded-xl border bg-white px-3 py-2 text-sm">
                 <span className="font-medium">{e.title}</span>
                 <span className="text-xs text-muted-foreground">{fmtDate(String(e.eventDate))}{e.nextDue ? ` → ${fmtDate(String(e.nextDue))}` : ""}</span>
-                <Button size="sm" variant="ghost" className="ml-auto h-7 w-7 p-0 text-red-600" onClick={async () => { await fetch(`/api/diary/events?id=${e.id}`, { method: "DELETE" }); if (selectedId) void loadDetails(selectedId); }} aria-label={t.diDelete}>
+                <Button size="sm" variant="ghost" className="ml-auto h-7 w-7 p-0 text-red-600" onClick={async () => { await csrfFetch(`/api/diary/events?id=${e.id}`, { method: "DELETE" }); if (selectedId) void loadDetails(selectedId); }} aria-label={t.diDelete}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>

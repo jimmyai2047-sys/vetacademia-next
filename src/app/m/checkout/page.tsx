@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function MobileCheckout() {
   const [status, setStatus] = useState("Preparing your payment…");
@@ -67,7 +68,7 @@ async function doPayment(
   setError: (e: string | null) => void
 ) {
   try {
-    const res = await fetch("/api/mobile/payments/create-order", {
+    const res = await csrfFetch("/api/mobile/payments/create-order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -94,7 +95,7 @@ async function doPayment(
       handler: async (response: any) => {
         setStatus("Verifying payment…");
         try {
-          const v = await fetch("/api/mobile/payments/verify", {
+          const v = await csrfFetch("/api/mobile/payments/verify", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

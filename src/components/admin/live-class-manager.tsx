@@ -18,6 +18,7 @@ import {
   Search,
   AlertTriangle,
 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type LiveClass = {
   id: string;
@@ -211,7 +212,7 @@ export default function LiveClassManager() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this live class? This cannot be undone.")) return;
     try {
-      const res = await fetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
       if (res.ok) {
         load();
       } else {
@@ -230,7 +231,7 @@ export default function LiveClassManager() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/live-classes/${c.id}`, {
+      const res = await csrfFetch(`/api/admin/live-classes/${c.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: eff }),

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users, Eye } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function VisitorCounter() {
   const [stats, setStats] = useState<{ total: number; live: number } | null>(
@@ -17,7 +18,7 @@ export default function VisitorCounter() {
     if (now - last < 60_000) return;
     sessionStorage.setItem(KEY, String(now));
 
-    fetch("/api/visitors", { method: "POST" })
+    csrfFetch("/api/visitors", { method: "POST" })
       .then((r) => r.json())
       .then((d) => setStats(d))
       .catch(() => {});

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { buttonVariants } from "@/components/ui/button";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 const fieldBase =
   "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30";
@@ -66,7 +67,7 @@ export default function AdmissionForm() {
     setStatus("submitting");
     setError(null);
     try {
-      const res = await fetch("/api/admissions", {
+      const res = await csrfFetch("/api/admissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ProtectedHtml from "@/components/protected-html";
 import type { FarmerLang } from "@/dictionaries/farmer-languages";
+import { csrfFetch } from "@/lib/csrf-client";
 
 // ---------- persistent + memory cache ----------
 const MEM = new Map<string, string>();
@@ -71,7 +72,7 @@ async function flush(batch: Job[]) {
 async function flushChunk(jobs: Job[]) {
   const { lang, html } = jobs[0];
   try {
-    const res = await fetch("/api/farmers/translate", {
+    const res = await csrfFetch("/api/farmers/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texts: jobs.map((j) => j.text), target: lang, html }),

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Mcq = {
   id: string;
@@ -145,7 +146,7 @@ export default function ChapterMcqManager({
         difficulty: form.difficulty,
       };
       if (editingId) {
-        const res = await fetch(`/api/admin/chapter-mcqs/${editingId}`, {
+        const res = await csrfFetch(`/api/admin/chapter-mcqs/${editingId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -160,7 +161,7 @@ export default function ChapterMcqManager({
           prev.map((m) => (m.id === editingId ? { ...m, ...d } : m))
         );
       } else {
-        const res = await fetch("/api/admin/chapter-mcqs", {
+        const res = await csrfFetch("/api/admin/chapter-mcqs", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -186,7 +187,7 @@ export default function ChapterMcqManager({
     if (!confirm("Delete this MCQ?")) return;
     setBusyId(id);
     try {
-      const res = await fetch(`/api/admin/chapter-mcqs/${id}`, {
+      const res = await csrfFetch(`/api/admin/chapter-mcqs/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) {
@@ -211,12 +212,12 @@ export default function ChapterMcqManager({
     setBusyId(id);
     try {
       await Promise.all([
-        fetch(`/api/admin/chapter-mcqs/${a.id}`, {
+        csrfFetch(`/api/admin/chapter-mcqs/${a.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ order: b.order }),
         }),
-        fetch(`/api/admin/chapter-mcqs/${b.id}`, {
+        csrfFetch(`/api/admin/chapter-mcqs/${b.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ order: a.order }),
@@ -251,7 +252,7 @@ export default function ChapterMcqManager({
           ? item.options.map((o: any) => String(o).trim()).filter(Boolean)
           : [];
         if (!item.question || opts.length < 2) continue;
-        const res = await fetch("/api/admin/chapter-mcqs", {
+        const res = await csrfFetch("/api/admin/chapter-mcqs", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

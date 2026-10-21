@@ -1,7 +1,9 @@
+import { csrfFetch } from "@/lib/csrf-client";
+
 export async function importDocxAsHtml(file: File): Promise<string> {
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch("/api/admin/convert-docx", {
+  const res = await csrfFetch("/api/admin/convert-docx", {
     method: "POST",
     body: fd,
   });

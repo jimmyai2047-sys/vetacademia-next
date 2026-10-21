@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { parseQuestions, ParsedQuestion } from "@/lib/parse-questions";
 import { difficultyLabel } from "@/lib/adaptive";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Question = {
   id: string;
@@ -122,7 +123,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
     setBulkImporting(true);
     setBulkError(null);
     try {
-      const res = await fetch(
+      const res = await csrfFetch(
         `/api/admin/mock-tests/${testId}/questions/bulk`,
         {
           method: "POST",
@@ -161,12 +162,12 @@ export default function QuestionManager({ testId }: { testId: string }) {
     try {
       const payload = { text, options, correctAnswer, marks, explanation, difficulty };
       const res = editing
-        ? await fetch(`/api/admin/mock-tests/${testId}/questions/${editing.id}`, {
+        ? await csrfFetch(`/api/admin/mock-tests/${testId}/questions/${editing.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch(`/api/admin/mock-tests/${testId}/questions`, {
+        : await csrfFetch(`/api/admin/mock-tests/${testId}/questions`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -189,7 +190,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
   async function handleDelete(q: Question) {
     if (!confirm("Delete this question?")) return;
     try {
-      const res = await fetch(
+      const res = await csrfFetch(
         `/api/admin/mock-tests/${testId}/questions/${q.id}`,
         { method: "DELETE" }
       );

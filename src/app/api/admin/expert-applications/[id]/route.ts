@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdminApi } from "@/lib/admin-api";
 import { expertProformaSchema } from "@/lib/expert-proforma";
 import { logAudit } from "@/lib/audit";
+import { validateCsrf } from "@/lib/csrf";
 
 // Admin correction of a received proforma. Only PENDING applications can be
 // edited — once approved, the Expert profile itself is the record to edit.
@@ -12,6 +13,7 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!validateCsrf(req)) return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
   const auth = await requireAdminApi(req, { strict: true });
   if ("error" in auth) return auth.error;
 

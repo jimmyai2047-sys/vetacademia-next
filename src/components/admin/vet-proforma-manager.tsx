@@ -98,7 +98,7 @@ function statusBadgeClass(status: string) {
 async function uploadFile(file: File): Promise<FileRef> {
   const fd = new FormData();
   fd.append("file", file);
-  const r = await fetch("/api/admin/upload", { method: "POST", body: fd });
+  const r = await csrfFetch("/api/admin/upload", { method: "POST", body: fd });
   const j = await r.json();
   if (!r.ok) throw new Error(j.error || "Upload failed");
   return j as FileRef;

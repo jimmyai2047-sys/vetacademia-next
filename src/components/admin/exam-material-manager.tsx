@@ -26,6 +26,7 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type MaterialRow = {
   id: string;
@@ -242,7 +243,7 @@ export default function ExamMaterialManager({
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", {
+      const res = await csrfFetch("/api/admin/upload", {
         method: "POST",
         body: fd,
       });
@@ -352,7 +353,7 @@ export default function ExamMaterialManager({
 
   async function remove(id: string) {
     if (!confirm("Delete this material?")) return;
-    const res = await fetch(`/api/admin/exam-materials/${id}`, {
+    const res = await csrfFetch(`/api/admin/exam-materials/${id}`, {
       method: "DELETE",
     });
     if (res.ok) load();

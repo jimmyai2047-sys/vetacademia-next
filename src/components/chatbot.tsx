@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type QA = {
   id: string;
@@ -310,7 +311,7 @@ export default function Chatbot() {
 
     setTyping(true);
     try {
-      const res = await fetch("/api/assistant", {
+      const res = await csrfFetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history }),

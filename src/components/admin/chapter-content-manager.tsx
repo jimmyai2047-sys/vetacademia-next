@@ -5,6 +5,7 @@ import { Upload, Trash2, FileText, Presentation, Video, Image as ImageIcon, Arch
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export type ContentItem = {
   id: string;
@@ -70,7 +71,7 @@ export default function ChapterContentManager({
       fd.append("title", title.trim() || file.name);
       fd.append("file", file);
 
-      const res = await fetch("/api/admin/content", {
+      const res = await csrfFetch("/api/admin/content", {
         method: "POST",
         body: fd,
       });
@@ -96,7 +97,7 @@ export default function ChapterContentManager({
   async function handleDelete(id: string) {
     if (!confirm("Delete this file?")) return;
     try {
-      const res = await fetch(`/api/admin/content/${id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/content/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json();
         setError(data.error || "Delete failed");

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Pill, Calculator, AlertTriangle, BookOpen, Ban, Stethoscope, GraduationCap, Microscope, Search, ArrowRight, ChevronDown, Syringe, Milk, Beef } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type Role = "vet" | "expert" | "student";
 type Section = "browse" | "dose" | "interactions" | "choices" | "banned";
@@ -89,7 +90,7 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
 
   const calcDose = async () => {
     setDOut(null);
-    const r = await fetch("/api/drug-guide/dose", {
+    const r = await csrfFetch("/api/drug-guide/dose", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ drug: dDrug, species: dSpecies, weightKg: Number(dWt), concentrationMgPerMl: dConc.trim() ? Number(dConc) : undefined }),
@@ -99,7 +100,7 @@ export default function DrugGuideClient({ initialMeta }: { initialMeta: { catego
 
   const checkIx = async () => {
     setIOut(null);
-    const r = await fetch("/api/drug-guide/interactions", {
+    const r = await csrfFetch("/api/drug-guide/interactions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ drugs: iDrugs.split(",").map((s) => s.trim()).filter(Boolean) }),

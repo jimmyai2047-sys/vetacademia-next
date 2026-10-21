@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Loader2, Radio } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 type ChatMsg = {
   id: string;
@@ -108,7 +109,7 @@ export default function LiveClassPlayer({
     setSending(true);
     setChatError(null);
     try {
-      const res = await fetch(`/api/live-classes/${liveClassId}/messages`, {
+      const res = await csrfFetch(`/api/live-classes/${liveClassId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),

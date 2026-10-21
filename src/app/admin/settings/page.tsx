@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Loader2, Save, CheckCircle, Crown, Sparkles, Shield, Settings as SettingsIcon } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -54,7 +55,7 @@ export default function SettingsPage() {
     setSaved(false);
     setError(null);
     try {
-      const res = await fetch("/api/admin/settings", {
+      const res = await csrfFetch("/api/admin/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),

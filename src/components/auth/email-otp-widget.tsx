@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getCsrfToken } from "@/lib/csrf-client";
+import { csrfFetch } from "@/lib/csrf-client";
 import { BadgeCheck, Loader2, MailCheck } from "lucide-react";
 
 // P1: optional email-OTP verification widget for signup.
@@ -35,10 +35,9 @@ export function EmailOtpWidget({
     }
     setLoading(true);
     try {
-      const csrf = await getCsrfToken();
-      const res = await fetch("/api/auth/signup/request-otp", {
+      const res = await csrfFetch("/api/auth/signup/request-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
       const data = await res.json().catch(() => ({}));
@@ -62,10 +61,9 @@ export function EmailOtpWidget({
     setError(null);
     setLoading(true);
     try {
-      const csrf = await getCsrfToken();
-      const res = await fetch("/api/auth/signup/verify-otp", {
+      const res = await csrfFetch("/api/auth/signup/verify-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-csrf-token": csrf },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), code: code.trim() }),
       });
       const data = await res.json().catch(() => ({}));
