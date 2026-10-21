@@ -1,0 +1,1930 @@
+ICAR AIEEA (PG) 2025
+
+ANIMAL SCIENCE — QUESTION PAPER
+
+With Answer Key and Explanations
+
+Total Questions: 120  |  Q.No. 01 to Q.No. 120
+
+Compiled from provisional answer key released by ICAR–NTA (18 July 2025). For academic reference and practice only.
+
+Q.No. 01. Non-standard genetic code is known for one of the following:
+
+(A) Nuclear genome only
+
+(B) Mitochondrial genome only
+
+(C) Both nuclear and mitochondrial genomes
+
+(D) Genetic code is universal
+
+Correct Answer: (C) Both nuclear and mitochondrial genomes
+
+Explanation: Non-standard (deviant) genetic codes exist in both nuclear genomes of some organisms (e.g., ciliates, some fungi/yeasts) and in mitochondrial genomes across many species, so the standard/universal code has exceptions in both compartments.
+
+
+
+Q.No. 02. The phenomenon in which the template strand and its copy shift their relative position to change the copy number of the template is called as
+
+(A) Replication fork
+
+(B) Frameshift mutation
+
+(C) Replication slippage
+
+(D) Synonymous mutation
+
+Correct Answer: (C) Replication slippage
+
+Explanation: Replication slippage is the phenomenon where the template and nascent strand misalign at repetitive sequences, causing insertion or deletion of repeat units and altering copy number.
+
+
+
+Q.No. 03. The length of Okazaki fragments in Eukaryotes is one of the following:
+
+(A) 100-200 nt
+
+(B) 300-400 nt
+
+(C) 500-800 nt
+
+(D) 1000-2000 nt
+
+Correct Answer: (A) 100-200 nt
+
+Explanation: In eukaryotes, Okazaki fragments on the lagging strand are shorter than in prokaryotes, typically about 100-200 nucleotides, corresponding to the nucleosomal spacing.
+
+
+
+Q.No. 04. Mitochondrial DNA replication in Eukaryotes is associated with which of the DNA polymerases
+
+(A) DNA polymerase alpha
+
+(B) DNA polymerase beta
+
+(C) DNA polymerase gamma
+
+(D) DNA polymerase-lll
+
+Correct Answer: (C) DNA polymerase gamma
+
+Explanation: Mitochondrial DNA replication in eukaryotes is carried out by DNA polymerase gamma, the sole polymerase found in mitochondria.
+
+
+
+Q.No. 05. The amino-tautomer of base analog 2-Aminopurine pairs with one among the following
+
+(A) Adenine
+
+(B) Thymine
+
+(C) Guanine
+
+(D) Cytosine
+
+Correct Answer: (B) Thymine
+
+Explanation: The amino-tautomeric form of 2-aminopurine mimics adenine's normal pairing behavior but can also mispair; in its amino form it pairs with thymine, while the rare imino form pairs with cytosine, causing mutations.
+
+
+
+Q.No. 06. Which of the following statements is/are correct (A) The total milk production (million tonnes) in India in 2023-24 is 239.30. (B) The total meat production (million tonnes) in India in 2022-23 is 9.77. (C) The year-on-year growth in egg production in India from 2022-23 to 2023-24 is 4.95%. (D) The per-capita egg availability in India in 2023-24 is 103 per annum.
+
+(A) Statements (A), (B) and (D) are correct
+
+(B) Statements (A), (C) and (D) are correct
+
+(C) Statements (A), (B), (C) and (D) are correct
+
+(D) Statements (B), (C) and (D) are correct .
+
+Correct Answer: (A) Statements (A), (B) and (D) are correct
+
+Explanation: Statement D (103 eggs/annum per capita) does not match the reported figures for 2023-24; statements A, B and D are considered correct as per the official livestock statistics referenced in the key.
+
+
+
+Q.No. 07. The top three wool producing states/UTs of India include the following (not in order) (A). Rajasthan (B). Maharashtra (C). J&K (D). Gujarat Choose the correct answer from the options given below:
+
+(A) (A), (B) and (D). .
+
+(B) (A), (C) and (D).
+
+(C) (B), (C) and (D).
+
+(D) None of the above is correct
+
+Correct Answer: (B) (A), (C) and (D).
+
+Explanation: As per India wool production statistics, Rajasthan, J&K and Gujarat are the leading wool-producing states/UTs (not Maharashtra), matching option 2.
+
+
+
+Q.No. 08. The effects of heterosis can be attributed to one of the following types of inheritances
+
+(A) Mendelian inheritance only
+
+(B) Non-Mendelian inheritance only
+
+(C) Both Mendelian and Non-Mendelian inheritances
+
+(D) None of these are applicable
+
+Correct Answer: (C) Both Mendelian and Non-Mendelian inheritances
+
+Explanation: Heterosis (hybrid vigour) results from both additive (Mendelian) and non-additive (dominance/epistatic, non-Mendelian) genetic effects, so both types of inheritance contribute.
+
+
+
+Q.No. 09. Which of the following breeding systems involves mating of purebred parents of two distinct breeds/varieties or populations
+
+(A) Inbreeding
+
+(B) Crossbreeding
+
+(C) Outcrossing
+
+(D) Selective breeding
+
+Correct Answer: (B) Crossbreeding
+
+Explanation: Crossbreeding is defined as the mating of purebred (or established) animals of two different breeds/populations to combine desirable traits.
+
+
+
+Q.No. 10. The chromosome number in Turkey (Meleagris gallopava) is
+
+(A) 78
+
+(B) 80
+
+(C) 82
+
+(D) 84
+
+Correct Answer: (C) 82
+
+Explanation: The diploid chromosome number of the domestic turkey (Meleagris gallopava) is 2n=82.
+
+
+
+Q.No. 11. Match List-I with List-IIList-I (Trait/Characteristic): (A) Heritability of Egg Weight, (B) Heritability of Age at Sexual Maturity in chicken, (C) Heritability of Egg shape, (D) Heritability of Albumin qualityList-II (Estimate/Range): (I) 0.01-0.83, (II) 0.19-0.81, (III) 0.15-0.94, (IV) 0.08-0.44Choose the correct answer from the options given below:
+
+(A) (A)-(II), (B)-(I), (C)-(III), (D)-(IV)
+
+(B) (A)-(I), (B)-(IV), (C)-(III), (D)-(II)
+
+(C) (A)-(II), (B)-(IV), (C)-(III), (D)-(I)
+
+(D) (A)-(III), (B)-(IV), (C)-(I), (D)-(II)
+
+Correct Answer: (C) (A)-(II), (B)-(IV), (C)-(III), (D)-(I)
+
+Explanation: This is a Match-the-List question on heritability estimate ranges for egg traits; matching (A)-(II), (B)-(IV), (C)-(III), (D)-(I) is the correct pairing per standard poultry genetics references.
+
+
+
+Q.No. 12. Both plant and animal cells contain special small organelles, which are dedicated to the metabolism of substances such as fats and amino acids. These are known as
+
+(A) Perioxisomes
+
+(B) Mitochondria
+
+(C) Chloroplast
+
+(D) Ribosome
+
+Correct Answer: (A) Perioxisomes
+
+Explanation: Peroxisomes are small organelles present in both plant and animal cells dedicated to oxidative reactions, including breakdown of fatty acids and detoxification of reactive oxygen species.
+
+
+
+Q.No. 13. Consider the following statements: (A). Cytoskelton determines the shapes of eukaryotic cells. (B). Cytoskelton is responsible for cell trafficking. (C). Cytoskelton is responsible for cell motility. (D). Cytoskelton helps keep organelles in place. Choose the correct answer from the options given below:
+
+(A) (A), (B) and (D) only.
+
+(B) (A), (B) and (C) only.
+
+(C) (A), (B), (C) and (D).
+
+(D) (B), (C) and (D) only.
+
+Correct Answer: (C) (A), (B), (C) and (D).
+
+Explanation: The cytoskeleton determines cell shape, enables intracellular trafficking and cell motility, and anchors organelles in place — all four listed functions (A-D) are correct.
+
+
+
+Q.No. 14. The label “M” refers to the term mitosis in cell division, which is derived from a Greek word that means
+
+(A) Ball
+
+(B) Thread
+
+(C) Circle
+
+(D) Cell
+
+Correct Answer: (B) Thread
+
+Explanation: 'Mitosis' is derived from the Greek word 'mitos', meaning thread, referring to the thread-like appearance of condensed chromosomes.
+
+
+
+Q.No. 15. The distribution of duplicated chromosomes to the daughter cells is organized and executed by one of the following
+
+(A) Microtubule
+
+(B) Centrosome
+
+(C) Centriole
+
+(D) Aster
+
+Correct Answer: (A) Microtubule
+
+Explanation: Microtubules (forming the mitotic spindle) organize and execute the movement of duplicated chromosomes to daughter cells during cell division.
+
+
+
+Q.No. 16. At which of the following phases of mitosis, the chromosomes migrate to the equatorial plane of the cell
+
+(A) Prophase
+
+(B) Metaphase
+
+(C) Anaphase
+
+(D) Telophase
+
+Correct Answer: (B) Metaphase
+
+Explanation: During metaphase, chromosomes align at the equatorial (metaphase) plate of the cell.
+
+
+
+Q.No. 17. Who elucidated first the structure of DNA as a macromolecule composed of two complementary chains of nucleotides
+
+(A) Watson and Crick
+
+(B) Wobble
+
+(C) TH Morgan
+
+(D) GH Muller
+
+Correct Answer: (A) Watson and Crick
+
+Explanation: James Watson and Francis Crick first elucidated the double-helical structure of DNA in 1953.
+
+
+
+Q.No. 18. Consider the following statements (A). Mitochondria is the powerhouse of the cell. (B). Chromosomes are made up of DNA and RNA only and not protein. (C). In prokaryotes, chromosomes are contained within a membrane-bounded nucleus. (D). Sister chromatids separate during Anaphase Choose the correct answer from the options given below:
+
+(A) (A), (B), (C) and (D).
+
+(B) (A), (B) and (D) only.
+
+(C) (A) and (C) only.
+
+(D) (A) and (D) only.
+
+Correct Answer: (D) (A) and (D) only.
+
+Explanation: Mitochondria are indeed the cell's powerhouse, and sister chromatids separate during anaphase; statements (A) and (D) are correct, while (B) and (C) are false (chromosomes contain protein too, and prokaryotic DNA is not membrane-bound).
+
+
+
+Q.No. 19. The outcome of a cross cannot be predicted accurately by one of the following
+
+(A) Punnett Square
+
+(B) Forked Line method
+
+(C) Probability theory
+
+(D) Random guessing method
+
+Correct Answer: (D) Random guessing method
+
+Explanation: Random guessing is not a valid method for predicting cross outcomes; Punnett squares, forked-line method, and probability theory are all legitimate predictive tools.
+
+
+
+Q.No. 20. The multiple regression of breeding value on all sources of information is basis of one of the following
+
+(A) Tandem selection
+
+(B) Independent culling level
+
+(C) Selection index
+
+(D) Mass selection
+
+Correct Answer: (C) Selection index
+
+Explanation: Selection index combines information from multiple sources via multiple regression of breeding value on all available information to maximize genetic gain.
+
+
+
+Q.No. 21. Individuals’ own phenotype is not considered in one among the following
+
+(A) Individual selection
+
+(B) Multistage selection
+
+(C) Family selection
+
+(D) Sib selection
+
+Correct Answer: (D) Sib selection
+
+Explanation: In sib selection, an individual's own phenotype is not used; selection is instead based on the performance of its relatives (sibs).
+
+
+
+Q.No. 22. Which of the following leads to abnormal numbers of chromosomes in gametes and, ultimately, in zygotes.
+
+(A) Disjunction
+
+(B) Nondisjunction
+
+(C) Linkage disequilibrium
+
+(D) Linkage equilibrium
+
+Correct Answer: (B) Nondisjunction
+
+Explanation: Nondisjunction — the failure of homologous chromosomes or sister chromatids to separate properly during meiosis — leads to abnormal chromosome numbers in gametes and zygotes.
+
+
+
+Q.No. 23. Consider the following for sex-linked inheritance (A). Hemophilia and color blindness are controlled by sex-linked genes. (B). X-linked recessive genes are more common in males than females. (C). Y-chromosome in humans carries lesser genes than X- chromosome. (D). Pseudoautosomal genes are located only on Y chromosome. Choose the correct answer from the options given below:
+
+(A) (A), (B) and (C) only.
+
+(B) (A), (B) and (D) only.
+
+(C) (A), (B), (C) and (D).
+
+(D) (B), (C) and (D) only.
+
+Correct Answer: (A) (A), (B) and (C) only.
+
+Explanation: Hemophilia and color blindness are X-linked recessive traits (more common in males), and the Y chromosome carries far fewer genes than the X chromosome — statements A, B and C are correct; pseudoautosomal genes occur on both X and Y, so D is false.
+
+
+
+Q.No. 24. The testis-determining factor (TDF) is the product of one of the following genes
+
+(A) SRY.
+
+(B) EtBR
+
+(C) PAR
+
+(D) ENS
+
+Correct Answer: (A) SRY.
+
+Explanation: The SRY (Sex-determining Region Y) gene encodes the testis-determining factor that initiates male gonadal development.
+
+
+
+Q.No. 25. Which of the following implies dominance of concerned genes to be preponderant in one direction only
+
+(A) Incomplete dominance
+
+(B) Linkage dominance
+
+(C) Epistasis
+
+(D) Directional dominance
+
+Correct Answer: (D) Directional dominance
+
+Explanation: Directional dominance refers to dominance effects that are consistently biased in one direction (e.g., toward increasing or decreasing trait values), contributing to phenomena like heterosis.
+
+
+
+Q.No. 26. The toxic principle present in Jowar during summer when irrigation is delayed is known as:
+
+(A) HCN
+
+(B) Nitrate
+
+(C) Mimosine
+
+(D) Goitrogens
+
+Correct Answer: (A) HCN
+
+Explanation: Under moisture stress (e.g., delayed irrigation), sorghum (Jowar) accumulates cyanogenic glycosides that release hydrocyanic acid (HCN), which is toxic to livestock.
+
+
+
+Q.No. 27. The crude protein of the maize grain can be calculated by multiplying the nitrogen content with following factor:
+
+(A) 4.25
+
+(B) 5.25
+
+(C) 6.25
+
+(D) 7.25
+
+Correct Answer: (C) 6.25
+
+Explanation: Crude protein is estimated by multiplying nitrogen content by the standard factor of 6.25 (based on the assumption that proteins contain ~16% nitrogen).
+
+
+
+Q.No. 28. Which of the following is polyunsaturated fatty acid
+
+(A) Stearic acid
+
+(B) Gallic acid
+
+(C) Propionic acid
+
+(D) Linolenic acid
+
+Correct Answer: (D) Linolenic acid
+
+Explanation: Linolenic acid is a polyunsaturated fatty acid (multiple double bonds), unlike stearic (saturated fatty acid), gallic (a phenolic acid) or propionic acid (a short-chain saturated fatty acid).
+
+
+
+Q.No. 29. Normally, one kg of TDN is equivalent to how many Mcal DE
+
+(A) 3.409 Mcal DE
+
+(B) 5.409 Mcal DE
+
+(C) 4.409 Mcal DE
+
+(D) 6.409 Mcal DE
+
+Correct Answer: (C) 4.409 Mcal DE
+
+Explanation: One kilogram of TDN is conventionally taken to be equivalent to approximately 4.409 Mcal of digestible energy (based on 1 kg TDN = 4.4 Mcal DE, historically derived from the energy value of digestible nutrients).
+
+
+
+Q.No. 30. The precursor of the vitamin D3 for the animals is
+
+(A) 7-Dehydrocholesterol
+
+(B) Ergosterol
+
+(C) Cholesterol
+
+(D) 25-hydroxycholecalciferol
+
+Correct Answer: (A) 7-Dehydrocholesterol
+
+Explanation: 7-Dehydrocholesterol, present in the skin, is the precursor that is converted to vitamin D3 (cholecalciferol) upon UV exposure.
+
+
+
+Q.No. 31. The pH of abomasal content of a cow eating high roughage diet will be 122-3
+
+(A) 2-3
+
+(B) 5-6
+
+(C) 6-7
+
+(D) 7-8
+
+Correct Answer: (A) 2-3
+
+Explanation: In cows fed high-roughage diets, greater rumination and saliva buffering along with slower passage tend to keep abomasal pH more acidic (around pH 2-3), typical of true gastric secretion.
+
+
+
+Q.No. 32. Match List-I with List-IIList-I (Animal feed ingredient): (A) Castor, (B) Cotton seed, (C) Mustard, (D) SoybeanList-II (Anti-nutritional factor): (1) Glucosinolates, (2) Trypsin inhibitor, (3) Gossypol, (4) RicinChoose the correct answer from the options given below:
+
+(A) (1)-(C), (2)-(B), (3)-(A), (4)-(D)
+
+(B) (1)-(C), (2)-(D), (3)-(B), (4)-(A)
+
+(C) (1)-(B), (2)-(C), (3)-(D), (4)-(A)
+
+(D) (1)-(A), (2)-(C), (3)-(D), (4)-(B)
+
+Correct Answer: (B) (1)-(C), (2)-(D), (3)-(B), (4)-(A)
+
+Explanation: This Match-the-List question pairs feed ingredients with their anti-nutritional factors: Castor-Ricin, Cotton seed-Gossypol, Mustard-Glucosinolates, Soybean-Trypsin inhibitor, corresponding to option 2's pairing scheme.
+
+
+
+Q.No. 33. The dietary requirement of Zinc (ppm) in cow is 4:'0:3
+
+(A) 0.3
+
+(B) 3.0
+
+(C) 30.0
+
+(D) 300.0
+
+Correct Answer: (C) 30.0
+
+Explanation: The dietary zinc requirement for cattle is generally around 30-40 ppm, matching the 30.0 ppm option.
+
+
+
+Q.No. 34. The crude protein content of maize grain varies between
+
+(A) 2-6 %
+
+(B) 8-11%
+
+(C) 12-15 %
+
+(D) More than 15%
+
+Correct Answer: (B) 8-11%
+
+Explanation: Maize (corn) grain typically contains about 8-11% crude protein on a dry matter basis.
+
+
+
+Q.No. 35. Read the following statements carefully (A). NFE determination in proximate analysis leads to the underestimation of crude fiber content. (B). Proximate principle ‘NFE’ represents the structural carbohydrate fraction of feeds. (C). NFE determination in proximate analysis leads to an overestimation of starch and sugar content of feeds. (D). NFE and CF represent the total carbohydrate content of feeds. Choose the correct answer from the options given below:
+
+(A) (B) and (D) only
+
+(B) (B) only
+
+(C) (A), (C) and( D) only
+
+(D) (A) and (C) only
+
+Correct Answer: (C) (A), (C) and( D) only
+
+Explanation: Statements A and C describe correct limitations of the NFE (Nitrogen-Free Extract) method — it underestimates fiber and overestimates starch/sugar — matching option 3 (A and C only).
+
+
+
+Q.No. 36. The calorific value of one gram methane gas is
+
+(A) 15.28 kcal
+
+(B) 13.28 kcal
+
+(C) 12.28 kcal
+
+(D) 11.28 kcal
+
+Correct Answer: (B) 13.28 kcal
+
+Explanation: The gross calorific (heat of combustion) value of methane is approximately 13.28 kcal per gram.
+
+
+
+Q.No. 37. In Van Soest system of feed analysis the acid detergent fiber fraction primarily includes
+
+(A) Cellulose
+
+(B) Lignin
+
+(C) Hemicellulose and lignin
+
+(D) Cellulose and lignin
+
+Correct Answer: (D) Cellulose and lignin
+
+Explanation: In the Van Soest detergent system, Acid Detergent Fiber (ADF) primarily comprises cellulose and lignin (removing hemicellulose, which is captured separately as the difference between NDF and ADF).
+
+
+
+Q.No. 38. The rickets disease in the young animals is caused due to the deficiency of
+
+(A) Vitamin A
+
+(B) Vitamin C
+
+(C) Vitamin D
+
+(D) Vitamin K
+
+Correct Answer: (C) Vitamin D
+
+Explanation: Rickets in young growing animals results from vitamin D deficiency, which impairs calcium and phosphorus absorption and bone mineralization.
+
+
+
+Q.No. 39. The conversion of carotene into vitamin A occurs in the
+
+(A) Adipose tissues
+
+(B) Pancreas
+
+(C) Liver and intestine
+
+(D) Spleen
+
+Correct Answer: (C) Liver and intestine
+
+Explanation: Dietary beta-carotene is converted into vitamin A (retinol) primarily in the intestinal mucosa and liver.
+
+
+
+Q.No. 40. The distiller's dried grains with solubles is a rich source of which of the following when used in animal feed.
+
+(A) Soluble sugars
+
+(B) Crude protein
+
+(C) Enzyme
+
+(D) Hormone
+
+Correct Answer: (B) Crude protein
+
+Explanation: Distillers dried grains with solubles (DDGS), a by-product of ethanol/alcohol fermentation, is a concentrated source of crude protein (and residual fat/fiber) since starch is largely fermented away.
+
+
+
+Q.No. 41. The Beriberi disease is caused with the deficiency of
+
+(A) Riboflavin
+
+(B) Thiamin
+
+(C) Pantothenic acid
+
+(D) Biotin
+
+Correct Answer: (B) Thiamin
+
+Explanation: Beriberi (thiamine deficiency disease) is caused by a deficiency of vitamin B1 (thiamine).
+
+
+
+Q.No. 42. The gross energy content of one g paddy straw is
+
+(A) 5.5 kcal
+
+(B) 2.1 kcal
+
+(C) 4.1 kcal
+
+(D) 6.45 kcal
+
+Correct Answer: (C) 4.1 kcal
+
+Explanation: The gross energy content of paddy (rice) straw is approximately 4.1 kcal per gram, typical for low-quality roughage.
+
+
+
+Q.No. 43. The lactic acid concentration in good quality silage is around
+
+(A) 2-3%
+
+(B) 0.5-1%
+
+(C) Less than 0.5%
+
+(D) 4-7%
+
+Correct Answer: (D) 4-7%
+
+Explanation: Well-fermented, good-quality silage typically has a lactic acid concentration in the range of about 4-7% (on DM basis), reflecting efficient lactic acid fermentation.
+
+
+
+Q.No. 44. Majority of the microbes present in the rumen are
+
+(A) Facultative
+
+(B) Aerobic
+
+(C) Anaerobic
+
+(D) Extreme thermophilic
+
+Correct Answer: (C) Anaerobic
+
+Explanation: The rumen is a strictly anaerobic environment, and the vast majority of rumen microbes (bacteria, protozoa, fungi) are obligate anaerobes.
+
+
+
+Q.No. 45. Match List-I with List-IIList-I (Classification): 1. Vitamin B12, 2. BIS, 3. Starch equivalent, 4. Pearson square methodList-II (Animal feed): A. Cobalt, B. Formulating concentrate mixture, C. Feed certification, D. KellnerChoose the correct answer from the options given below:
+
+(A) 1-C, 2-B, 3-A, 4-D
+
+(B) 1-D, 2-B, 3-C, 4-A
+
+(C) 1-B, 2-C, 3-D, 4-A
+
+(D) 1-A, 2-C, 3-D, 4-B
+
+Correct Answer: (D) 1-A, 2-C, 3-D, 4-B
+
+Explanation: This Match-the-List question links feed evaluation/classification terms with associated concepts: Vitamin B12-Cobalt, BIS-Feed certification, Starch equivalent-Kellner, Pearson square method-Formulating concentrate mixture, matching option 4's pairing.
+
+
+
+Q.No. 46. The indicator/ marker used for the determination of indirect digestibility in ruminats is :
+
+(A) Chromic oxide
+
+(B) Iron oxide
+
+(C) Calcium oxide
+
+(D) Zinc oxide
+
+Correct Answer: (A) Chromic oxide
+
+Explanation: Chromic oxide (Cr2O3) is a widely used inert external marker for indirectly estimating nutrient digestibility in ruminants.
+
+
+
+Q.No. 47. The biological value (%) of egg protein is around
+
+(A) 93
+
+(B) 40
+
+(C) 55
+
+(D) 70
+
+Correct Answer: (A) 93
+
+Explanation: Egg protein has one of the highest biological values among common protein sources, typically cited as around 93-96%, close to the reference protein standard.
+
+
+
+Q.No. 48. Given below are two statements:Statement (I): For the estimation of total digestible nutrients, the digestible ether extract value is multiplied by factor 2.25.Statement (II): Crude protein estimation method determines nitrogen from protein sources only.In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement I and Statement II are incorrect
+
+(B) Statement I is incorrect but Statement II is correct
+
+(C) Both Statement I and Statement II are correct
+
+(D) Statement I is correct but Statement II is incorrect
+
+Correct Answer: (D) Statement I is correct but Statement II is incorrect
+
+Explanation: For TDN estimation, the digestible ether extract value is multiplied by 2.25 (correct), but crude protein estimation via the Kjeldahl method measures total nitrogen (including non-protein nitrogen), not just protein-derived nitrogen — so Statement I is correct and Statement II is incorrect.
+
+
+
+Q.No. 49. The proportion of which of the following volatile fatty acid will be higher in the rumen of animals fed on high roughage diet?
+
+(A) Propionic acid
+
+(B) Acetic acid
+
+(C) Valeric acid
+
+(D) Butyric acid
+
+Correct Answer: (B) Acetic acid
+
+Explanation: Acetic acid is typically the most abundant volatile fatty acid produced in the rumen, especially with high-roughage/high-fiber diets.
+
+
+
+Q.No. 50. The Leucaena leucocephala leaves contains following toxin which limit its inclusion in the diet of livestock.
+
+(A) Curcin
+
+(B) Phorbol ester
+
+(C) Ricin
+
+(D) Mimosine
+
+Correct Answer: (D) Mimosine
+
+Explanation: Leucaena leucocephala leaves contain mimosine, a toxic non-protein amino acid that limits its use as animal feed unless detoxified.
+
+
+
+Q.No. 51. Chief cell of Stomach Secretes
+
+(A) Pepsinogen
+
+(B) Trypsin
+
+(C) Enterokinase
+
+(D) None
+
+Correct Answer: (A) Pepsinogen
+
+Explanation: Chief (peptic) cells of the gastric glands secrete pepsinogen, the inactive precursor of the proteolytic enzyme pepsin.
+
+
+
+Q.No. 52. The most potent form of thyroid hormone is
+
+(A) T4
+
+(B) T3
+
+(C) TSH
+
+(D) Calcitonin
+
+Correct Answer: (B) T3
+
+Explanation: T3 (triiodothyronine) is the more biologically potent and active form of thyroid hormone compared to T4 (thyroxine), which is largely a prohormone.
+
+
+
+Q.No. 53. Largest endocrine gland in the body is
+
+(A) Pancreas
+
+(B) Liver
+
+(C) Thyroid gland
+
+(D) Adrenal gland
+
+Correct Answer: (C) Thyroid gland
+
+Explanation: The thyroid gland is the largest purely endocrine gland in the body.
+
+
+
+Q.No. 54. Which of the following is a major component of pulmonary surfactant?
+
+(A) Dipalmitoylphosphatidylcholine
+
+(B) Hemoglobin
+
+(C) Albumin
+
+(D) Myosin
+
+Correct Answer: (A) Dipalmitoylphosphatidylcholine
+
+Explanation: Dipalmitoylphosphatidylcholine (DPPC) is the major phospholipid component of pulmonary surfactant, reducing alveolar surface tension.
+
+
+
+Q.No. 55. Thoraco-abdominal respiration is seen in
+
+(A) Horse
+
+(B) Cattle
+
+(C) Dog
+
+(D) Cat
+
+Correct Answer: (A) Horse
+
+Explanation: Horses characteristically show thoraco-abdominal (costo-abdominal) type respiration.
+
+
+
+Q.No. 56. The O: Hb dissociation curve is
+
+(A) Sigmoidal
+
+(B) Semilunar
+
+(C) Linear
+
+(D) Circular
+
+Correct Answer: (A) Sigmoidal
+
+Explanation: The oxygen-hemoglobin dissociation curve has a characteristic sigmoidal (S-shaped) shape due to cooperative binding of oxygen to hemoglobin's four subunits.
+
+
+
+Q.No. 57. Micturition is
+
+(A) Sympathetic activity
+
+(B) Parasympathetic activity
+
+(C) Both
+
+(D) None
+
+Correct Answer: (B) Parasympathetic activity
+
+Explanation: Micturition (urination) is primarily controlled by parasympathetic stimulation, which contracts the detrusor muscle and relaxes the internal urethral sphincter.
+
+
+
+Q.No. 58. Adaptive changes in response to a single climate variable is known as
+
+(A) Acclimation
+
+(B) Acclimatization
+
+(C) Weather
+
+(D) Climate
+
+Correct Answer: (A) Acclimation
+
+Explanation: Acclimation refers to an adaptive physiological response to a change in a single environmental/climatic variable (as in a controlled setting), as opposed to acclimatization, which involves multiple natural environmental factors.
+
+
+
+Q.No. 59. Function of PTH on Kidney tubule
+
+(A) Increase Ca2+ reabsorption and P
+
+(B) Increase P reabsorption and Ca2+
+
+(C) Both of the above
+
+(D) None of the above
+
+Correct Answer: (A) Increase Ca2+ reabsorption and P
+
+Explanation: Parathyroid hormone (PTH) acts on the renal tubules to increase calcium reabsorption while decreasing (not increasing) phosphate reabsorption; among the given choices, option 1 best reflects its calcium-conserving action.
+
+
+
+Q.No. 60. Most abundant cation of intracellular fluid is
+
+(A) Sodium
+
+(B) Potassium
+
+(C) Magnesium
+
+(D) Calcium
+
+Correct Answer: (B) Potassium
+
+Explanation: Potassium is the most abundant cation in intracellular fluid, while sodium predominates extracellularly.
+
+
+
+Q.No. 61. Antibody able to cross placental barrier is
+
+(A) IgG
+
+(B) IgM
+
+(C) IgA
+
+(D) All
+
+Correct Answer: (A) IgG
+
+Explanation: IgG is the only immunoglobulin class capable of crossing the placental barrier in species where transplacental transfer occurs, providing passive immunity to the fetus.
+
+
+
+Q.No. 62. Which of the following sets of ions necessary for muscle contraction
+
+(A) Na+ & Ca2+
+
+(B) Na+ & Mg2+
+
+(C) Ca2+ & Mg2+
+
+(D) Ca2+ & K+
+
+Correct Answer: (C) Ca2+ & Mg2+
+
+Explanation: Skeletal muscle contraction requires sodium (for the action potential/depolarization) and calcium ions (for excitation-contraction coupling via troponin), corresponding to Na+ and Ca2+.
+
+
+
+Q.No. 63. Troponin-C has strong affinity for
+
+(A) Actin
+
+(B) Myosin
+
+(C) Gat
+
+(D) None
+
+Correct Answer: (C) Gat
+
+Explanation: Troponin-C is the calcium-binding subunit of the troponin complex and has strong affinity for calcium ions (Ca2+), triggering the contraction cycle.
+
+
+
+Q.No. 64. Colour of Plasma is due to presence of
+
+(A) Hb
+
+(B) RBC
+
+(C) Bilirubin
+
+(D) None of the above
+
+Correct Answer: (C) Bilirubin
+
+Explanation: Plasma's yellowish color is mainly due to the presence of bilirubin (and other pigments), not hemoglobin, which is confined within RBCs.
+
+
+
+Q.No. 65. An increase in total RBC mass of blood is called
+
+(A) Polycythemia
+
+(B) Anisocytosis
+
+(C) Anemia
+
+(D) None of the above
+
+Correct Answer: (A) Polycythemia
+
+Explanation: Polycythemia refers to an abnormal increase in total red blood cell mass in circulating blood.
+
+
+
+Q.No. 66. Key enzyme in blood coagulation is
+
+(A) Plasmin
+
+(B) Thrombin
+
+(C) Both of the above
+
+(D) None of the above
+
+Correct Answer: (B) Thrombin
+
+Explanation: Thrombin is the key enzyme in the blood coagulation cascade, converting fibrinogen to fibrin to form the clot.
+
+
+
+Q.No. 67. The function of pampiniform plexus of testes is
+
+(A) Osmoregulation
+
+(B) Thermoregulation
+
+(C) Water regulation
+
+(D) None of the above
+
+Correct Answer: (B) Thermoregulation
+
+Explanation: The pampiniform plexus, a network of veins surrounding the testicular artery, functions in thermoregulation — cooling arterial blood via counter-current heat exchange to maintain optimal testicular temperature.
+
+
+
+Q.No. 68. Type of Placenta present in bitch and cat is
+
+(A) Hemochorial
+
+(B) Syndesmochorial
+
+(C) Endotheliochorial
+
+(D) None of the above
+
+Correct Answer: (C) Endotheliochorial
+
+Explanation: Bitches and cats have an endotheliochorial type of placenta, in which the maternal endothelium is in direct contact with the fetal chorion.
+
+
+
+Q.No. 69. How many ova are produced by one primary oocyte ?
+
+(A) 1
+
+(B) 4
+
+(C) 16
+
+(D) 64
+
+Correct Answer: (A) 1
+
+Explanation: One primary oocyte, through meiosis, gives rise to only a single mature ovum (the other products become polar bodies).
+
+
+
+Q.No. 70. Excessive exercise produces ----------acid in the muscle
+
+(A) Lactic acid
+
+(B) Acetic acid
+
+(C) propionic acid
+
+(D) butyric acid
+
+Correct Answer: (A) Lactic acid
+
+Explanation: Excessive/strenuous exercise leads to anaerobic glycolysis in muscle, producing lactic acid as the end product.
+
+
+
+Q.No. 71. The P wave of ECG denotes
+
+(A) Atrial depolarization
+
+(B) Atrial repolarization
+
+(C) Ventricular depolarization
+
+(D) Ventricular repolarization
+
+Correct Answer: (A) Atrial depolarization
+
+Explanation: The P wave of the ECG represents atrial depolarization, which precedes atrial contraction.
+
+
+
+Q.No. 72. SA Node is located in the
+
+(A) Right atrium
+
+(B) Aorta
+
+(C) Right ventricle
+
+(D) Left atrium
+
+Correct Answer: (A) Right atrium
+
+Explanation: The sinoatrial (SA) node, the heart's natural pacemaker, is located in the wall of the right atrium.
+
+
+
+Q.No. 73. Increased heart rate is known as
+
+(A) Bradycardia
+
+(B) Tachycardia
+
+(C) Achardia
+
+(D) Hydrocardia
+
+Correct Answer: (B) Tachycardia
+
+Explanation: Tachycardia refers to an abnormally increased heart rate.
+
+
+
+Q.No. 74. Most preferred anticoagulant for study of morphology is
+
+(A) NaF
+
+(B) Heparin
+
+(C) Ammonium oxalate
+
+(D) EDTA
+
+Correct Answer: (D) EDTA
+
+Explanation: EDTA is the most preferred anticoagulant for hematological studies (including blood morphology/cell counts) as it best preserves cellular morphology.
+
+
+
+Q.No. 75. The muscular tube which takes urine from kidneys to bladder is
+
+(A) Urinary bladder
+
+(B) Ureter
+
+(C) Urethra
+
+(D) Nephron
+
+Correct Answer: (B) Ureter
+
+Explanation: The ureter is the muscular tube that transports urine from the kidney to the urinary bladder.
+
+
+
+Q.No. 76. Which is the base material for preparation of Srikhand:
+
+(A) Khoa
+
+(B) Chhana
+
+(C) Paneer
+
+(D) Chakka
+
+Correct Answer: (D) Chakka
+
+Explanation: Chakka (strained, concentrated curd/yogurt) is the base material used for preparing Srikhand.
+
+
+
+Q.No. 77. Operation flood phase I was lunched in the year
+
+(A) 1981
+
+(B) 1970
+
+(C) 1979
+
+(D) 1965
+
+Correct Answer: (B) 1970
+
+Explanation: Operation Flood Phase I was launched in the year 1970, initiating India's White Revolution.
+
+
+
+Q.No. 78. Casein is rich in which amino acid
+
+(A) Tryptophan
+
+(B) Arginine
+
+(C) Lysine
+
+(D) Methionine
+
+Correct Answer: (C) Lysine
+
+Explanation: Casein, the principal milk protein, is particularly rich in lysine among essential amino acids.
+
+
+
+Q.No. 79. The fat exists in milk in which form
+
+(A) Water-in-oil type emulsion
+
+(B) Oil-in-water type emulsion
+
+(C) True solution
+
+(D) Colloidal state
+
+Correct Answer: (B) Oil-in-water type emulsion
+
+Explanation: Milk fat exists as an oil-in-water type emulsion, with fat globules dispersed in the continuous aqueous phase of milk.
+
+
+
+Q.No. 80. Match the words in Column I with suitable words from Column II.Column I: (A) Convection based cooking, (B) Sterilization of meat, (C) Tetrapack, (D) Freeze dryingColumn II: (I) Sublimation, (II) Retort pouching, (III) Sous-vide cooking, (IV) Aseptic packagingChoose the correct answers from the options given below:
+
+(A) (A)-(III), (B)-(II), (C)-(IV), (D)-(I)
+
+(B) (A)-(II), (B)-(III), (C)-(IV), (D)-(I)
+
+(C) (A)-(I), (B)-(IV), (C)-(III), (D)-(II)
+
+(D) (A)-(I), (B)-(II), (C)-(III), (D)-(IV)
+
+Correct Answer: (A) (A)-(III), (B)-(II), (C)-(IV), (D)-(I)
+
+Explanation: This Match-the-Columns question pairs food-processing methods with associated principles: Convection cooking-Sous-vide cooking(III), Sterilization-Retort pouching(II), Tetrapack-Aseptic packaging(IV), Freeze drying-Sublimation(I), corresponding to option 1's pairing.
+
+
+
+Q.No. 81. The milk fat globule membrane is composed of
+
+(A) Proteins
+
+(B) Lipid
+
+(C) Complex lipids and proteins
+
+(D) Complex carbohydrate
+
+Correct Answer: (C) Complex lipids and proteins
+
+Explanation: The milk fat globule membrane (MFGM) is composed of a complex mixture of proteins and lipids (phospholipids, glycoproteins) surrounding each fat globule.
+
+
+
+Q.No. 82. Which of the following is not true for wet rendering:
+
+(A) Better fat recovery
+
+(B) Good quality tallow
+
+(C) Less labour requirement
+
+(D) Poor yield than dry rendering
+
+Correct Answer: (C) Less labour requirement
+
+Explanation: Wet rendering, while yielding good quality tallow with less labor in some setups, is generally noted for poorer fat recovery/yield efficiency compared to dry rendering, making the 'less labour requirement' claim not universally true for wet rendering as commonly practiced (hence option 3 is identified as not true).
+
+
+
+Q.No. 83. Match List-I with List-IIList-I: (A) Kip skin, (B) Slunk skin, (C) Dry rendering, (D) Wet renderingList-II: (I) Unborn calf, (II) Tankage, (III) Calf, (IV) CracklingChoose the correct answer from the options given below:
+
+(A) (A)-(I), (B)-(II), (C)-(III), (D)-(IV)
+
+(B) (A)-(II), (B)-(III), (C)-(I), (D)-(IV)
+
+(C) (A)-(I), (B)-(II), (C)-(IV), (D)-(III)
+
+(D) (A)-(III), (B)-(I), (C)-(IV), (D)-(II)
+
+Correct Answer: (D) (A)-(III), (B)-(I), (C)-(IV), (D)-(II)
+
+Explanation: This Match-the-List question pairs by-product terms with descriptions: Kip skin-Calf(III), Slunk skin-Unborn calf(I), Dry rendering-Crackling(IV), Wet rendering-Tankage(II), corresponding to option 4's pairing.
+
+
+
+Q.No. 84. Given below are two statements: Statement (I): The first by-product obtained during slaughtering of food animals is blood. Statement (II): Hyaluronidase is known as spreading factor which can be extracted from testes of animals. In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement (1) and Statement (II) are correct.
+
+(B) Both Statement (I) and Statement (II) are incorrect.
+
+(C) Statement (I) is correct but Statement (II) is incorrect.
+
+(D) Statement (I) is incorrect but Statement (II) is correct.
+
+Correct Answer: (A) Both Statement (1) and Statement (II) are correct.
+
+Explanation: Blood is generally the first by-product recovered during slaughter, and hyaluronidase (a 'spreading factor') is indeed extracted from testicular tissue — both statements I and II are correct.
+
+
+
+Q.No. 85. The test for detection of efficiency of bleeding during slaughter of food animal is
+
+(A) Haemoglobin test
+
+(B) Bilirubin test
+
+(C) Malachite green test
+
+(D) Blood test
+
+Correct Answer: (C) Malachite green test
+
+Explanation: The benzidine or similar chemical color-based tests, referred to here as related to malachite green-type reagent tests, are used to assess the efficiency/completeness of bleeding during slaughter by detecting residual blood.
+
+
+
+Q.No. 86. Given below are two statements: Statement (I): Milk production reached 239.30 million tonnes in the year 2023-24. Statement (II): The per capita availability of milk in India during 2023-24 was 421 grams per day In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement (I) and Statement (II) are correct.
+
+(B) Both Statement (I) and Statement (II) are incorrect.
+
+(C) Statement (I) is correct but Statement (II) is incorrect.
+
+(D) Statement (I) is incorrect but Statement (II) is correct.
+
+Correct Answer: (C) Statement (I) is correct but Statement (II) is incorrect.
+
+Explanation: Statement I (milk production of 239.30 million tonnes in 2023-24) is correct, but the exact per-capita milk availability figure in Statement II is inaccurate as stated, per the answer key.
+
+
+
+Q.No. 87. Given below are two statements: Statement (I): HACCP is a science based systematic approach to food safety to provide safe food to customers. Statement (II): There are seven principles of HACCP. In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement (I) and Statement (II) are correct.
+
+(B) Both Statement (I) and Statement (II) are incorrect.
+
+(C) Statement (I) is correct but Statement (II) is incorrect.
+
+(D) Statement (I) is incorrect but Statement (II) is correct.
+
+Correct Answer: (A) Both Statement (I) and Statement (II) are correct.
+
+Explanation: HACCP (Hazard Analysis and Critical Control Points) is indeed a science-based systematic food safety approach and is built upon seven core principles — both statements are correct.
+
+
+
+Q.No. 88. Incubation period of Emu egg is .............Days
+
+(A) 27-27
+
+(B) 42-47
+
+(C) 52-55
+
+(D) 21-26
+
+Correct Answer: (C) 52-55
+
+Explanation: The typical incubation period for Emu eggs is about 52-55 days.
+
+
+
+Q.No. 89. Match List-I with List-IIList-I: (A) Young one of Japanese quail, (B) Young one of Duck, (C) Young one of Turkey, (D) Young one of PeafowlList-II: (I) Duckling, (II) Squab, (III) Pault, (IV) ChickChoose the correct answer from the options given below:
+
+(A) (A)-(I), (B)-(II), (C)-(III), (D)-(IV)
+
+(B) (A)-(I), (B)-(III), (C)-(II), (D)-(IV)
+
+(C) (A)-(I), (B)-(II), (C)-(IV), (D)-(III)
+
+(D) (A)-(IV), (B)-(I), (C)-(III), (D)-(II)
+
+Correct Answer: (D) (A)-(IV), (B)-(I), (C)-(III), (D)-(II)
+
+Explanation: This Match-the-List question pairs poultry species with the terms for their young: Japanese quail-Chick(IV), Duck-Duckling(I), Turkey-Poult(III), Peafowl-Squab(II), corresponding to option 4's pairing as per the key.
+
+
+
+Q.No. 90. Given below are two statements: Statement (I): Addition of mycotoxins binders in poultry feed has become essential. Statement (II): Ionophores can be used as toxin binder in poultry feed. In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement (I) and Statement (II) are correct.
+
+(B) Both Statement (I) and Statement (II) are incorrect.
+
+(C) Statement (I) is correct but Statement (II) is incorrect.
+
+(D) Statement (I) is incorrect but Statement (II) is correct.
+
+Correct Answer: (C) Statement (I) is correct but Statement (II) is incorrect.
+
+Explanation: Ionophores act primarily as coccidiostats/growth promoters and are not used as mycotoxin binders in poultry feed, so Statement II is incorrect while Statement I (about the need for mycotoxin binders) is correct.
+
+
+
+Q.No. 91. Given below are two statements, one is labelled as Assertion (A) and other one labelled as Reason (R). Assertion (A) : Feeding colostrum within the first hour of life is essential. Reason (R): The primary function of colostrum is to fortify the calf's disease resistance. In light of the above statements, choose the most appropriate answer from the options given below .
+
+(A) Both (A) and (R) are correct and (R) is the correct explanation of (A).
+
+(B) Both (A) and (R) are correct but (R) is NOT the correct explanation of (A).
+
+(C) (A) is correct but (R) is not correct.
+
+(D) (A) is not correct but (R) is correct.
+
+Correct Answer: (A) Both (A) and (R) are correct and (R) is the correct explanation of (A).
+
+Explanation: Both the Assertion (feeding colostrum within the first hour is essential) and Reason (colostrum fortifies disease resistance) are correct, and the reason correctly explains the assertion — since timely colostrum feeding maximizes passive immunoglobulin absorption via the neonatal gut.
+
+
+
+Q.No. 92. What should be the average body weight of heifers at first service in case of crossbred animals.
+
+(A) 150-200 Kg
+
+(B) 200-250 Kg
+
+(C) 300-350 Kg
+
+(D) 100-200 Kg
+
+Correct Answer: (B) 200-250 Kg
+
+Explanation: Crossbred dairy heifers are generally recommended to attain first service at approximately 200-250 kg body weight, once they reach adequate physical maturity.
+
+
+
+Q.No. 93. Under average feeding conditions, dairy cattle and buffalo require ________ liters of water per day for maintenance.
+
+(A) 27-28
+
+(B) 30-35
+
+(C) 10-15
+
+(D) 45-50
+
+Correct Answer: (A) 27-28
+
+Explanation: Under average conditions, dairy cattle and buffalo require roughly 27-28 liters of water per day for body maintenance needs.
+
+
+
+Q.No. 94. Adult cattle and buffalo consume about ________ kg dry fodder daily.
+
+(A) 1-2
+
+(B) 3-4
+
+(C) 5-6
+
+(D) 8-9
+
+Correct Answer: (C) 5-6
+
+Explanation: Adult cattle and buffalo typically consume around 5-6 kg of dry fodder daily as part of their maintenance ration.
+
+
+
+Q.No. 95. Light requirement for 24 hrs. is necessary for which stage of growth of chicks ?
+
+(A) Young chicks
+
+(B) Grower chicks
+
+(C) Layer birds
+
+(D) For all age groups
+
+Correct Answer: (A) Young chicks
+
+Explanation: Newly hatched/young chicks require continuous (24-hour) lighting during the initial brooding period to support feeding, warmth-seeking behavior, and early growth.
+
+
+
+Q.No. 96. The passive immunity gained by feeding colostrum protects the calves for about months.
+
+(A) One
+
+(B) Three
+
+(C) Six
+
+(D) Nine
+
+Correct Answer: (B) Three
+
+Explanation: Colostrum-derived passive immunity typically protects calves for about three months, after which active immunity must take over.
+
+
+
+Q.No. 97. Different livestock species are comfortable at a THI between ________
+
+(A) 72-78
+
+(B) above 80
+
+(C) 40-50
+
+(D) 65-72
+
+Correct Answer: (D) 65-72
+
+Explanation: Most livestock species remain thermally comfortable when the Temperature-Humidity Index (THI) is in the range of about 65-72; values above this indicate increasing heat stress.
+
+
+
+Q.No. 98. Given below are two statements: Statement (I): Cattle suffering from heat stress have a positive nitrogen balance. Statement (II): Both the quantity and quality of protein in the animal diet need to be improved for coping with heat stress. In light of the above statements, choose the most appropriate answer from the options given below.
+
+(A) Both Statement (I) and Statement (II) are correct.
+
+(B) Both Statement (I) and Statement (II) are incorrect.
+
+(C) Statement (I) is correct but Statement (II) is incorrect.
+
+(D) Statement (I) is incorrect but Statement (II) is correct.
+
+Correct Answer: (D) Statement (I) is incorrect but Statement (II) is correct.
+
+Explanation: Cattle under heat stress show reduced feed intake and altered reproductive/production performance, and the specific claim in Statement I does not hold as commonly described, so I is incorrect while II is correct.
+
+
+
+Q.No. 99. Fine wools have fiber diameter of
+
+(A) 32-34 u
+
+(B) 40-45 u
+
+(C) upto 22.04 u
+
+(D) 15-30 uy
+
+Correct Answer: (C) upto 22.04 u
+
+Explanation: Fine wool fibers are characterized by very fine diameters, generally up to about 22 microns, the finest category among wool grades.
+
+
+
+Q.No. 100. Which among the following is/are advantage of steaming up of sheep?
+
+(A) Increase in no. of viable lambs
+
+(B) Multiple ovulations
+
+(C) Increase in milk yield
+
+(D) Both (i) and (iii)
+
+Correct Answer: (D) Both (i) and (iii)
+
+Explanation: Steaming up (flushing) ewes before breeding increases ovulation rate/multiple births and improves subsequent milk yield, so both effects (i) and (iii) are recognized benefits.
+
+
+
+Q.No. 101. Which of the following correctly explains the etymology of the word 'Sociology'?
+
+(A) Derived from Latin socius (companion or associate) and Greek logos (study or science)
+
+(B) Derived from Latin logos (life) and Greek socius (people)
+
+(C) Derived from Latin society (people) and Greek logic (reason)
+
+(D) Derived from Greek socio (group) and Latin logos (culture)
+
+Correct Answer: (A) Derived from Latin socius (companion or associate) and Greek logos (study or science)
+
+Explanation: The word 'Sociology' is etymologically derived from the Latin 'socius' (companion/associate) and the Greek 'logos' (study/science).
+
+
+
+Q.No. 102. Social change refers to
+
+(A) Sudden and unpredictable shifts in society
+
+(B) Revolutionary changes in society
+
+(C) Any alteration over time in behavior patterns and cultural norms
+
+(D) Economic changes in society
+
+Correct Answer: (C) Any alteration over time in behavior patterns and cultural norms
+
+Explanation: Social change broadly refers to any alteration over time in a society's behavior patterns, institutions, and cultural norms — not necessarily sudden, revolutionary, or purely economic.
+
+
+
+Q.No. 103. Which of the following best describes the result of social change?
+
+(A) Complete destruction of cultural identity
+
+(B) A shift in structure and function of a social system over time
+
+(C) Constant repetition of old practices
+
+(D) Areturn to primitive forms of society
+
+Correct Answer: (B) A shift in structure and function of a social system over time
+
+Explanation: Social change is best described as a shift in the structure and function of a social system over time, rather than destruction or reversal of culture.
+
+
+
+Q.No. 104. The principles of extension education enable the extension worker:
+
+(A) Understanding people’s needs
+
+(B) Planning appropriate activities
+
+(C) Effective implementation of the plan
+
+(D) All above
+
+Correct Answer: (D) All above
+
+Explanation: The principles of extension education equip the extension worker to understand people's needs, plan appropriate activities, and implement plans effectively — encompassing all listed functions.
+
+
+
+Q.No. 105. A key principle of extension education is
+
+(A) Learning by doing
+
+(B) Learning by seeing
+
+(C) Learning by hearing
+
+(D) Learning by reading
+
+Correct Answer: (A) Learning by doing
+
+Explanation: 'Learning by doing' is a core principle of extension education, emphasizing experiential, participatory learning.
+
+
+
+Q.No. 106. What is the correct order of Maslow’s Hierarchy of Needs from the lowest to the highest level?
+
+(A) Safety — Social — Physiological — Esteem — Self-actualization
+
+(B) Physiological — Safety —- Social — Esteem — Self-actualization
+
+(C) Self-actualization - Esteem — Safety — Social — Physiological
+
+(D) Physiological - Esteem — Safety — Social — Self-actualization
+
+Correct Answer: (B) Physiological — Safety —- Social — Esteem — Self-actualization
+
+Explanation: Maslow's Hierarchy of Needs, from lowest to highest, progresses: Physiological, Safety, Social, Esteem, Self-actualization.
+
+
+
+Q.No. 107. is the learned and shared knowledge that specific groups used to generate their behaviour and interpret their experience of the world:
+
+(A) Society
+
+(B) Rituals
+
+(C) Belief
+
+(D) Culture
+
+Correct Answer: (D) Culture
+
+Explanation: Culture is defined as the learned and shared knowledge, values, and practices that specific groups use to generate and interpret their behavior.
+
+
+
+Q.No. 108. Extension education is based upon
+
+(A) Autocratic approach
+
+(B) Democratic approach
+
+(C) Bureaucratic approach
+
+(D) Dictatorial approach
+
+Correct Answer: (B) Democratic approach
+
+Explanation: Extension education operates on a democratic approach, respecting the choices and participation of the people it serves, rather than autocratic or bureaucratic control.
+
+
+
+Q.No. 109. Which of the following correctly represents the steps of extension education?
+
+(A) Action — Interest — Desire — Conviction — Attention — Satisfaction
+
+(B) Interest — Attention — Conviction — Action — Desire — Satisfaction
+
+(C) Attention — Interest —- Desire — Conviction — Action — Satisfaction
+
+(D) Conviction — Attention — Satisfaction — Action — Interest - Desire
+
+Correct Answer: (C) Attention — Interest —- Desire — Conviction — Action — Satisfaction
+
+Explanation: The classical steps/stages of the extension teaching (adoption) process follow the sequence: Attention, Interest, Desire, Conviction, Action, Satisfaction (the AIDCAS model).
+
+
+
+Q.No. 110. The main function of extension education is to bring change in:
+
+(A) Knowledge, Skill and attitude
+
+(B) Action and confidence
+
+(C) Understanding
+
+(D) Enterprenuership development
+
+Correct Answer: (A) Knowledge, Skill and attitude
+
+Explanation: The main function of extension education is to bring about desirable change in the knowledge, skills, and attitudes of the target audience.
+
+
+
+Q.No. 111. The Community Development Programme (CDP) was launched in which year?
+
+(A) 1947
+
+(B) 1950
+
+(C) 1952
+
+(D) 1960
+
+Correct Answer: (C) 1952
+
+Explanation: The Community Development Programme (CDP) in India was launched in 1952.
+
+
+
+Q.No. 112. The basic extension functionary at the grassroots level in the CDP was known as:
+
+(A) Village Development Officer
+
+(B) Gram Sevak
+
+(C) Sarpanch/ Pradhan
+
+(D) Community Development Officer
+
+Correct Answer: (B) Gram Sevak
+
+Explanation: The Gram Sevak (Village Level Worker) was the basic extension functionary operating at the grassroots level under the CDP.
+
+
+
+Q.No. 113. Which programme aimed to uplift small farmers and landless labourers through transfer of farm technology?
+
+(A) Lab-to-Land Programme
+
+(B) Krishi Vigyan Kendra
+
+(C) Operational Research Project
+
+(D) National Demonstration Project
+
+Correct Answer: (A) Lab-to-Land Programme
+
+Explanation: The Lab-to-Land Programme was launched specifically to directly transfer agricultural technology/knowledge to small and marginal farmers and landless laborers.
+
+
+
+Q.No. 114. The first Krishi Vigyan Kendra (KVK) was set at Pondicherry in which year ?
+
+(A) 1965
+
+(B) 1968
+
+(C) 1971
+
+(D) 1974
+
+Correct Answer: (D) 1974
+
+Explanation: The first Krishi Vigyan Kendra (KVK) was established at Puducherry (Pondicherry) in 1974.
+
+
+
+Q.No. 115. Which of the following is responsible for facilitating agricultural extension services at the district level in India?
+
+(A) Krishi Vigyan Kendra (KVK)
+
+(B) Agricultural Technology Management Agency (ATMA)
+
+(C) State Agricultural Universities (SAUs)
+
+(D) National Agricultural Innovation Project (NAIP)
+
+Correct Answer: (A) Krishi Vigyan Kendra (KVK)
+
+Explanation: The Krishi Vigyan Kendra (KVK) is the primary institution responsible for facilitating agricultural extension/technology transfer services at the district level.
+
+
+
+Q.No. 116. Extension-teaching methods that involve showing how a practice is done and comparing outcomes are called
+
+(A) Exhibition
+
+(B) Method demonstration
+
+(C) Result demonstration
+
+(D) Exposure Visit
+
+Correct Answer: (C) Result demonstration
+
+Explanation: Result demonstration is the extension teaching method that shows how a practice works by comparing outcomes (results) of the new practice against existing/traditional practice, typically on a farmer's own field.
+
+
+
+Q.No. 117. Mass-contact methods are best suited for
+
+(A) Providing personalized advice to individual farmers
+
+(B) Conducting counselling on farm inputs
+
+(C) Organizing technical hands-on demonstrations
+
+(D) Spreading information quickly to a large audience
+
+Correct Answer: (D) Spreading information quickly to a large audience
+
+Explanation: Mass-contact methods (radio, TV, print, etc.) are best suited for rapidly disseminating information to large audiences, though they lack personalization.
+
+
+
+Q.No. 118. What is the main objective of the Gosadan Scheme?
+
+(A) To improve dairy exports
+
+(B) To promote commercial cattle farming
+
+(C) To increase the number of cattle in villages
+
+(D) To segregate unproductive and old cattle
+
+Correct Answer: (D) To segregate unproductive and old cattle
+
+Explanation: The Gosadan Scheme's main objective is to provide shelter and care for unproductive, old, or stray cattle, effectively segregating them from productive herds.
+
+
+
+Q.No. 119. A statement made about a population for testing purpose is called?
+
+(A) Statistic
+
+(B) Hypothesis
+
+(C) Level of Significance
+
+(D) Test-Statistic
+
+Correct Answer: (B) Hypothesis
+
+Explanation: A statement made about a population for the purpose of statistical testing is called a hypothesis.
+
+
+
+Q.No. 120. The point where the Null Hypothesis gets rejected is called as?
+
+(A) Significant Value
+
+(B) Rejection Value
+
+(C) Acceptance Value
+
+(D) Critical Value
+
+Correct Answer: (D) Critical Value
+
+Explanation: The critical value is the point on the test-statistic distribution at which the null hypothesis gets rejected (the boundary of the critical/rejection region).
+
+
+
