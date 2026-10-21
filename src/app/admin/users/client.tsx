@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight, Crown, Sparkles } from "lucide-react";
+import { Search, Download, Users, ArrowLeft, Ban, Trash2, ChevronLeft, ChevronRight, Crown, Sparkles, LifeBuoy, ListChecks } from "lucide-react";
 import Link from "next/link";
 import ConfirmDialog from "@/components/admin/confirm-dialog";
 import { useToast } from "@/components/admin/toast-provider";
@@ -65,12 +65,15 @@ export default function UsersClient({
   page,
   totalPages,
   totalCount,
+  roleCounts,
 }: {
   users: User[];
   currentUserId: string;
   page: number;
   totalPages: number;
   totalCount: number;
+  /** WHOLE-dataset role counts from the server — never derived from this page */
+  roleCounts: Record<string, number>;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -101,14 +104,8 @@ export default function UsersClient({
     });
   }, [users, search, roleFilter]);
 
-  const roleCounts = useMemo(() => {
-    const counts: Record<string, number> = { ALL: users.length };
-    users.forEach((u) => {
-      counts[u.role] = (counts[u.role] || 0) + 1;
-    });
-    return counts;
-  }, [users]);
-
+  // Summary figures come from the server-side platform-wide groupBy; the table
+  // below is only one page (max 50 rows), so nothing here may count `users`.
   const expertCount = EXPERT_ROLES.reduce(
     (sum, r) => sum + (roleCounts[r] || 0),
     0
@@ -202,7 +199,9 @@ export default function UsersClient({
   function handleExport() {
     const headers = ["Name", "Email", "Role", "Banned", "Programme", "Year", "Joined"];
     const escape = (value: string) => `"${value.replace(/"/g, '""')}"`;
-    const rows = users.map((u) => [
+    // Export scope = exactly what the table is showing (this page + filters),
+    // and the filename/toast say so — never presented as all users.
+    const rows = filteredUsers.map((u) => [
       u.name,
       u.email,
       u.role,
@@ -222,10 +221,13 @@ export default function UsersClient({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "users.csv";
+    a.download = `users-page${page}-filtered.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast("Users exported successfully", "success");
+    toast(
+      `Exported ${rows.length} row(s) — current page & filters only (${totalCount} users exist in total)`,
+      "success"
+    );
   }
 
   return (
@@ -267,17 +269,21 @@ export default function UsersClient({
           </div>
           <Button onClick={handleExport} size="sm" className="rounded-xl bg-white text-primary hover:bg-white/90 shadow-md gap-2 font-semibold">
             <Download className="h-4 w-4" />
-            Export
+            Export page
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+          Platform totals — all {totalCount} users, every page
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Total Users", count: roleCounts.ALL, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
           { label: "Students", count: roleCounts.STUDENT || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
           { label: "Animal Owners", count: animalOwnerCount, icon: Users, color: "text-amber-600", bg: "bg-amber-100 dark:bg-amber-900/30" },
-          { label: "Experts", count: expertCount, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
+          { label: "Expert accounts", count: expertCount, icon: Users, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
           { label: "Guests", count: guestCount, icon: Users, color: "text-gray-600", bg: "bg-gray-100 dark:bg-gray-800" },
           { label: "Admins", count: roleCounts.ADMIN || 0, icon: Users, color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30" },
         ].map((item) => (
@@ -297,7 +303,51 @@ export default function UsersClient({
             </CardContent>
           </Card>
         ))}
+        </div>
       </div>
+
+      {/* Paid-student access test checklist (admin review finding 17):
+          admin previews are unrestricted — they never prove the learner journey. */}
+      <Card className="relative overflow-hidden rounded-[1.25rem] border border-primary/5 shadow-sm bg-white">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
+        <CardHeader className="pb-2">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+            <ListChecks className="h-3.5 w-3.5 text-primary" /> Paid-student access test checklist
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Admin previews show everything with no enrolment or payment, so they can
+            never confirm the learner journey. Verify with the three dedicated test
+            accounts — credentials live in{" "}
+            <code className="px-1 bg-muted rounded text-[11px]">scripts/create-access-test-accounts.mjs</code>
+            {" "}— not with your admin session.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-2 text-xs">
+          <ul className="space-y-1.5">
+            <li>
+              □ <strong className="font-mono">access-test-unpaid@vetacademia.in</strong> —
+              paid chapters, materials and mock tests stay locked behind the purchase prompt.
+            </li>
+            <li>
+              □ <strong className="font-mono">access-test-paid-active@vetacademia.in</strong> —
+              every resource in the purchased plan opens without a second payment ask.
+            </li>
+            <li>
+              □ <strong className="font-mono">access-test-paid-expired@vetacademia.in</strong> —
+              expired access prompts renewal; nothing paid stays readable or downloadable.
+            </li>
+            <li>
+              □ Their <strong>TEST</strong> payments stay excluded from revenue totals on{" "}
+              <Link href="/admin/payments" className="text-primary hover:underline">Payments</Link>.
+            </li>
+          </ul>
+          <p className="text-muted-foreground">
+            Accounts missing? Dry-run{" "}
+            <code className="px-1 bg-muted rounded text-[11px]">node --env-file=.env scripts/create-access-test-accounts.mjs</code>,
+            then rerun with <code className="px-1 bg-muted rounded text-[11px]">CONFIRM=apply</code> to create them.
+          </p>
+        </CardContent>
+      </Card>
 
       <Card className="va-card-hover relative overflow-hidden rounded-[1.25rem] border border-primary/5 shadow-sm bg-white">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
@@ -318,6 +368,9 @@ export default function UsersClient({
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
+                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Platform-wide counts · filtering applies to this page only
+                </div>
                 <SelectItem value="ALL">All Roles ({roleCounts.ALL})</SelectItem>
                 <SelectItem value="ADMIN">Admin ({roleCounts.ADMIN || 0})</SelectItem>
                 <SelectItem value="STUDENT">Student ({roleCounts.STUDENT || 0})</SelectItem>
@@ -330,7 +383,7 @@ export default function UsersClient({
                 ))}
               </SelectContent>
             </Select>
-            <Badge variant="secondary" className="rounded-full px-3">{filteredUsers.length} users</Badge>
+            <Badge variant="secondary" className="rounded-full px-3">{filteredUsers.length} shown on this page ({totalCount} total)</Badge>
           </div>
         </CardHeader>
         <CardContent>
@@ -406,6 +459,20 @@ export default function UsersClient({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
+                          <Link
+                            href={`/admin/users/${user.id}`}
+                            aria-label="Open support view"
+                            title="Support view — entitlements, progress, reports"
+                          >
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-xl"
+                              aria-label="Open support view"
+                            >
+                              <LifeBuoy className="h-4 w-4" />
+                            </Button>
+                          </Link>
                           <Button
                             variant="outline"
                             size="icon"

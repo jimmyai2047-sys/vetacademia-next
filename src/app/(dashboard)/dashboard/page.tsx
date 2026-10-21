@@ -81,6 +81,14 @@ export default async function DashboardPage() {
       })
     : null;
 
+  // Finding 14: profile shortcuts land on THIS person's profile — the public
+  // directory (/experts) is not "my profile". No row yet → the apply/editor path.
+  const myProfileHref = expertProfile
+    ? `/experts/${expertProfile.id}`
+    : isExpert
+    ? "/experts/apply"
+    : "/experts";
+
   const joinedYear = new Date(currentUser.createdAt).getFullYear().toString();
 
   const [testAttempts, subjectCount, recentAttempts, allTests] = isStudent
@@ -256,7 +264,7 @@ export default async function DashboardPage() {
                     { href: "/community", label: "Community", desc: "Community groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
                   ]
                 : [
-                    { href: "/experts", label: "My Expert Profile", desc: "Public profile & sessions", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
+                    { href: myProfileHref, label: "My Expert Profile", desc: "Public profile & sessions", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
                     { href: "/consultations", label: "My Consultations", desc: "Manage your bookings", icon: CalendarCheck, color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30" },
                     { href: "/community", label: "Community", desc: "Expert groups & discussions", icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
                     { href: "/vets", label: "Vets Resources", desc: "Practice tools & references", icon: Tractor, color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
@@ -336,7 +344,7 @@ export default async function DashboardPage() {
                   </>
                 ) : (
                   <>
-                    <Link href="/experts">
+                    <Link href={myProfileHref}>
                       <Button className="w-full">View My Profile</Button>
                     </Link>
                     <Link href="/consultations">

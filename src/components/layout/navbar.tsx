@@ -32,7 +32,6 @@ import {
   LogOut,
   LayoutDashboard,
   Search,
-  Shield,
   BookMarked,
   Microscope,
   Award,
@@ -187,7 +186,25 @@ export default function Navbar() {
   const isStudent = role === "STUDENT";
   const isAnimalOwner = role === "ANIMAL_OWNER";
   const isExpert = isExpertRole(role);
-  const isGuest = role === "GUEST";
+
+  // Finding 14: "My Profile" must land on the signed-in expert's OWN profile.
+  // Experts may have no row yet (self-registration) — then the apply/editor path.
+  const [ownExpertId, setOwnExpertId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isExpert) return;
+    let alive = true;
+    fetch("/api/experts/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (alive) setOwnExpertId(d?.expert?.id ?? null);
+      })
+      .catch(() => {
+        /* keep null → apply fallback */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [isExpert]);
 
   // UI-only audience mode: "student" (default) or "vet" (practitioner).
   // It reorders the corner menu in the nav and is remembered per browser —
@@ -217,10 +234,10 @@ export default function Navbar() {
     ? []
     : isStudent
     ? [
+        // Unique destinations only — study tools (Mock Tests, Flashcards,
+        // Demo) already live in the Prepare dropdown above.
         { href: "/syllabus", label: "My Syllabus" },
-        { href: "/mock-tests", label: "Mock Tests" },
-        { href: "/flashcards", label: "Flashcards" },
-        { href: "/demo", label: "Free Demo" },
+        { href: "/prepare", label: "My Prep" },
       ]
     : isAnimalOwner
     ? [
@@ -232,7 +249,10 @@ export default function Navbar() {
       ]
     : isExpert
     ? [
-        { href: "/experts", label: "My Profile" },
+        {
+          href: ownExpertId ? `/experts/${ownExpertId}` : "/experts/apply",
+          label: "My Profile",
+        },
         { href: "/consultations", label: "My Consultations" },
         { href: "/community", label: "Community" },
       ]
@@ -250,6 +270,10 @@ export default function Navbar() {
     const q = search.trim();
     if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
   }
+
+  // Admin screens run in their own shell (finding 15): the public header
+  // would only crowd the tables and overlap the sidebar controls.
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -275,17 +299,22 @@ export default function Navbar() {
           </Link>
 
         {/* Desktop Navigation */}
+        {/* Compact bar from xl: only the core menus + "More". The full set
+            (Animal Owner, Vets, Resources, About) returns at 2xl, where the
+            bar has room for it. Home lives on the logo. */}
         <nav className="hidden xl:flex items-center gap-1 min-w-0">
-          <Link href="/">
-            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><Home className="h-4 w-4" />Home</Button>
-          </Link>
-
-          <Link href="/farmers">
-            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><Tractor className="h-4 w-4" />Animal Owner</Button>
-          </Link>
-          <Link href="/vets">
-            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
-          </Link>
+          <div className="hidden 2xl:flex items-center gap-1">
+            <Link href="/farmers">
+              <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><Tractor className="h-4 w-4" />Animal Owner</Button>
+            </Link>
+            {/* Hidden in vet mode — the Vet Corner dropdown already opens with
+                the same /vets destination. */}
+            {navMode !== "vet" && (
+              <Link href="/vets">
+                <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm"><HeartPulse className="h-4 w-4" />Vets</Button>
+              </Link>
+            )}
+          </div>
 
           {/* Audience toggle: Student <-> Vet (practitioner). UI preference only. */}
           <div
@@ -351,9 +380,8 @@ export default function Navbar() {
                       <p className="text-xs text-muted-foreground">Diploma basket (10 states) + 3 Degrees</p>
                     </div>
                   </div>
-                  <Link href={DIPLOMA_UMBRELLA.href} onClick={closeAllMenus} className="hidden sm:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold text-white hover:bg-primary/90 transition-colors">
-                    {DIPLOMA_UMBRELLA.short} <ArrowRight className="h-3 w-3" />
-                  </Link>
+                  {/* Diploma hub pill removed — the umbrella card directly below
+                      already links to the same /diplomas destination. */}
                 </div>
               </div>
               <div className="relative grid sm:grid-cols-[1.2fr_1fr] gap-0 max-h-[420px] overflow-y-auto">
@@ -636,24 +664,18 @@ export default function Navbar() {
                 <p className="rounded-xl bg-teal-50 border border-teal-200 px-3 py-2 text-[11px] font-medium text-teal-800">
                   Diploma? <Link href="/diplomas" onClick={closeAllMenus} className="font-bold underline">10 state diplomas</Link> → <Link href="/examinations/paravet-jobs" onClick={closeAllMenus} className="font-bold underline">10 state posts</Link> (LSA • VLDA • AVFO • Pharmacist • VFA) — one common core.
                 </p>
+                {/* Study-tools links (Materials, PYQ Papers) intentionally live only
+                    in the Prepare dropdown above — no duplicate entries here. */}
                 <Link href="/examinations" onClick={closeAllMenus} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
                   <FileCheck className="h-3.5 w-3.5" /> View All Examinations
                 </Link>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href="/study-materials" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-white border border-primary/10 px-3 py-2.5 text-xs font-bold hover:border-primary/20 hover:shadow-sm transition-all">
-                    <BookOpenCheck className="h-3.5 w-3.5 text-primary" /> Study Materials
-                  </Link>
-                  <Link href="/papers" onClick={closeAllMenus} className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] text-white px-3 py-2.5 text-xs font-bold shadow-md hover:shadow-lg transition-all">
-                    <FileCheck className="h-3.5 w-3.5" /> PYQ Papers
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Resources */}
+          {/* Resources — 2xl only; the compact "More" menu covers it below */}
           <div
-            className="group relative"
+            className="hidden 2xl:block group relative"
             onMouseEnter={() => setMenu("resources", true)}
             onMouseLeave={() => setMenu("resources", false)}
             onFocus={() => setMenu("resources", true)}
@@ -726,9 +748,9 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* About */}
+          {/* About — 2xl only; the compact "More" menu covers it below */}
           <div
-            className="group relative"
+            className="hidden 2xl:block group relative"
             onMouseEnter={() => setMenu("about", true)}
             onMouseLeave={() => setMenu("about", false)}
             onFocus={() => setMenu("about", true)}
@@ -787,6 +809,69 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Compact "More" menu — below 2xl this holds everything that the
+              full bar (Animal Owner, Vets, Resources, About) shows, so the
+              header never runs into search / Admission / sign-in. */}
+          <div
+            className="2xl:hidden group relative"
+            onMouseEnter={() => setMenu("more", true)}
+            onMouseLeave={() => setMenu("more", false)}
+            onFocus={() => setMenu("more", true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu("more", false);
+            }}
+          >
+            <Button variant="ghost" className="gap-1.5 px-2.5 text-[13px] xl:text-sm" aria-haspopup="true" aria-expanded={!!openMenus["more"]}>
+              More
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openMenus["more"] ? "rotate-180" : ""}`} />
+            </Button>
+            <div
+              onClick={closeAllMenus}
+              className={`absolute left-1/2 -translate-x-1/2 top-full z-50 pt-3 w-[340px] max-w-[calc(100vw-2rem)] rounded-[1.25rem] border border-primary/10 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(2,132,199,0.3)] overflow-hidden transition-all duration-300 ease-out ${openMenus["more"] ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}
+            >
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-[#d4a843] to-blue-600" />
+              <div className="relative bg-gradient-to-br from-primary/[0.06] via-white to-blue-50/30 p-4 border-b border-primary/5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-md">
+                    <Library className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold tracking-[0.14em] uppercase text-primary">More</p>
+                    <p className="text-xs text-muted-foreground">Audiences, resources & about</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative p-2.5 space-y-1 max-h-[420px] overflow-y-auto">
+                {[
+                  { href: "/farmers", label: "Animal Owner Corner", desc: "Schemes, diary & advisory", icon: Tractor },
+                  { href: "/vets", label: "Vets", desc: "Clinical tools & references", icon: HeartPulse },
+                  { href: "/experts", label: "Experts", desc: "1:1 Consultations", icon: Users },
+                  { href: "/community", label: "Community", desc: "Ask & discuss cases", icon: Users },
+                  { href: "/blog", label: "Blog", desc: "Tips & guides", icon: Newspaper },
+                  { href: "/catalog", label: "The Catalog", desc: "All subjects, drawer by drawer", icon: BookOpen },
+                  { href: "/about", label: "About Us", desc: "Our story & mission", icon: Info },
+                  { href: "/pricing", label: "Pricing", desc: "Affordable one-time plans", icon: IndianRupee },
+                  { href: "/contact", label: "Contact Us", desc: "We reply in 2h", icon: Phone },
+                ].map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="group/item flex items-center gap-3 rounded-xl px-3 py-2 border border-transparent hover:border-primary/10 hover:bg-gradient-to-r hover:from-primary/[0.06] hover:to-blue-50/40 hover:shadow-sm transition-all"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover/item:bg-primary group-hover/item:text-white transition-all">
+                      <l.icon className="h-4 w-4" />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-semibold group-hover/item:text-primary transition-colors">{l.label}</span>
+                      <span className="block truncate text-[11px] text-muted-foreground">{l.desc}</span>
+                    </span>
+                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <Link href="/admission">
             <Button>Admission</Button>
           </Link>
@@ -803,7 +888,7 @@ export default function Navbar() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             aria-label="Search subjects"
-            className="pl-9 pr-3 h-9 w-36 2xl:w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="pl-9 pr-3 h-9 w-32 2xl:w-48 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </form>
 
@@ -893,8 +978,9 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {/* Sticky Search */}
-              <div className="sticky top-[57px] z-10 bg-white/95 backdrop-blur-xl p-3 border-b border-primary/5">
+              {/* Sticky Search — offset matches the sticky header height above
+                  (3px gradient + 72px header row) so the two never overlap. */}
+              <div className="sticky top-[75px] z-10 bg-white/95 backdrop-blur-xl p-3 border-b border-primary/5">
                 <form onSubmit={handleSearch} className="relative">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
@@ -963,16 +1049,20 @@ export default function Navbar() {
                   </span>
                   Animal Owner Corner
                 </Link>
-                <Link
-                  href="/vets"
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/10 text-red-600">
-                    <HeartPulse className="h-4 w-4" />
-                  </span>
-                  Vets
-                </Link>
+                {/* In vet mode the Vet Corner section below already opens with
+                    the same /vets destination — avoid the duplicate row. */}
+                {navMode !== "vet" && (
+                  <Link
+                    href="/vets"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-accent"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/10 text-red-600">
+                      <HeartPulse className="h-4 w-4" />
+                    </span>
+                    Vets
+                  </Link>
+                )}
 
                 {navMode === "student" && (
                 <MobileNavSection

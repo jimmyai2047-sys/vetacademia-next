@@ -4,6 +4,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { roleColor } from "@/lib/role-color";
+import { decorateLiveClass } from "@/lib/live-class-status";
 import Link from "next/link";
 import {
   Card,
@@ -26,6 +27,12 @@ import {
   Sparkles,
   Crown,
   Shield,
+  CreditCard,
+  FileX2,
+  UserCheck,
+  Radio,
+  ClipboardList,
+  CheckCircle2,
 } from "lucide-react";
 
 
@@ -44,34 +51,150 @@ function timeAgo(date: Date) {
   return `${Math.floor(days / 30)}mo ago`;
 }
 
+function oneDayAgo() {
+  return new Date(Date.now() - 24 * 60 * 60 * 1000);
+}
+
 export default async function AdminDashboard() {
-  const [totalUsers, totalProgrammes, totalSubjects, totalMockTests, recentUsers, recentAttempts] =
-    await Promise.all([
-      prisma.user.count(),
-      prisma.programme.count(),
-      prisma.subject.count(),
-      prisma.mockTest.count(),
-      prisma.user.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          programme: true,
-          createdAt: true,
-        },
-      }),
-      prisma.mockTestAttempt.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 8,
-        include: {
-          user: { select: { name: true } },
-          mockTest: { select: { title: true } },
-        },
-      }),
-    ]);
+  const dayAgo = oneDayAgo();
+  const [
+    totalUsers,
+    totalProgrammes,
+    totalSubjects,
+    totalMockTests,
+    recentUsers,
+    recentAttempts,
+    agedPendingPayments,
+    publishedMaterials,
+    pendingApprovals,
+    liveClassRows,
+    newEnquiries,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.programme.count(),
+    prisma.subject.count(),
+    prisma.mockTest.count(),
+    prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        programme: true,
+        createdAt: true,
+      },
+    }),
+    prisma.mockTestAttempt.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: {
+        user: { select: { name: true } },
+        mockTest: { select: { title: true } },
+      },
+    }),
+    // ---- Operational queues (finding 15) ----
+    prisma.payment.count({
+      where: { status: "PENDING", createdAt: { lt: dayAgo } },
+    }),
+    prisma.examMaterial.findMany({
+      where: { published: true },
+      select: {
+        id: true,
+        title: true,
+        isDemo: true,
+        fileUrl: true,
+        externalUrl: true,
+        body: true,
+      },
+    }),
+    prisma.expertApplication.count({ where: { status: "PENDING" } }),
+    prisma.liveClass.findMany({
+      where: {
+        OR: [{ status: { in: ["LIVE", "SCHEDULED"] } }, { status: "ENDED" }],
+      },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        scheduledAt: true,
+        duration: true,
+        recordingUrl: true,
+      },
+      orderBy: { scheduledAt: "desc" },
+      take: 100,
+    }),
+    prisma.enquiry.count({ where: { status: "NEW" } }),
+  ]);
+
+  // Same readiness rules the exam-material editor enforces (material-readiness
+  // + the [DEMO]-prefix flag mismatch), so the queue matches what the page shows.
+  const incompleteResources = publishedMaterials.filter(
+    (m) =>
+      !(m.fileUrl?.trim() || m.externalUrl?.trim() || m.body?.trim()) ||
+      (!m.isDemo && m.title.trim().toUpperCase().startsWith("[DEMO]"))
+  ).length;
+  const attentionClasses = liveClassRows.filter((c) => {
+    const decorated = decorateLiveClass(c);
+    return decorated.needsAttention || (decorated.effectiveStatus === "ENDED" && !c.recordingUrl);
+  }).length;
+
+  // Finding 15: actionable queues come BEFORE inventory totals — each card is
+  // the next administrative action, linking to the screen that resolves it.
+  const queues = [
+    {
+      title: "Aged pending payments",
+      count: agedPendingPayments,
+      hint: "Orders stuck >24h — reconcile or cancel",
+      action: "Reconcile",
+      href: "/admin/payments",
+      icon: CreditCard,
+      tone: "text-red-600",
+      bg: "bg-red-50 border-red-200/60",
+    },
+    {
+      title: "Incomplete resources",
+      count: incompleteResources,
+      hint: "Published with no readable source, or [DEMO] flag mismatch",
+      action: "Fix resources",
+      href: "/admin/exam-materials",
+      icon: FileX2,
+      tone: "text-amber-600",
+      bg: "bg-amber-50 border-amber-200/60",
+    },
+    {
+      title: "Pending approvals",
+      count: pendingApprovals,
+      hint: "Expert proforma applications awaiting review",
+      action: "Review",
+      href: "/admin/experts",
+      icon: UserCheck,
+      tone: "text-blue-600",
+      bg: "bg-blue-50 border-blue-200/60",
+    },
+    {
+      title: "Classes needing attention",
+      count: attentionClasses,
+      hint: "Stale status or ended without a recording",
+      action: "Resolve",
+      href: "/admin/live-classes",
+      icon: Radio,
+      tone: "text-purple-600",
+      bg: "bg-purple-50 border-purple-200/60",
+    },
+    {
+      title: "Untouched enquiries",
+      count: newEnquiries,
+      hint: "Admission enquiries still marked NEW",
+      action: "Follow up",
+      href: "/admin/admissions",
+      icon: ClipboardList,
+      tone: "text-emerald-600",
+      bg: "bg-emerald-50 border-emerald-200/60",
+    },
+  ];
+  const openQueues = queues.filter((q) => q.count > 0);
 
   const statCards = [
     { title: "Total Users", value: totalUsers.toLocaleString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
@@ -108,6 +231,67 @@ export default async function AdminDashboard() {
               <Sparkles className="h-6 w-6" />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Needs attention — next administrative actions (finding 15) */}
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <span className="h-6 w-1 rounded-full bg-gradient-to-b from-red-500 to-[#d4a843]" />
+            Needs attention
+          </h2>
+          {openQueues.length === 0 ? (
+            <Badge className="rounded-full bg-emerald-100 text-emerald-800 border-emerald-200 gap-1">
+              <CheckCircle2 className="h-3 w-3" /> All clear — no open items
+            </Badge>
+          ) : (
+            <Badge className="rounded-full bg-red-100 text-red-800 border-red-200 gap-1">
+              {openQueues.length} queue{openQueues.length === 1 ? "" : "s"} open
+            </Badge>
+          )}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {queues.map((q) => {
+            const open = q.count > 0;
+            return (
+              <Link key={q.title} href={q.href} className="group">
+                <div
+                  className={`relative h-full overflow-hidden rounded-[1.25rem] border p-4 transition-all ${
+                    open
+                      ? `${q.bg} hover:shadow-md hover:-translate-y-0.5`
+                      : "border-primary/5 bg-white opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span
+                      className={`flex h-9 w-9 items-center justify-center rounded-xl border bg-white shadow-sm ${
+                        open ? "border-current" : "border-primary/10"
+                      } ${open ? q.tone : "text-muted-foreground"}`}
+                    >
+                      <q.icon className="h-4 w-4" />
+                    </span>
+                    <span
+                      className={`text-2xl font-extrabold tracking-tight ${
+                        open ? q.tone : "text-muted-foreground/50"
+                      }`}
+                    >
+                      {q.count}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm font-bold">{q.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{q.hint}</p>
+                  <p
+                    className={`mt-2 inline-flex items-center gap-1 text-[11px] font-semibold ${
+                      open ? q.tone : "text-muted-foreground"
+                    }`}
+                  >
+                    {open ? q.action : "Nothing to do"} →
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

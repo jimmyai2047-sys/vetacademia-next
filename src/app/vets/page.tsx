@@ -8,7 +8,7 @@ import VetsPageNav from "@/components/vets-page-nav";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Stethoscope, Sparkles, BookOpen, Users, ShieldCheck, Clock, Video, FileText, Pill, ArrowRight, Calculator } from "lucide-react";
+import { Stethoscope, Sparkles, BookOpen, ShieldCheck, Clock, Video, FileText, Pill, ArrowRight, Calculator, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VetQuickTools from "@/components/vet-quick-tools";
@@ -23,11 +23,16 @@ import VetStickyCta from "@/components/vet-sticky-cta";
 import VetProformas from "@/components/vet-proformas";
 import VetFluidCalculator from "@/components/vet-fluid-calculator";
 import VetGestationCalculator from "@/components/vet-gestation-calculator";
+import { getPublishedExpertCount, expertCountLabel } from "@/lib/expert-stats";
+import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
 export const dynamic = "force-dynamic";
 
 export default async function VetsPage() {
-  const vetPosts = await getPublishedPosts("VETS").catch(() => []);
+  const [vetPosts, expertCount] = await Promise.all([
+    getPublishedPosts("VETS").catch(() => []),
+    getPublishedExpertCount(),
+  ]);
   return (
     <div className="pb-16 md:pb-0">
       <div className="container mx-auto px-4 pt-8 md:pt-12">
@@ -42,12 +47,13 @@ export default async function VetsPage() {
               <Badge className="rounded-full bg-white/15 backdrop-blur border-white/20 text-white gap-1.5 px-3 py-1.5">
                 <BookOpen className="h-3.5 w-3.5" /> {vetPosts.length} articles
               </Badge>
-              <Badge className="rounded-full bg-emerald-900/30 border-emerald-200/20 text-white gap-1.5 px-3 py-1.5">
-                <ShieldCheck className="h-3.5 w-3.5" /> 50+ Verified Experts
+              <Badge className="rounded-full bg-emerald-900/30 border-emerald-200/20 text-white gap-1.5 px-3 py-1.5" title="Published, admin-verified consultant profiles on /experts">
+                <ShieldCheck className="h-3.5 w-3.5" /> {expertCountLabel(expertCount)} Verified Experts
               </Badge>
               <Link href="/experts">
                 <Button variant="secondary" size="sm" className="rounded-full bg-white text-emerald-700 hover:bg-white/90 gap-1.5">
-                  <Video className="h-3.5 w-3.5" /> Book 15 min — ₹299
+                  <Video className="h-3.5 w-3.5" /> Book Consultation
+                  <span className="hidden sm:inline">— {EXPERT_CONSULTATION_FEE_LABEL}</span>
                 </Button>
               </Link>
             </>
@@ -95,8 +101,24 @@ export default async function VetsPage() {
 
       <VetsPageNav />
 
+      {/* Clinical-tools safety notice — values are aids, not prescriptions.
+          The audit flagged these tools for specialist review; make that status
+          explicit to every visitor until the review signs off. */}
+      <div className="container mx-auto px-4 mt-4">
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <p className="text-amber-900 leading-relaxed">
+            <span className="font-semibold">Clinical tools — specialist review in progress.</span>{" "}
+            Doses, protocols and calculators below are teaching/reference aids compiled from
+            standard formularies. They are <span className="font-semibold">not a prescription</span>:
+            always confirm against the current package insert, your state formulary and a
+            senior veterinarian before treating an animal.
+          </p>
+        </div>
+      </div>
+
       {/* Quick Access Tools */}
-      <div className="container mx-auto px-4 mt-6" id="quick-tools">
+      <div className="container mx-auto px-4 mt-6 scroll-mt-32" id="quick-tools">
         <div className="flex items-center gap-2 mb-3">
           <Badge className="rounded-full bg-emerald-600 gap-1.5">
             <Sparkles className="h-3 w-3" /> Quick Tools
@@ -134,7 +156,7 @@ export default async function VetsPage() {
       </div>
 
       {/* Clinical Calculators: Fluid therapy + Gestation due date */}
-      <div className="container mx-auto px-4 mt-6" id="calculators">
+      <div className="container mx-auto px-4 mt-6 scroll-mt-32" id="calculators">
         <div className="flex items-center gap-2 mb-3">
           <Badge className="rounded-full bg-emerald-600 gap-1.5">
             <Calculator className="h-3 w-3" /> Calculators
@@ -153,7 +175,7 @@ export default async function VetsPage() {
       </div>
 
       {/* Proformas — Post Mortem, Health Certificates, Valuation, Insurance (Word + PDF) */}
-      <div className="container mx-auto px-4 mt-6" id="proformas">
+      <div className="container mx-auto px-4 mt-6 scroll-mt-32" id="proformas">
         <div className="flex items-center gap-2 mb-3">
           <Badge className="rounded-full bg-emerald-600 gap-1.5"><FileText className="h-3 w-3" /> Proformas</Badge>
           <span className="text-xs text-muted-foreground">Post Mortem • Health Certificates • Valuation • Insurance — Word & PDF</span>
@@ -176,7 +198,7 @@ export default async function VetsPage() {
       </div>
 
       {/* Articles with Filters + Search */}
-      <div id="articles" className="container mx-auto px-4 py-8 md:py-12">
+      <div id="articles" className="container mx-auto px-4 py-8 md:py-12 scroll-mt-32">
         <div className="flex items-center gap-3 mb-2">
           <Badge variant="secondary" className="rounded-full bg-emerald-50 text-emerald-700 border-emerald-200 gap-1.5">
             <Sparkles className="h-3.5 w-3.5" /> Curated

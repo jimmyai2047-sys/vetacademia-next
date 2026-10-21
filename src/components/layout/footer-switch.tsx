@@ -40,5 +40,7 @@ function MinimalAuthFooter() {
 export default function FooterSwitch() {
   const pathname = usePathname();
   if (isAuthPath(pathname)) return <MinimalAuthFooter />;
+  // Admin screens own their layout end-to-end (finding 15) — no public footer.
+  if (pathname?.startsWith("/admin")) return null;
   return <Footer />;
 }

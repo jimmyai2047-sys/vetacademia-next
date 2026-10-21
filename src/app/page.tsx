@@ -12,17 +12,6 @@ import ChatbotLazy from "@/components/chatbot-lazy";
 // don't inflate the initial JS/hydration cost of the homepage. (ChatbotLazy
 // already code-splits the chatbot with ssr:false internally; the ticker and
 // farmer CTA below are dynamic-split server-side-safe chunks.)
-const HomeVideoTestimonials = dynamicImport(
-  () => import("@/components/home-video-testimonials"),
-  {
-    loading: () => (
-      <div className="grid md:grid-cols-2 gap-6 animate-pulse" aria-hidden="true">
-        <div className="h-48 rounded-[1.5rem] bg-muted" />
-        <div className="h-48 rounded-[1.5rem] bg-muted" />
-      </div>
-    ),
-  }
-);
 const HomeLinksTicker = dynamicImport(() => import("@/components/home-links-ticker"), {
   loading: () => (
     <div className="h-28 animate-pulse rounded-2xl bg-muted" aria-hidden="true" />
@@ -33,6 +22,8 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { signBlobViewerUrl } from "@/lib/blob-token";
 import { DIPLOMA_TRACKS, DIPLOMA_UMBRELLA } from "@/lib/diplomas";
+import { getPublishedExpertCount, expertCountLabel, EXPERT_COUNT_SOURCE_NOTE } from "@/lib/expert-stats";
+import ProgrammeChooser from "@/components/programme-chooser";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   BookOpen,
@@ -248,20 +239,21 @@ const importantLinks = [
 const getHomeStats = unstable_cache(
   async () => {
     try {
-      const [users, subjects, programmesCount, experts] = await Promise.all([
+      const [users, subjects, programmesCount, expertProfiles] = await Promise.all([
         prisma.user.count().catch(() => 10000),
         prisma.subject.count().catch(() => 100),
         prisma.programme.count().catch(() => 4),
-        prisma.user.count({ where: { role: { notIn: ["STUDENT", "ANIMAL_OWNER", "GUEST"] } } }).catch(() => 50),
+        // Same source as the /experts directory listing — never a role count.
+        getPublishedExpertCount(),
       ]);
       return {
         programmes: String(programmesCount || 4),
         subjects: subjects > 100 ? `${subjects}+` : "100+",
         students: users > 1000 ? `${Math.floor(users / 1000)}K+` : "10K+",
-        experts: String(experts || 50) + "+",
+        experts: expertCountLabel(expertProfiles),
       };
     } catch {
-      return { programmes: "4", subjects: "100+", students: "10K+", experts: "50+" };
+      return { programmes: "4", subjects: "100+", students: "10K+", experts: "Verified" };
     }
   },
   ["home-stats"],
@@ -477,12 +469,9 @@ export default async function HomePage() {
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </Link>
-                <Link
-                  href="/syllabus/ahdp"
-                  className="inline-flex h-12 sm:h-10 items-center justify-center gap-1.5 rounded-xl px-5 text-[15px] font-semibold text-primary underline-offset-4 hover:underline"
-                >
+                <ProgrammeChooser className="inline-flex h-12 sm:h-10 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl px-5 text-[15px] font-semibold text-primary underline-offset-4 hover:underline cursor-pointer">
                   Explore Programmes <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
+                </ProgrammeChooser>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 Free trial • No credit card • Plans starting from ₹{cheapest.price.toLocaleString("en-IN")}
@@ -575,13 +564,15 @@ export default async function HomePage() {
             I am a…
           </p>
           <div className="mx-auto mt-3 grid max-w-4xl gap-3 sm:grid-cols-3">
-            <Link href="/syllabus/ahdp" className="group flex items-center gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-primary/30">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white"><GraduationCap className="h-5 w-5" aria-hidden="true" /></span>
-              <span>
-                <span className="block font-bold text-[15px] group-hover:text-primary">Student <ArrowRight className="inline h-3.5 w-3.5" aria-hidden="true" /></span>
-                <span className="block text-xs text-muted-foreground">Diploma • B.V.Sc • M.V.Sc • Exams</span>
+            <ProgrammeChooser className="group block rounded-2xl border border-primary/15 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-primary/30 cursor-pointer text-left">
+              <span className="flex items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white"><GraduationCap className="h-5 w-5" aria-hidden="true" /></span>
+                <span>
+                  <span className="block font-bold text-[15px] group-hover:text-primary">Student <ArrowRight className="inline h-3.5 w-3.5" aria-hidden="true" /></span>
+                  <span className="block text-xs text-muted-foreground">Diploma • B.V.Sc • M.V.Sc • Exams</span>
+                </span>
               </span>
-            </Link>
+            </ProgrammeChooser>
             <Link href="/vets" className="group flex items-center gap-3 rounded-2xl border border-red-200/60 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-red-300">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-rose-600 text-white"><Stethoscope className="h-5 w-5" aria-hidden="true" /></span>
               <span>
@@ -632,6 +623,9 @@ export default async function HomePage() {
             Empowering veterinary students since 2020
             <span className="h-1 w-1 rounded-full bg-white/40 animate-pulse" />
           </div>
+          <p className="mx-auto mt-2 max-w-3xl text-center text-[11px] leading-relaxed text-white/45">
+            {EXPERT_COUNT_SOURCE_NOTE}
+          </p>
         </div>
       </section>
 
@@ -883,7 +877,7 @@ export default async function HomePage() {
                         <feature.icon className="h-7 w-7 text-white group-hover:text-primary transition-colors" />
                       </div>
                       <div className="mt-3 rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-3 py-1 text-xs font-semibold tracking-wide text-white">
-                        {idx === 0 ? '500+ Tests' : idx === 1 ? '10K+ Notes' : idx === 2 ? '50+ Experts' : 'Full Syllabus'}
+                        {idx === 0 ? '500+ Tests' : idx === 1 ? '10K+ Notes' : idx === 2 ? `${liveStats.experts} Experts` : 'Full Syllabus'}
                       </div>
                     </div>
                   </div>
@@ -1275,10 +1269,6 @@ export default async function HomePage() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-          <div className="mt-8">
-            <h3 className="text-center font-bold mb-4">Video Testimonials</h3>
-            <HomeVideoTestimonials />
           </div>
           <div className="mt-10 text-center">
             <Link href="/testimonials" className="inline-block">

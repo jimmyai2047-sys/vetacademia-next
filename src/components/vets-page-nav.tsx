@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { BookOpen, Stethoscope, Calculator } from "lucide-react";
 
 const tabs = [
@@ -13,7 +12,9 @@ const tabs = [
 
 export default function VetsPageNav() {
   return (
-    <div className="sticky top-14 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+    // Site header is ~72px (3px gradient + 68px bar + 1px rule); top-[72px]
+    // stops the header from clipping this bar when both are stuck.
+    <div className="sticky top-[72px] z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container mx-auto px-4">
         <nav className="flex gap-1 py-2 overflow-x-auto" aria-label="Vet sections">
           {tabs.map((tab) => (

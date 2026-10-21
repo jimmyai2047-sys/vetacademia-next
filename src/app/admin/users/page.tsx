@@ -22,7 +22,7 @@ export default async function UsersPage({
   const page = Math.max(1, parseInt(params.page || "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const [users, totalCount] = await Promise.all([
+  const [users, totalCount, roleGroups] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       skip,
@@ -39,9 +39,15 @@ export default async function UsersPage({
       },
     }),
     prisma.user.count(),
+    // Whole-dataset role counts — summary cards must never change when the
+    // table page changes (admin review finding 6).
+    prisma.user.groupBy({ by: ["role"], _count: { _all: true } }),
   ]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const roleCounts: Record<string, number> = { ALL: totalCount };
+  for (const g of roleGroups) roleCounts[g.role] = g._count._all;
 
   return (
     <UsersClient
@@ -50,6 +56,7 @@ export default async function UsersPage({
       page={page}
       totalPages={totalPages}
       totalCount={totalCount}
+      roleCounts={roleCounts}
     />
   );
 }
