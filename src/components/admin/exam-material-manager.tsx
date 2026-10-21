@@ -27,6 +27,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type MaterialRow = {
   id: string;
@@ -95,6 +96,7 @@ export default function ExamMaterialManager({
   showHeading?: boolean;
 }) {
   const [rows, setRows] = useState<MaterialRow[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState>({
     ...emptyForm,
@@ -351,12 +353,18 @@ export default function ExamMaterialManager({
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete this material?")) return;
-    const res = await csrfFetch(`/api/admin/exam-materials/${id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) load();
+  function remove(id: string) {
+    showConfirm(
+      "Delete this material?",
+      "The material and its uploaded file will be permanently removed. This cannot be undone.",
+      async () => {
+        const res = await csrfFetch(`/api/admin/exam-materials/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) load();
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   const categoryLabel = (c: string) =>
@@ -781,6 +789,7 @@ export default function ExamMaterialManager({
           </div>
         )}
       </section>
+      {confirmDialog}
     </div>
   );
 }

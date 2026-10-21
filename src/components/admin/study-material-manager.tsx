@@ -21,6 +21,7 @@ import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type Chapter = {
   id: string;
@@ -65,6 +66,7 @@ export default function StudyMaterialManager({
   programmeTree: Programme[];
 }) {
   const [materials, setMaterials] = useState<Material[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
 
   // navigation state (drill-down path)
@@ -316,12 +318,18 @@ export default function StudyMaterialManager({
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this study material?")) return;
-    const res = await csrfFetch(`/api/admin/study-materials/${id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) load();
+  function handleDelete(id: string) {
+    showConfirm(
+      "Delete this study material?",
+      "The material and its uploaded file will be permanently removed. This cannot be undone.",
+      async () => {
+        const res = await csrfFetch(`/api/admin/study-materials/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) load();
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   const card =
@@ -785,6 +793,7 @@ export default function StudyMaterialManager({
           )}
         </div>
       )}
+      {confirmDialog}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { TRACK_OPTIONS, trackLabel } from "@/lib/exam-tracks";
 import { EXAM_KEY_REFS } from "@/lib/reference-dictionary";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 import {
   Pencil,
   Trash2,
@@ -50,6 +51,7 @@ export default function PostManager() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("FARMERS");
   const [posts, setPosts] = useState<Post[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Post | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -197,20 +199,26 @@ export default function PostManager() {
     }
   }
 
-  async function handleDelete(p: Post) {
-    if (!confirm("Delete this post? This cannot be undone.")) return;
-    try {
-      const res = await csrfFetch(`/api/admin/posts/${p.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setPosts((prev) => prev.filter((x) => x.id !== p.id));
-        router.refresh();
-      } else {
-        const d = await res.json().catch(() => ({}));
-        setError(d.error || "Failed to delete post");
-      }
-    } catch {
-      setError("Network error while deleting post");
-    }
+  function handleDelete(p: Post) {
+    showConfirm(
+      "Delete this post?",
+      "The post will be permanently removed from the site. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/posts/${p.id}`, { method: "DELETE" });
+          if (res.ok) {
+            setPosts((prev) => prev.filter((x) => x.id !== p.id));
+            router.refresh();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            setError(d.error || "Failed to delete post");
+          }
+        } catch {
+          setError("Network error while deleting post");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   const filtered = posts.filter((p) => {
@@ -437,6 +445,7 @@ export default function PostManager() {
           ))}
         </div>
       )}
+      {confirmDialog}
     </div>
   );
 }

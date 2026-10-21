@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChapterRichEditor from "@/components/admin/chapter-rich-editor";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type Section = {
   id: string;
@@ -30,6 +31,7 @@ export default function ChapterSectionManager({
   initialSections: Section[];
 }) {
   const [sections, setSections] = useState<Section[]>(initialSections);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -143,51 +145,57 @@ export default function ChapterSectionManager({
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete this section?")) return;
-    setBusyId(id);
-    try {
-      const res = await csrfFetch(`/api/admin/chapter-sections/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        setError(d.error || "Delete failed");
-        return;
-      }
-      setSections((prev) => prev.filter((s) => s.id !== id));
-      if (editingId === id) setEditingId(null);
-    } catch {
-      setError("Delete failed");
-    } finally {
-      setBusyId(null);
-    }
+  function remove(id: string) {
+    showConfirm(
+      "Delete this section?",
+      "The section and its content will be permanently removed. This cannot be undone.",
+      async () => {
+        setBusyId(id);
+        try {
+          const res = await csrfFetch(`/api/admin/chapter-sections/${id}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) {
+            const d = await res.json();
+            setError(d.error || "Delete failed");
+            return;
+          }
+          setSections((prev) => prev.filter((s) => s.id !== id));
+          if (editingId === id) setEditingId(null);
+        } catch {
+          setError("Delete failed");
+        } finally {
+          setBusyId(null);
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
-  async function deleteLegacy() {
-    if (
-      !confirm(
-        "Delete the OLD chapter content? Sections will be used instead. This cannot be undone."
-      )
-    )
-      return;
-    setBusyId("legacy");
-    try {
-      const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: "" }),
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        setError(d.error || "Failed");
-        return;
+  function deleteLegacy() {
+    showConfirm(
+      "Delete the OLD chapter content?",
+      "Sections will be used instead. This cannot be undone.",
+      async () => {
+        setBusyId("legacy");
+        try {
+          const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: "" }),
+          });
+          if (!res.ok) {
+            const d = await res.json();
+            setError(d.error || "Failed");
+            return;
+          }
+        } catch {
+          setError("Failed");
+        } finally {
+          setBusyId(null);
+        }
       }
-    } catch {
-      setError("Failed");
-    } finally {
-      setBusyId(null);
-    }
+    );
   }
 
   const ordered = [...sections].sort((a, b) => a.order - b.order);
@@ -305,6 +313,7 @@ export default function ChapterSectionManager({
       </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
+      {confirmDialog}
     </div>
   );
 }

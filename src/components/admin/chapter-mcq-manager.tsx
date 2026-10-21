@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type Mcq = {
   id: string;
@@ -64,6 +65,7 @@ export default function ChapterMcqManager({
   const [mcqs, setMcqs] = useState<Mcq[]>(
     initialMcqs.map((m) => ({ ...m, options: normOpts(m.options) }))
   );
+  const { showConfirm, confirmDialog } = useConfirm();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [showBulk, setShowBulk] = useState(false);
@@ -183,23 +185,29 @@ export default function ChapterMcqManager({
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete this MCQ?")) return;
-    setBusyId(id);
-    try {
-      const res = await csrfFetch(`/api/admin/chapter-mcqs/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        setError((await res.json()).error || "Delete failed");
-        return;
-      }
-      setMcqs((prev) => prev.filter((m) => m.id !== id));
-    } catch {
-      setError("Delete failed");
-    } finally {
-      setBusyId(null);
-    }
+  function remove(id: string) {
+    showConfirm(
+      "Delete this MCQ?",
+      "The question and its options will be permanently removed. This cannot be undone.",
+      async () => {
+        setBusyId(id);
+        try {
+          const res = await csrfFetch(`/api/admin/chapter-mcqs/${id}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) {
+            setError((await res.json()).error || "Delete failed");
+            return;
+          }
+          setMcqs((prev) => prev.filter((m) => m.id !== id));
+        } catch {
+          setError("Delete failed");
+        } finally {
+          setBusyId(null);
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   async function move(id: string, dir: -1 | 1) {
@@ -463,6 +471,7 @@ export default function ChapterMcqManager({
       </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
+      {confirmDialog}
     </div>
   );
 }

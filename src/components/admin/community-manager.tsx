@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 import { Search } from "lucide-react";
 
 type LinkRow = {
@@ -37,6 +38,7 @@ const emptyForm: FormState = {
 
 export default function CommunityManager() {
   const [links, setLinks] = useState<LinkRow[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -121,15 +123,21 @@ export default function CommunityManager() {
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete this community link? This cannot be undone.")) return;
-    try {
-      const res = await csrfFetch(`/api/admin/community/${id}`, { method: "DELETE" });
-      if (res.ok) load();
-      else setError("Failed to delete link");
-    } catch {
-      setError("Network error while deleting link");
-    }
+  function remove(id: string) {
+    showConfirm(
+      "Delete this community link?",
+      "The link will be removed from the public list. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/community/${id}`, { method: "DELETE" });
+          if (res.ok) load();
+          else setError("Failed to delete link");
+        } catch {
+          setError("Network error while deleting link");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   return (
@@ -331,6 +339,7 @@ export default function CommunityManager() {
           </>
         )}
       </section>
+      {confirmDialog}
     </div>
   );
 }

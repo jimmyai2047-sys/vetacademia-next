@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 export type ContentItem = {
   id: string;
@@ -53,6 +54,7 @@ export default function ChapterContentManager({
   initialContents: ContentItem[];
 }) {
   const [contents, setContents] = useState<ContentItem[]>(initialContents);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -94,19 +96,25 @@ export default function ChapterContentManager({
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this file?")) return;
-    try {
-      const res = await csrfFetch(`/api/admin/content/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Delete failed");
-        return;
-      }
-      setContents((prev) => prev.filter((c) => c.id !== id));
-    } catch {
-      setError("Delete failed");
-    }
+  function handleDelete(id: string) {
+    showConfirm(
+      "Delete this file?",
+      "The uploaded file will be permanently removed. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/content/${id}`, { method: "DELETE" });
+          if (!res.ok) {
+            const data = await res.json();
+            setError(data.error || "Delete failed");
+            return;
+          }
+          setContents((prev) => prev.filter((c) => c.id !== id));
+        } catch {
+          setError("Delete failed");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   return (
@@ -189,6 +197,7 @@ export default function ChapterContentManager({
       </div>
 
       {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+      {confirmDialog}
     </div>
   );
 }

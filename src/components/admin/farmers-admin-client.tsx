@@ -16,6 +16,7 @@ import {
 import { FARM_TYPES } from "@/lib/farm-types";
 import FileExtractField from "@/components/file-extract-field";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 const API: Record<string, string> = {
   guides: "/api/admin/farm-guides",
@@ -430,6 +431,7 @@ export default function FarmersAdminClient({
   const [adding, setAdding] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busyReport, setBusyReport] = useState<string | null>(null);
+  const { showConfirm, confirmDialog } = useConfirm();
 
   // Report support actions (finding 7): open the stored PDF and repair it by
   // regenerating from saved inputs — never re-charges the customer.
@@ -448,32 +450,33 @@ export default function FarmersAdminClient({
     }
   }
 
-  async function regenerateReport(id: string) {
-    if (
-      !confirm(
-        "Regenerate this PDF from its stored inputs? No charge is made, and the buyer's existing download link will serve the new file."
-      )
-    )
-      return;
-    setBusyReport(id);
-    setError(null);
-    try {
-      const res = await csrfFetch(`/api/admin/generated-reports/${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const d = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(d.error || "Failed to regenerate");
-        return;
-      }
-      router.refresh();
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setBusyReport(null);
-    }
+  function regenerateReport(id: string) {
+    showConfirm(
+      "Regenerate this report?",
+      "The PDF is rebuilt from its stored inputs. No charge is made, and the buyer's existing download link will serve the new file.",
+      async () => {
+        setBusyReport(id);
+        setError(null);
+        try {
+          const res = await csrfFetch(`/api/admin/generated-reports/${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+          });
+          const d = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            setError(d.error || "Failed to regenerate");
+            return;
+          }
+          router.refresh();
+        } catch {
+          setError("Network error. Please try again.");
+        } finally {
+          setBusyReport(null);
+        }
+      },
+      { confirmLabel: "Regenerate", variant: "default" }
+    );
   }
 
   async function apiSave(kind: string, payload: Values, id?: string) {
@@ -509,26 +512,33 @@ export default function FarmersAdminClient({
   }
 
   async function apiDelete(kind: string, id: string) {
-    if (!confirm("Delete this item?")) return;
-    setError(null);
-    try {
-      const res = await csrfFetch(`${API[kind]}/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        setError("Failed to delete");
-        return;
-      }
-      setData((s) => {
-        const list = s[kind as keyof typeof s] as (Values & { id: string })[];
-        return { ...s, [kind]: list.filter((x) => x.id !== id) };
-      });
-    } catch {
-      setError("Network error. Please try again.");
-    }
+    showConfirm(
+      "Delete this item?",
+      "The entry will be permanently removed. This cannot be undone.",
+      async () => {
+        setError(null);
+        try {
+          const res = await csrfFetch(`${API[kind]}/${id}`, { method: "DELETE" });
+          if (!res.ok) {
+            setError("Failed to delete");
+            return;
+          }
+          setData((s) => {
+            const list = s[kind as keyof typeof s] as (Values & { id: string })[];
+            return { ...s, [kind]: list.filter((x) => x.id !== id) };
+          });
+        } catch {
+          setError("Network error. Please try again.");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   const reports = data.generatedReports as ReportRow[];
 
   return (
+    <>
     <Tabs defaultValue="guides">
       {error && (
         <p className="mb-3 text-sm text-red-600" role="alert">
@@ -713,5 +723,7 @@ export default function FarmersAdminClient({
         <p className="text-xs text-muted-foreground mt-2">Bank-format Generated Reports (GOAT/SHEEP/PIG/POULTRY/DAIRY) — preview DRAFT + Razorpay Rs.2500 + Blob private storage. Full management at <code>/farmers/project-report</code> + <code>/api/reports/mine</code>.</p>
       </TabsContent>
     </Tabs>
+    {confirmDialog}
+    </>
   );
 }

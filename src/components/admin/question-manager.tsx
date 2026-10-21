@@ -18,6 +18,7 @@ import {
 import { parseQuestions, ParsedQuestion } from "@/lib/parse-questions";
 import { difficultyLabel } from "@/lib/adaptive";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type Question = {
   id: string;
@@ -30,6 +31,7 @@ type Question = {
 };
 
 export default function QuestionManager({ testId }: { testId: string }) {
+  const { showConfirm, confirmDialog } = useConfirm();
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,20 +189,26 @@ export default function QuestionManager({ testId }: { testId: string }) {
     }
   }
 
-  async function handleDelete(q: Question) {
-    if (!confirm("Delete this question?")) return;
-    try {
-      const res = await csrfFetch(
-        `/api/admin/mock-tests/${testId}/questions/${q.id}`,
-        { method: "DELETE" }
-      );
-      if (res.ok) {
-        setQuestions((prev) => prev.filter((x) => x.id !== q.id));
-        router.refresh();
-      }
-    } catch {
-      // ignore
-    }
+  function handleDelete(q: Question) {
+    showConfirm(
+      "Delete this question?",
+      "The question and its options will be permanently removed. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(
+            `/api/admin/mock-tests/${testId}/questions/${q.id}`,
+            { method: "DELETE" }
+          );
+          if (res.ok) {
+            setQuestions((prev) => prev.filter((x) => x.id !== q.id));
+            router.refresh();
+          }
+        } catch {
+          // ignore
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   return (
@@ -473,6 +481,7 @@ export default function QuestionManager({ testId }: { testId: string }) {
           })}
         </div>
       )}
+      {confirmDialog}
     </div>
   );
 }

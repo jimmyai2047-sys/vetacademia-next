@@ -33,6 +33,7 @@ import {
 import Link from "next/link";
 import { csrfFetch } from "@/lib/csrf-client";
 import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type Qualification = {
   id?: string;
@@ -106,6 +107,7 @@ export default function AdminExpertsPage({
   initialTab?: "experts" | "applications";
 } = {}) {
   const [tab, setTab] = useState<"experts" | "applications">(initialTab);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [experts, setExperts] = useState<Expert[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [appStatus, setAppStatus] = useState("PENDING");
@@ -344,19 +346,24 @@ export default function AdminExpertsPage({
     }
   }
 
-  async function handleDelete(e: Expert) {
-    if (!confirm(`Delete expert "${e.name}"? This also removes their login. This cannot be undone.`))
-      return;
-    try {
-      const res = await csrfFetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
-      if (res.ok) fetchExperts();
-      else {
-        const d = await res.json().catch(() => ({}));
-        setError(d.error || "Delete failed");
-      }
-    } catch {
-      setError("Network error while deleting expert");
-    }
+  function handleDelete(e: Expert) {
+    showConfirm(
+      `Delete expert "${e.name}"?`,
+      "This also removes their login. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/experts/${e.id}`, { method: "DELETE" });
+          if (res.ok) fetchExperts();
+          else {
+            const d = await res.json().catch(() => ({}));
+            setError(d.error || "Delete failed");
+          }
+        } catch {
+          setError("Network error while deleting expert");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   async function handleApprove() {
@@ -1053,6 +1060,7 @@ export default function AdminExpertsPage({
           )}
         </>
       )}
+      {confirmDialog}
     </div>
   );
 }

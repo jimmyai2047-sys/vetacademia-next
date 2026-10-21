@@ -19,6 +19,7 @@ import {
   Search,
 } from "lucide-react";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type MockTest = {
   id: string;
@@ -46,6 +47,7 @@ export default function MockTestManager({
   const isPY = scope === "PREVIOUS_YEAR";
   const defaultKind: string = isPY ? "PREVIOUS_YEAR" : "MOCK";
   const [tests, setTests] = useState<MockTest[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<MockTest | null>(null);
@@ -199,20 +201,26 @@ export default function MockTestManager({
     }
   }
 
-  async function handleDelete(t: MockTest) {
-    if (!confirm("Delete this test and its questions? This cannot be undone.")) return;
-    try {
-      const res = await csrfFetch(`/api/admin/mock-tests/${t.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setTests((prev) => prev.filter((x) => x.id !== t.id));
-        router.refresh();
-      } else {
-        const d = await res.json().catch(() => ({}));
-        setError(d.error || "Failed to delete test");
-      }
-    } catch {
-      setError("Network error while deleting test");
-    }
+  function handleDelete(t: MockTest) {
+    showConfirm(
+      "Delete this test?",
+      "The test and all of its questions will be permanently removed. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/mock-tests/${t.id}`, { method: "DELETE" });
+          if (res.ok) {
+            setTests((prev) => prev.filter((x) => x.id !== t.id));
+            router.refresh();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            setError(d.error || "Failed to delete test");
+          }
+        } catch {
+          setError("Network error while deleting test");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   return (
@@ -486,6 +494,7 @@ export default function MockTestManager({
           );
         })()
       )}
+      {confirmDialog}
     </div>
   );
 }

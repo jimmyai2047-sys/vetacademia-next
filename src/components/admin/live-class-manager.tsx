@@ -19,6 +19,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { csrfFetch } from "@/lib/csrf-client";
+import { useConfirm } from "@/components/admin/use-confirm";
 
 type LiveClass = {
   id: string;
@@ -98,6 +99,7 @@ function statusColor(s: string) {
 
 export default function LiveClassManager() {
   const [classes, setClasses] = useState<LiveClass[]>([]);
+  const { showConfirm, confirmDialog } = useConfirm();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -209,19 +211,25 @@ export default function LiveClassManager() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this live class? This cannot be undone.")) return;
-    try {
-      const res = await csrfFetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        load();
-      } else {
-        const d = await res.json().catch(() => ({}));
-        setError(d.error || "Failed to delete live class");
-      }
-    } catch {
-      setError("Network error while deleting live class");
-    }
+  function handleDelete(id: string) {
+    showConfirm(
+      "Delete this live class?",
+      "The class and its recorded session link will be permanently removed. This cannot be undone.",
+      async () => {
+        try {
+          const res = await csrfFetch(`/api/admin/live-classes/${id}`, { method: "DELETE" });
+          if (res.ok) {
+            load();
+          } else {
+            const d = await res.json().catch(() => ({}));
+            setError(d.error || "Failed to delete live class");
+          }
+        } catch {
+          setError("Network error while deleting live class");
+        }
+      },
+      { confirmLabel: "Delete" }
+    );
   }
 
   // One-click resolution for a stale status: adopt the clock-derived status
@@ -442,6 +450,7 @@ export default function LiveClassManager() {
           ))}
         </div>
       )}
+      {confirmDialog}
     </div>
   );
 }
