@@ -128,9 +128,12 @@ export function parseQualifications(raw: string | null): ExpertQualificationInpu
 }
 
 // Flat consultation fee (Rs) charged uniformly for every expert —
-// not an hourly rate. Displayed on expert cards, profiles and booking.
+// not an hourly rate. Displayed on expert cards, profiles, booking and the
+// vets hub. Session length is part of the price, so every surface quotes both.
 export const EXPERT_CONSULTATION_FEE = 500;
-export const EXPERT_CONSULTATION_FEE_LABEL = "Rs 500/- per consultation";
+export const EXPERT_CONSULTATION_DURATION_MIN = 30;
+export const EXPERT_CONSULTATION_FEE_LABEL = `Rs ${EXPERT_CONSULTATION_FEE}/- per ${EXPERT_CONSULTATION_DURATION_MIN}-min consultation`;
+
 
 export function qualificationSummary(quals: ExpertQualificationInput[]): string {
   return quals.map((q) => (q.year ? `${q.degree} (${q.year})` : q.degree)).join(", ");

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { decorateLiveClasses } from "@/lib/live-class-status";
 
 export async function GET(req: Request) {
   try {
@@ -31,10 +32,10 @@ export async function GET(req: Request) {
       },
     });
 
-    const result = classes.map((c) => ({
+    // Derive true status from the clock (stored status is a manual field).
+    const result = decorateLiveClasses(classes).map((c) => ({
       ...c,
-      recordingUrl:
-        c.isDemo || !c.planSlug ? c.recordingUrl : null,
+      recordingUrl: c.isDemo || !c.planSlug ? c.recordingUrl : null,
     }));
 
     return NextResponse.json(result);

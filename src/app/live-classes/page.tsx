@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Radio, Calendar, Clock, ArrowRight, Play, Sparkles, GraduationCap } from "lucide-react";
+import { Radio, Calendar, Clock, ArrowRight, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import { decorateLiveClasses } from "@/lib/live-class-status";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
 export const metadata = {
@@ -22,19 +23,6 @@ const EXAM_LABELS: Record<string, string> = {
   ars: "ARS",
   other: "General",
 };
-
-function statusBadge(status: string) {
-  switch (status) {
-    case "LIVE":
-      return <Badge className="bg-red-500 text-white animate-pulse rounded-full">LIVE NOW</Badge>;
-    case "SCHEDULED":
-      return <Badge className="bg-blue-100 text-blue-700 rounded-full">Upcoming</Badge>;
-    case "ENDED":
-      return <Badge className="bg-green-100 text-green-700 rounded-full">Recorded</Badge>;
-    default:
-      return <Badge variant="secondary" className="rounded-full">{status}</Badge>;
-  }
-}
 
 function formatDt(d: Date) {
   return d.toLocaleString("en-IN", {
@@ -68,6 +56,7 @@ export default async function LiveClassesPage({
         scheduledAt: true,
         duration: true,
         status: true,
+        youtubeUrl: true,
         isDemo: true,
       },
     })
@@ -76,18 +65,21 @@ export default async function LiveClassesPage({
       return [];
     });
 
+  // Stored status is a manual dropdown and goes stale — bucket by the derived
+  // status instead so an August session can never still read "LIVE NOW".
+  const decorated = decorateLiveClasses(classes);
   const visible = activeExam
-    ? classes.filter((c) => c.exam === activeExam)
-    : classes;
+    ? decorated.filter((c) => c.exam === activeExam)
+    : decorated;
 
-  const live = visible.filter((c) => c.status === "LIVE");
+  const live = visible.filter((c) => c.effectiveStatus === "LIVE");
   const upcoming = visible
-    .filter((c) => c.status === "SCHEDULED")
+    .filter((c) => c.effectiveStatus === "SCHEDULED")
     .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime());
   const recordings = visible
-    .filter((c) => c.status === "ENDED")
+    .filter((c) => c.effectiveStatus === "ENDED")
     .sort((a, b) => b.scheduledAt.getTime() - a.scheduledAt.getTime());
-  function ClassRow({ c }: { c: (typeof classes)[number] }) {
+  function ClassRow({ c }: { c: (typeof visible)[number] }) {
     return (
       <Link href={`/examinations/${c.exam}/live/${c.id}`}>
         <div className="va-card-hover group relative flex items-center justify-between p-4 rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg hover:border-primary/10 transition-all">
@@ -95,9 +87,9 @@ export default async function LiveClassesPage({
           <div className="flex items-center gap-3 min-w-0">
             <div
               className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                c.status === "LIVE"
+                c.effectiveStatus === "LIVE"
                   ? "bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"
-                  : c.status === "SCHEDULED"
+                  : c.effectiveStatus === "SCHEDULED"
                   ? "bg-blue-500"
                   : "bg-green-500"
               }`}
@@ -115,10 +107,10 @@ export default async function LiveClassesPage({
                 {formatDt(c.scheduledAt)}
                 {c.subject && <> &middot; {c.subject}</>}
                 {c.duration ? <> &middot; {c.duration} min</> : null}
-                {c.status === "LIVE" && (
+                {c.effectiveStatus === "LIVE" && (
                   <span className="text-red-500 ml-1 font-medium">LIVE</span>
                 )}
-                {c.status === "ENDED" && (
+                {c.effectiveStatus === "ENDED" && (
                   <span className="text-green-600 ml-1">Recorded</span>
                 )}
               </div>
@@ -130,7 +122,7 @@ export default async function LiveClassesPage({
     );
   }
 
-  const sections: { title: string; items: typeof classes; icon: "live" | "up" | "rec" }[] = [
+  const sections: { title: string; items: typeof visible; icon: "live" | "up" | "rec" }[] = [
     { title: "Live Now", items: live, icon: "live" },
     { title: "Upcoming Classes", items: upcoming, icon: "up" },
     { title: "Recorded Sessions", items: recordings, icon: "rec" },

@@ -11,6 +11,7 @@ import {
   listConsultations,
   ConsultationServiceError,
 } from "@/lib/consultations-service";
+import { EXPERT_CONSULTATION_DURATION_MIN } from "@/lib/expert-proforma";
 
 export async function GET() {
   try {
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
       studentId: session.user.id,
       expertId: data.expertId,
       slot,
-      duration: 30,
+      duration: EXPERT_CONSULTATION_DURATION_MIN,
       notes,
       requireAvailableExpert: false,
     });
