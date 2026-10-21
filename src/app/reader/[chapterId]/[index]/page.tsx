@@ -42,6 +42,8 @@ export default async function LectureRoute({
   if (index >= chapter.sections.length) notFound();
 
   const access = await getAccess();
+  // Editorial workflow: unpublished chapters are not served to learners.
+  if (chapter.status !== "PUBLISHED" && !access.isAdmin) notFound();
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
   const programmeOwned = access.programmeSlugs.has(programmeSlug);
   const yearOwned =

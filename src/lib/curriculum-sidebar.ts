@@ -58,6 +58,8 @@ export async function getCurriculumSidebar(opts: {
       id: true,
       name: true,
       chapters: {
+        // Learner-facing navigation: unpublished drafts never appear.
+        where: { status: "PUBLISHED" },
         orderBy: [{ unitNumber: "asc" }, { title: "asc" }],
         select: { id: true, title: true, type: true, unitNumber: true, courseCode: true },
       },

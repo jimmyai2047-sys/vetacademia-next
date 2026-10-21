@@ -19,7 +19,9 @@ export async function GET(req: Request) {
           department: true,
           programme: true,
           _count: {
-            select: { chapters: true },
+            // Students only ever see published chapters; drafts/reviews in
+            // progress must not inflate the visible chapter totals.
+            select: { chapters: { where: { status: "PUBLISHED" } } },
           },
         },
         orderBy: { name: "asc" },

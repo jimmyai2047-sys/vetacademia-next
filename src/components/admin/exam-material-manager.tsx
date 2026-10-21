@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/lib/exam-prep";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { importDocxAsHtml } from "@/lib/docx-import";
+import { hasReadableSource } from "@/lib/material-readiness";
 import {
   Plus,
   Pencil,
@@ -23,6 +24,7 @@ import {
   Loader2,
   FileText,
   X,
+  AlertTriangle,
 } from "lucide-react";
 
 type MaterialRow = {
@@ -71,6 +73,19 @@ const emptyForm: FormState = {
   isDemo: false,
 };
 
+/**
+ * The title literally advertises "[DEMO]…" while the access flag says No —
+ * the title must never be what grants access, so a mismatch is a defect to
+ * resolve deliberately (either flip the flag or drop the marker).
+ */
+function demoFlagMismatch(m: MaterialRow): boolean {
+  return !m.isDemo && m.title.trim().toUpperCase().startsWith("[DEMO]");
+}
+
+function needsAttention(m: MaterialRow): boolean {
+  return (m.published && !hasReadableSource(m)) || demoFlagMismatch(m);
+}
+
 export default function ExamMaterialManager({
   category,
   showHeading = true,
@@ -101,6 +116,19 @@ export default function ExamMaterialManager({
   const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
   const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
   const [subjectMap, setSubjectMap] = useState<Record<string, string>>({});
+  const [attentionOnly, setAttentionOnly] = useState(false);
+
+  // Readiness queue: what is already visible to readers but not actually
+  // deliverable, plus demo labels that disagree with the access flag.
+  const incompletePublished = useMemo(
+    () => rows.filter((m) => m.published && !hasReadableSource(m)),
+    [rows]
+  );
+  const flagMismatches = useMemo(() => rows.filter(demoFlagMismatch), [rows]);
+  const visibleRows = useMemo(
+    () => (attentionOnly ? rows.filter(needsAttention) : rows),
+    [rows, attentionOnly]
+  );
 
   const activeCategory = category || form.category;
   const programme = programmeForCategory(activeCategory);
@@ -274,6 +302,20 @@ export default function ExamMaterialManager({
       !form.externalUrl.trim()
     ) {
       setError("Upload a file for this material type.");
+      return;
+    }
+    // Mirror the server-side publish gate (src/lib/material-readiness.ts):
+    // a published material with no file, no link and no body ships an empty
+    // card to readers.
+    if (
+      form.published &&
+      !file &&
+      !form.externalUrl.trim() &&
+      !(form.body && form.body.trim())
+    ) {
+      setError(
+        "Published materials need a file, an external link, or body content — add one, or unpublish this material."
+      );
       return;
     }
     setSaving(true);
@@ -614,11 +656,48 @@ export default function ExamMaterialManager({
       </section>
 
       <section>
-        <h2 className="font-semibold mb-3">Existing Materials</h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-semibold">Existing Materials</h2>
+          {(incompletePublished.length > 0 || flagMismatches.length > 0) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {incompletePublished.length > 0 && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800"
+                  title="Published, but there is no file, link or body — these are withheld from the public demo page until fixed"
+                >
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  {incompletePublished.length} published without an asset
+                </span>
+              )}
+              {flagMismatches.length > 0 && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800"
+                  title='Title starts with "[DEMO]" but the Demo access flag is No — decide which one is right; the title never grants access'
+                >
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  {flagMismatches.length} demo-label mismatches
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setAttentionOnly((v) => !v)}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                  attentionOnly
+                    ? "border-primary bg-primary text-white"
+                    : "border-input bg-background hover:bg-muted"
+                }`}
+              >
+                {attentionOnly ? "Showing items needing a fix" : "Show only items needing a fix"}
+              </button>
+            </div>
+          )}
+        </div>
         {loading ? (
           <p className="text-muted-foreground">Loading...</p>
-        ) : rows.length === 0 ? (
-          <p className="text-muted-foreground">No materials yet.</p>
+        ) : visibleRows.length === 0 ? (
+          <p className="text-muted-foreground">
+            {attentionOnly ? "Nothing needs a fix in this list." : "No materials yet."}
+          </p>
         ) : (
           <div className="overflow-x-auto rounded-xl border">
             <table className="w-full text-sm">
@@ -635,7 +714,7 @@ export default function ExamMaterialManager({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((m) => (
+                {visibleRows.map((m) => (
                   <tr key={m.id} className="border-t">
                     <td className="p-3">{categoryLabel(m.category)}</td>
                     <td className="p-3">{materialTypeLabel(m.type)}</td>
@@ -649,12 +728,36 @@ export default function ExamMaterialManager({
                         </span>
                       ) : null}
                     </td>
-                    <td className="p-3 max-w-[200px] truncate">
-                      {m.externalUrl
-                        ? "Link"
-                        : m.fileName || (m.fileUrl ? "File" : "—")}
+                    <td className="p-3 max-w-[200px]">
+                      {!hasReadableSource(m) ? (
+                        m.published ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-800" title="Published with no file, link or body — readers see an empty card">
+                            Missing asset
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">Draft, none</span>
+                        )
+                      ) : (
+                        <span className="truncate">
+                          {m.externalUrl ? "Link" : m.fileName || "File"}
+                          {m.body ? " + text" : ""}
+                        </span>
+                      )}
                     </td>
-                     <td className="p-3">{m.isDemo ? "Yes" : "No"}</td>
+                     <td className="p-3">
+                      {m.isDemo ? (
+                        "Yes"
+                      ) : demoFlagMismatch(m) ? (
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-orange-800"
+                          title='Title starts with "[DEMO]" but the Demo access flag is No — access follows the flag, never the title'
+                        >
+                          No · title says demo
+                        </span>
+                      ) : (
+                        "No"
+                      )}
+                    </td>
                      <td className="p-3">{m.published ? "Yes" : "No"}</td>
                     <td className="p-3 text-right whitespace-nowrap">
                       <button

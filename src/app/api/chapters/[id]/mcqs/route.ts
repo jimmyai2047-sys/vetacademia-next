@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAccess } from "@/lib/access";
 
 function parseOptions(raw: string): string[] {
   try {
@@ -17,6 +18,16 @@ export async function GET(
 ) {
   try {
     const { id: chapterId } = await ctx.params;
+    const chapter = await prisma.chapter.findUnique({
+      where: { id: chapterId },
+      select: { status: true },
+    });
+    if (!chapter) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    // Editorial workflow: unpublished chapters expose nothing (admins may read).
+    if (chapter.status !== "PUBLISHED") {
+      const access = await getAccess();
+      if (!access.isAdmin) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     const mcqs = await prisma.chapterMcq.findMany({
       where: { chapterId },
       orderBy: { order: "asc" },

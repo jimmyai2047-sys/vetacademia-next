@@ -89,6 +89,7 @@ export default async function ExamSubjectPage({
             include: {
               programme: true,
               chapters: {
+                where: { status: "PUBLISHED" },
                 orderBy: { unitNumber: "asc" },
                 select: { id: true, title: true, unitNumber: true },
               },

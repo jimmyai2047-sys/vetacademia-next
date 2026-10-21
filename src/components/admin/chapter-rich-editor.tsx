@@ -7,7 +7,10 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Extension } from "@tiptap/core";
 import { TableKit } from "@tiptap/extension-table/kit";
 import { useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import ConfirmDialog from "@/components/admin/confirm-dialog";
 import {
   Loader2,
   Check,
@@ -21,9 +24,13 @@ import {
   Table as TableIcon,
   FileUp,
   AlertTriangle,
+  Send,
+  Rocket,
+  Undo2,
 } from "lucide-react";
 import { compressDataUrl, compressAllDataUrls } from "@/lib/client-image-compress";
 import { importDocxAsHtml } from "@/lib/docx-import";
+import { csrfFetch } from "@/lib/csrf-client";
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -91,19 +98,51 @@ export default function ChapterRichEditor({
   initialContent,
   onSave,
   saveLabel,
+  initialStatus,
 }: {
   chapterId: string;
   initialContent: string;
   onSave?: (html: string) => Promise<void>;
   saveLabel?: string;
+  initialStatus?: "DRAFT" | "REVIEW" | "PUBLISHED";
 }) {
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   const [wordWarning, setWordWarning] = useState(false);
+  const [workflow, setWorkflow] = useState<string>(initialStatus || "PUBLISHED");
+  const [workflowBusy, setWorkflowBusy] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<null | "PUBLISHED" | "DRAFT">(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const docxRef = useRef<HTMLInputElement>(null);
+
+  // Editorial workflow (finding 9): every transition goes through an explicit
+  // confirm — publishing makes content live for learners, unpublishing hides it.
+  async function applyStatus(next: "PUBLISHED" | "DRAFT" | "REVIEW") {
+    setWorkflowBusy(true);
+    setError(null);
+    try {
+      const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Status change failed");
+        return;
+      }
+      const d = await res.json().catch(() => ({}));
+      if (d.status) setWorkflow(d.status);
+      router.refresh();
+    } catch {
+      setError("Status change failed");
+    } finally {
+      setWorkflowBusy(false);
+    }
+  }
 
   const insertHtml = useCallback(
     (html: string) => {
@@ -261,7 +300,7 @@ export default function ChapterRichEditor({
       if (onSave) {
         await onSave(html);
       } else {
-        const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+        const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: html }),
@@ -457,6 +496,74 @@ export default function ChapterRichEditor({
           </span>
         )}
         {error && <span className="text-xs text-red-500">{error}</span>}
+      </div>
+
+      {/* Editorial workflow (finding 9): DRAFT → REVIEW → PUBLISHED */}
+      <div className="flex items-center gap-2 flex-wrap border-t pt-2">
+        <span className="text-xs text-muted-foreground">Status:</span>
+        <Badge
+          variant={workflow === "PUBLISHED" ? "default" : "secondary"}
+          className="text-xs"
+        >
+          {workflow === "PUBLISHED"
+            ? "Published · live for students"
+            : workflow === "REVIEW"
+              ? "In review · hidden from students"
+              : "Draft · hidden from students"}
+        </Badge>
+        {workflow !== "PUBLISHED" && (
+          <>
+            <Button
+              size="sm"
+              variant="default"
+              className="h-7 text-xs gap-1"
+              disabled={workflowBusy}
+              onClick={() => setPendingStatus("PUBLISHED")}
+            >
+              <Rocket className="h-3 w-3" /> Publish
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-xs gap-1"
+              disabled={workflowBusy}
+              onClick={() => applyStatus("REVIEW")}
+            >
+              <Send className="h-3 w-3" /> Submit for review
+            </Button>
+          </>
+        )}
+        {workflow === "PUBLISHED" && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs gap-1"
+            disabled={workflowBusy}
+            onClick={() => setPendingStatus("DRAFT")}
+          >
+            <Undo2 className="h-3 w-3" /> Move to draft
+          </Button>
+        )}
+        {workflowBusy && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+        <ConfirmDialog
+          open={pendingStatus !== null}
+          onOpenChange={(o) => { if (!o) setPendingStatus(null); }}
+          title={pendingStatus === "PUBLISHED" ? "Publish this chapter?" : "Move this chapter to draft?"}
+          description={
+            pendingStatus === "PUBLISHED"
+              ? "The chapter becomes visible to students immediately (subject to their enrolment)."
+              : "The chapter is hidden from students immediately — its link stops working until you publish again."
+          }
+          confirmLabel={pendingStatus === "PUBLISHED" ? "Publish" : "Move to draft"}
+          variant={pendingStatus === "PUBLISHED" ? "default" : "destructive"}
+          loading={workflowBusy}
+          onConfirm={async () => {
+            if (!pendingStatus) return;
+            const next = pendingStatus;
+            setPendingStatus(null);
+            await applyStatus(next);
+          }}
+        />
       </div>
     </div>
   );

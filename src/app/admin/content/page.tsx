@@ -37,6 +37,7 @@ import {
   Eye,
   ExternalLink,
   Info,
+  AlertTriangle,
 } from "lucide-react";
 
 
@@ -78,9 +79,10 @@ export default async function ContentPage() {
 
   const programmeOrder: Record<string, number> = {
     AHDP: 0,
-    BVSC: 1,
-    MVSC: 2,
-    PHD: 3,
+    DVP: 1,
+    BVSC: 2,
+    MVSC: 3,
+    PHD: 4,
   };
   subjects.sort((a, b) => {
     return (a.code || a.name).localeCompare(b.code || b.name);
@@ -88,6 +90,7 @@ export default async function ContentPage() {
 
   const iconMap: Record<string, typeof BookOpen> = {
     AHDP: BookOpen,
+    DVP: BookOpen,
     BVSC: GraduationCap,
     MVSC: FlaskConical,
     PHD: GraduationCap,
@@ -95,6 +98,7 @@ export default async function ContentPage() {
 
   const colorMap: Record<string, string> = {
     AHDP: "text-green-600",
+    DVP: "text-teal-600",
     BVSC: "text-blue-600",
     MVSC: "text-purple-600",
     PHD: "text-orange-600",
@@ -139,9 +143,13 @@ export default async function ContentPage() {
             <Info className="h-4 w-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm text-amber-900">Preview + Structure Info</h3>
+            <h3 className="font-semibold text-sm text-amber-900">Unrestricted admin preview — structure info</h3>
             <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              <strong>Programmes</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]</code> (public syllabus) · <strong>Subjects</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]/[subjectId]</code> (Theory/Practical accordion, order = <code>unitNumber ASC</code>) · <strong>Examinations</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/examinations/[exam]</code> (prev year papers + mock tests + study materials). Har card pe <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> Preview</span> se student view ek click me khulega (Admin ko full access hai — no purchase needed).
+              <strong>Programmes</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]</code> (public syllabus) · <strong>Subjects</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/syllabus/[programme]/[subjectId]</code> (Theory/Practical accordion, order = <code>unitNumber ASC</code>) · <strong>Examinations</strong> → <code className="px-1 py-0.5 bg-white border rounded text-[11px]">/examinations/[exam]</code> (previous year papers + mock tests + study materials). Every <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> Preview</span> opens the student view in one click.
+            </p>
+            <p className="text-xs text-amber-800 mt-1.5 leading-relaxed flex items-start gap-1.5">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+              <span><strong>Previews are unrestricted:</strong> as an admin you see everything with no enrolment or payment. This is <em>not</em> a paid-student access test — to verify the real learner journey, sign in with a dedicated unpaid / paid / expired test account (see the activity on <code className="px-1 bg-white border rounded text-[11px]">/admin/users</code> and the checklist there).</span>
             </p>
           </div>
         </div>
@@ -188,7 +196,7 @@ export default async function ContentPage() {
                         <Link href={`/admin/content/${slug}`}>
                           <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
                         </Link>
-                        <Link href={`/syllabus/${slug}`} target="_blank" rel="noopener noreferrer">
+                        <Link href={`/syllabus/${slug}`} target="_blank" rel="noopener noreferrer" title="Unrestricted admin preview — not a paid-student access test">
                           <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
                             <Eye className="h-3 w-3" /> Preview
                           </Button>
@@ -349,7 +357,7 @@ export default async function ContentPage() {
                       <Link href={`/admin/content/exam/${track.key}`}>
                         <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
                       </Link>
-                      <Link href={`/examinations/${examSlug}`} target="_blank" rel="noopener noreferrer">
+                      <Link href={`/examinations/${examSlug}`} target="_blank" rel="noopener noreferrer" title="Unrestricted admin preview — not a paid-student access test">
                         <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
                           <Eye className="h-3 w-3" /> Preview
                         </Button>

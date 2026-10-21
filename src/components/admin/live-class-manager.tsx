@@ -16,6 +16,7 @@ import {
   Radio,
   Eye,
   Search,
+  AlertTriangle,
 } from "lucide-react";
 
 type LiveClass = {
@@ -29,6 +30,12 @@ type LiveClass = {
   scheduledAt: string;
   duration: number;
   status: string;
+  /** derived from the clock by the API — what is actually true right now */
+  effectiveStatus?: string;
+  /** stored status disagrees with the derived one */
+  statusStale?: boolean;
+  /** past its scheduled end while still stored as SCHEDULED/LIVE */
+  needsAttention?: boolean;
   recordingUrl: string | null;
   thumbnailUrl: string | null;
   isDemo: boolean;
@@ -46,6 +53,37 @@ const EXAMS = [
 ];
 
 const STATUSES = ["SCHEDULED", "LIVE", "ENDED", "CANCELLED"];
+
+// Every schedule on this site is India wall-clock time. Stored instants are
+// UTC, so both directions are converted explicitly instead of trusting the
+// browser/.server zone (a datetime-local string with no offset otherwise
+// shifts the class by 5.5 hours somewhere in the pipeline).
+const TZ = "Asia/Kolkata";
+const TZ_OFFSET = "+05:30";
+
+function toInputValue(iso: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: TZ,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date(iso));
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+    return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
+  } catch {
+    return iso.slice(0, 16);
+  }
+}
+
+function toInstant(value: string): string {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)
+    ? new Date(`${value}${TZ_OFFSET}`).toISOString()
+    : value;
+}
 
 function statusColor(s: string) {
   switch (s) {
@@ -127,7 +165,7 @@ export default function LiveClassManager() {
     setTrack(c.track || "");
     setSubject(c.subject || "");
     setYoutubeUrl(c.youtubeUrl || "");
-    setScheduledAt(c.scheduledAt.slice(0, 16));
+    setScheduledAt(toInputValue(c.scheduledAt));
     setDuration(c.duration);
     setStatus(c.status);
     setRecordingUrl(c.recordingUrl || "");
@@ -146,7 +184,7 @@ export default function LiveClassManager() {
     try {
       const payload = {
         title, description, exam, track: track || null, subject: subject || null,
-        youtubeUrl: youtubeUrl || null, scheduledAt, duration, status,
+        youtubeUrl: youtubeUrl || null, scheduledAt: toInstant(scheduledAt), duration, status,
         recordingUrl: recordingUrl || null, isDemo, planSlug: planSlug || null, order,
       };
       const url = editingId ? `/api/admin/live-classes/${editingId}` : "/api/admin/live-classes";
@@ -185,12 +223,46 @@ export default function LiveClassManager() {
     }
   }
 
+  // One-click resolution for a stale status: adopt the clock-derived status
+  // (PUT is partial, so only the status field is sent).
+  async function resolveAttention(c: LiveClass) {
+    const eff = c.effectiveStatus || c.status;
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/live-classes/${c.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: eff }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setError(d.error || "Update failed");
+        return;
+      }
+      load();
+    } catch {
+      setError("Network error while updating the class");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   function formatDt(dt: string) {
-    return new Date(dt).toLocaleString("en-IN", {
+    return `${new Date(dt).toLocaleString("en-IN", {
+      timeZone: TZ,
       dateStyle: "medium",
       timeStyle: "short",
-    });
+    })} IST`;
   }
+
+  // Operational queue: sessions the admin still has to decide something about.
+  // Overdue SCHEDULED/LIVE rows are auto-ended by the API sweep, so what is
+  // left here is mostly finished sessions with no recording attached.
+  const attention = classes.filter((c) => {
+    const eff = c.effectiveStatus || c.status;
+    return c.needsAttention || (eff === "ENDED" && !c.recordingUrl);
+  });
 
   return (
     <div className="space-y-4">
@@ -217,7 +289,10 @@ export default function LiveClassManager() {
             <Input placeholder="Subject (optional)" value={subject} onChange={(e) => setSubject(e.target.value)} />
             <Input placeholder="Track (optional)" value={track} onChange={(e) => setTrack(e.target.value)} />
             <Input placeholder="YouTube Live URL" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
-            <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
+            <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} aria-label="Scheduled start (India time)" />
+            <p className="text-xs text-muted-foreground sm:col-span-2 -mt-1">
+              Schedule times are India Standard Time (Asia/Kolkata, UTC+05:30).
+            </p>
             <Input type="number" placeholder="Duration (min)" value={duration} onChange={(e) => setDuration(Number(e.target.value))} />
             <select value={status} onChange={(e) => setStatus(e.target.value)} className="border rounded-md px-3 py-2 text-sm bg-background">
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -248,6 +323,55 @@ export default function LiveClassManager() {
         <p className="text-sm text-muted-foreground">No live classes yet.</p>
       ) : (
         <div className="space-y-2">
+          {attention.length > 0 && (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-700" />
+                <p className="text-xs font-bold text-amber-800">
+                  {attention.length} class{attention.length === 1 ? "" : "es"} need
+                  {attention.length === 1 ? "s" : ""} attention
+                </p>
+              </div>
+              <ul className="space-y-1.5">
+                {attention.map((c) => (
+                  <li
+                    key={`attention-${c.id}`}
+                    className="flex items-center justify-between gap-3 text-xs"
+                  >
+                    <span className="min-w-0 truncate">
+                      {formatDt(c.scheduledAt)} · {c.title} —{" "}
+                      {c.needsAttention
+                        ? "past its scheduled end while still stored as SCHEDULED/LIVE"
+                        : "ended, but no recording URL attached"}
+                    </span>
+                    <span className="flex shrink-0 gap-1">
+                      {!c.recordingUrl && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 px-2 text-[11px]"
+                          onClick={() => startEdit(c)}
+                        >
+                          Add recording
+                        </Button>
+                      )}
+                      {c.statusStale && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 px-2 text-[11px]"
+                          onClick={() => resolveAttention(c)}
+                          disabled={saving}
+                        >
+                          Mark {c.effectiveStatus}
+                        </Button>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -272,9 +396,27 @@ export default function LiveClassManager() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-sm truncate">{c.title}</span>
-                  <Badge className={`text-[10px] ${statusColor(c.status)}`}>{c.status}</Badge>
+                  <Badge className={`text-[10px] ${statusColor(c.effectiveStatus || c.status)}`}>{c.effectiveStatus || c.status}</Badge>
+                  {c.statusStale && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] border-amber-200 bg-amber-50 text-amber-700"
+                      title="Stored status disagrees with the clock — the saved value stays editable below"
+                    >
+                      stored: {c.status}
+                    </Badge>
+                  )}
                   <Badge variant="outline" className="text-[10px]">{c.exam}</Badge>
-                  {c.isDemo && <Badge variant="secondary" className="text-[10px]">FREE</Badge>}
+                  {c.isDemo && <Badge variant="secondary" className="text-[10px]">DEMO FIXTURE</Badge>}
+                  {c.effectiveStatus === "ENDED" && !c.recordingUrl && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] border-muted-foreground/40 text-muted-foreground"
+                      title="This class has ended but no recording URL is attached yet"
+                    >
+                      No recording
+                    </Badge>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                   <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDt(c.scheduledAt)}</span>

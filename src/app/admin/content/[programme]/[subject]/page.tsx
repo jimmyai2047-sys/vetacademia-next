@@ -24,6 +24,8 @@ import ChapterMcqManager from "@/components/admin/chapter-mcq-manager";
 import ChapterBulkImporter from "@/components/admin/chapter-bulk-importer";
 import ChapterTitleEditor from "@/components/admin/chapter-title-editor";
 import AddChapterButton from "@/components/admin/add-chapter-button";
+import ChapterHistoryButton from "@/components/admin/chapter-history-button";
+import PublishDraftsButton from "@/components/admin/publish-drafts-button";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +57,9 @@ export default async function SubjectContentPage({
 
   const theoryChapters = subject.chapters.filter((c) => c.type !== "PRACTICAL");
   const practicalChapters = subject.chapters.filter((c) => c.type === "PRACTICAL");
+  const draftCount = subject.chapters.filter(
+    (c) => c.status !== "PUBLISHED"
+  ).length;
 
   const signedMap = new Map<string, (typeof subject.chapters)[number]["chapterContents"] & { downloadUrl?: string }[]>();
   await Promise.all(
@@ -104,6 +109,7 @@ export default async function SubjectContentPage({
               href={`/syllabus/${slug}/${subject.id}`}
               target="_blank"
               rel="noopener noreferrer"
+              title="Unrestricted admin preview — not a paid-student access test"
             >
               <Button className="rounded-xl bg-white text-[#0c4a6e] hover:bg-white/90 font-semibold shadow-lg gap-2">
                 <Eye className="h-4 w-4" /> Preview as Student
@@ -163,6 +169,8 @@ export default async function SubjectContentPage({
       <div className="flex items-center gap-3 flex-wrap">
         <ChapterBulkImporter subjectId={subject.id} />
         <AddChapterButton subjectId={subject.id} />
+        <ChapterHistoryButton subjectId={subject.id} />
+        <PublishDraftsButton subjectId={subject.id} draftCount={draftCount} />
         <Link href={`/syllabus/${slug}/${subject.id}`} target="_blank" className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-white px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary hover:text-white transition-colors md:hidden">
           <Eye className="h-3.5 w-3.5" /> Preview as Student <ExternalLink className="h-3 w-3" />
         </Link>
@@ -198,6 +206,7 @@ export default async function SubjectContentPage({
               <ChapterRichEditor
                 chapterId={course.id}
                 initialContent={course.content}
+                initialStatus={course.status}
               />
               <ChapterContentManager
                 chapterId={course.id}
@@ -237,13 +246,14 @@ export default async function SubjectContentPage({
                         initialIsDemo={ch.isDemo}
                       />
                     </div>
-                    <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
+                    <Link href={`/reader/${ch.id}`} target="_blank" title="Unrestricted admin preview — unpublished chapters open for admins only" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
                       <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
                     </Link>
                   </div>
                 <ChapterRichEditor
                   chapterId={ch.id}
                   initialContent={ch.content}
+                  initialStatus={ch.status}
                 />
                 <ChapterContentManager
                   chapterId={ch.id}
@@ -282,13 +292,14 @@ export default async function SubjectContentPage({
                         initialIsDemo={ch.isDemo}
                       />
                     </div>
-                    <Link href={`/reader/${ch.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
+                    <Link href={`/reader/${ch.id}`} target="_blank" title="Unrestricted admin preview — unpublished chapters open for admins only" className="inline-flex items-center gap-1 rounded-full border bg-white px-2 py-1 text-xs text-primary hover:bg-primary hover:text-white transition-colors shrink-0">
                       <Eye className="h-3 w-3" /> Preview <ExternalLink className="h-3 w-3" />
                     </Link>
                   </div>
                 <ChapterRichEditor
                   chapterId={ch.id}
                   initialContent={ch.content}
+                  initialStatus={ch.status}
                 />
                 <ChapterContentManager
                   chapterId={ch.id}

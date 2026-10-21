@@ -62,6 +62,9 @@ export default async function CoursePage({
   if (programmeNameToSlug(course.subject.programme.name) !== progSlug) notFound();
 
   const access = await getAccess();
+  // Editorial workflow: unpublished courses stay out of the student view
+  // (admins keep access so they can review before publishing).
+  if (course.status !== "PUBLISHED" && !access.isAdmin) notFound();
   const programmeOwned = access.programmeSlugs.has(progSlug);
   const yearOwned =
     (progSlug === "bvsc" || progSlug === "ahdp") && course.subject.year

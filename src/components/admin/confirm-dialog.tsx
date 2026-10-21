@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,7 @@ export default function ConfirmDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  description: string;
+  description: ReactNode;
   confirmLabel?: string;
   variant?: "destructive" | "default";
   onConfirm: () => void | Promise<void>;

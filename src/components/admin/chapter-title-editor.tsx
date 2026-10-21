@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, Pencil } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf-client";
 
 export default function ChapterTitleEditor({
   chapterId,
@@ -27,7 +28,7 @@ export default function ChapterTitleEditor({
   async function toggleDemo() {
     setDemoSaving(true);
     try {
-      const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+      const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isDemo: !isDemo }),
@@ -48,7 +49,7 @@ export default function ChapterTitleEditor({
     setSaved(false);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/chapter/${chapterId}`, {
+      const res = await csrfFetch(`/api/admin/chapter/${chapterId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: trimmed }),

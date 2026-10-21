@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { csrfFetch } from "@/lib/csrf-client";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
@@ -22,7 +23,7 @@ async function uploadDataUrl(dataUrl: string): Promise<string> {
   const file = new File([blob], `img-${Date.now()}.${ext}`, { type: `image/${ext}` });
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+  const res = await csrfFetch("/api/admin/upload", { method: "POST", body: fd });
   if (!res.ok) return dataUrl;
   const data = await res.json();
   return data.url || data.downloadUrl || dataUrl;
@@ -97,6 +98,35 @@ export default function ChapterBulkImporter({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [replacePreview, setReplacePreview] = useState<
+    { count: number; chapters: { id: string; title: string; unitNumber: number; status: string }[] } | null
+  >(null);
+  const [replaceLoading, setReplaceLoading] = useState(false);
+  const [replaceAck, setReplaceAck] = useState(false);
+
+  // Replace preview (finding 9): show exactly what will be removed BEFORE
+  // the admin picks a file — never a silent wipe.
+  async function toggleReplace(checked: boolean) {
+    setReplace(checked);
+    setReplaceAck(false);
+    setError(null);
+    if (!checked) {
+      setReplacePreview(null);
+      return;
+    }
+    setReplaceLoading(true);
+    try {
+      const res = await fetch(`/api/admin/chapters?subjectId=${encodeURIComponent(subjectId)}`);
+      if (res.ok) {
+        const d = await res.json();
+        setReplacePreview({ count: d.count ?? 0, chapters: d.chapters ?? [] });
+      }
+    } catch {
+      setReplacePreview(null);
+    } finally {
+      setReplaceLoading(false);
+    }
+  }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -107,6 +137,10 @@ export default function ChapterBulkImporter({
     }
     if (!title.trim()) {
       setError("Please enter the chapter title first.");
+      return;
+    }
+    if (replace && (replacePreview?.count ?? 0) > 0 && !replaceAck) {
+      setError("Confirm the replacement (checkbox above) before importing.");
       return;
     }
 
@@ -141,7 +175,7 @@ export default function ChapterBulkImporter({
       setStatus("Saving chapter...");
       const sections = splitHtmlIntoTopicSections(cleanedHtml);
 
-      const res = await fetch("/api/admin/chapters", {
+      const res = await csrfFetch("/api/admin/chapters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -180,7 +214,7 @@ export default function ChapterBulkImporter({
       setStatus(`Saving sections (${sections.length})...`);
       for (let i = 0; i < sections.length; i++) {
         const s = sections[i];
-        const sr = await fetch("/api/admin/chapter-sections", {
+        const sr = await csrfFetch("/api/admin/chapter-sections", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -232,9 +266,53 @@ export default function ChapterBulkImporter({
       </div>
 
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
+        <input type="checkbox" checked={replace} onChange={(e) => toggleReplace(e.target.checked)} disabled={creating} />
         Replace existing chapters for this subject
       </label>
+
+      {replace && replaceLoading && (
+        <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Checking existing chapters…
+        </p>
+      )}
+      {replace && replacePreview && replacePreview.count > 0 && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
+          <p className="text-sm font-medium text-red-800 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+            This will remove {replacePreview.count} existing{" "}
+            {replacePreview.count === 1 ? "chapter" : "chapters"}:
+          </p>
+          <ul className="text-xs text-red-700 space-y-0.5 max-h-32 overflow-y-auto list-disc pl-5">
+            {replacePreview.chapters.slice(0, 20).map((c) => (
+              <li key={c.id}>
+                Unit {c.unitNumber}: {c.title}{" "}
+                <span className="text-red-400">({c.status.toLowerCase()})</span>
+              </li>
+            ))}
+            {replacePreview.chapters.length > 20 && (
+              <li>… and {replacePreview.chapters.length - 20} more</li>
+            )}
+          </ul>
+          <p className="text-xs text-red-700">
+            Every removed chapter is snapshotted first (Version history → restorable).
+            The imported replacement starts as <strong>DRAFT</strong> — students only see it after you publish.
+          </p>
+          <label className="flex items-start gap-2 text-xs font-medium text-red-800">
+            <input
+              type="checkbox"
+              checked={replaceAck}
+              onChange={(e) => setReplaceAck(e.target.checked)}
+              disabled={creating}
+              className="mt-0.5"
+            />
+            I understand {replacePreview.count}{" "}
+            {replacePreview.count === 1 ? "chapter" : "chapters"} will be replaced.
+          </label>
+        </div>
+      )}
+      {replace && replacePreview && replacePreview.count === 0 && (
+        <p className="text-xs text-muted-foreground">No existing chapters — nothing to replace.</p>
+      )}
 
       <div className="flex items-center gap-3">
         <input ref={fileRef} type="file" accept=".docx,.doc" className="hidden" onChange={handleFileUpload} />
@@ -251,7 +329,7 @@ export default function ChapterBulkImporter({
       )}
       {done && (
         <p className="text-sm text-green-600 flex items-center gap-2">
-          <Check className="h-4 w-4" /> Chapter saved successfully!
+          <Check className="h-4 w-4" /> Saved as DRAFT — review it, then press Publish to make it visible to students.
         </p>
       )}
       {error && (

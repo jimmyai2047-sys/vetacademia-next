@@ -39,6 +39,7 @@ export async function GET(req: Request) {
           content: true,
           isDemo: true,
           subjectId: true,
+          status: true,
         },
         orderBy: { unitNumber: "asc" },
       }),
@@ -69,8 +70,14 @@ export async function GET(req: Request) {
       ? access.ownedSubjectIds.has(subject.id)
       : false;
 
+    // Editorial workflow: DRAFT/REVIEW chapters are never listed to learners
+    // (admins see everything so they can preview unpublished work).
+    const visibleChapters = access.isAdmin
+      ? chapters
+      : chapters.filter((ch) => ch.status === "PUBLISHED");
+
     return NextResponse.json(
-      chapters.map((ch) => {
+      visibleChapters.map((ch) => {
         const allowed =
           ch.isDemo ||
           programmeOwned ||

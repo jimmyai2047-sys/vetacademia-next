@@ -34,6 +34,9 @@ export default async function ChapterReaderRoute({
   if (!chapter) notFound();
 
   const access = await getAccess();
+  // Editorial workflow: DRAFT/REVIEW chapters are invisible to learners;
+  // admins can open them to review before publishing.
+  if (chapter.status !== "PUBLISHED" && !access.isAdmin) notFound();
   const programmeSlug = programmeNameToSlug(chapter.subject.programme.name);
   const programmeOwned = access.programmeSlugs.has(programmeSlug);
   const yearOwned =

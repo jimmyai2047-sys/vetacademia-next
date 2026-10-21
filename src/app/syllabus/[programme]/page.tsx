@@ -81,6 +81,7 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowLeft, Sparkles
 import { getSubjectImage } from "@/lib/subject-images";
 import { getAccess } from "@/lib/access";
 import { slugToProgrammeName } from "@/lib/programme";
+import { isStudyToolSubject } from "@/lib/subjects";
 import { getDiploma, type DiplomaTrack } from "@/lib/diplomas";
 import NotifyMe from "@/components/notify-me";
 import SyllabusProgress from "@/components/syllabus-progress";
@@ -228,7 +229,7 @@ export default async function ProgrammePage({
                   semester: true,
                   paper: true,
                   code: true,
-                  _count: { select: { chapters: true } },
+                  _count: { select: { chapters: { where: { status: "PUBLISHED" } } } },
                 },
                 orderBy: [{ year: "asc" }, { name: "asc" }],
               },
@@ -245,7 +246,7 @@ export default async function ProgrammePage({
               semester: true,
               paper: true,
               code: true,
-              _count: { select: { chapters: true } },
+              _count: { select: { chapters: { where: { status: "PUBLISHED" } } } },
             },
             orderBy: [{ year: "asc" }, { semester: "asc" }, { paper: "asc" }],
           },
@@ -270,7 +271,9 @@ export default async function ProgrammePage({
   const access = await getAccess();
 
   // Granular purchase plans for this programme (year plans for BVSc/AHDP,
-  // subject plans for MVSc/PhD).
+  // subject plans for MVSc/PhD). Ordered so the base (lifetime) plan sorts
+  // before its -6mo/-12mo/-24mo duration variants; the maps below keep the
+  // FIRST row per year/subject so the CTA never links a random variant.
   const granularPlans = await unstable_cache(
     () =>
       prisma.plan.findMany({
@@ -278,6 +281,7 @@ export default async function ProgrammePage({
           programmeSlug: slug,
           OR: [{ year: { not: null } }, { subjectId: { not: null } }],
         },
+        orderBy: [{ year: { sort: "asc", nulls: "last" } }, { subjectId: { sort: "asc", nulls: "last" } }, { slug: "asc" }],
         select: { slug: true, year: true, subjectId: true },
       }),
     ["syllabus-granular-plans", slug],
@@ -286,8 +290,9 @@ export default async function ProgrammePage({
   const yearPlanByYear = new Map<string, string>();
   const subjectPlanBySubject = new Map<string, string>();
   for (const p of granularPlans) {
-    if (p.year) yearPlanByYear.set(p.year, p.slug);
-    if (p.subjectId) subjectPlanBySubject.set(p.subjectId, p.slug);
+    if (p.year && !yearPlanByYear.has(p.year)) yearPlanByYear.set(p.year, p.slug);
+    if (p.subjectId && !subjectPlanBySubject.has(p.subjectId))
+      subjectPlanBySubject.set(p.subjectId, p.slug);
   }
 
   const isYearProgramme = slug === "bvsc" || slug === "ahdp";
@@ -299,18 +304,29 @@ export default async function ProgrammePage({
     ...programme.departments.flatMap((d) => d.subjects),
     ...programme.subjects,
   ];
+  // Study tools (Flashcards, Mock Tests, …) can exist as subject rows so they
+  // can carry content, but they are not part of the prescribed academic
+  // curriculum — keep them out of the subject/course totals and the year tree.
+  const isStudyTool = isStudyToolSubject;
+  const academicSubjects = allSubjects.filter((s) => !isStudyTool(s));
+  const studyToolSubjects = allSubjects.filter(isStudyTool);
   const groupKey = (s: { year: string | null; semester: string | null }) =>
     s.year || s.semester || "General";
   const glanceGroups = new Map<string, typeof allSubjects>();
-  for (const s of allSubjects) {
+  for (const s of academicSubjects) {
     const key = groupKey(s);
     if (!glanceGroups.has(key)) glanceGroups.set(key, []);
     glanceGroups.get(key)!.push(s);
   }
-  const totalCourses = allSubjects.reduce(
+  const totalCourses = academicSubjects.reduce(
     (sum, s) => sum + s._count.chapters,
     0
   );
+  // Only real year groups count as "years" — a catch-all "General" bucket
+  // (subjects without an assigned year) must never inflate the year count.
+  const glanceGroupKeys = Array.from(glanceGroups.keys());
+  const yearGroupKeys = glanceGroupKeys.filter((k) => /year/i.test(k));
+  const generalGroupKeys = glanceGroupKeys.filter((k) => !/year/i.test(k));
 
   const renderSubjectCard = (subject: {
     id: string;
@@ -412,8 +428,8 @@ export default async function ProgrammePage({
     isPartOf: { "@type": "WebSite", "@id": "https://vetacademia.in/#website" },
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: allSubjects.length,
-      itemListElement: allSubjects.map((s, index) => ({
+      numberOfItems: academicSubjects.length,
+      itemListElement: academicSubjects.map((s, index) => ({
         "@type": "ListItem",
         position: index + 1,
         item: {
@@ -464,7 +480,7 @@ export default async function ProgrammePage({
                 <p className="mt-1 text-white/80 max-w-2xl">{programme.fullName}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 text-xs font-medium">
-                    <BookMarked className="h-3.5 w-3.5" /> {allSubjects.length} Subjects
+                    <BookMarked className="h-3.5 w-3.5" /> {academicSubjects.length} Subjects
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 text-xs font-medium">
                     <Users className="h-3.5 w-3.5" /> {totalCourses} Courses
@@ -486,9 +502,18 @@ export default async function ProgrammePage({
               <h2 className="text-lg font-semibold mb-1 tracking-tight">Syllabus at a <span className="va-gradient-text">Glance</span></h2>
               <div className="h-1 w-12 rounded-full bg-gradient-to-r from-primary to-[#d4a843] mb-2" />
               <p className="text-sm text-muted-foreground mb-3">
-                {allSubjects.length} subjects · {totalCourses} courses mapped unit-wise
-                across {glanceGroups.size} {isYearProgramme ? "year" : "group"}
-                {glanceGroups.size === 1 ? "" : "s"}.
+                {academicSubjects.length} subjects · {totalCourses} courses mapped unit-wise
+                {yearGroupKeys.length > 0 ? (
+                  <>
+                    {" "}across {yearGroupKeys.length} {yearGroupKeys.length === 1 ? "year" : "years"}
+                    {generalGroupKeys.length > 0 &&
+                      ` · ${generalGroupKeys.length} general ${generalGroupKeys.length === 1 ? "group" : "groups"}`}
+                  </>
+                ) : (
+                  <>{" "}across {glanceGroups.size} {glanceGroups.size === 1 ? "group" : "groups"}</>
+                )}
+                {studyToolSubjects.length > 0 &&
+                  ` · ${studyToolSubjects.length} study ${studyToolSubjects.length === 1 ? "tool" : "tools"} below`}.
               </p>
               <div className="space-y-4">
                 {Array.from(glanceGroups.entries()).map(([group, subs]) => (
@@ -529,7 +554,7 @@ export default async function ProgrammePage({
           </Card>
 
           <div className="space-y-4">
-            <SyllabusProgress total={allSubjects.length} completed={0} lastSubject={null} />
+            <SyllabusProgress total={academicSubjects.length} completed={0} lastSubject={null} />
             <Card className="va-card-hover rounded-[1.5rem] border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-sm overflow-hidden relative">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-70" />
               <CardContent className="p-5 space-y-3">
@@ -573,7 +598,7 @@ export default async function ProgrammePage({
             <div key={dept.id}>
               <h2 className="text-xl font-semibold mb-4">{dept.name}</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dept.subjects.map(renderSubjectCard)}
+                {dept.subjects.filter((s) => !isStudyTool(s)).map(renderSubjectCard)}
               </div>
             </div>
           ))}
@@ -581,7 +606,24 @@ export default async function ProgrammePage({
       ) : (
         <div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programme.subjects.map(renderSubjectCard)}
+            {academicSubjects.map(renderSubjectCard)}
+          </div>
+        </div>
+      )}
+
+      {/* Study tools sit alongside the syllabus — never counted as academic
+          subjects or years in the summary above. */}
+      {studyToolSubjects.length > 0 && (
+        <div className="mt-10">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold">Study Tools</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Practice tools that complement the syllabus — not academic subjects
+              and not part of the prescribed course structure.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {studyToolSubjects.map(renderSubjectCard)}
           </div>
         </div>
       )}

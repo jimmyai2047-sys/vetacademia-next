@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { slugToProgrammeName } from "@/lib/programme";
+import { CATEGORY_TO_PROGRAMME } from "@/lib/exam-prep";
+import { isStudyToolSubject } from "@/lib/subjects";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Layers, Crown, Sparkles, Shield, Eye, ExternalLink, Info } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Crown, Sparkles, Shield, Eye, ExternalLink, Info, AlertTriangle, CheckCircle2, FileStack } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +33,49 @@ export default async function ProgrammeContentPage({
   });
 
   if (!programme) notFound();
+
+  // ---- Coverage matrix (finding 4): curriculum chapters vs exam resources ----
+  // Exam materials are matched by free-text `subject` name against categories
+  // that map to this programme slug — the same rule the public /prepare plates use.
+  const programmeCategories = Object.entries(CATEGORY_TO_PROGRAMME)
+    .filter(([, p]) => p === slug)
+    .map(([c]) => c);
+  const examMaterials = await prisma.examMaterial.findMany({
+    where: { published: true, category: { in: programmeCategories } },
+    select: { subject: true },
+  });
+  const coverage = programme.subjects.map((subject) => {
+    const studyTool = isStudyToolSubject(subject);
+    const exact = examMaterials.filter((m) => m.subject === subject.name).length;
+    const ciOnly = examMaterials.find(
+      (m) => m.subject && m.subject.toLowerCase() === subject.name.toLowerCase()
+    );
+    const chapters = subject._count.chapters;
+    let status: "ready" | "tool" | "gap";
+    let reason: string;
+    if (studyTool) {
+      status = "tool";
+      reason = "Study tool (not part of the prescribed curriculum)";
+    } else if (chapters > 0 && exact > 0) {
+      status = "ready";
+      reason = `${chapters} curriculum chapters · ${exact} exam resources`;
+    } else if (chapters > 0 && exact === 0 && ciOnly) {
+      status = "gap";
+      reason = `Exam resources mapped under a different name: "${ciOnly.subject}"`;
+    } else if (chapters > 0) {
+      status = "gap";
+      reason = "Curriculum chapters exist — no exam resources mapped";
+    } else if (exact > 0) {
+      status = "gap";
+      reason = "Exam resources exist — no curriculum chapters";
+    } else {
+      status = "gap";
+      reason = "No curriculum chapters and no exam resources";
+    }
+    return { subject, chapters, exam: exact, studyTool, status, reason };
+  });
+  const readyCount = coverage.filter((c) => c.status === "ready").length;
+  const gapCount = coverage.filter((c) => c.status === "gap").length;
 
   return (
     <div className="space-y-6">
@@ -92,12 +137,25 @@ export default async function ProgrammeContentPage({
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <span className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-[#d4a843]" />
-          Subjects ({programme.subjects.length})
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <span className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-[#d4a843]" />
+            Subjects ({programme.subjects.length})
+          </h2>
+          <div className="flex items-center gap-1.5 text-xs">
+            <Badge className="rounded-full bg-emerald-100 text-emerald-800 border-emerald-200 gap-1">
+              <CheckCircle2 className="h-3 w-3" /> {readyCount} ready
+            </Badge>
+            <Badge className="rounded-full bg-amber-100 text-amber-800 border-amber-200 gap-1">
+              <AlertTriangle className="h-3 w-3" /> {gapCount} coverage {gapCount === 1 ? "gap" : "gaps"}
+            </Badge>
+            <Badge variant="outline" className="rounded-full gap-1" title="Badges show curriculum chapters vs exam resources per subject">
+              <Info className="h-3 w-3" /> coverage
+            </Badge>
+          </div>
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {programme.subjects.map((subject) => (
+          {coverage.map(({ subject, chapters, exam, studyTool, status, reason }) => (
               <Card key={subject.id} className="va-card-hover group relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm hover:shadow-lg transition-all">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                 <CardHeader className="pb-3">
@@ -115,14 +173,35 @@ export default async function ProgrammeContentPage({
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <Badge variant="secondary" className="rounded-full">
-                      {subject._count.chapters} Chapters
-                    </Badge>
+                    <div className="flex flex-col gap-1.5 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="secondary" className="rounded-full">
+                          {chapters} Chapters
+                        </Badge>
+                        <Badge variant="outline" className="rounded-full gap-1">
+                          <FileStack className="h-3 w-3" /> {exam} exam resources
+                        </Badge>
+                      </div>
+                      {status === "ready" && (
+                        <Badge className="rounded-full w-fit bg-emerald-100 text-emerald-800 border-emerald-200 gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Ready
+                        </Badge>
+                      )}
+                      {status === "gap" && (
+                        <Badge className="rounded-full w-fit bg-amber-100 text-amber-800 border-amber-200 gap-1">
+                          <AlertTriangle className="h-3 w-3" /> Gap
+                        </Badge>
+                      )}
+                      {studyTool && (
+                        <Badge variant="outline" className="rounded-full w-fit">Study tool</Badge>
+                      )}
+                      <p className="text-[11px] text-muted-foreground leading-snug">{reason}</p>
+                    </div>
                     <div className="flex items-center gap-1.5">
                       <Link href={`/admin/content/${slug}/${subject.id}`}>
                         <Button variant="outline" size="sm" className="rounded-full border-primary/10 h-7 text-xs">Manage</Button>
                       </Link>
-                      <Link href={`/syllabus/${slug}/${subject.id}`} target="_blank" rel="noopener noreferrer">
+                      <Link href={`/syllabus/${slug}/${subject.id}`} target="_blank" rel="noopener noreferrer" title="Unrestricted admin preview — not a paid-student access test">
                         <Button variant="ghost" size="sm" className="rounded-full h-7 text-xs gap-1 text-primary hover:bg-primary hover:text-white">
                           <Eye className="h-3 w-3" /> Preview
                         </Button>

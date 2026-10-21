@@ -53,8 +53,20 @@ type PreparedCategory = {
   papers: { id: string; title: string; downloadUrl: string | null }[];
   mockTests: TestItem[];
   adaptiveTests: TestItem[];
-  lsaSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
-  dvpSubjects?: { id: string; name: string; code: string | null; chapterCount: number }[];
+  lsaSubjects?: {
+    id: string;
+    name: string;
+    code: string | null;
+    chapterCount: number;
+    materialCount: number;
+  }[];
+  dvpSubjects?: {
+    id: string;
+    name: string;
+    code: string | null;
+    chapterCount: number;
+    materialCount: number;
+  }[];
 };
 
 const TYPE_ICON: Record<string, any> = {
@@ -324,20 +336,28 @@ export default function ExamPrepTabs({
                       </CardTitle>
                       {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
                     </CardHeader>
-                    <CardContent className="flex items-center justify-between">
-                      <Badge variant="secondary" className="text-xs">{mats.length} chapters</Badge>
-                      <span className="text-xs text-primary font-medium">{mats.length === 0 ? "No chapters yet — click to add" : `Click to ${mats.length > 0 ? "view" : "add"} →`}</span>
+                    <CardContent className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        <Badge variant="secondary" className="text-xs">{s.chapterCount} curriculum chapters</Badge>
+                        <Badge variant="outline" className="text-xs">{mats.length} exam resources</Badge>
+                      </div>
+                      <span className="text-xs text-primary font-medium shrink-0">
+                        {mats.length === 0 ? "No exam resources yet" : "Click to view →"}
+                      </span>
                     </CardContent>
                   </div>
                   <div id={`lsa-subject-${s.id}`} data-expanded="false" style={{ display: "none" }} className="border-t bg-muted/20 p-3">
                     {mats.length === 0 ? (
                       <p className="text-xs text-muted-foreground text-center py-4">
-                        No chapters yet for {s.name}. Add via Admin → Content → Examination → LSA → Subject: {s.name}
+                        {s.chapterCount > 0
+                          ? `Curriculum has ${s.chapterCount} chapters for ${s.name}, but no exam resources are mapped yet.`
+                          : `No curriculum chapters and no exam resources yet for ${s.name}.`}{" "}
+                        Add via Admin → Content → Examination → LSA → Subject: {s.name}
                       </p>
                     ) : (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-primary" /> Chapters ({mats.length}) — one by one</span>
+                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-primary" /> Exam resources ({mats.length})</span>
                           <Badge variant="outline" className="text-[10px]">Progress • Reader as in test file</Badge>
                         </div>
                         <div className="grid gap-3">
@@ -409,20 +429,28 @@ export default function ExamPrepTabs({
                       </CardTitle>
                       {s.code && <p className="text-xs text-muted-foreground">{s.code}</p>}
                     </CardHeader>
-                    <CardContent className="flex items-center justify-between">
-                      <Badge variant="secondary" className="text-xs">{mats.length} chapters</Badge>
-                      <span className="text-xs text-violet-700 font-medium">{mats.length === 0 ? "No chapters yet — click to add" : "Click to view →"}</span>
+                    <CardContent className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        <Badge variant="secondary" className="text-xs">{s.chapterCount} curriculum chapters</Badge>
+                        <Badge variant="outline" className="text-xs">{mats.length} exam resources</Badge>
+                      </div>
+                      <span className="text-xs text-violet-700 font-medium shrink-0">
+                        {mats.length === 0 ? "No exam resources yet" : "Click to view →"}
+                      </span>
                     </CardContent>
                   </div>
                   <div id={`up-subject-${s.id}`} data-expanded="false" style={{ display: "none" }} className="border-t bg-muted/20 p-3">
                     {mats.length === 0 ? (
                       <p className="text-xs text-muted-foreground text-center py-4">
-                        No chapters yet for {s.name}. Add via Admin → Content → Examination → UP Pharmacist → Subject: {s.name}
+                        {s.chapterCount > 0
+                          ? `Curriculum has ${s.chapterCount} chapters for ${s.name}, but no exam resources are mapped yet.`
+                          : `No curriculum chapters and no exam resources yet for ${s.name}.`}{" "}
+                        Add via Admin → Content → Examination → UP Pharmacist → Subject: {s.name}
                       </p>
                     ) : (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-violet-600" /> Chapters ({mats.length}) — one by one</span>
+                          <span className="text-xs font-semibold flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-violet-600" /> Exam resources ({mats.length})</span>
                         </div>
                         <div className="grid gap-3">
                           {mats

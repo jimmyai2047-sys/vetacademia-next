@@ -3,6 +3,8 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { readinessIssue } from "@/lib/material-readiness";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
   try {
@@ -74,6 +76,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const willPublish = published ?? true;
+    const issue = readinessIssue({
+      published: willPublish,
+      fileUrl: fileUrl || null,
+      externalUrl: externalUrl || null,
+      body: chapterBody || null,
+    });
+    if (issue) {
+      return NextResponse.json({ error: issue }, { status: 400 });
+    }
+
     const material = await prisma.examMaterial.create({
       data: {
         category,
@@ -86,11 +99,22 @@ export async function POST(req: NextRequest) {
         fileType: fileType || null,
         fileSize: fileSize ?? null,
         externalUrl: externalUrl || null,
-        published: published ?? true,
+        published: willPublish,
         order: order ?? 0,
         subject: subject || null,
         topic: topic || null,
         isDemo: isDemo ?? false,
+      },
+    });
+    logAudit({
+      action: "exam_material.create",
+      actor: session.user.id,
+      target: material.id,
+      meta: {
+        title: material.title,
+        category: material.category,
+        published: material.published,
+        isDemo: material.isDemo,
       },
     });
     return NextResponse.json(material, { status: 201 });

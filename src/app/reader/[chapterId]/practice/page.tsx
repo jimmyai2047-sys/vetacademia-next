@@ -39,6 +39,8 @@ export default async function PracticeRoute({
   });
 
   if (!chapter) notFound();
+  // Editorial workflow: unpublished chapters are not served to learners.
+  if (chapter.status !== "PUBLISHED" && !access.isAdmin) notFound();
 
   const progSlug = programmeNameToSlug(chapter.subject.programme.name);
   const programmeOwned = access.programmeSlugs.has(progSlug);
