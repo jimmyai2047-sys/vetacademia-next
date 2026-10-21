@@ -62,10 +62,11 @@ export default async function FlashcardsPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-3">
             <Layers className="h-6 w-6 text-primary" />
           </div>
-          No flashcards available yet. Questions will appear here once mock tests
-          have been added.
-          <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
-            <Sparkles className="h-3 w-3 text-[#d4a843]" /> Add mock tests in admin to generate deck
+          No flashcards available yet — new decks are added regularly.
+          <div className="mt-3">
+            <a href="/demo" className="text-sm font-semibold text-primary hover:underline">
+              Try the free demo <Sparkles className="inline h-3 w-3 text-[#d4a843]" />
+            </a>
           </div>
         </div>
       ) : (

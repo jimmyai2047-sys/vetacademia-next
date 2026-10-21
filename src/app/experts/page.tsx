@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight, MapPin, GraduationCap, Search } from "lucide-react";
+import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight, MapPin, GraduationCap, Search, ShieldCheck } from "lucide-react";
 import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
@@ -133,6 +133,20 @@ export default async function ExpertsPage({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* How counts, verification and reviews work — shown next to the
+          directory so the public expert number is always explained. */}
+      <div className="mt-4 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm">
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+        <p className="text-muted-foreground leading-relaxed">
+          <span className="font-semibold text-foreground">How this directory works:</span>{" "}
+          the header badge counts every published profile on this page — the same
+          number used across the site. Each profile is verified by our admin team
+          (designation, qualifications and present posting) before it goes live.
+          Star ratings and review counts come only from completed consultations
+          booked on VetAcademia; profiles without consultations show “No reviews yet”.
+        </p>
       </div>
 
       {/* Search / field filter */}

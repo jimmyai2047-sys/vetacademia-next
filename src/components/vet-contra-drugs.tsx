@@ -46,14 +46,16 @@ const contraData: { species: string; icon: string; drugs: Drug[] }[] = [
       { name: "Aminoglycosides (dehydrated)", reason: "Nephrotoxic — ensure hydration", mechanism: "Renal tubular accumulation → nephrotoxicosis", symptoms: "Polyuria → oliguria, azotemia", alternative: "Hydrate first, monitor creatinine" },
       { name: "Corticosteroids (laminitis prone)", reason: "Laminitis risk", mechanism: "Vasoconstriction + metabolic laminitis trigger", symptoms: "Lameness, coffin bone rotation", alternative: "NSAIDs if possible" },
       { name: "Metronidazole (high)", reason: "Hepatotoxic", mechanism: "Dose-dependent hepatic necrosis", symptoms: "Anorexia, jaundice", alternative: "Lower dose" },
+      // Feed-line hazards that show up in cattle yards but harm HORSES — they
+      // belong to the equine group, not the cattle/buffalo table.
+      { name: "Ionophores (cattle feed cross-contamination)", reason: "Fatal to horses even in trace amounts — feed hygiene", mechanism: "Monensin/salinomycin disrupt Na/K flux → myocardial necrosis", symptoms: "In horse: colic, myoglobinuria, cardiac failure", alternative: "Separate feed lines & mixers, label all medicated feed" },
+      { name: "Tylosin (cross-fed in livestock ration)", reason: "Fatal if ingested by horses — macrolide sensitivity", mechanism: "Equine gut hypersensitivity to tylosin", symptoms: "In horse: diarrhea, colitis", alternative: "Never share feed between cattle and horse lines" },
     ],
   },
   {
     species: "Cattle / Buffalo",
     icon: "🐄",
     drugs: [
-      { name: "Ionophores (horse feed cross-contamination)", reason: "Fatal to horses — hygiene", mechanism: "Same ionophore toxicity as horse", symptoms: "In horse: cardiac failure", alternative: "Separate feed lines, label caution" },
-      { name: "Tylosin (horse)", reason: "Fatal if fed to horse", mechanism: "Horse sensitivity to macrolides", symptoms: "Diarrhea, colitis", alternative: "Avoid cross-feeding" },
       { name: "Urea (excess >1%)", reason: "Ammonia toxicity → bloat", mechanism: "Rapid urease → NH3 → alkalosis", symptoms: "Restlessness, dyspnea, bloat", alternative: "Urea <1% of ration, adapt slowly" },
       { name: "Copper (sheep mineral to cattle excess)", reason: "Sheep mineral toxic if excess", mechanism: "Copper accumulation → haemolysis", symptoms: "Jaundice, hemoglobinuria", alternative: "Species-specific mineral" },
     ],

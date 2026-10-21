@@ -215,7 +215,7 @@ export default async function FarmersPage({
         </div>
 
         {/* Sticky in-page section nav - glass */}
-        <nav className="sticky top-14 z-10 -mx-1 mt-5 mb-5 rounded-[1.25rem] border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+        <nav className="sticky top-[72px] z-10 -mx-1 mt-5 mb-5 rounded-[1.25rem] border border-border/60 bg-background/80 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
           <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SECTIONS.map((s) => (
               <a

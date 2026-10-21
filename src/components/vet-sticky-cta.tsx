@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Video, Clock, ShieldCheck } from "lucide-react";
+import { Users, Video, ShieldCheck } from "lucide-react";
+import { EXPERT_CONSULTATION_FEE, EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
 export default function VetStickyCta() {
   return (
@@ -16,10 +17,10 @@ export default function VetStickyCta() {
           </span>
           <div>
             <div className="font-bold flex items-center gap-2">
-              Book Consultation — 15 min <Badge className="bg-white text-emerald-700 rounded-full text-xs">₹299</Badge>
+              Book Consultation <Badge className="bg-white text-emerald-700 rounded-full text-xs">₹{EXPERT_CONSULTATION_FEE}</Badge>
             </div>
             <div className="text-xs text-white/80 flex items-center gap-2">
-              <Clock className="h-3 w-3" /> Today 4PM & 7PM slots • <ShieldCheck className="h-3 w-3" /> Verified vets
+              <ShieldCheck className="h-3 w-3" /> {EXPERT_CONSULTATION_FEE_LABEL} • Verified vets
             </div>
           </div>
         </div>
@@ -35,8 +36,8 @@ export default function VetStickyCta() {
         <div className="flex items-center gap-2">
           <Video className="h-4 w-4" />
           <div>
-            <div className="text-sm font-bold">Book 15 min — ₹299</div>
-            <div className="text-xs text-white/80">Today 4PM, 7PM</div>
+            <div className="text-sm font-bold">Book Consultation — ₹{EXPERT_CONSULTATION_FEE}</div>
+            <div className="text-xs text-white/80">Verified vets</div>
           </div>
         </div>
         <Link href="/experts">
