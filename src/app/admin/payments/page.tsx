@@ -43,7 +43,33 @@ type PaymentRow = {
   buyer: Buyer;
 };
 
-type Summary = { collected: number; paid: number; pending: number; failed: number };
+type Summary = {
+  collected: number; // LIVE money only (excludes TEST / test-mode rows)
+  collectedTest: number; // TEST rows, shown separately, never counted as revenue
+  paidLive: number;
+  paidTest: number;
+  paid: number;
+  pending: number;
+  pendingAged: number; // PENDING rows older than 24h — likely abandoned checkouts
+  failed: number;
+};
+
+const EMPTY_SUMMARY: Summary = {
+  collected: 0,
+  collectedTest: 0,
+  paidLive: 0,
+  paidTest: 0,
+  paid: 0,
+  pending: 0,
+  pendingAged: 0,
+  failed: 0,
+};
+
+// The Payment table has no refund column, so refunds issued in the gateway are
+// NOT known here. Net is shown explicitly as gross minus whatever this system
+// has actually recorded (today: nothing) rather than being implied by a single
+// "collected" figure.
+const REFUNDED_RECORDED = 0;
 
 function statusStyle(s: string): string {
   if (s === "PAID") return "bg-emerald-100 text-emerald-700 border border-emerald-200";
@@ -70,7 +96,7 @@ function csvCell(v: string | number): string {
 
 export default function AdminPaymentsPage() {
   const [rows, setRows] = useState<PaymentRow[]>([]);
-  const [summary, setSummary] = useState<Summary>({ collected: 0, paid: 0, pending: 0, failed: 0 });
+  const [summary, setSummary] = useState<Summary>(EMPTY_SUMMARY);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -79,6 +105,7 @@ export default function AdminPaymentsPage() {
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("ALL");
+  const [method, setMethod] = useState("ALL");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
@@ -91,6 +118,7 @@ export default function AdminPaymentsPage() {
           page: String(p),
           pageSize: "20",
           status,
+          method,
           search,
           from,
           to,
@@ -110,14 +138,14 @@ export default function AdminPaymentsPage() {
         setTotal(data.total || 0);
         setPage(data.page || 1);
         setTotalPages(data.totalPages || 1);
-        setSummary(data.summary || { collected: 0, paid: 0, pending: 0, failed: 0 });
+        setSummary({ ...EMPTY_SUMMARY, ...(data.summary || {}) });
       } catch {
         setError("Failed to load payments");
       } finally {
         setLoading(false);
       }
     },
-    [status, search, from, to]
+    [status, method, search, from, to]
   );
 
   useEffect(() => {
@@ -200,7 +228,12 @@ export default function AdminPaymentsPage() {
                 <Crown className="h-3 w-3 text-[#d4a843]" /> Royal Payments
               </div>
               <h1 className="text-2xl font-bold tracking-tight">Payments Received</h1>
-              <p className="text-white/70 text-sm">{total} transactions • Rs.{summary.collected.toLocaleString("en-IN")} collected (PAID)</p>
+              <p className="text-white/70 text-sm">
+                {total} transactions • Rs.{summary.collected.toLocaleString("en-IN")} collected (live, PAID)
+                {summary.collectedTest > 0 && (
+                  <> • Rs.{summary.collectedTest.toLocaleString("en-IN")} test (non-cash)</>
+                )}
+              </p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -214,18 +247,37 @@ export default function AdminPaymentsPage() {
         </div>
       </div>
 
-      {/* Summary */}
+      {/* Money — live collections only, stated as gross / refunded / net */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Collected (PAID)", value: `Rs.${summary.collected.toLocaleString("en-IN")}` },
-          { label: "Paid", value: String(summary.paid) },
-          { label: "Pending", value: String(summary.pending) },
-          { label: "Failed", value: String(summary.failed) },
+          { label: "Gross — live (PAID)", value: `Rs.${summary.collected.toLocaleString("en-IN")}`, note: `${summary.paidLive} live PAID row(s)` },
+          { label: "Refunded (recorded)", value: `Rs.${REFUNDED_RECORDED.toLocaleString("en-IN")}`, note: "no refund field in this system" },
+          { label: "Net (gross − refunds)", value: `Rs.${(summary.collected - REFUNDED_RECORDED).toLocaleString("en-IN")}`, note: "reconcile settled net in Razorpay" },
+          { label: "Test (non-cash)", value: `Rs.${summary.collectedTest.toLocaleString("en-IN")}`, note: `${summary.paidTest} PAID, not revenue` },
         ].map((c) => (
           <Card key={c.label} className="rounded-[1rem] border border-primary/5 bg-white shadow-sm">
             <CardContent className="p-4">
               <p className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">{c.label}</p>
               <p className="text-xl font-bold mt-1">{c.value}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{c.note}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Status counts for the current filter scope */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "Paid", value: String(summary.paid), note: "all methods, this scope", warn: false },
+          { label: "Pending", value: String(summary.pending), note: summary.pendingAged > 0 ? `${summary.pendingAged} older than 24h (likely abandoned)` : "awaiting payment", warn: summary.pendingAged > 0 },
+          { label: "Failed", value: String(summary.failed), note: "gateway failed", warn: false },
+          { label: "Transactions", value: String(total), note: "rows matching these filters", warn: false },
+        ].map((c) => (
+          <Card key={c.label} className="rounded-[1rem] border border-primary/5 bg-white shadow-sm">
+            <CardContent className="p-4">
+              <p className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">{c.label}</p>
+              <p className="text-xl font-bold mt-1">{c.value}</p>
+              <p className={`text-[10px] mt-0.5 ${c.warn ? "font-semibold text-amber-700" : "text-muted-foreground"}`}>{c.note}</p>
             </CardContent>
           </Card>
         ))}
@@ -250,6 +302,11 @@ export default function AdminPaymentsPage() {
             <option value="PENDING">Pending</option>
             <option value="FAILED">Failed</option>
             <option value="CANCELLED">Cancelled</option>
+          </select>
+          <select value={method} onChange={(e) => setMethod(e.target.value)} className="rounded-xl border border-input bg-background px-3 py-2 text-sm" aria-label="Payment environment filter">
+            <option value="ALL">All payments</option>
+            <option value="LIVE">Live only</option>
+            <option value="TEST">Test only</option>
           </select>
           <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl md:w-40" aria-label="From date" />
           <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl md:w-40" aria-label="To date" />
@@ -307,7 +364,15 @@ export default function AdminPaymentsPage() {
                         <span className="font-semibold text-red-600">Expired {fmtDate(r.expiresAt)}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">{r.method}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {r.method === "TEST" ? (
+                        <Badge className="rounded-full px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase bg-amber-100 text-amber-800 border border-amber-200" title="Internal / gateway test mode — excluded from collected revenue">Test</Badge>
+                      ) : r.method === "RAZORPAY" ? (
+                        <Badge className="rounded-full px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase bg-gray-100 text-gray-700 border border-gray-200">Razorpay</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3"><Badge className={`rounded-full px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase ${statusStyle(r.status)}`}>{r.status}</Badge></td>
                     <td className="px-4 py-3">
                       <Link href={`/admin/payments/${r.id}`}>
@@ -338,7 +403,7 @@ export default function AdminPaymentsPage() {
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        Source: <span className="font-mono">Payment</span> table + buyer <span className="font-mono">User</span> profile (name, email, phone, address, college) + <span className="font-mono">Plan / GeneratedReport</span> name. Fine-grained instrument (UPI vs Card) lives in Razorpay Dashboard — click the payment ID there. CSV exports the current page.
+        Source: <span className="font-mono">Payment</span> table + buyer <span className="font-mono">User</span> profile (name, email, phone, address, college) + <span className="font-mono">Plan / GeneratedReport</span> name. <strong>Collected = live money only</strong>: rows with method <span className="font-mono">TEST</span> are internal / gateway test-mode and are reported under “Test (non-cash)”, never as revenue (legacy rows with no method are treated as live). A <span className="font-mono">RAZORPAY</span> label alone does not prove live-mode settlement — confirm capture/settlement in the Razorpay dashboard. Fine-grained instrument (UPI vs Card) lives there too. Refunds issued at the gateway are not recorded in the Payment table, so Net currently equals Gross - reconcile both against the Razorpay dashboard. CSV exports the current page.
       </p>
     </div>
   );

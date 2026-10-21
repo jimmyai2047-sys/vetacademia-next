@@ -53,6 +53,8 @@ export async function GET(
           description: true,
           programmeSlug: true,
           examSlug: true,
+          year: true,
+          subjectId: true,
         },
       },
     },
@@ -93,6 +95,37 @@ export async function GET(
   }));
 
   const paidRows = history.filter((h) => h.status === "PAID");
+  // TEST / test-mode rows are excluded from the revenue figure but kept
+  // visible as `lifetimeTest` so they stay auditable.
+  const isTest = (h: { method: string | null }) => h.method === "TEST";
+  const lifetimePaid = paidRows.filter((h) => !isTest(h)).reduce((s, h) => s + h.amount, 0);
+  const lifetimeTest = paidRows.filter(isTest).reduce((s, h) => s + h.amount, 0);
+
+  // Is THIS checkout currently granting anything? Mirrors activeAccessFilter:
+  // PAID + (null expiresAt = lifetime, or a future expiry).
+  const active =
+    payment.status === "PAID" &&
+    (!payment.expiresAt || payment.expiresAt.getTime() > Date.now());
+
+  // The concrete scope this purchase unlocks — same rules accessFromPayments
+  // applies, so support can answer "what did this buy?" without guessing.
+  const grants: string[] = [];
+  if (payment.plan) {
+    const p = payment.plan;
+    if (p.type === "COURSE" && p.programmeSlug && !p.year && !p.subjectId) {
+      grants.push(`Full course: ${p.programmeSlug}`);
+    }
+    if (p.type === "EXAM" && p.examSlug) grants.push(`Exam pack: ${p.examSlug}`);
+    if (p.year && p.programmeSlug) grants.push(`Year scope: ${p.programmeSlug}:${p.year}`);
+    if (p.subjectId) grants.push(`Subject: ${p.subjectId}`);
+    if (!grants.length) grants.push(`Plan: ${p.slug}`);
+  } else if (report) {
+    grants.push(`Report download: ${report.title}`);
+  } else if (payment.planSlug) {
+    grants.push(`Plan: ${payment.planSlug}`);
+  } else {
+    grants.push("No content scope (top-up / legacy row)");
+  }
 
   return NextResponse.json({
     payment: {
@@ -110,6 +143,8 @@ export async function GET(
           : payment.planSlug || "—",
       planSlug: payment.planSlug,
       expiresAt: payment.expiresAt,
+      active,
+      grants,
       plan: payment.plan,
       report,
       createdAt: payment.createdAt,
@@ -135,7 +170,8 @@ export async function GET(
     totals: {
       transactions: history.length,
       paid: paidRows.length,
-      lifetimePaid: paidRows.reduce((s, h) => s + h.amount, 0),
+      lifetimePaid,
+      lifetimeTest,
     },
   });
 }

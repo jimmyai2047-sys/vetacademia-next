@@ -15,6 +15,8 @@ import {
   IndianRupee,
   Package,
   History,
+  KeyRound,
+  ExternalLink,
 } from "lucide-react";
 
 type Buyer = {
@@ -42,6 +44,8 @@ type Payment = {
   paymentId: string;
   product: string;
   expiresAt: string | null;
+  active: boolean;
+  grants: string[];
   plan: { slug: string; name: string; type: string; price: number; validityDays: number | null; description: string | null } | null;
   report: { id: string; title: string; animalType: string; amount: number; status: string } | null;
   createdAt: string;
@@ -93,7 +97,7 @@ export default function AdminPaymentDetailPage() {
   const [payment, setPayment] = useState<Payment | null>(null);
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const [history, setHistory] = useState<HistoryRow[]>([]);
-  const [totals, setTotals] = useState({ transactions: 0, paid: 0, lifetimePaid: 0 });
+  const [totals, setTotals] = useState({ transactions: 0, paid: 0, lifetimePaid: 0, lifetimeTest: 0 });
   const [expired, setExpired] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -115,7 +119,7 @@ export default function AdminPaymentDetailPage() {
       );
       setBuyer(data.buyer);
       setHistory(data.history || []);
-      setTotals(data.totals || { transactions: 0, paid: 0, lifetimePaid: 0 });
+      setTotals(data.totals || { transactions: 0, paid: 0, lifetimePaid: 0, lifetimeTest: 0 });
     } catch {
       setError("Failed to load payment");
     } finally {
@@ -255,7 +259,8 @@ export default function AdminPaymentDetailPage() {
                   <>
                     <Field label="Plan Name" value={payment.plan.name} />
                     <Field label="Type" value={payment.plan.type} />
-                    <Field label="Price" value={`Rs.${payment.plan.price.toLocaleString("en-IN")}`} />
+                    <Field label="Paid at this checkout" value={`Rs.${payment.amount.toLocaleString("en-IN")}`} />
+                    <Field label="Catalogue price (today)" value={`Rs.${payment.plan.price.toLocaleString("en-IN")}`} />
                     <Field label="Slug" value={payment.plan.slug} mono />
                   </>
                 ) : (
@@ -263,7 +268,8 @@ export default function AdminPaymentDetailPage() {
                     <>
                       <Field label="Report Title" value={payment.report.title} />
                       <Field label="Animal" value={payment.report.animalType} />
-                      <Field label="Price" value={`Rs.${payment.report.amount.toLocaleString("en-IN")}`} />
+                      <Field label="Paid at this checkout" value={`Rs.${payment.amount.toLocaleString("en-IN")}`} />
+                      <Field label="Catalogue price (today)" value={`Rs.${payment.report.amount.toLocaleString("en-IN")}`} />
                       <Field label="Report Status" value={payment.report.status} />
                     </>
                   )
@@ -271,6 +277,65 @@ export default function AdminPaymentDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Entitlement & access — what this checkout actually unlocks today */}
+          <Card className="relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-600 via-primary to-emerald-500" />
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 border border-violet-100"><KeyRound className="h-4 w-4 text-violet-700" /></span>
+                Entitlement &amp; Access
+              </CardTitle>
+              <Badge
+                className={`rounded-full px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase ${
+                  payment.active
+                    ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                    : "bg-gray-100 text-gray-600 border border-gray-200"
+                }`}
+              >
+                {payment.active
+                  ? "Access active"
+                  : payment.status === "PAID"
+                    ? "Access expired"
+                    : "No access from this row"}
+              </Badge>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {payment.grants.map((g) => (
+                  <span
+                    key={g}
+                    className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-800"
+                  >
+                    {g}
+                  </span>
+                ))}
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Field
+                  label="Validity"
+                  value={
+                    !payment.expiresAt
+                      ? "Lifetime"
+                      : !expired
+                        ? `Active till ${fmtDate(payment.expiresAt)}`
+                        : `Expired ${fmtDate(payment.expiresAt)}`
+                  }
+                />
+                <Field label="Content gate" value={payment.active ? "Grants premium content" : "Grants nothing right now"} />
+                <Field label="Test row" value={payment.method === "TEST" ? "TEST — never counted as revenue" : "Live"} />
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground">Buyer</p>
+                  <Link
+                    href={`/admin/users/${buyer?.id}`}
+                    className="mt-0.5 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  >
+                    Open support view <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Buyer history */}
           <Card className="relative overflow-hidden rounded-[1.25rem] border border-primary/5 bg-white shadow-sm">
@@ -280,7 +345,10 @@ export default function AdminPaymentDetailPage() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 border border-amber-100"><History className="h-4 w-4 text-amber-700" /></span>
                 All Purchases by this Buyer
               </CardTitle>
-              <p className="text-xs text-muted-foreground">{totals.transactions} transactions • {totals.paid} paid • Rs.{totals.lifetimePaid.toLocaleString("en-IN")} lifetime</p>
+              <p className="text-xs text-muted-foreground">
+                {totals.transactions} transactions • {totals.paid} paid • Rs.{totals.lifetimePaid.toLocaleString("en-IN")} lifetime (live)
+                {totals.lifetimeTest > 0 && <> • Rs.{totals.lifetimeTest.toLocaleString("en-IN")} test (non-cash)</>}
+              </p>
             </CardHeader>
             <CardContent className="p-0 overflow-x-auto">
               <table className="w-full min-w-[700px] text-sm">

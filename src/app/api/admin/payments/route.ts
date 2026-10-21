@@ -27,15 +27,26 @@ export async function GET(req: Request) {
     Math.max(1, parseInt(url.searchParams.get("pageSize") || "20", 10) || 20)
   );
   const status = (url.searchParams.get("status") || "ALL").toUpperCase();
+  // Scope of the money figures: ALL | LIVE (real collections) | TEST (internal
+  // test / gateway test-mode rows, never counted as revenue).
+  const method = (url.searchParams.get("method") || "ALL").toUpperCase();
   const search = (url.searchParams.get("search") || "").trim();
   const from = url.searchParams.get("from") || "";
   const to = url.searchParams.get("to") || "";
+
+  // LIVE is an explicit OR so legacy rows with method = null stay included —
+  // never rely on Prisma `not` semantics against a nullable column. Wrapped in
+  // AND so it composes with the search OR below instead of clobbering it.
+  const liveClause = { OR: [{ method: null }, { method: { not: "TEST" } }] };
+  const testClause = { method: "TEST" };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
   if (["PENDING", "PAID", "FAILED", "CANCELLED"].includes(status)) {
     where.status = status;
   }
+  if (method === "LIVE") where.AND = [liveClause];
+  if (method === "TEST") where.AND = [testClause];
   if (from || to) {
     where.createdAt = {};
     if (from) {
@@ -63,7 +74,39 @@ export async function GET(req: Request) {
 
   const skip = (page - 1) * pageSize;
 
-  const [rows, total, grouped, collected] = await Promise.all([
+  const paidWhere = { ...where, status: "PAID" };
+  // Both money figures are computed inside the SAME filter scope as the rows,
+  // so the summary always describes the list being looked at.
+  const paidLiveWhere = {
+    ...paidWhere,
+    AND: [...(paidWhere.AND ?? []), liveClause],
+  };
+  const paidTestWhere = {
+    ...paidWhere,
+    AND: [...(paidWhere.AND ?? []), testClause],
+  };
+  // Abandoned checkouts: PENDING rows sitting for more than a day are almost
+  // never going to be paid, so they are reported apart from fresh pendings
+  // instead of inflating one undifferentiated "pending" bucket.
+  const agedPendingWhere = {
+    ...where,
+    status: "PENDING",
+    createdAt: {
+      ...((where.createdAt as Record<string, Date> | undefined) ?? {}),
+      lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    },
+  };
+
+  const [
+    rows,
+    total,
+    grouped,
+    collectedLive,
+    collectedTest,
+    paidLiveCount,
+    paidTestCount,
+    pendingAgedCount,
+  ] = await Promise.all([
     prisma.payment.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -89,9 +132,16 @@ export async function GET(req: Request) {
     prisma.payment.count({ where }),
     prisma.payment.groupBy({ by: ["status"], where, _count: { status: true } }),
     prisma.payment.aggregate({
-      where: { ...where, status: "PAID" },
+      where: paidLiveWhere,
       _sum: { amount: true },
     }),
+    prisma.payment.aggregate({
+      where: paidTestWhere,
+      _sum: { amount: true },
+    }),
+    prisma.payment.count({ where: paidLiveWhere }),
+    prisma.payment.count({ where: paidTestWhere }),
+    prisma.payment.count({ where: agedPendingWhere }),
   ]);
 
   // Resolve GeneratedReport purchases stored as metadata { generatedReportId }
@@ -157,9 +207,15 @@ export async function GET(req: Request) {
     pageSize,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
     summary: {
-      collected: collected._sum.amount ?? 0,
+      // `collected` is LIVE money only — TEST / test-mode rows never count as
+      // revenue. `collectedTest` stays visible so tests remain auditable.
+      collected: collectedLive._sum.amount ?? 0,
+      collectedTest: collectedTest._sum.amount ?? 0,
+      paidLive: paidLiveCount,
+      paidTest: paidTestCount,
       paid: countBy("PAID"),
       pending: countBy("PENDING"),
+      pendingAged: pendingAgedCount,
       failed: countBy("FAILED"),
     },
   });
