@@ -29,9 +29,20 @@ export function examForTrack(track?: string | null): string | null {
   return TRACK_OPTIONS.find((o) => o.value === track)?.exam || null;
 }
 
+// Legacy track tags still present on older rows — labelled for humans instead
+// of showing the raw tag in admin tables (finding 11). Exported for the
+// /admin/reports/references reference-check report.
+export const LEGACY_TRACK_LABELS: Record<string, string> = {
+  "icar-jrf": "ICAR — JRF (PG, legacy)",
+};
+
 export function trackLabel(track?: string | null): string {
   if (!track) return "General";
-  return TRACK_OPTIONS.find((o) => o.value === track)?.label || track;
+  return (
+    TRACK_OPTIONS.find((o) => o.value === track)?.label ||
+    LEGACY_TRACK_LABELS[track] ||
+    track
+  );
 }
 
 // Top-level cards on the Content Management page. A track may have one or more

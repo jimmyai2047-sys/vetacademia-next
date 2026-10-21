@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
+import { isValidCommunityRef } from "@/lib/reference-dictionary";
 
 export async function PUT(
   req: NextRequest,
@@ -29,6 +30,15 @@ export async function PUT(
     if (typeof body?.title === "string") data.title = body.title.trim();
     if (typeof body?.url === "string") data.url = body.url.trim();
     if (typeof body?.active === "boolean") data.active = body.active;
+
+    const nextCategory = (data.category as string | undefined) ?? existing.category;
+    const nextRef = (data.ref as string | undefined) ?? existing.ref;
+    if (!isValidCommunityRef(nextCategory, nextRef)) {
+      return NextResponse.json(
+        { error: `Unknown ${nextCategory} ref "${nextRef}" — pick a value from the reference dictionary` },
+        { status: 400 }
+      );
+    }
 
     const updated = await prisma.communityLink.update({
       where: { id },

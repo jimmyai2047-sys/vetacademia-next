@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PROGRAMME_REFS, EXAM_REFS, ROLE_REFS } from "@/lib/community-constants";
+import { csrfFetch } from "@/lib/csrf-client";
 import { Search } from "lucide-react";
 
 type LinkRow = {
@@ -50,6 +51,13 @@ export default function CommunityManager() {
       ? ROLE_REFS
       : EXAM_REFS;
 
+  // Show canonical labels in the table instead of raw refs (finding 11).
+  function refLabel(category: string, ref: string) {
+    const list =
+      category === "PROGRAMME" ? PROGRAMME_REFS : category === "ROLE" ? ROLE_REFS : EXAM_REFS;
+    return list.find((r) => r.value === ref)?.label || ref;
+  }
+
   async function load() {
     setLoading(true);
     try {
@@ -63,6 +71,7 @@ export default function CommunityManager() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, []);
 
@@ -97,7 +106,7 @@ export default function CommunityManager() {
     const url = editingId
       ? `/api/admin/community/${editingId}`
       : "/api/admin/community";
-    const res = await fetch(url, {
+    const res = await csrfFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -115,7 +124,7 @@ export default function CommunityManager() {
   async function remove(id: string) {
     if (!confirm("Delete this community link? This cannot be undone.")) return;
     try {
-      const res = await fetch(`/api/admin/community/${id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/community/${id}`, { method: "DELETE" });
       if (res.ok) load();
       else setError("Failed to delete link");
     } catch {
@@ -287,7 +296,7 @@ export default function CommunityManager() {
                   <tr key={l.id} className="border-t">
                     <td className="p-3">{l.platform}</td>
                     <td className="p-3">{l.category}</td>
-                    <td className="p-3">{l.ref}</td>
+                    <td className="p-3" title={l.ref}>{refLabel(l.category, l.ref)}</td>
                     <td className="p-3">{l.title}</td>
                     <td className="p-3 max-w-[200px] truncate">
                       <a

@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { TRACK_OPTIONS, trackLabel } from "@/lib/exam-tracks";
+import { EXAM_KEY_REFS } from "@/lib/reference-dictionary";
+import { csrfFetch } from "@/lib/csrf-client";
 import {
   Pencil,
   Trash2,
@@ -42,13 +44,7 @@ const CATEGORIES = [
   { key: "PREVIOUS_YEAR", label: "Previous Year Papers" },
 ];
 
-const EXAMS = [
-  { key: "psc", label: "PSC" },
-  { key: "icar-entrance", label: "ICAR" },
-  { key: "net", label: "NET" },
-  { key: "ars", label: "ARS" },
-  { key: "other", label: "Other" },
-];
+const EXAMS = EXAM_KEY_REFS.map((r) => ({ key: r.value, label: r.label }));
 
 export default function PostManager() {
   const router = useRouter();
@@ -93,6 +89,7 @@ export default function PostManager() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadPosts();
   }, []);
 
@@ -137,7 +134,7 @@ export default function PostManager() {
     try {
       const fd = new FormData();
       fd.append("file", f);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const res = await csrfFetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Upload failed");
@@ -175,12 +172,12 @@ export default function PostManager() {
         file,
       };
       const res = editing
-        ? await fetch(`/api/admin/posts/${editing.id}`, {
+        ? await csrfFetch(`/api/admin/posts/${editing.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           })
-        : await fetch("/api/admin/posts", {
+        : await csrfFetch("/api/admin/posts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -203,7 +200,7 @@ export default function PostManager() {
   async function handleDelete(p: Post) {
     if (!confirm("Delete this post? This cannot be undone.")) return;
     try {
-      const res = await fetch(`/api/admin/posts/${p.id}`, { method: "DELETE" });
+      const res = await csrfFetch(`/api/admin/posts/${p.id}`, { method: "DELETE" });
       if (res.ok) {
         setPosts((prev) => prev.filter((x) => x.id !== p.id));
         router.refresh();

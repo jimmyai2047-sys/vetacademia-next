@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
+import { isValidCommunityRef } from "@/lib/reference-dictionary";
 
 export async function GET() {
   try {
@@ -43,6 +44,13 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "platform, category, ref, title and url are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidCommunityRef(category, ref.trim())) {
+      return NextResponse.json(
+        { error: `Unknown ${category} ref "${ref.trim()}" — pick a value from the reference dictionary` },
         { status: 400 }
       );
     }

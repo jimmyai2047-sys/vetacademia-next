@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getExamKeysForPlan } from "@/lib/plans";
 import { roleGroup } from "@/lib/roles";
 import { activeAccessFilter } from "@/lib/plan-validity";
+import { COMMUNITY_EXAM_REF_KEYS } from "@/lib/reference-dictionary";
 export {
   PROGRAMME_REFS,
   EXAM_REFS,
@@ -55,7 +56,10 @@ export async function getEligibleCommunityLinks(
     .filter(
       (l) =>
         (l.category === "PROGRAMME" && programmeSlugs.has(l.ref)) ||
-        (l.category === "EXAM" && examKeys.has(l.ref)) ||
+        (l.category === "EXAM" &&
+          (COMMUNITY_EXAM_REF_KEYS[l.ref] ?? [l.ref]).some((k) =>
+            examKeys.has(k)
+          )) ||
         (l.category === "ROLE" && !!user && l.ref === roleGroup(user.role))
     )
     .map((l) => ({

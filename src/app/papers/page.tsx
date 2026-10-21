@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, ArrowLeft, NotebookPen, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
+import { examKeyLabel } from "@/lib/reference-dictionary";
+import { trackLabel } from "@/lib/exam-tracks";
 import { getPublishedPosts } from "@/lib/posts";
 import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
@@ -62,7 +64,7 @@ export default async function PapersPage() {
               if (p.exam === "icar-entrance" && p.track === "icar-jrf") return { key: "icar-jrf", label: "ICAR — JRF (PG)", color: "bg-purple-600" };
               if (p.exam === "icar-entrance" && p.track === "icar-jrf-srf") return { key: "icar-jrf-srf", label: "ICAR — JRF/SRF", color: "bg-indigo-600" };
               if (!p.exam && !p.track) return { key: "programme", label: "Programme Papers", color: "bg-amber-600" };
-              return { key: p.exam || p.track || "general", label: p.exam ? p.exam.toUpperCase() : p.track || "General", color: "bg-primary" };
+              return { key: p.exam || p.track || "general", label: p.exam ? examKeyLabel(p.exam) : trackLabel(p.track), color: "bg-primary" };
             };
             const byYear = new Map<string, typeof papers>();
             for (const p of papers) {
@@ -95,7 +97,7 @@ export default async function PapersPage() {
                   }
                   return (
                     <section key={year} id={`year-${year}`} className="scroll-mt-20">
-                      <div className="sticky top-[68px] z-10 -mx-4 px-4 py-2 bg-white/80 backdrop-blur-md border-y border-primary/5 flex items-center gap-3 mb-4">
+                      <div className="sticky top-[72px] z-10 -mx-4 px-4 py-2 bg-white/80 backdrop-blur-md border-y border-primary/5 flex items-center gap-3 mb-4">
                         <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white text-sm font-bold shadow-sm">{year.slice(-2)}</span>
                         <h2 className="text-lg font-bold">{year}</h2>
                         <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">{yearPapers.length} papers</span>
