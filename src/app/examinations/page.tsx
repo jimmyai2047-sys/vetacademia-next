@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import ExamCountdown from "@/components/exam-countdown";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const examinations: Array<{
   id: string;
@@ -245,6 +246,7 @@ const groupMeta: Record<string, { label: string; desc: string; color: string }> 
 export default function ExaminationsPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
+      <Breadcrumb />
       <DecorativePageHeader
         badge="Examinations"
         title="Exams"

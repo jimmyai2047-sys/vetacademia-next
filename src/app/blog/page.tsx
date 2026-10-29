@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata = {
   title: "VetAcademia | Blog: Vet Exam Tips & Career Guides",
@@ -61,6 +62,7 @@ export default async function BlogPage() {
 
   return (
     <div className="flex flex-col">
+      <Breadcrumb />
       {/* Decorative Header */}
       <div className="container mx-auto px-4 pt-5">
         <DecorativePageHeader

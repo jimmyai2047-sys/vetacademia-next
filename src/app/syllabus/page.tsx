@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight, Sparkles } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 import { getProgrammeImage } from "@/lib/subject-images";
@@ -70,6 +71,7 @@ export default async function SyllabusPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
+      <Breadcrumb />
       <DecorativePageHeader
         badge="Based on VCI MSVE-2016 • ICAR Course Structure"
         title="Syllabus"

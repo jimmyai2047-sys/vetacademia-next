@@ -32,6 +32,7 @@ import {
   Download,
 } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,7 @@ export default async function DemoPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+      <Breadcrumb />
       <DecorativePageHeader
         badge="Free Preview"
         title="Try VetAcademia free"

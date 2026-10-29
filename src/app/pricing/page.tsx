@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, ArrowRight, Wallet, ShieldCheck, ListFilter } from "lucide-react";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import PricingExplorer from "./pricing-explorer";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -102,6 +103,7 @@ export default async function PricingPage({
 
   return (
     <div className="flex flex-col">
+      <Breadcrumb />
       {/* Decorative Header */}
       <div className="container mx-auto px-4 pt-8 md:pt-12">
         <DecorativePageHeader

@@ -21,6 +21,7 @@ import {
   Award,
   ChevronRight,
 } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const metadata = {
   title: "VetAcademia | Veterinary Diplomas: AHDP, VLDD, DAH, DVP",
@@ -73,6 +74,7 @@ export default function DiplomasPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
+      <Breadcrumb />
       <DecorativePageHeader
         badge="Diploma Basket • 10 States + Lab Tech"
         title="Diploma in Veterinary"
