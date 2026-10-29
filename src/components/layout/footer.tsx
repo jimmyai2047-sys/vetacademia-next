@@ -81,7 +81,7 @@ export default function Footer() {
               {[
                 { icon: Mail, text: "contact@vetacademia.in" },
                 { icon: Phone, text: "+91-89499 29291" },
-                { icon: MapPin, text: "Rajasthan • India • Mon–Sat, 10 AM–6 PM IST" },
+                { icon: MapPin, text: "India • Mon–Sat, 10 AM–6 PM IST" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="group flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all">
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#d4a843]/20 text-[#d4a843] group-hover:bg-[#d4a843] group-hover:text-[#0c4a6e] transition-colors">

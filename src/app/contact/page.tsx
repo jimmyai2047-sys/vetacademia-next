@@ -95,7 +95,7 @@ export default function ContactPage() {
                   <p className="text-sm text-muted-foreground">
                     VetAcademia Academic Office
                     <br />
-                    Rajasthan, India
+                    India
                     <br />
                     <span className="text-xs italic">
                       Building, locality, city and PIN are being finalised and will be published here shortly.
