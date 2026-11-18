@@ -26,7 +26,11 @@ export const metadata = {
   },
 };
 
-export const dynamic = "force-dynamic";
+// ISR, not force-dynamic: the homepage reads no session/cookies/headers, so
+// every visit was paying for a full serverless render + React SSR. Serving a
+// cached render for 10 minutes is what keeps Fluid Active CPU inside the Hobby
+// allowance. Data underneath is already wrapped in unstable_cache.
+export const revalidate = 600;
 
 const programmes = [
   {

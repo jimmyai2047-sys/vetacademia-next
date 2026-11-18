@@ -34,7 +34,8 @@ import {
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 
-export const dynamic = "force-dynamic";
+// Public preview page with no per-user data: ISR keeps it off the request path.
+export const revalidate = 600;
 
 const PROGRAMMES = [
   { slug: "ahdp", label: "A.H.D.P", sub: "Animal Husbandry Diploma" },

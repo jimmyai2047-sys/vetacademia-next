@@ -9,7 +9,9 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import SanitizedHtml from "@/components/sanitized-html";
 
-export const dynamic = "force-dynamic";
+// Public, read-only article: cache the render instead of rebuilding it for
+// every visit/crawl. Edits appear within 10 minutes.
+export const revalidate = 600;
 
 const getPostBySlug = cache(async (slug: string) =>
   prisma.blogPost.findUnique({ where: { slug } }).catch(() => null)

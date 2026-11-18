@@ -26,7 +26,8 @@ import VetGestationCalculator from "@/components/vet-gestation-calculator";
 import { getPublishedExpertCount, expertCountLabel } from "@/lib/expert-stats";
 import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 
-export const dynamic = "force-dynamic";
+// Resource hub with no per-user data (tools are client components): ISR.
+export const revalidate = 900;
 
 export default async function VetsPage() {
   const [vetPosts, expertCount] = await Promise.all([

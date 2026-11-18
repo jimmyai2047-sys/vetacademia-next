@@ -10,7 +10,8 @@ import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Layers, Sparkles } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+// Public sample deck (20 newest questions), identical for every visitor: ISR.
+export const revalidate = 300;
 
 export default async function FlashcardsPage() {
   const questions = await prisma.question.findMany({

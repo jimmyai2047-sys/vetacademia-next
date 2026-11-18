@@ -12,7 +12,8 @@ export const metadata = {
     "Read real success stories from veterinary students who cracked BVSc, ICAR, Veterinary Officer, MVSc, AHDP and PhD exams with VetAcademia.",
 };
 
-export const dynamic = "force-dynamic";
+// Public content, identical for every visitor: serve a cached render.
+export const revalidate = 1800;
 
 function getInitials(name: string) {
   return name

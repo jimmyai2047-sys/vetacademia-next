@@ -15,7 +15,9 @@ import { BookOpen, GraduationCap, FlaskConical, Stethoscope, ArrowRight, Sparkle
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 
-export const dynamic = "force-dynamic";
+// Public programme index. Data is unstable_cache'd; the render itself was
+// being rebuilt on every visit. Cache it too.
+export const revalidate = 900;
 import { getProgrammeImage } from "@/lib/subject-images";
 import { programmeNameToSlug } from "@/lib/programme";
 

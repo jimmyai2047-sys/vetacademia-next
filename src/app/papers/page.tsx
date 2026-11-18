@@ -14,7 +14,9 @@ import { getPublishedPosts } from "@/lib/posts";
 import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 
-export const dynamic = "force-dynamic";
+// Public paper index; the list query is already unstable_cache'd. Cache the
+// render as well so crawlers do not trigger a full SSR pass per page.
+export const revalidate = 600;
 
 export default async function PapersPage() {
   const [papers, posts] = await Promise.all([
