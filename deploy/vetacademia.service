@@ -1,0 +1,32 @@
+[Unit]
+Description=VetAcademia Next.js (www.vetacademia.in)
+After=network.target
+
+[Service]
+Type=simple
+User=vetacademia
+Group=vetacademia
+WorkingDirectory=/srv/vetacademia/current
+EnvironmentFile=/srv/vetacademia/current/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=NEXT_TELEMETRY_DISABLED=1
+# Keep headroom on a 4 GB box; the OS and Caddy still need room.
+Environment=NODE_OPTIONS=--max-old-space-size=2048
+ExecStart=/usr/bin/node /srv/vetacademia/current/node_modules/next/dist/bin/next start -p 3000
+Restart=always
+RestartSec=5
+# Give in-flight requests a moment to finish before SIGKILL.
+KillSignal=SIGINT
+TimeoutStopSec=20
+MemoryMax=3G
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/vetacademia/current/.next
+
+[Install]
+WantedBy=multi-user.target

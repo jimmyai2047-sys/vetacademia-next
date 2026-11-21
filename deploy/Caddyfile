@@ -1,0 +1,51 @@
+# Caddy in front of Next.js. TLS uses a Cloudflare Origin Certificate so the
+# origin only accepts traffic on Full (strict) — no Let's Encrypt round trips,
+# and no ACME rate limits while you iterate.
+#
+# Put the certificate from Cloudflare (SSL/TLS -> Origin Server -> Create
+# Certificate) at:
+#   /etc/caddy/origin.pem
+#   /etc/caddy/origin.key
+#   chown caddy:caddy /etc/caddy/origin.* && chmod 600 /etc/caddy/origin.key
+
+{
+	email admin@vetacademia.in
+}
+
+www.vetacademia.in {
+	encode zstd gzip
+
+	tls /etc/caddy/origin.pem /etc/caddy/origin.key
+
+	# Long cache for immutable Next.js build assets only. HTML/API stay
+	# uncached at the origin; Cloudflare handles edge caching for media.
+	@immutable path /_next/static/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy 127.0.0.1:3000 {
+		header_up X-Forwarded-Proto https
+		header_up X-Real-IP {remote_host}
+		# Uploads are presigned to R2, so the app should never receive a
+		# large body. Fail loudly instead of buffering gigabytes.
+		request_buffers 1MB
+	}
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+	}
+
+	log {
+		output file /srv/vetacademia/shared/logs/caddy-access.log {
+			roll_size 50MiB
+			roll_keep 5
+		}
+		format console
+	}
+}
+
+# Apex -> www. The canonical host is www (see next.config.ts: a www->apex rule
+# in Next creates a redirect loop). Keep this at the edge, never in the app.
+vetacademia.in {
+	redir https://www.vetacademia.in{uri} permanent
+}
