@@ -32,6 +32,10 @@ Hobby fair-use pause took the site down (HTTP 402) and suspended the Blob store.
 R2 for gated video → Cloudflare Stream only for the top 10–20 lectures. Stream costs
 $0.30 per lecture-hour stored per month, so never migrate a library to it.
 
-**Open migration item:** the Blob store (`J2KwWBlJD9BxCTrN`, 1,518 objects / 159.95 MB,
-inventory in `backups/blob-manifest-2026-11-21.json`) is suspended for signing. Do not
-delete the Vercel project or store until the R2 export completes.
+**Migrated (21 Nov 2026):** all 1,518 objects / 159.95 MB are now in R2 bucket
+`vetacademia-media` (inventory: `backups/blob-manifest-2026-11-21.json`; upload report:
+`backups/r2-export-report-2026-11-21T15-25-57-011Z.json`, 1,518 copied / 0 failed). Media is
+also served publicly at `https://media.vetacademia.in` (R2 custom domain, proxied). The
+Vercel Blob store (`J2KwWBlJD9BxCTrN`) still exists because the running app reads from it —
+it must stay until the 14 `@vercel/blob` call sites switch to R2 in Phase 5 and the switch is
+verified live.

@@ -1,12 +1,31 @@
 # Migration runbook — Vercel → Hetzner + Cloudflare + R2
 
-Target: Hetzner CX22 (Singapore) + Cloudflare Free + Cloudflare R2 + Neon + Upstash.
+Target: Hetzner CX22 (**Ashburn, US East** until Neon is migrated out of `us-east-2`) +
+Cloudflare Free + Cloudflare R2 + Neon + Upstash.
 Cost after cutover: **≈ ₹440–600/month** (from ₹2,080).
 
 Rules this migration must preserve: see `docs/infrastructure-and-cost-rules.md`
 (large files never through Next.js, immutable cache headers, no R2 Infrequent Access).
 
 Estimated calendar time: **2 evenings** if nothing goes wrong, 3–4 if R2 export is slow.
+
+---
+
+## Progress log (living section — keep current)
+
+| Date | Done | Evidence |
+|---|---|---|
+| 21 Nov 2026 | Vercel Pro paid → site restored (HTTP 200), Blob signing unlocked | `www.vetacademia.in` 200 |
+| 21 Nov 2026 | Full local export: 1,518/1,518 files, 159.95 MB, 0 failures | `media-backup/`, `_export-report-*.json` |
+| 21 Nov 2026 | Media copied into R2 `vetacademia-media` (byte-identical, immutable headers) | `backups/r2-export-report-2026-11-21T15-25-57-011Z.json` |
+| 21 Nov 2026 | Domain moved to Cloudflare (`art`/`lily.ns.cloudflare.com`), MX/TXT/DKIM intact | `www` returns `cf-ray …-BOM`, MX still resolves |
+| 21 Nov 2026 | `media.vetacademia.in` custom domain active; files fetch over HTTPS | 200 + `Cache-Control: immutable` on test objects |
+| 21 Nov 2026 | Resend configured and email fixed; production reset mail **Delivered** | see the email section below |
+
+Still open: Hetzner VPS, the 14 `@vercel/blob` call sites → R2, `images.remotePatterns`,
+`clientIp()` → `cf-connecting-ip`, staging test, cutover, cancel Vercel Pro. An explicit
+Cloudflare Cache Rule for `media.vetacademia.in` is belt-and-braces only — the objects already
+carry `immutable` headers.
 
 ---
 
@@ -24,31 +43,42 @@ Estimated calendar time: **2 evenings** if nothing goes wrong, 3–4 if R2 expor
 | CNAME | `www` | `9e7a8bea8e2e16be.vercel-dns-017.com` | Current site |
 | A | `@` | `216.198.79.1` | Current apex (Vercel) |
 
-### 🔴 Email is currently broken — fix it during this migration
+### ✅ Email fixed (21 Nov 2026)
 
-- SPF authorises **only Zoho**. Resend sends through Amazon SES, and there is **no
-  `include:amazonses.com`**.
-- The Resend DKIM record (`resend._domainkey.vetacademia.in`) **does not exist**.
-- DMARC is `p=quarantine`.
+**Was broken:** `RESEND_API_KEY` existed nowhere (not Vercel, not local `.env`), so
+`src/lib/email.ts` failed soft and password-reset / OTP mail was never generated at all —
+while the API still returned `{"success":true}`. On top of that there was no DKIM record and
+the SPF authorised only Zoho, so had a key existed, mail would still have failed DMARC
+alignment under `p=quarantine`.
 
-Result: mail sent as `no-reply@vetacademia.in` via Resend fails DMARC alignment and is
-very likely being quarantined — password resets and signup OTPs. Combined with
-`RESEND_API_KEY` missing from `.env`, **your transactional email is doubly broken**.
+**What was done:**
 
-Fix in Cloudflare in Phase 1:
+1. New Resend account (`dr.ashokbaindha13@gmail.com`), domain `vetacademia.in` added,
+   region **Tokyo (`ap-northeast-1`)** — nearest Resend region to India.
+2. Three records added to the Cloudflare zone (all **DNS only**, never proxied):
+   - TXT `resend._domainkey` → `p=MIGf…IDAQAB` (selector used by Resend Forge)
+   - CNAME `rsend` → `rsend-apne1.forge.rmta.net`
+   - CNAME `send` → `send.forge.rmta.net`
+   Resend's own SPF/MX arrive via these CNAMEs, so the apex Zoho SPF is untouched.
+   **Proxied CNAMEs must be avoided:** Cloudflare flattens them to A records and Resend's
+   verification fails forever.
+3. Resend domain status: **Verified**. API key `vetacademia-production` (*Sending access*)
+   saved in `.env` as `RESEND_API_KEY`; `EMAIL_FROM=VetAcademia <no-reply@vetacademia.in>`.
+4. Both variables added to Vercel (Production + Preview) and the project redeployed.
+5. Verified end-to-end: `POST /api/auth/forgot-password` on the live site → Resend log shows
+   **Delivered** for `drashokbaindha@gmail.com`.
 
-1. Add `include:amazonses.com` to the SPF record:
-   `v=spf1 include:dc-8e814c8572._spfm.vetacademia.in include:amazonses.com ~all`
-2. Add the DKIM TXT record Resend shows under Domains → vetacademia.in → DNS Records
-   (selector `resend._domainkey`).
-3. Optionally point `rua=` at an inbox you actually read instead of GoDaddy's.
-4. Re-verify the domain in Resend, then send a test reset email.
+Notes for the VPS cutover: `admin@vetacademia.in` and `dr.ashokbaindha13@gmail.com` are
+**not** rows in `User` (139 users), so a reset for them returns `{"success":true}` without
+sending. The endpoint answers identically for known and unknown addresses by design — it
+cannot be used for account enumeration.
 
 ### Environment variables
 
 Copy them **from the Vercel dashboard**, not from the local `.env` — the local file is
-missing at least `RESEND_API_KEY` and `MOBILE_JWT_SECRET` (the latter is required in
-production by `src/lib/mobileAuth.ts`).
+missing at least `MOBILE_JWT_SECRET` (required in production by `src/lib/mobileAuth.ts`).
+`RESEND_API_KEY` was added to the local file during the email fix and must be copied into
+the VPS `.env` as well.
 
 ```
 DATABASE_URL                 NEXTAUTH_URL=https://www.vetacademia.in
