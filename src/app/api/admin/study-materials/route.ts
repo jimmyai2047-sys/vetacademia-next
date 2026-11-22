@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(req: Request) {
@@ -76,7 +77,9 @@ export async function POST(req: NextRequest) {
       data: {
         title: title.trim(),
         type: type || "NOTE",
-        content: content ? sanitizeChapterContent(content) : null,
+        content: content
+          ? sanitizeChapterContent(await processInlineImages(content))
+          : null,
         url: url || null,
         fileName: fileName || null,
         fileType: fileType || null,

@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import { readinessIssue } from "@/lib/material-readiness";
 import { logAudit } from "@/lib/audit";
 
@@ -93,7 +94,9 @@ export async function POST(req: NextRequest) {
         type,
         title: title.trim(),
         description: description || null,
-        body: chapterBody ? sanitizeChapterContent(chapterBody) : null,
+        body: chapterBody
+          ? sanitizeChapterContent(await processInlineImages(chapterBody))
+          : null,
         fileUrl: fileUrl || null,
         fileName: fileName || null,
         fileType: fileType || null,

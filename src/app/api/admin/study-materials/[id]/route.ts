@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import { logAudit } from "@/lib/audit";
 
 export async function PUT(
@@ -74,7 +75,7 @@ export async function PUT(
         content:
           content !== undefined
             ? content
-              ? sanitizeChapterContent(content)
+              ? sanitizeChapterContent(await processInlineImages(content))
               : null
             : existing.content,
         url: url !== undefined ? url : existing.url,

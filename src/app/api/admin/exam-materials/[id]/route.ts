@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin";
 import { validateCsrf } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import { sanitizeChapterContent } from "@/lib/content";
+import { processInlineImages } from "@/lib/chapter-images";
 import { readinessIssue } from "@/lib/material-readiness";
 import { logAudit } from "@/lib/audit";
 
@@ -69,7 +70,7 @@ export async function PUT(
     const mergedBody =
       chapterBody !== undefined
         ? chapterBody
-          ? sanitizeChapterContent(chapterBody)
+          ? sanitizeChapterContent(await processInlineImages(chapterBody))
           : null
         : existing.body;
     const issue = readinessIssue({
