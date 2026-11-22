@@ -214,18 +214,34 @@ site is stable, not during cutover.
 
 ## Phase 5 — Code changes (the only diff this migration needs)
 
+**Done — commit `cc3adf1`, deployed to the VPS and verified (22 Nov 2026).**
+`getSignedUrl()` on `/papers` returns `media.vetacademia.in` URLs; `/api/blob`
+returns `307` → `location: https://media.vetacademia.in/...` → 200; objects serve
+`Cache-Control: public, max-age=31536000, immutable` with `cf-cache-status: HIT`.
+
 | File | Change |
 |---|---|
-| `src/lib/blob.ts` | Replace `issueSignedToken`/`presignUrl` with R2 presigned GETs (S3 SigV4) or the public URL for `chapters/`, `avatars/`. Keep the `getSignedUrl(blobUrl)` signature — it already extracts the pathname, so **no database rewrite is needed**. |
-| `src/lib/chapter-images.ts` | `put()` from `@vercel/blob` → `PutObjectCommand` to R2, with `CacheControl: public, max-age=31536000, immutable`. |
-| `src/app/api/blob/route.ts` | Stop buffering. `307` redirect to a presigned R2 URL (≤15 min). This is rule 1. |
-| `src/lib/rate-limit.ts` | `clientIp()` → prefer `cf-connecting-ip`; behind Cloudflare every request otherwise looks like one IP and the limiter throttles real students. |
-| `src/lib/env.ts` | Add `R2_*` accessors. |
-| `next.config.ts` | Add `media.vetacademia.in` to `images.remotePatterns`; drop the Blob hosts once the export is verified. |
-| `.env` / `.env.example` | Add `R2_*`; remove `BLOB_READ_WRITE_TOKEN` after go-live. |
+| `src/lib/r2.ts` *(new)* | `put()`/`del()` drop-in shim over `@aws-sdk/client-s3` — same signatures, so all 9 call sites only changed their import. Path-style endpoint, `Cache-Control: public, max-age=31536000, immutable` by default (rule 2), content type inferred from the extension. |
+| `src/lib/blob.ts` | `issueSignedToken`/`presignUrl` → a pure string transform: Blob URL → `https://media.vetacademia.in/<pathname>`. **No signing, no expiry, no network call.** Signature kept, so ~30 call sites are untouched and **no database rewrite is needed**. Also gained `isOurMediaUrl()`. |
+| `src/lib/chapter-images.ts` | `put()` → `@/lib/r2`; local-dev guard now checks `R2_ACCESS_KEY_ID`. |
+| `src/app/api/blob/route.ts` | Stop buffering. **`307` redirect** to the public R2 URL (rule 1). Auth (session or HMAC token) and the host allowlist are unchanged: 401 without a token, 403 for a foreign host. |
+| `src/lib/rate-limit.ts` | `clientIp()` → prefer `cf-connecting-ip`; `x-forwarded-for`'s first entry is client-supplied, so trusting it let an attacker rotate fake IPs past the limiter. |
+| `src/lib/env.ts` | Added `R2_*` accessors. |
+| `next.config.ts` | `media.vetacademia.in` added to `images.remotePatterns`; Blob hosts kept until go-live. |
+| `src/app/api/me/avatar/route.ts`, `src/app/api/auth/register/route.ts` | Avatar validators accepted **only** `blob.vercel-storage.com` — they would have rejected every new R2 URL. Now use `isOurMediaUrl()`. |
+| `src/proxy.ts` | CSP `connect-src` + `frame-src` gained `https://media.vetacademia.in` (the Office/Google viewer iframe loads it directly now). |
+| `src/app/globals.css` | Chapter-image sizing selectors also match `media.vetacademia.in`. |
+| `src/app/api/reports/finalize`, `src/app/api/admin/generated-reports/[id]` | **Exception to rule 2:** these overwrite the *same* key when a report is repaired, so they use `public, max-age=300` instead of `immutable` — otherwise a repaired PDF would be served stale for a year. Remember this when writing the Cloudflare Cache Rule: exclude `reports/*`. |
+| `.env` / `.env.example` | `R2_*` present. `BLOB_READ_WRITE_TOKEN` stays until go-live. |
 
 Nothing else in the app is Vercel-specific. `fs` reads in `src/lib/pdf-static-assets.ts`
 keep working (that is the whole reason this stack was chosen).
+
+**Left deliberately working:** four sites still say *"if the URL is on the Blob
+host → wrap it in a tokenized `/api/blob` link, else use it directly"*
+(`experts/page.tsx`, `page.tsx`, `reader/[chapterId]`, `mock-tests/page.tsx`).
+That is correct during the transition: legacy DB rows keep their proxy path
+(which now 307s to R2), and new R2 rows pass straight through.
 
 ---
 
