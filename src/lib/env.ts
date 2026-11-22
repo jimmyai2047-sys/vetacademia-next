@@ -32,6 +32,13 @@ export const env = {
   RAZORPAY_WEBHOOK_SECRET: v("RAZORPAY_WEBHOOK_SECRET"),
   RESEND_API_KEY: v("RESEND_API_KEY"),
   EMAIL_FROM: v("EMAIL_FROM"),
+  /** Cloudflare R2 (S3-compatible). Replaces Vercel Blob for stored media. */
+  R2_ACCOUNT_ID: v("R2_ACCOUNT_ID"),
+  R2_ACCESS_KEY_ID: v("R2_ACCESS_KEY_ID"),
+  R2_SECRET_ACCESS_KEY: v("R2_SECRET_ACCESS_KEY"),
+  R2_BUCKET: v("R2_BUCKET") || "vetacademia-media",
+  /** Public origin for objects (bucket custom domain, never the r2.dev URL). */
+  R2_PUBLIC_BASE_URL: (v("R2_PUBLIC_BASE_URL") || "https://media.vetacademia.in").replace(/\/+$/, ""),
   GEMINI_MODEL: v("GEMINI_MODEL") || "gemini-3.5-flash",
   GEMINI_API_KEY: v("GEMINI_API_KEY"),
   NEXTAUTH_URL: v("NEXTAUTH_URL") || "http://localhost:3000",

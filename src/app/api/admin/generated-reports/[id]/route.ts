@@ -1,9 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { requireAdminApi } from "@/lib/admin-api";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrl } from "@/lib/blob";
-import { env } from "@/lib/env";
 import { logAudit } from "@/lib/audit";
 import { reportInputSchema } from "@/lib/report-input";
 import { buildReportBytes } from "@/lib/report-builder";
@@ -162,13 +161,11 @@ export async function POST(
   }
 
   // Same key as finalize → overwrites in place, so the customer's existing
-  // dashboard link keeps working after the repair.
+  // dashboard link keeps working after the repair. Short TTL (not immutable)
+  // so a repaired PDF is visible within minutes instead of a year.
   const blob = await put(`reports/${report.userId}/${report.id}.pdf`, Buffer.from(bytes), {
-    access: "private",
     contentType: "application/pdf",
-    token: env.BLOB_READ_WRITE_TOKEN,
-    addRandomSuffix: false,
-    multipart: true,
+    cacheControl: "public, max-age=300",
   });
 
   await prisma.generatedReport.update({

@@ -1,8 +1,7 @@
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { NextResponse, NextRequest } from "next/server";
 import { getSignedUrl } from "@/lib/blob";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
-import { env } from "@/lib/env";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -91,12 +90,7 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `expert-proforma/${Date.now()}-${safeName}`;
 
-    const blob = await put(path, file, {
-      access: "private",
-      token: env.BLOB_READ_WRITE_TOKEN,
-      addRandomSuffix: true,
-      multipart: true,
-    });
+    const blob = await put(path, file);
 
     return NextResponse.json(
       {

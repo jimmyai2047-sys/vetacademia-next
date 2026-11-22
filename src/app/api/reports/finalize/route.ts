@@ -1,12 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import { getSignedUrl } from "@/lib/blob";
-import { env } from "@/lib/env";
 import { reportInputSchema } from "@/lib/report-input";
 import { buildGoatReport } from "@/lib/goat-report-pdf";
 import { buildSheepReport } from "@/lib/sheep-report-pdf";
@@ -177,12 +176,12 @@ export async function POST(req: NextRequest) {
       default:
         return NextResponse.json({ error: "Unsupported animalType" }, { status: 400 });
     }
+    // Same key is overwritten when a report is repaired, so NOT immutable —
+    // a 5-minute edge TTL keeps the customer's existing link showing the
+    // repaired file (see rule 2: immutable is for content-addressed keys).
     const blob = await put(`reports/${session.user.id}/${report.id}.pdf`, Buffer.from(bytes), {
-      access: "private",
       contentType: "application/pdf",
-      token: env.BLOB_READ_WRITE_TOKEN,
-      addRandomSuffix: false,
-      multipart: true,
+      cacheControl: "public, max-age=300",
     });
     await prisma.generatedReport.update({
       where: { id: report.id },

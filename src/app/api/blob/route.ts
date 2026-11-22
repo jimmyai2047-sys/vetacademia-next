@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { env } from "@/lib/env";
 import { getSignedUrl } from "@/lib/blob";
 import { signBlobViewerUrl, verifyBlobViewerToken } from "@/lib/blob-token";
 import { verifyToken } from "@/lib/mobileAuth";
@@ -16,23 +17,30 @@ function blobHostAllowed(target: string): URL | null {
   } catch {
     return null;
   }
-  if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) return null;
+  // Both the legacy Vercel Blob host (URLs already stored in the database) and
+  // the R2 media host (URLs minted after the Phase 5 migration) are ours.
+  const host = parsed.hostname;
+  const allowed =
+    host.endsWith(".blob.vercel-storage.com") ||
+    host === new URL(env.R2_PUBLIC_BASE_URL).hostname;
+  if (!allowed) return null;
   return parsed;
 }
 
-// Serves a private Vercel Blob object to external viewers (Office Online /
-// Google Docs) which fetch the URL server-side and cannot use private/blob
-// tokens. We fetch the (re-signed) blob server-side and stream it back with a
-// public, CORS-enabled response. Only our own Blob store host is allowed.
+// Hands an external viewer (Office Online / Google Docs — which fetch URLs
+// server-side without cookies or tokens) a 307 redirect to the public R2 URL.
 //
-// Auth: the caller must EITHER hold a valid session (browser fetches send
-// cookies) OR present a short-lived HMAC token (minted server-side by pages
-// that already enforce their own paywall, or via POST /api/blob). Without
-// this, anyone with a leaked blob URL could stream private files forever.
+// This is rule 1 in AGENTS.md: the file bytes never pass through the Next.js
+// server. The old implementation buffered the whole object into memory and
+// streamed it back; a redirect costs one small response instead.
+//
+// Auth is unchanged: the caller must EITHER hold a valid session (browser
+// fetches send cookies) OR present a short-lived HMAC token (minted server-side
+// by pages that already enforce their own paywall, or via POST /api/blob).
 export async function GET(req: NextRequest) {
   // Generous limit: external viewers (Google/Office) fetch from shared egress
   // IPs, so per-IP throttling must not break legit concurrent viewers. The
-  // HMAC token / session check above is the real protection.
+  // HMAC token / session check below is the real protection.
   const rl = await rateLimit(`blob:${clientIp(req)}`, 300, 60_000);
   if (!rl.allowed) {
     return NextResponse.json(
@@ -64,58 +72,13 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const signed = await getSignedUrl(target);
-    const upstream = await fetch(signed);
-    if (!upstream.ok) {
-      return NextResponse.json({ error: "Upstream error" }, { status: 502 });
-    }
-    const buf = Buffer.from(await upstream.arrayBuffer());
-    // Vercel Blob often returns application/octet-stream for Office files,
-    // which makes external viewers (Office Online) reject them with
-    // "This content is blocked". Force the correct MIME by extension.
-    const ext = (parsed.pathname.split(".").pop() || "").toLowerCase();
-    const MIME: Record<string, string> = {
-      pdf: "application/pdf",
-      ppt: "application/vnd.ms-powerpoint",
-      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      doc: "application/msword",
-      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      xls: "application/vnd.ms-excel",
-      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      png: "image/png",
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      gif: "image/gif",
-      webp: "image/webp",
-    };
-    const contentType = MIME[ext] || upstream.headers.get("content-type") || "application/octet-stream";
-    const filename = decodeURIComponent(
-      parsed.pathname.split("/").pop() || "file"
-    );
-    const allowedOrigins = [
-      "https://vetacademia.in",
-      "https://www.vetacademia.in",
-      "https://view.officeapps.live.com",
-      "https://docs.google.com",
-    ];
-    const requestOrigin = req.headers.get("origin");
-    const allowOrigin =
-      requestOrigin && allowedOrigins.includes(requestOrigin)
-        ? requestOrigin
-        : "https://vetacademia.in";
-
-    return new NextResponse(buf, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Content-Disposition": `inline; filename="${filename}"`,
-        "Cache-Control": "public, max-age=3600",
-        "Access-Control-Allow-Origin": allowOrigin,
-        "Vary": "Origin",
-      },
-    });
+    // Maps the stored Blob URL to the R2 media URL (pure string transform,
+    // no network call) and lets the CDN serve the bytes directly.
+    const mediaUrl = await getSignedUrl(target);
+    // 307 (not 302) so the method and body survive the redirect.
+    return NextResponse.redirect(mediaUrl, 307);
   } catch (err) {
-    console.error("Blob proxy error:", err);
+    console.error("Blob redirect error:", err);
     return NextResponse.json({ error: "Error" }, { status: 500 });
   }
 }

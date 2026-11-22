@@ -42,12 +42,17 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    // Allow Vercel Blob (expert photos, blog covers, study-material images)
+    // Allow the R2 media domain (expert photos, blog covers, study-material
+    // images) plus the legacy Vercel Blob hosts (still stored in old rows)
     // to be served through the Next.js image optimizer.
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media.vetacademia.in",
       },
       {
         protocol: "https",

@@ -1,11 +1,10 @@
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { getSignedUrl } from "@/lib/blob";
 import { logAudit } from "@/lib/audit";
 import { detectFileType } from "@/lib/file-type";
 import { validateCsrf } from "@/lib/csrf";
-import { env } from "@/lib/env";
 
 const MAX_SIZE = 200 * 1024 * 1024; // 200 MB
 
@@ -53,44 +52,13 @@ function hasValidImageMagicBytes(header: Uint8Array): boolean {
   return false;
 }
 
-// Vercel Blob store tokens can restrict allowed content types. Some stores
-// disallow Office MIME types (.ppt/.pptx/.doc/.xls). If the inferred content
-// type is rejected, retry with application/octet-stream which is usually allowed.
-async function putWithFallback(
-  path: string,
-  file: File,
-  token?: string,
-  access: "private" | "public" = "private"
-) {
-  const base = {
-    access,
-    token,
-    addRandomSuffix: false,
-    multipart: true,
-  };
+// Uploads one file to R2, passing the browser's content type when available.
+// (The old Vercel Blob "content type not allowed" retry is gone — R2 imposes
+// no content-type allowlist.)
+async function putWithFallback(path: string, file: File) {
   const contentType =
     file.type && file.type !== "" ? file.type : undefined;
-  try {
-    return await put(
-      path,
-      file,
-      contentType ? { ...base, contentType } : base
-    );
-  } catch (e: any) {
-    const isContentTypeError =
-      e?.name === "BlobContentTypeNotAllowedError" ||
-      (typeof e?.message === "string" &&
-        e.message.toLowerCase().includes("contenttype") &&
-        (e.message.toLowerCase().includes("not allowed") ||
-          e.message.toLowerCase().includes("not permitted")));
-    if (isContentTypeError) {
-      return await put(path, file, {
-        ...base,
-        contentType: "application/octet-stream",
-      });
-    }
-    throw e;
-  }
+  return await put(path, file, contentType ? { contentType } : {});
 }
 
 export async function POST(req: NextRequest) {
@@ -139,7 +107,7 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `uploads/${Date.now()}-${safeName}`;
 
-    const blob = await putWithFallback(path, file, env.BLOB_READ_WRITE_TOKEN);
+    const blob = await putWithFallback(path, file);
 
     logAudit({
       action: "upload",

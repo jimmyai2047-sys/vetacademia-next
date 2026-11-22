@@ -327,7 +327,8 @@
 .chapter-content img[alt*="map"],
 .chapter-content img[alt*="MAP"],
 .chapter-content img[src*="private.blob"],
-.chapter-content img[src*="vercel-storage"] {
+.chapter-content img[src*="vercel-storage"],
+.chapter-content img[src*="media.vetacademia.in"] {
   max-width: 90% !important;
   max-height: 560px !important;
 }
@@ -335,14 +336,16 @@
 .chapter-content figure:has(img[alt*="map"]),
 .chapter-content figure:has(img[alt*="MAP"]),
 .chapter-content figure:has(img[src*="private.blob"]),
-.chapter-content figure:has(img[src*="vercel-storage"]) {
+.chapter-content figure:has(img[src*="vercel-storage"]),
+.chapter-content figure:has(img[src*="media.vetacademia.in"]) {
   max-width: 96% !important;
 }
 .chapter-content figure:has(img[alt*="Map"]) img,
 .chapter-content figure:has(img[alt*="map"]) img,
 .chapter-content figure:has(img[alt*="MAP"]) img,
 .chapter-content figure:has(img[src*="private.blob"]) img,
-.chapter-content figure:has(img[src*="vercel-storage"]) img {
+.chapter-content figure:has(img[src*="vercel-storage"]) img,
+.chapter-content figure:has(img[src*="media.vetacademia.in"]) img {
   max-width: 100% !important;
   max-height: 540px !important;
 }

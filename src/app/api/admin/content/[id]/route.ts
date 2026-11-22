@@ -1,9 +1,8 @@
-import { del } from "@vercel/blob";
+import { del } from "@/lib/r2";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
-import { env } from "@/lib/env";
 
 export async function DELETE(
   req: NextRequest,
@@ -30,7 +29,7 @@ export async function DELETE(
 
     // Remove from blob storage
     try {
-      await del(content.url, { token: env.BLOB_READ_WRITE_TOKEN });
+      await del(content.url);
     } catch (e) {
       console.error("Blob delete failed:", e);
     }

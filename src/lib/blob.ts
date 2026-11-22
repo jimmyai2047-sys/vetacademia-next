@@ -1,74 +1,63 @@
-import { issueSignedToken, presignUrl } from "@vercel/blob";
 import { env } from "./env";
 
-// Cache signed URLs. The Blob service allows up to 7 days; we sign for 24 h so
-// that pages held open across sessions (and lazily-loaded images far below the
-// fold) still load instead of 403-ing after the old 60-minute window. Cached
-// until 10 min before expiry to avoid re-signing on every render/request (the
-// syllabus pages otherwise trigger one signing call per Blob image).
-const CACHE_TTL_MS = 23 * 60 * 60 * 1000;
-declare global {
-  var __VA_BLOB_URL_CACHE: Map<string, { url: string; expires: number }> | undefined;
-  var __VA_BLOB_INFLIGHT: Map<string, Promise<string>> | undefined;
+// Media now lives in Cloudflare R2 and is served publicly (no signing) from the
+// bucket's custom domain. Every stored object carries
+// `Cache-Control: public, max-age=31536000, immutable`, so the URL returned here
+// is permanent — unlike Vercel Blob's signed URLs, it never expires.
+//
+// The R2 key equals the old Blob `pathname`, which means the mapping is a pure
+// string transform and **no database rewrite is needed**: any historical
+// `https://<store>.blob.vercel-storage.com/<pathname>` becomes
+// `https://media.vetacademia.in/<pathname>`.
+
+const MEDIA_BASE = env.R2_PUBLIC_BASE_URL; // https://media.vetacademia.in
+const MEDIA_HOST = new URL(MEDIA_BASE).hostname;
+
+/** Extracts the object key from any URL shape we may have stored over time. */
+function toObjectKey(blobUrl: string): string {
+  const pathname = new URL(blobUrl).pathname;
+  return pathname.replace(/^\/+/, "");
 }
-const cache: Map<string, { url: string; expires: number }> =
-  globalThis.__VA_BLOB_URL_CACHE ?? (globalThis.__VA_BLOB_URL_CACHE = new Map());
-// In-flight signing promises — concurrent renders for the same URL share one
-// signing call instead of stampeding the Blob API when the cache is cold.
-const inflight: Map<string, Promise<string>> =
-  globalThis.__VA_BLOB_INFLIGHT ?? (globalThis.__VA_BLOB_INFLIGHT = new Map());
 
 /**
- * Returns a short-lived signed GET URL for a private Vercel Blob object.
- * Must be called server-side (uses BLOB_READ_WRITE_TOKEN). Falls back to the
- * original URL if signing fails so the app never hard-crashes.
+ * True when a URL points at one of our own storage hosts — the R2 media domain
+ * or the legacy Vercel Blob store. Used by avatar/profile validators so that
+ * only our own files can be linked from an account (prevents arbitrary remote
+ * URLs being stored as profile media).
+ */
+export function isOurMediaUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname;
+    return host === MEDIA_HOST || host.endsWith(".blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Returns a publicly-cacheable URL for a stored media object.
+ * Must be called server-side. Kept `async` (and the same signature as the old
+ * Vercel Blob signer) so the ~30 existing call sites need no changes.
+ *
+ * Local public files (e.g. /proformas/...) and URLs already pointing at the R2
+ * domain are returned untouched.
  */
 export async function getSignedUrl(blobUrl: string | null | undefined): Promise<string> {
   if (!blobUrl) return "";
-  // Local public files (e.g. /proformas/...) need no signing — return as-is.
+  // Local public files need no storage lookup — return as-is.
   if (blobUrl.startsWith("/")) return blobUrl;
-  const token = env.BLOB_READ_WRITE_TOKEN;
-  if (!token) return blobUrl;
 
-  const cached = cache.get(blobUrl);
-  if (cached && cached.expires > Date.now()) {
-    return cached.url;
+  try {
+    const url = new URL(blobUrl);
+    // Already on our media domain (or any non-Blob absolute URL we don't own).
+    if (url.hostname === new URL(MEDIA_BASE).hostname) return blobUrl;
+    if (!url.hostname.endsWith(".blob.vercel-storage.com")) return blobUrl;
+
+    return `${MEDIA_BASE}/${toObjectKey(blobUrl)}`;
+  } catch (error) {
+    // Malformed URL — never hard-crash a render over a link.
+    console.error("getSignedUrl error:", error);
+    return blobUrl;
   }
-  // Cap cache size to prevent unbounded growth on long-lived instances.
-  if (cache.size > 2000) {
-    const now = Date.now();
-    for (const [k, v] of cache.entries()) {
-      if (now > v.expires) cache.delete(k);
-    }
-  }
-
-  const pending = inflight.get(blobUrl);
-  if (pending) return pending;
-
-  const signing = (async () => {
-    try {
-      const pathname = new URL(blobUrl).pathname.replace(/^\//, "");
-      const validUntil = Date.now() + 24 * 60 * 60 * 1000;
-      const signedToken = await issueSignedToken({
-        token: token as string,
-        pathname,
-        operations: ["get"],
-        validUntil,
-      });
-      const { presignedUrl } = await presignUrl(signedToken, {
-        operation: "get",
-        pathname,
-        access: "private",
-      });
-      cache.set(blobUrl, { url: presignedUrl, expires: validUntil - 10 * 60 * 1000 });
-      return presignedUrl;
-    } catch (error) {
-      console.error("getSignedUrl error:", error);
-      return blobUrl;
-    } finally {
-      inflight.delete(blobUrl);
-    }
-  })();
-  inflight.set(blobUrl, signing);
-  return signing;
 }

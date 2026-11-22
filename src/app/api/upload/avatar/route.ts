@@ -1,10 +1,9 @@
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSignedUrl } from "@/lib/blob";
 import { validateCsrf } from "@/lib/csrf";
-import { env } from "@/lib/env";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -79,12 +78,7 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `avatars/${session.user.id}-${Date.now()}-${safeName}`;
 
-    const blob = await put(path, file, {
-      access: "private",
-      token: env.BLOB_READ_WRITE_TOKEN,
-      addRandomSuffix: false,
-      multipart: true,
-    });
+    const blob = await put(path, file);
 
     return NextResponse.json(
       {

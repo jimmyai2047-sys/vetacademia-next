@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { validateCsrf } from "@/lib/csrf";
 import { verifyVerificationToken } from "@/lib/otp";
+import { isOurMediaUrl } from "@/lib/blob";
 import type { Role } from "@prisma/client";
 import {
   SELF_REGISTERABLE_ROLES,
@@ -175,13 +176,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // P0: only accept avatar URLs from our own Blob store (or relative paths).
-    // Prevents SSRF-style profile tricks via arbitrary remote URLs.
+    // P0: only accept avatar URLs from our own media hosts (R2 / legacy Blob)
+    // or relative paths. Prevents SSRF-style profile tricks via arbitrary
+    // remote URLs.
     const avatar = validatedData.avatar?.trim() || undefined;
     const avatarOk =
-      !avatar ||
-      avatar.startsWith("/") ||
-      avatar.includes("blob.vercel-storage.com");
+      !avatar || avatar.startsWith("/") || isOurMediaUrl(avatar);
     if (!avatarOk) {
       return NextResponse.json(
         { error: "Invalid avatar URL" },

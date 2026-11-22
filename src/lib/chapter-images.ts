@@ -1,4 +1,4 @@
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { randomUUID } from "crypto";
 import { getSignedUrl } from "@/lib/blob";
 import { sanitizeChapterContent } from "@/lib/content";
@@ -15,16 +15,15 @@ const MAX_DIMENSION = 1200;
 const WEBP_QUALITY = 72;
 
 /**
- * Uploads inline base64 images (e.g. pasted from Word) to Vercel Blob and
- * rewrites the HTML to reference the Blob URLs instead. This keeps the stored
+ * Uploads inline base64 images (e.g. pasted from Word) to Cloudflare R2 and
+ * rewrites the HTML to reference the public media URLs instead. This keeps the stored
  * HTML small, lets images be CDN-cached, and avoids shipping multi-MB base64
  * blobs to the browser. Images are compressed/resized via sharp when available.
  * Client-side compression should also be applied before calling this.
  */
 export async function processInlineImages(html: string): Promise<string> {
   if (!html || !/data:image\//.test(html)) return html;
-  const token = env.BLOB_READ_WRITE_TOKEN;
-  if (!token) return html; // no Blob token (local dev) → keep base64
+  if (!env.R2_ACCESS_KEY_ID) return html; // no R2 creds (local dev) → keep base64
 
   const matches = [...html.matchAll(INLINE_IMG_RE)].slice(0, MAX_INLINE_IMAGES);
 
@@ -62,13 +61,8 @@ export async function processInlineImages(html: string): Promise<string> {
         }
 
         const path = `chapters/${randomUUID()}.${ext}`;
-        const blob = await put(path, buffer, {
-          access: "private",
-          token,
-          addRandomSuffix: false,
-          multipart: true,
-        });
-        return { dataUrl, url: blob.url };
+        const uploaded = await put(path, buffer);
+        return { dataUrl, url: uploaded.url };
       } catch (err) {
         console.error("processInlineImages: upload failed for one image", err);
         return null;

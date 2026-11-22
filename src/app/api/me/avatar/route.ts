@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
+import { isOurMediaUrl } from "@/lib/blob";
 
 // P0: post-signup avatar linking. Signup itself no longer uploads anonymously
 // (the old flow hit 401 because /api/upload/avatar requires a session).
@@ -24,9 +25,8 @@ export async function PATCH(req: NextRequest) {
     }
     const body = await req.json().catch(() => ({}));
     const { url } = schema.parse(body);
-    // Only allow our own Blob store or relative paths.
-    const ok =
-      url.startsWith("/") || url.includes("blob.vercel-storage.com");
+    // Only allow our own media hosts (R2 / legacy Blob) or relative paths.
+    const ok = url.startsWith("/") || isOurMediaUrl(url);
     if (!ok) {
       return NextResponse.json({ error: "Invalid avatar URL" }, { status: 400 });
     }

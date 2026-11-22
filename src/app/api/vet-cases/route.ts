@@ -6,7 +6,7 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { ok, fail } from "@/lib/api-response";
-import { put } from "@vercel/blob";
+import { put } from "@/lib/r2";
 import { sendPushToUser } from "@/lib/push";
 import { z } from "zod";
 
@@ -74,8 +74,7 @@ export async function POST(req: NextRequest) {
 
     const photoUrls: string[] = [];
     if (files.length > 0) {
-      const token = env.BLOB_READ_WRITE_TOKEN;
-      if (!token) return fail("Photo uploads are not configured", 503);
+      if (!env.R2_ACCESS_KEY_ID) return fail("Photo uploads are not configured", 503);
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.size > 5 * 1024 * 1024) {
@@ -95,8 +94,7 @@ export async function POST(req: NextRequest) {
         const blobExt = ext === "jpeg" ? "jpg" : ext;
         const blob = await put(
           `vet-cases/${session.user.id}/${Date.now()}-${i}.${blobExt}`,
-          file,
-          { access: "private", token }
+          file
         );
         photoUrls.push(blob.url);
       }

@@ -70,7 +70,11 @@ export async function rateLimit(
 }
 
 export function clientIp(req: Request | { headers: Headers }): string {
+  // Behind Cloudflare, `cf-connecting-ip` is set by the edge and cannot be
+  // spoofed by the client. `x-forwarded-for`'s FIRST entry is client-supplied,
+  // so trusting it would let an attacker rotate fake IPs past the limiter.
   return (
+    req.headers.get("cf-connecting-ip")?.trim() ||
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     "unknown"
