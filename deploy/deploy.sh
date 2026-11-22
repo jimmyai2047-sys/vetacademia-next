@@ -15,6 +15,7 @@ set -euo pipefail
 
 APP_DIR="/srv/vetacademia"
 REPO_DIR="$APP_DIR/repo"
+APP_USER="vetacademia"
 KEEP_RELEASES=4
 
 log() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
@@ -94,6 +95,12 @@ npm run build
 
 log "pruning dev dependencies"
 npm prune --omit=dev
+
+# The build runs as root but the service runs as $APP_USER: without this the
+# app cannot write its ISR/fetch cache at runtime (EACCES -> 500s on
+# revalidate) and cannot read anything the build left root-owned.
+log "fixing ownership for $APP_USER"
+chown -R "$APP_USER:$APP_USER" "$REL" "$APP_DIR/shared/cache"
 
 log "switching current -> $STAMP"
 repoint "$REL"
