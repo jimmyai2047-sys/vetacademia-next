@@ -194,6 +194,33 @@
   }
 }
 
+/* Step C (Nov 2026): study content is view-only — no text selection outside
+   form fields. providers.tsx blocks copy/cut/contextmenu/drag with the same
+   exemptions; /admin gets .va-admin on <html> and stays fully usable. */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+body * {
+  -webkit-touch-callout: none;
+}
+input,
+textarea,
+select,
+[contenteditable],
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+html.va-admin body {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+html.va-admin body * {
+  -webkit-touch-callout: default;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
