@@ -93,14 +93,12 @@ import {
   Tractor,
   GraduationCap,
   ShieldCheck,
-  Download,
   ExternalLink,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { decorateLiveClasses } from "@/lib/live-class-status";
 import { trackLabel } from "@/lib/exam-tracks";
 import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
-import { getSignedUrl } from "@/lib/blob";
 import { getPublishedPosts } from "@/lib/posts";
 import PostList from "@/components/post-list";
 import { getAccess } from "@/lib/access";
@@ -343,11 +341,10 @@ export default async function ExamPage({
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       })
     : [];
-  // Sign both fileUrl and any private Blob images inside body (for proper image box visibility)
+  // Sign any private Blob images inside body (for proper image box visibility)
   const examMaterialsWithLinks = await Promise.all(
     examMaterials.map(async (m) => ({
       ...m,
-      signedUrl: m.fileUrl ? await getSignedUrl(m.fileUrl) : null,
       signedBody: m.body ? await prepareChapterHtml(m.body) : null,
     }))
   );
@@ -605,9 +602,7 @@ export default async function ExamPage({
                             <Link href={`/prepare/material/${m.id}`}>
                               <Button size="sm" variant="outline" className="rounded-full gap-1.5 text-xs"><BookOpen className="h-3 w-3" /> Open Reader</Button>
                             </Link>
-                            {m.signedUrl ? (
-                              <a href={m.signedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline gap-1"><Download className="h-3 w-3" /> Download</a>
-                            ) : m.externalUrl ? (
+                            {m.externalUrl ? (
                               <a href={m.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline gap-1"><ExternalLink className="h-3 w-3" /> Open</a>
                             ) : null}
                           </div>
@@ -840,9 +835,7 @@ export default async function ExamPage({
                             <Link href={`/prepare/material/${m.id}`}>
                               <Button size="sm" variant="outline" className="rounded-full gap-1.5 text-xs"><BookOpen className="h-3 w-3" /> Open Reader</Button>
                             </Link>
-                            {m.signedUrl ? (
-                              <a href={m.signedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline gap-1"><Download className="h-3 w-3" /> Download</a>
-                            ) : m.externalUrl ? (
+                            {m.externalUrl ? (
                               <a href={m.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline gap-1"><ExternalLink className="h-3 w-3" /> Open</a>
                             ) : null}
                           </div>
@@ -1078,16 +1071,7 @@ export default async function ExamPage({
                         </div>
                       ) : null}
                     </div>
-                    {m.signedUrl ? (
-                      <a
-                        href={m.signedUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline shrink-0 ml-3"
-                      >
-                        Download
-                      </a>
-                    ) : m.externalUrl ? (
+                    {m.externalUrl ? (
                       <a
                         href={m.externalUrl}
                         target="_blank"

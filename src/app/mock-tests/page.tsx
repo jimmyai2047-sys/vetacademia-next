@@ -15,12 +15,11 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Brain, Clock, FileText, Download, Sparkles, Trophy } from "lucide-react";
+import { Brain, Clock, Sparkles, Trophy } from "lucide-react";
 import BookmarkButton from "@/components/bookmark-button";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
 import MockAnalytics from "@/components/mock-analytics";
 import { computeAnalytics, type MockAnalyticsData } from "@/lib/mock-analytics-core";
-import { signBlobViewerUrl } from "@/lib/blob-token";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -159,8 +158,6 @@ export default async function MockTestsPage() {
       title: true,
       description: true,
       duration: true,
-      fileUrl: true,
-      fileName: true,
       exam: true,
       year: true,
       examSubjectSlug: true,
@@ -169,22 +166,8 @@ export default async function MockTestsPage() {
     },
   }).catch(() => []);
 
-  // Download links go through the /api/blob proxy (which signs server-side on
-  // demand) instead of pre-signing 200 URLs at render time — keeps the HTML
-  // small and avoids 200 signing calls per page load. Each link carries a
-  // short-lived token because /api/blob requires auth (session or token).
-  function linkFor(fileUrl: string | null | undefined): string {
-    if (!fileUrl) return "";
-    if (fileUrl.startsWith("/")) return fileUrl;
-    if (fileUrl.includes("blob.vercel-storage.com")) {
-      return signBlobViewerUrl(fileUrl);
-    }
-    return fileUrl;
-  }
-
   const testsWithLinks = tests.map((t) => ({
     ...t,
-    signedUrl: linkFor(t.fileUrl),
     // SEO/payload: cards show ~2 lines, so ship only a snippet. Full rich-text
     // descriptions × 200 tests were bloating the HTML + flight payload.
     description: t.description ? t.description.slice(0, 160) : t.description,
@@ -320,19 +303,6 @@ export default async function MockTestsPage() {
                             </div>
                           </div>
 
-                          {test.signedUrl && (
-                            <a
-                              href={test.signedUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-2 text-xs text-primary hover:underline"
-                            >
-                              <FileText className="h-4 w-4" />
-                              {test.fileName || "Practice set"}
-                              <Download className="h-3 w-3" />
-                            </a>
-                          )}
-
                           <Link href={`/mock-tests/${test.id}`} className="w-full block">
                             <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
                               {test._count.questions === 0 ? "No Questions" : "Start Test"}
@@ -383,11 +353,6 @@ export default async function MockTestsPage() {
                             <span className="font-medium">{test._count.questions} Qs</span>
                           </div>
                         </div>
-                        {test.signedUrl && (
-                          <a href={test.signedUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs text-primary hover:underline">
-                            <FileText className="h-4 w-4" /> {test.fileName || "Practice set"} <Download className="h-3 w-3" />
-                          </a>
-                        )}
                         <Link href={`/mock-tests/${test.id}`} className="w-full block">
                           <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-[#0284c7] shadow-sm hover:shadow-md" disabled={test._count.questions === 0}>
                             {test._count.questions === 0 ? "No Questions" : "Start Test"}

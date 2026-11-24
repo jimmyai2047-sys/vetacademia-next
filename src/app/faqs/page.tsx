@@ -49,7 +49,7 @@ const faqs = [
   },
   {
     q: "Can I access content on mobile?",
-    a: "Yes, VetAcademia is fully responsive — mobile, tablet and desktop. You can study 24/7, download PDFs, and attempt tests on any device.",
+    a: "Yes, VetAcademia is fully responsive - mobile, tablet and desktop. You can study 24/7, read notes in the browser, and attempt tests on any device.",
   },
   {
     q: "What is the refund / cancellation policy?",

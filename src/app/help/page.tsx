@@ -45,7 +45,7 @@ const helpTopics = [
   {
     icon: Layers,
     title: "Previous Year Papers",
-    description: "Download solved and unsolved past papers.",
+    description: "Read solved and unsolved past papers.",
     href: "/papers",
     grad: "from-amber-600 to-orange-600",
   },

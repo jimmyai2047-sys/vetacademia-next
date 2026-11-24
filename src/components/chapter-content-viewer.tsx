@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, Presentation, Video, BookOpen, Download, Maximize2, ExternalLink } from "lucide-react";
+import { FileText, Presentation, Video, BookOpen, File as FileIcon, Maximize2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ProtectedHtml from "@/components/protected-html";
 
@@ -86,13 +86,6 @@ function PptViewer({ url, viewerUrl, title }: { url: string; viewerUrl?: string 
           >
             <Maximize2 className="h-3 w-3" /> Full Screen
           </a>
-          <a
-            href={url}
-            download
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary hover:underline"
-          >
-            <Download className="h-3 w-3" /> Download
-          </a>
         </div>
       </div>
       <div className="w-full rounded-lg overflow-hidden border bg-muted" style={{ minHeight: "min(500px, 60vh)" }}>
@@ -167,13 +160,6 @@ function PdfViewer({ url, title }: { url: string; title: string }) {
           >
             <Maximize2 className="h-3 w-3" /> Full Screen
           </a>
-          <a
-            href={url}
-            download
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary hover:underline"
-          >
-            <Download className="h-3 w-3" /> Download
-          </a>
         </div>
       </div>
       <div className="w-full rounded-lg overflow-hidden border" style={{ height: "min(600px, 80vh)" }}>
@@ -207,7 +193,7 @@ export default function ChapterContentViewer({
   if (hasPpt) tabs.push({ id: "ppt", label: "PPT", icon: Presentation, count: ppts.length });
   if (hasVideo) tabs.push({ id: "video", label: "Video", icon: Video, count: videos.length });
   if (hasPdf) tabs.push({ id: "pdf", label: "PDF", icon: FileText, count: pdfs.length });
-  if (others.length > 0) tabs.push({ id: "files", label: "Files", icon: Download, count: others.length });
+  if (others.length > 0) tabs.push({ id: "files", label: "Files", icon: FileIcon, count: others.length });
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || "content");
 
@@ -283,20 +269,16 @@ export default function ChapterContentViewer({
         {activeTab === "files" && others.length > 0 && (
           <ul className="space-y-2">
             {others.map((f) => (
-              <li key={f.id}>
-                <a
-                  href={f.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 text-sm hover:bg-muted hover:underline"
-                >
-                  <Download className="h-4 w-4 text-primary shrink-0" />
-                  <span className="truncate max-w-[300px]">{f.title}</span>
-                  {f.size && (
-                    <span className="text-xs text-muted-foreground">{formatSize(f.size)}</span>
-                  )}
-                  <Badge variant="outline" className="text-[10px] shrink-0">{f.fileType}</Badge>
-                </a>
+              <li
+                key={f.id}
+                className="inline-flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 text-sm"
+              >
+                <FileIcon className="h-4 w-4 text-primary shrink-0" />
+                <span className="truncate max-w-[300px]">{f.title}</span>
+                {f.size && (
+                  <span className="text-xs text-muted-foreground">{formatSize(f.size)}</span>
+                )}
+                <Badge variant="outline" className="text-[10px] shrink-0">{f.fileType}</Badge>
               </li>
             ))}
           </ul>

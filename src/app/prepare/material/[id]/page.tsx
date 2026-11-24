@@ -1,13 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getSignedUrl } from "@/lib/blob";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 import ProtectedHtml from "@/components/protected-html";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, FileText, ExternalLink, Download } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +24,6 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
   if (!m) notFound();
 
   const signedBody = m.body ? await prepareChapterHtml(m.body) : null;
-  const signedFile = m.fileUrl ? await getSignedUrl(m.fileUrl) : null;
 
   const backTab = m.category ? `?tab=${m.category}` : "";
 
@@ -51,11 +49,6 @@ export default async function MaterialReadPage({ params }: { params: Promise<{ i
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">{m.title}</h1>
             {m.description && <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{m.description}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
-              {signedFile && (
-                <a href={signedFile} target="_blank" rel="noopener noreferrer">
-                  <Button size="sm" variant="outline" className="rounded-full gap-1.5"><Download className="h-4 w-4" /> Download File</Button>
-                </a>
-              )}
               {m.externalUrl && (
                 <a href={m.externalUrl} target="_blank" rel="noopener noreferrer">
                   <Button size="sm" variant="outline" className="rounded-full gap-1.5"><ExternalLink className="h-4 w-4" /> Open Link</Button>

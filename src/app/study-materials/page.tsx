@@ -6,7 +6,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
-import { getSignedUrl } from "@/lib/blob";
 import MaterialGallery from "@/components/material-gallery";
 import Link from "next/link";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
@@ -44,24 +43,18 @@ export default async function StudyMaterialsPage() {
         },
         orderBy: { createdAt: "desc" },
         take: 100,
-        select: { id: true, title: true, category: true, fileUrl: true, content: true },
+        select: { id: true, title: true, category: true, content: true },
       }),
     ["study-materials-posts"],
     { revalidate: 120 }
   )();
 
-  const materials = await Promise.all(
-    posts.map(async (p) => {
-      const url = await getSignedUrl(p.fileUrl);
-      return {
-        id: p.id,
-        title: p.title,
-        excerpt: excerptFromHtml(p.content),
-        category: p.category as "VETS" | "ADVISORY" | "ANIMAL_OWNER",
-        downloadUrl: url || undefined,
-      };
-    })
-  );
+  const materials = posts.map((p) => ({
+    id: p.id,
+    title: p.title,
+    excerpt: excerptFromHtml(p.content),
+    category: p.category as "VETS" | "ADVISORY" | "ANIMAL_OWNER",
+  }));
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -69,7 +62,7 @@ export default async function StudyMaterialsPage() {
         badge="Study Hub • 10K+ Resources"
         title="Study"
         titleHighlight="Materials"
-        description="Access notes, advisories and resources for veterinary students and farmers — filter by programme, search instantly, and download PDFs for offline study."
+        description="Access notes, advisories and resources for veterinary students and farmers — filter by programme, search instantly, and read in the browser."
         variant="primary"
         actions={
           <>

@@ -5,7 +5,7 @@ export const metadata = {
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Download, ArrowLeft, NotebookPen, Sparkles } from "lucide-react";
+import { FileText, ArrowLeft, NotebookPen, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { examKeyLabel } from "@/lib/reference-dictionary";
@@ -200,23 +200,12 @@ export default async function PapersPage() {
                   </span>
                   <div className="flex items-center gap-2">
                     {post.downloadUrl && (
-                      <>
-                        <Link
-                          href={`/papers/view/${post.id}`}
-                          className="inline-flex items-center gap-1 rounded-xl border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
-                        >
-                          <FileText className="h-3.5 w-3.5" /> Open
-                        </Link>
-                        <a
-                          href={post.downloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          download
-                          className="inline-flex items-center gap-1 rounded-xl bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-                        >
-                          <Download className="h-3.5 w-3.5" /> Download
-                        </a>
-                      </>
+                      <Link
+                        href={`/papers/view/${post.id}`}
+                        className="inline-flex items-center gap-1 rounded-xl border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                      >
+                        <FileText className="h-3.5 w-3.5" /> Open
+                      </Link>
                     )}
                     <BookmarkButton
                       type="material"

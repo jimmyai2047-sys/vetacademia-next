@@ -564,7 +564,7 @@ export default async function ProgrammePage({
                 <ol className="text-sm text-muted-foreground space-y-1.5 list-decimal list-inside">
                   <li>Pick your {isYearProgramme ? "year" : "subject group"} above.</li>
                   <li>Open a subject to see units &amp; chapters.</li>
-                  <li>Read theory, download notes &amp; attempt mock tests.</li>
+                  <li>Read theory &amp; notes and attempt mock tests.</li>
                 </ol>
                 <Link
                   href="/admission"

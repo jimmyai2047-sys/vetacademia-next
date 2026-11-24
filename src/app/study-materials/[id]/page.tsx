@@ -1,17 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
-import { getSignedUrl } from "@/lib/blob";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
 
 export const metadata = {
   title: "Study Material | VetAcademia",
   description:
-    "Read and download a published VetAcademia study material — notes, advisories and reference documents for veterinary students.",
+    "Read a published VetAcademia study material — notes, advisories and reference documents for veterinary students.",
   robots: { index: false, follow: true },
 };
 
@@ -47,7 +46,6 @@ export default async function StudyMaterialDetailPage({
   )();
   if (!post || !post.published) notFound();
 
-  const downloadUrl = post.fileUrl ? await getSignedUrl(post.fileUrl) : null;
   const cat = CATEGORY_META[post.category] || null;
 
   return (
@@ -77,22 +75,6 @@ export default async function StudyMaterialDetailPage({
             <ProtectedHtml html={post.content} />
           ) : (
             <p className="text-muted-foreground">No content available.</p>
-          )}
-
-          {downloadUrl && (
-            <>
-              <div className="va-divider-dots my-2"><span /></div>
-              <a
-                href={downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-4 py-2 text-sm font-medium text-white shadow-sm hover:shadow-md transition-all mt-2"
-              >
-                <FileText className="h-4 w-4" />
-                Download attachment
-                <Download className="h-3.5 w-3.5" />
-              </a>
-            </>
           )}
         </CardContent>
       </Card>

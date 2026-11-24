@@ -17,7 +17,6 @@ import { getStateJob } from "@/lib/state-jobs";
 import ProtectedHtml from "@/components/protected-html";
 import {
   FileText,
-  Download,
   Play,
   Image as ImageIcon,
   Presentation,
@@ -140,13 +139,6 @@ function MaterialCard({ m }: { m: Material }) {
               <BookOpen className="h-3.5 w-3.5" /> Open Reader
             </Button>
           </Link>
-          {m.downloadUrl && (
-            <a href={m.downloadUrl} target="_blank" rel="noopener noreferrer">
-              <Button size="sm" variant="outline">
-                <Download className="h-4 w-4 mr-1" /> Download
-              </Button>
-            </a>
-          )}
           {m.externalUrl && (
             <a
               href={m.externalUrl}
@@ -509,15 +501,6 @@ export default function ExamPrepTabs({
                     >
                       <FileText className="h-3.5 w-3.5" /> Open
                     </Link>
-                    <a
-                      href={p.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-                    >
-                      <Download className="h-3.5 w-3.5" /> Download
-                    </a>
                   </div>
                 ) : (
                   <span className="text-xs text-muted-foreground">

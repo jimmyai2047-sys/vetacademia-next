@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
-import { ArrowLeft, Download, FileText } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import ProtectedHtml from "@/components/protected-html";
 import { signBlobViewerUrl } from "@/lib/blob-token";
 
@@ -23,9 +23,8 @@ export default async function PostViewerPage({
   if (!post.published) notFound();
 
   // Proxy private blobs through /api/blob so they render inline (Content-
-  // Disposition: inline) inside the in-site viewer iframe and can be served
-  // with a proper filename on download. The URL carries a short-lived token
-  // because /api/blob requires auth (session or token).
+  // Disposition: inline) inside the in-site viewer iframe. The URL carries a
+  // short-lived token because /api/blob requires auth (session or token).
   const viewUrl = post.fileUrl
     ? signBlobViewerUrl(post.fileUrl)
     : null;
@@ -39,15 +38,6 @@ export default async function PostViewerPage({
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </Link>
-        {viewUrl && (
-          <a
-            href={viewUrl}
-            download={post.fileName || "document.pdf"}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#0284c7] px-4 py-2 text-xs font-medium text-white shadow-sm hover:shadow-md transition-all"
-          >
-            <Download className="h-3.5 w-3.5" /> Download
-          </a>
-        )}
       </div>
 
       <div className="mb-4 flex items-start gap-3">

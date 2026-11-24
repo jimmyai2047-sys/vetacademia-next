@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, Search, FileText, ArrowRight } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import BookmarkButton from "@/components/bookmark-button";
 
@@ -19,7 +19,6 @@ export type Material = {
   title: string;
   excerpt: string;
   category: "VETS" | "ADVISORY" | "ANIMAL_OWNER";
-  downloadUrl?: string;
 };
 
 const FILTERS = [
@@ -146,18 +145,6 @@ export default function MaterialGallery({
                   >
                     Read More <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
-                  {m.downloadUrl && (
-                    <a
-                      href={m.downloadUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-                    >
-                      <FileText className="h-3.5 w-3.5" />
-                      Download
-                      <Download className="h-3 w-3" />
-                    </a>
-                  )}
                 </div>
               </CardContent>
             </Card>

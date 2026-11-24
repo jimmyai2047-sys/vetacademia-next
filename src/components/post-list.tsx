@@ -3,7 +3,7 @@ import ProtectedHtml from "@/components/protected-html";
 import { FarmHtml, FarmText } from "@/components/farm-translated";
 import type { FarmerLang } from "@/dictionaries/farmer-languages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Download } from "lucide-react";
+import { FileText } from "lucide-react";
 import { PublicPost } from "@/lib/posts";
 
 export default function PostList({ posts, lang }: { posts: PublicPost[]; lang?: FarmerLang }) {
@@ -42,16 +42,6 @@ export default function PostList({ posts, lang }: { posts: PublicPost[]; lang?: 
                   <FileText className="h-3.5 w-3.5" />
                   {translate && lang ? <FarmText text="View in browser" lang={lang} /> : "View in browser"}
                 </Link>
-                <a
-                  href={p.downloadUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  download
-                  className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  {translate && lang ? <FarmText text="Download" lang={lang} /> : "Download"}
-                </a>
               </div>
             )}
           </CardContent>
