@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { toMediaUrl } from "@/lib/blob";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -679,7 +680,7 @@ export default function AdminExpertsPage({
                           Submitted {new Date(a.createdAt).toLocaleString("en-IN")}
                           {a.showContact ? " • consented to show contact publicly" : " • contact admin-only"}
                           {a.certificateUrl && <> • <a href={a.certificateUrl} target="_blank" rel="noreferrer" className="text-primary underline">certificate</a></>}
-                          {a.photoUrl && <> • <a href={a.photoUrl} target="_blank" rel="noreferrer" className="text-primary underline">photo</a></>}
+                          {a.photoUrl && <> • <a href={toMediaUrl(a.photoUrl)} target="_blank" rel="noreferrer" className="text-primary underline">photo</a></>}
                         </p>
                         {a.adminNote && <p className="text-xs">Admin note: {a.adminNote}</p>}
                       </div>
@@ -1010,7 +1011,7 @@ export default function AdminExpertsPage({
                     <div className="flex items-start gap-3">
                       {e.photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={e.photoUrl} alt={e.name} className="h-14 w-14 rounded-xl object-cover border shadow-sm" loading="lazy" decoding="async" />
+                        <img src={toMediaUrl(e.photoUrl)} alt={e.name} className="h-14 w-14 rounded-xl object-cover border shadow-sm" loading="lazy" decoding="async" />
                       ) : (
                         <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-[#0284c7] text-white flex items-center justify-center font-semibold shadow-sm">
                           {e.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}

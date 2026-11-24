@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { signBlobViewerUrl } from "@/lib/blob-token";
+import { toMediaUrl } from "@/lib/blob";
 import { DIPLOMA_TRACKS } from "@/lib/diplomas";
 import { getPublishedExpertCount, expertCountLabel, EXPERT_COUNT_SOURCE_NOTE } from "@/lib/expert-stats";
 import HomePageClient from "@/components/home-page-client";
@@ -228,10 +228,9 @@ const getHomeExperts = unstable_cache(
       return rows
         .map((e) => ({
           ...e,
-          photoUrl:
-            e.photoUrl && e.photoUrl.includes("blob.vercel-storage.com")
-              ? signBlobViewerUrl(e.photoUrl)
-              : e.photoUrl,
+          // Legacy Blob hosts become direct media URLs — next/image cannot
+          // follow /api/blob's 307 (Phase 8 fix; raw Blob hosts are 403).
+          photoUrl: toMediaUrl(e.photoUrl),
         }))
         .sort((a, b) => Number(!!b.photoUrl) - Number(!!a.photoUrl))
         .slice(0, 3);

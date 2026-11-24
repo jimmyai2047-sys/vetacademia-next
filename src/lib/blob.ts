@@ -36,6 +36,34 @@ export function isOurMediaUrl(url: string | null | undefined): boolean {
 }
 
 /**
+ * Synchronous, client-safe form of {@link getSignedUrl}: a pure string
+ * transform with no async work (the async signature of getSignedUrl exists
+ * only for compatibility with its ~30 call sites).
+ *
+ * Used wherever a legacy Blob URL must become a direct media URL at render
+ * time — in particular anything fed into `next/image`, because the image
+ * optimizer fetches URLs in-process and cannot follow `/api/blob`'s 307.
+ */
+export function toMediaUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  // Local public files need no storage lookup — return as-is.
+  if (url.startsWith("/")) return url;
+
+  try {
+    const parsed = new URL(url);
+    // Already on our media domain (or any non-Blob absolute URL we don't own).
+    if (parsed.hostname === MEDIA_HOST) return url;
+    if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) return url;
+
+    return `${MEDIA_BASE}/${toObjectKey(url)}`;
+  } catch (error) {
+    // Malformed URL — never hard-crash a render over a link.
+    console.error("toMediaUrl error:", error);
+    return url;
+  }
+}
+
+/**
  * Returns a publicly-cacheable URL for a stored media object.
  * Must be called server-side. Kept `async` (and the same signature as the old
  * Vercel Blob signer) so the ~30 existing call sites need no changes.
@@ -44,20 +72,5 @@ export function isOurMediaUrl(url: string | null | undefined): boolean {
  * domain are returned untouched.
  */
 export async function getSignedUrl(blobUrl: string | null | undefined): Promise<string> {
-  if (!blobUrl) return "";
-  // Local public files need no storage lookup — return as-is.
-  if (blobUrl.startsWith("/")) return blobUrl;
-
-  try {
-    const url = new URL(blobUrl);
-    // Already on our media domain (or any non-Blob absolute URL we don't own).
-    if (url.hostname === new URL(MEDIA_BASE).hostname) return blobUrl;
-    if (!url.hostname.endsWith(".blob.vercel-storage.com")) return blobUrl;
-
-    return `${MEDIA_BASE}/${toObjectKey(blobUrl)}`;
-  } catch (error) {
-    // Malformed URL — never hard-crash a render over a link.
-    console.error("getSignedUrl error:", error);
-    return blobUrl;
-  }
+  return toMediaUrl(blobUrl);
 }

@@ -21,18 +21,16 @@ import { Star, Clock, IndianRupee, Sparkles, Users, Award, ArrowRight, MapPin, G
 import { EXPERT_CONSULTATION_FEE_LABEL } from "@/lib/expert-proforma";
 import { prisma } from "@/lib/prisma";
 import { DecorativePageHeader } from "@/components/decorative/page-header";
-import { signBlobViewerUrl } from "@/lib/blob-token";
+import { toMediaUrl } from "@/lib/blob";
 import { EXPERT_FIELD_CATEGORIES, qualificationSummary } from "@/lib/expert-proforma";
 
 export const dynamic = "force-dynamic";
 
+// Legacy Blob hosts become direct media URLs. next/image cannot follow
+// /api/blob's 307 redirect (the optimizer fetches in-process), and raw Blob
+// store URLs are 403 — so images must point straight at the public media host.
 function proxyUrl(blobUrl: string): string {
-  // Tokenized because /api/blob requires auth; only blob hosts go through
-  // the proxy, anything else is returned as-is.
-  if (blobUrl.includes("blob.vercel-storage.com")) {
-    return signBlobViewerUrl(blobUrl);
-  }
-  return blobUrl;
+  return toMediaUrl(blobUrl);
 }
 
 async function getExperts(q: string, field: string) {
