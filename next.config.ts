@@ -43,8 +43,10 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     // Allow the R2 media domain (expert photos, blog covers, study-material
-    // images) plus the legacy Vercel Blob hosts (still stored in old rows)
-    // to be served through the Next.js image optimizer.
+    // images) and Unsplash through the Next.js image optimizer. The legacy
+    // Vercel Blob hosts were removed in Phase 8 — every stored blob URL is
+    // either rewritten to the media host or proxied via /api/blob (verified:
+    // zero direct blob references in rendered HTML).
     remotePatterns: [
       {
         protocol: "https",
@@ -53,18 +55,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "media.vetacademia.in",
-      },
-      {
-        protocol: "https",
-        hostname: "*.blob.vercel-storage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.private.blob.vercel-storage.com",
       },
     ],
     // The /api/blob proxy serves remote blob images through a local path with a

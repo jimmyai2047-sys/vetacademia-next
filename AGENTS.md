@@ -38,4 +38,6 @@ $0.30 per lecture-hour stored per month, so never migrate a library to it.
 also served publicly at `https://media.vetacademia.in` (R2 custom domain, proxied). The
 Vercel Blob store (`J2KwWBlJD9BxCTrN`) still exists because the running app reads from it —
 it must stay until the 14 `@vercel/blob` call sites switch to R2 in Phase 5 and the switch is
-verified live.
+verified live. **Phase 8 (24 Nov 2026):** the switch is verified — `BLOB_READ_WRITE_TOKEN` was
+dropped from the server env, and the Blob hosts were removed from the CSP and image
+`remotePatterns`. The Blob store itself stays untouched purely as a rollback path.
