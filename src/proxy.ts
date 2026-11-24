@@ -100,17 +100,21 @@ export async function proxy(req: NextRequest) {
   // 'unsafe-inline' is removed so injected scripts are rejected. Static pages
   // (set above) allow 'unsafe-inline' instead — they have no nonce. Razorpay's
   // checkout script is loaded via a direct <script src>, so its host is
-  // allow-listed explicitly. style-src keeps 'unsafe-inline' because React
-  // renders many inline style="" attributes that would otherwise be blocked.
+  // allow-listed explicitly. static.cloudflareinsights.com is Cloudflare's
+  // Web Analytics beacon, injected at the edge — without it the CSP blocks
+  // the beacon and analytics silently record nothing. style-src keeps
+  // 'unsafe-inline' because React renders many inline style="" attributes
+  // that would otherwise be blocked.
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' ${isStaticCsp ? "'unsafe-inline'" : `'nonce-${nonce}'`} https://checkout.razorpay.com${
+    `script-src 'self' ${isStaticCsp ? "'unsafe-inline'" : `'nonce-${nonce}'`} https://checkout.razorpay.com https://static.cloudflareinsights.com${
       isDev ? " 'unsafe-eval'" : ""
     }`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://media.vetacademia.in",
+    // Cloudflare's Web Analytics beacon posts its events here.
+    "connect-src 'self' https://media.vetacademia.in https://cloudflareinsights.com",
     "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://www.youtube.com https://youtube.com https://media.vetacademia.in https://docs.google.com",
     "object-src 'none'",
     "base-uri 'self'",
