@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin-api";
 import { prisma } from "@/lib/prisma";
-import { getAccessForUser } from "@/lib/access";
+import { getPurchasedAccessForUser } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +42,7 @@ export async function GET(
 
   const [access, payments, progressAgg, progressRows, reports] =
     await Promise.all([
-      getAccessForUser(id),
+      getPurchasedAccessForUser(id),
       prisma.payment.findMany({
         where: { userId: id },
         orderBy: { createdAt: "desc" },

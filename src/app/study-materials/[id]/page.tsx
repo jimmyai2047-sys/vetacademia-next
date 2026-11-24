@@ -1,11 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { getSignedUrl } from "@/lib/blob";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, ArrowLeft } from "lucide-react";
@@ -40,21 +37,7 @@ export default async function StudyMaterialDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return (
-      <div className="container mx-auto px-4 py-20 max-w-md text-center">
-        <h1 className="text-2xl font-bold mb-2">Log in to view study materials</h1>
-        <p className="text-muted-foreground mb-6">
-          Please log in to access this content.
-        </p>
-        <Link href="/login" className={buttonVariants()}>
-          Log In
-        </Link>
-      </div>
-    );
-  }
-
+  // Step A (Nov 2026): no login required — every material is public.
   const { id } = await params;
 
   const post = await unstable_cache(

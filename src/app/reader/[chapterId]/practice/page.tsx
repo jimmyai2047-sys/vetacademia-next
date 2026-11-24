@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getAccess } from "@/lib/access";
 import { programmeNameToSlug } from "@/lib/programme";
@@ -50,24 +49,6 @@ export default async function PracticeRoute({
       : false;
   const subjectOwned = access.ownedSubjectIds.has(chapter.subject.id);
   const hasAccess = chapter.isDemo || access.isAdmin || programmeOwned || yearOwned || subjectOwned;
-
-  if (!chapter.isDemo && !access.isAuthed) {
-    return (
-      <div className="container mx-auto px-4 py-10 max-w-2xl text-center">
-        <h1 className="text-xl font-semibold mb-2 tracking-tight">Login required</h1>
-        <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-        <p className="text-muted-foreground mb-4">
-          Sign in to practice MCQs for this chapter.
-        </p>
-        <Link
-          href={`/login?redirect=${encodeURIComponent(`/reader/${chapterId}/practice`)}`}
-          className="text-primary underline font-medium"
-        >
-          Sign in
-        </Link>
-      </div>
-    );
-  }
 
   if (!hasAccess) {
     return (

@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 import { getAccess } from "@/lib/access";
@@ -46,8 +46,6 @@ export default async function ChapterReaderRoute({
   const subjectOwned = access.ownedSubjectIds.has(chapter.subjectId);
   const hasAccess =
     chapter.isDemo || programmeOwned || yearOwned || subjectOwned || access.isAdmin;
-
-  if (!chapter.isDemo && !access.isAuthed) redirect(`/login?redirect=/reader/${chapterId}`);
 
   if (!hasAccess) {
     return (

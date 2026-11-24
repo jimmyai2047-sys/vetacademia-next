@@ -94,11 +94,33 @@ async function accessFromPayments(userId: string): Promise<AccessInfo> {
   return info;
 }
 
-function fullAdminAccess(userId: string): AccessInfo {
+// ── Step A (Nov 2026): all content is free for everyone ───────────────
+// getAccess / getAccessForUser return a MATCH-ALL access object so every
+// plan / programme / exam / year / subject gate passes, while userId,
+// isAuthed and isAdmin stay REAL:
+//   • guests keep isAuthed=false (their mock-test attempts stay
+//     non-persisted — the attempt API reads the session directly),
+//   • admins keep isAdmin=true (editorial workflow: unpublished content
+//     stays hidden from everyone else),
+//   • banned mobile users still get EMPTY, so a ban keeps working even for
+//     previously issued tokens.
+// Subject gates never consult ownedSubjectIds alone — every one of them is
+// OR'd with programmeOwned, and ALL_PROGRAMME_SLUGS covers all five
+// programmes, so an empty set here cannot lock anyone out.
+//
+// Payment-derived access is still needed by the two UIs that DISPLAY what
+// a user owns (the /pricing "Owned" badges and the admin user-overview
+// chips) — those call getPurchasedAccess / getPurchasedAccessForUser.
+
+function fullContentAccess(
+  userId: string | null,
+  isAuthed: boolean,
+  isAdmin: boolean
+): AccessInfo {
   return {
     userId,
-    isAuthed: true,
-    isAdmin: true,
+    isAuthed,
+    isAdmin,
     planSlugs: ALL_PLAN_SLUGS,
     programmeSlugs: ALL_PROGRAMME_SLUGS,
     examKeys: ALL_EXAM_KEYS,
@@ -112,12 +134,8 @@ export const getAccess = cache(async (): Promise<AccessInfo> => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   const role = session?.user?.role;
-  if (!userId) return EMPTY;
-
-  // Admin gets full access to all content — no payment required
-  if (role === "ADMIN") return fullAdminAccess(userId);
-
-  return accessFromPayments(userId);
+  if (!userId) return fullContentAccess(null, false, false);
+  return fullContentAccess(userId, true, role === "ADMIN");
 });
 
 // Token-based (mobile app / Bearer) callers have a verified userId but no
@@ -132,7 +150,32 @@ export async function getAccessForUser(userId: string): Promise<AccessInfo> {
     select: { role: true, banned: true },
   });
   if (!user || user.banned) return EMPTY;
-  if (user.role === "ADMIN") return fullAdminAccess(userId);
+  return fullContentAccess(userId, true, user.role === "ADMIN");
+}
+
+// What the user has actually PAID for — display only (pricing "Owned"
+// badges, admin user-overview chips). Content gates must use getAccess /
+// getAccessForUser above, which are free for everyone.
+export const getPurchasedAccess = cache(async (): Promise<AccessInfo> => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  const role = session?.user?.role;
+  if (!userId) return EMPTY;
+  if (role === "ADMIN") return fullContentAccess(userId, true, true);
+  return accessFromPayments(userId);
+});
+
+export async function getPurchasedAccessForUser(
+  userId: string
+): Promise<AccessInfo> {
+  if (!userId) return EMPTY;
+  const { prisma } = await import("@/lib/prisma");
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true, banned: true },
+  });
+  if (!user || user.banned) return EMPTY;
+  if (user.role === "ADMIN") return fullContentAccess(userId, true, true);
   return accessFromPayments(userId);
 }
 
@@ -167,11 +210,10 @@ async function mockTestAllowed(
   // API 403'd exam/subject-tagged papers.)
   if (test.kind === "PREVIOUS_YEAR") return true;
 
-  if (!access.isAuthed) return false;
+  // Step A: no sign-in requirement — getAccess() returns match-all sets, so
+  // every exam (including the "other" catch-all) is open to everyone.
 
   if (test.exam) {
-    // "other" is a catch-all exam category — open to any signed-in member.
-    if (test.exam === "other") return access.isAuthed;
     return access.examKeys.has(test.exam) || access.examPlanOwned;
   }
 

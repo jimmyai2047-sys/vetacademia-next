@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, FileText, ExternalLink, Download } from "lucide-react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -22,20 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function MaterialReadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return (
-      <div className="container mx-auto px-4 py-8 md:py-12 text-center max-w-xl">
-        <div className="va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-6 md:p-8">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
-          <p className="relative text-muted-foreground">Please log in to view this material.</p>
-          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-          <Link href="/login" className="relative mt-4 inline-block text-primary underline">Log In</Link>
-        </div>
-      </div>
-    );
-  }
+  // Step A (Nov 2026): no login gate — materials are public.
   const m = await prisma.examMaterial.findUnique({ where: { id } });
   if (!m) notFound();
 

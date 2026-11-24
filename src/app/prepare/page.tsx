@@ -8,12 +8,6 @@ import { getSignedUrl } from "@/lib/blob";
 import { EXAM_PREP_CATEGORIES } from "@/lib/exam-prep";
 import { isStudyToolSubject } from "@/lib/subjects";
 import ExamPrepTabs from "@/components/exam-prep-tabs";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { DecorativePageHeader } from "@/components/decorative/page-header";
-import { GraduationCap, Sparkles } from "lucide-react";
 import { prepareChapterHtml } from "@/lib/chapter-images";
 
 export const dynamic = "force-dynamic";
@@ -74,40 +68,7 @@ export default async function PreparePage({
   searchParams: Promise<{ tab?: string; state?: string }>;
 }) {
   const { tab, state } = await searchParams;
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return (
-      <div className="container mx-auto px-4 py-5 max-w-3xl">
-        <DecorativePageHeader
-          badge="Exam Preparation"
-          title="Exam"
-          titleHighlight="Preparation"
-          description="Structured tracks, previous year papers, and mock tests — login to unlock your personalized exam preparation hub."
-          variant="primary"
-        />
-        <div className="mt-5 va-card-hover relative overflow-hidden rounded-[1.75rem] border border-primary/5 bg-white shadow-sm p-5 md:p-6 text-center">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#d4a843] to-primary" />
-          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/5 blur-2xl" />
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#0284c7] text-white shadow-lg">
-            <GraduationCap className="h-7 w-7" />
-          </div>
-          <h2 className="mt-4 text-2xl font-bold">Log in to access exam preparation</h2>
-          <div className="va-divider-dots my-4 mx-auto max-w-[120px]"><span /></div>
-          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Structured tracks, previous year papers, and mock tests are available to enrolled members — exam-focused, syllabus-aligned preparation.
-          </p>
-          <Link href={`/login?redirect=${encodeURIComponent(tab ? `/prepare?tab=${tab}${state ? `&state=${state}` : ""}` : state ? `/prepare?state=${state}` : "/prepare")}`} className={buttonVariants({ size: "lg", className: "gap-2 rounded-xl shadow-md" })}>
-            <Sparkles className="h-4 w-4" /> Log In
-          </Link>
-          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-primary/20" />
-            Secure • Personalized • Exam-focused
-            <span className="h-px w-8 bg-gradient-to-r from-primary/20 to-transparent" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Step A (Nov 2026): no login gate — the whole prep hub is public.
 
   let categories: PreparedCategory[] = [];
   try {

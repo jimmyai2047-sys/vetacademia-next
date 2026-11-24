@@ -8,7 +8,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getAccess } from "@/lib/access";
+import { getPurchasedAccess } from "@/lib/access";
 import { reconcilePendingPayments } from "@/lib/payments-service";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +51,7 @@ export default async function PricingPage({
     subjectId: string | null;
     sortOrder: number;
   }[] = [];
-  let access: Awaited<ReturnType<typeof getAccess>> = {
+  let access: Awaited<ReturnType<typeof getPurchasedAccess>> = {
     userId: null,
     isAuthed: false,
     isAdmin: false,
@@ -82,7 +82,7 @@ export default async function PricingPage({
           sortOrder: true,
         },
       }),
-      getAccess(),
+      getPurchasedAccess(),
       prisma.subject.findMany({ select: { id: true, name: true } }),
     ]);
   } catch {
