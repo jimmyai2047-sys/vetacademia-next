@@ -1,7 +1,7 @@
 # Migration runbook — Vercel → Hetzner + Cloudflare + R2
 
-Target: Hetzner CX22 (**Ashburn, US East** until Neon is migrated out of `us-east-2`) +
-Cloudflare Free + Cloudflare R2 + Neon + Upstash.
+Target: Hetzner CX22 (**Nuremberg, DE**) + Cloudflare Free + Cloudflare R2 +
+Neon (**Frankfurt, `eu-central-1`** — migrated 24 Nov 2026) + Upstash.
 Cost after cutover: **≈ ₹440–600/month** (from ₹2,080).
 
 Rules this migration must preserve: see `docs/infrastructure-and-cost-rules.md`
@@ -181,7 +181,7 @@ You need one month of Pro to get them out.
 
 ## Phase 4 — VPS (45 min)
 
-Create **Hetzner Cloud → CX22 → Singapore → Ubuntu 24.04**, add your SSH key.
+Create **Hetzner Cloud → CX22 → Nuremberg (DE) → Ubuntu 24.04**, add your SSH key.
 
 ```
 ssh root@<IP>
@@ -205,10 +205,15 @@ Checkpoint: `curl -H 'Host: www.vetacademia.in' http://127.0.0.1:3000/` returns 
 
 ### Data residency note
 
-Your Neon database is in `us-east-2` (Ohio). Until you migrate it, set the Hetzner box
-to **Ashburn (US East)** instead of Singapore, or every query pays ~230 ms. Migrating
-Neon to Singapore is a `pg_dump`/restore during a maintenance window — do it after the
-site is stable, not during cutover.
+**Done — 24 Nov 2026.** Neon now runs in `eu-central-1` (**Frankfurt**), roughly 200 km
+from the Nuremberg box. Because a Neon project's region is fixed at creation, the move was
+a new project (`VetAcademia-frankfurt`, PG 18) plus `pg_dump -Fc` →
+`pg_restore --clean --no-owner` inside a ~30 s `systemctl stop` window: row counts were
+compared table-by-table (52 tables / 10,267 rows, identical) *before* the `DATABASE_URL`
+swap, and the script auto-rolled back to Ohio on any mismatch. Query RTT from the box:
+**794 ms (Ohio) → 96 ms (Frankfurt)**. The old Ohio project stays untouched as the
+rollback path until a few clean days pass, then delete it. Env backup:
+`shared/env.bak.pre-neon-fra-20261124102314`.
 
 ---
 

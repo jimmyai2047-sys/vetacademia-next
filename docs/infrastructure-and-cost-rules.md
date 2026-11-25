@@ -1,7 +1,7 @@
 # Infrastructure & cost rules (read before changing hosting, storage or uploads)
 
 **Project:** VetAcademia — www.vetacademia.in
-**Target stack (decided 21 Nov 2026):** Hetzner Cloud CX22 (Singapore) + Cloudflare Free
+**Target stack (decided 21 Nov 2026):** Hetzner Cloud CX22 (Nuremberg, DE) + Cloudflare Free
 (CDN/DNS/WAF) + Cloudflare R2 (objects) + Neon Postgres + Upstash Redis + Resend.
 **Migrating away from:** Vercel (Hobby team paused for Fluid Active CPU on 18 Nov 2026 →
 site returned HTTP 402 until 18 Dec; Blob store suspended for URL signing).
@@ -73,9 +73,15 @@ that is read more than about once a month.
       `backups/blob-manifest-2026-11-21.json`. Signing is suspended, so bytes cannot be read
       until the Pro upgrade or the 18 Dec 2026 unpause.
 - [ ] **Do not delete the Vercel project or the Blob store** until the export to R2 completes.
-- [ ] R2 bucket → Hetzner CX22 (Singapore) → Cloudflare DNS → cancel Vercel Pro.
-- [ ] Database is Neon `us-east-2` (Ohio). Move the Neon project to Singapore at cutover,
-      otherwise every query pays ~230 ms. See `VERCEL-USAGE-AUDIT.md` for the CPU history.
+- [ ] R2 bucket → Hetzner CX22 (Nuremberg) → Cloudflare DNS (all three **done**) →
+      **cancel Vercel Pro** (still pending; before the ~19–21 Dec 2026 renewal).
+- [x] **Database migrated to Neon `eu-central-1` (Frankfurt) — done 24 Nov 2026.** New
+      project `VetAcademia-frankfurt` (PG 18, `neondb`); `pg_dump -Fc` →
+      `pg_restore --clean --no-owner` inside a ~30 s stop window, row counts compared
+      table-by-table before the `DATABASE_URL` swap (52 tables / 10,267 rows, identical).
+      Query RTT from the box: **794 ms (Ohio) → 96 ms (Frankfurt)**. The old Ohio project
+      `VetAcademia` is kept untouched as the rollback path — delete it only after a few
+      clean days. Env backup: `shared/env.bak.pre-neon-fra-20261124102314`.
 - [ ] `RESEND_API_KEY` is absent from `.env`; password-reset and OTP mail fail soft without it.
 
 ## Verification checklist for any future change
