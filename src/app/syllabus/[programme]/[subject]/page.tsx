@@ -27,6 +27,7 @@ import { programmeNameToSlug } from "@/lib/programme";
 import EnrollCta from "@/components/enroll-cta";
 import CurriculumSidebar from "@/components/curriculum-sidebar";
 import { getCurriculumSidebar } from "@/lib/curriculum-sidebar";
+import PyqSection from "@/components/pyq-section";
 
 
 
@@ -66,6 +67,26 @@ export default async function SubjectPage({
   if (!subject) notFound();
 
   if (programmeNameToSlug(subject.programme.name) !== progSlug) notFound();
+
+  // Previous Year Papers for this subject (uploaded by scripts/upload-ahdp-pyq.mjs).
+  const pyqRows = await unstable_cache(
+    () =>
+      prisma.studyMaterial.findMany({
+        where: {
+          subjectId: subject.id,
+          type: "PYQ",
+          isPublic: true,
+          url: { not: null },
+        },
+        orderBy: [{ year: "desc" }, { createdAt: "asc" }],
+        select: { id: true, title: true, year: true, url: true },
+      }),
+    ["subject-pyq", subject.id],
+    { revalidate: 120 }
+  )();
+  const pyqs = pyqRows.flatMap((p) =>
+    p.url ? [{ id: p.id, title: p.title, year: p.year, url: p.url }] : []
+  );
 
   const access = await getAccess();
   const programmeOwned = access.programmeSlugs.has(progSlug);
@@ -245,6 +266,14 @@ export default async function SubjectPage({
       <Tabs defaultValue="syllabus" className="space-y-6">
         <TabsList>
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
+          {pyqs.length > 0 && (
+            <TabsTrigger value="pyq" className="gap-1.5">
+              Previous Year Papers
+              <Badge variant="secondary" className="px-1.5 py-0">
+                {pyqs.length}
+              </Badge>
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="syllabus" className="space-y-6">
@@ -479,6 +508,11 @@ export default async function SubjectPage({
             </>
           )}
         </TabsContent>
+        {pyqs.length > 0 && (
+          <TabsContent value="pyq">
+            <PyqSection papers={pyqs} />
+          </TabsContent>
+        )}
       </Tabs>
         </div>
       </div>

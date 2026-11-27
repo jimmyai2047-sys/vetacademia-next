@@ -596,6 +596,7 @@ model StudyMaterial {
   userId      String?
   isPublic    Boolean   @default(true)
   isDemo      Boolean   @default(false) // demo content visible to everyone (no purchase)
+  year        Int?      // exam year for type="PYQ" (Previous Year Papers) — null for everything else
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

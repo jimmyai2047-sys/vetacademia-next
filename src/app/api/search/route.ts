@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { programmeNameToSlug } from "@/lib/programme";
 
 export async function GET(req: Request) {
   try {
@@ -16,7 +17,14 @@ export async function GET(req: Request) {
         select: {
           id: true,
           title: true,
-          subject: { select: { name: true } },
+          type: true,
+          subject: {
+            select: {
+              id: true,
+              name: true,
+              programme: { select: { name: true } },
+            },
+          },
         },
       }),
       prisma.mockTest.findMany({
@@ -41,7 +49,13 @@ export async function GET(req: Request) {
         id: m.id,
         title: m.title,
         sub: m.subject?.name ?? "",
-        url: `/study-materials/${m.id}`,
+        // Previous Year Papers live inside their subject page;
+        // /study-materials/[id] only serves Post rows, so linking a PYQ
+        // there would 404.
+        url:
+          m.type === "PYQ" && m.subject
+            ? `/syllabus/${programmeNameToSlug(m.subject.programme.name)}/${m.subject.id}`
+            : `/study-materials/${m.id}`,
       })),
       ...papers.map((p: any) => ({
         type: "paper",
